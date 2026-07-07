@@ -1,0 +1,138 @@
+# LM Studio Lab screening registry.
+# Unresolved compat_model_id values must stay null until a safe /v1/models probe
+# confirms the compat-visible identifier. Never guess compat IDs from source_id.
+
+schema_version: 1
+registry_kind: lmstudio_lab_candidates
+resolution_policy:
+  compat_model_id_resolution: safe_v1_models_probe_only
+  compat_model_id_guessing_from_source_id: forbidden
+  unresolved_compat_model_id_action: keep_null_until_probe_confirms
+  required_probe_endpoint: /v1/models
+artifact_privacy_rules:
+  store_raw_provider_responses: false
+  store_model_filesystem_paths: false
+  store_local_paths: false
+default_temperature: 0
+thinking_policy: off_if_available_else_unknown
+initial_screening_stages:
+  - stage_id: M1
+    artifact_type: structured_json
+    artifact_format: json
+    purpose: initial structured output screening
+  - stage_id: M2
+    artifact_type: plain_text
+    artifact_format: text
+    purpose: initial plain text screening
+candidates:
+  - lab_key: gemma4_e2b_q4km
+    family: gemma
+    size_class: small
+    structured_output_policy: candidate_primary
+    source_id: lmstudio-community/gemma-4-E2B-it-GGUF/gemma-4-E2B-it-Q4_K_M.gguf
+    compat_model_id: google/gemma-4-e2b
+    compat_model_id_status: measured_baseline
+    status: measured_baseline
+  - lab_key: qwen35_4b_q4km
+    family: qwen
+    size_class: small
+    structured_output_policy: blocked
+    source_id: lmstudio-community/Qwen3.5-4B-GGUF/Qwen3.5-4B-Q4_K_M.gguf
+    compat_model_id: qwen3.5-4b
+    compat_model_id_status: lab_verified
+    compat_resolution:
+      status: lab_verified
+      source: acquisition_and_native_lifecycle_lab
+      exact_visible_id: true
+    native_identity:
+      native_model_key: qwen3.5-4b
+      native_key_verified: true
+      format: gguf
+      quantization: Q4_K_M
+      quantization_verified: true
+      bits_per_weight: 4
+      params: 4B
+      size_bytes: 3383082464
+      source_verified_by_native_list: true
+    disk_state:
+      ready_on_disk: true
+      observed_by: acq_live_qwen35_4b_q4km_001
+    last_observed_load_state:
+      loaded_instances: 0
+      observed_after: l4c_unload_happy_qwen35_4b_001
+      loaded_in_ram_vram: false
+    status: lab_verified
+  - lab_key: gemma4_e4b_q4km
+    family: gemma
+    size_class: medium
+    structured_output_policy: candidate_heavy
+    source_id: lmstudio-community/gemma-4-E4B-it-GGUF/gemma-4-E4B-it-Q4_K_M.gguf
+    compat_model_id: google/gemma-4-e4b
+    compat_model_id_status: lab_verified
+    compat_resolution:
+      status: lab_verified
+      source: identity_probe_lab
+      exact_visible_id: true
+    native_identity:
+      native_model_key: google/gemma-4-e4b
+      native_key_verified: true
+      format: gguf
+      quantization: null
+      quantization_verified: false
+      bits_per_weight: 4
+      params: null
+      size_bytes: 6326932336
+      source_verified_by_native_list: true
+    disk_state:
+      ready_on_disk: true
+      observed_by: m0_3_identity_gemma4_e4b_002
+    load_echo:
+      context_length: 8192
+      parallel: 1
+      context_length_verified: true
+      parallel_verified: true
+      observed_by: l4j_policy_backed_smoke_gemma4_e4b_001
+    last_observed_load_state:
+      loaded_instances: 0
+      observed_after: l4j_policy_backed_smoke_gemma4_e4b_001
+      loaded_in_ram_vram: false
+    status: lab_verified
+  - lab_key: qwen35_9b_q4km
+    family: qwen
+    size_class: medium
+    structured_output_policy: recovery_only
+    source_id: lmstudio-community/Qwen3.5-9B-GGUF/Qwen3.5-9B-Q4_K_M.gguf
+    compat_model_id: qwen/qwen3.5-9b
+    compat_model_id_status: lab_verified
+    compat_resolution:
+      status: lab_verified
+      source: identity_probe_lab
+      exact_visible_id: true
+    native_identity:
+      native_model_key: qwen/qwen3.5-9b
+      native_key_verified: true
+      format: gguf
+      quantization: null
+      quantization_verified: false
+      bits_per_weight: 4
+      params: null
+      size_bytes: 6548927711
+      capabilities:
+        - reasoning
+        - trained_for_tool_use
+        - vision
+      source_verified_by_native_list: true
+    disk_state:
+      ready_on_disk: true
+      observed_by: m0_6_identity_qwen35_9b_001
+    load_echo:
+      context_length: 8192
+      parallel: 1
+      context_length_verified: true
+      parallel_verified: true
+      observed_by: m0_7_policy_backed_smoke_qwen35_9b_001
+    last_observed_load_state:
+      loaded_instances: 0
+      observed_after: m0_7_policy_backed_smoke_qwen35_9b_001
+      loaded_in_ram_vram: false
+    status: lab_verified

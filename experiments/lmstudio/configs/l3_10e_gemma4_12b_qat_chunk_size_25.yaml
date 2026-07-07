@@ -1,0 +1,36 @@
+experiment_id: l3_10e_gemma4_12b_qat_chunk_size_25
+hardware_profile: local_manual
+lmstudio_base_url: http://127.0.0.1:1234
+allow_remote: false
+models:
+  - key: gemma4_12b_qat
+    model_id: google/gemma-4-12b-qat
+    load:
+      context_length:
+        - 8192
+      parallel:
+        - 1
+modes:
+  - json_schema_single
+datasets:
+  - blocks_json_medium_chunked
+repeats: 1
+warmup_runs: 0
+structured_prompt_variant: baseline
+structured_schema_variant: baseline
+prerequisites:
+  load_only_evidence_dir: experiments/lmstudio/results_summaries/run_l3-9c-gemma4-12b-qat-load-only-20260707_l3_9c_gemma4_12b_qat_load_only_8k_16k
+  required_decision: load_only_passed
+  required_tiers:
+    - 8192
+    - 16384
+  require_final_loaded_instances: 0
+privacy:
+  store_prompt_text: false
+  store_response_text: false
+  store_prompt_hash: true
+safety:
+  production_default: false
+  wvm_runtime_integration: false
+  kv_reuse_proven: false
+  final_user_facing_recommendation: false

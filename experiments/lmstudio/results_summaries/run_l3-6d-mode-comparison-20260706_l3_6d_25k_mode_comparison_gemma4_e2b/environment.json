@@ -1,0 +1,13 @@
+{
+  "experiment_id": "l3_6d_25k_mode_comparison_gemma4_e2b",
+  "generation_allowed": true,
+  "kv_reuse_proven": false,
+  "lab_only": true,
+  "live_25k_authorized": true,
+  "managed_live": true,
+  "mode": "mode_comparison_controlled_live",
+  "production_default": false,
+  "run_id": "l3-6d-mode-comparison-20260706",
+  "schema_version": "1.0",
+  "wvm_runtime_integration": false
+}

@@ -1,0 +1,21 @@
+{
+  "business_pass_count": 2,
+  "business_pass_rate": 0.5,
+  "duplicate_id_count": 0,
+  "empty_text_count": 0,
+  "finish_length_count": 2,
+  "ids_exact_pass_count": 2,
+  "ids_exact_pass_rate": 0.5,
+  "invalid_json_count": 2,
+  "json_parse_pass_count": 2,
+  "json_parse_pass_rate": 0.5,
+  "reasoning_leak_count": 0,
+  "schema_error_count": 0,
+  "schema_pass_count": 2,
+  "schema_pass_rate": 0.5,
+  "schema_version": "1.0",
+  "structured_error_count": 2,
+  "total_count": 4,
+  "validation_source": "live_structured_validation",
+  "validation_status": "completed_live"
+}

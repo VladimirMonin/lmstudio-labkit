@@ -1,0 +1,49 @@
+{
+  "app_concurrency": 1,
+  "artifacts": [
+    "environment.json",
+    "run_config.json",
+    "load_response_sanitized.json",
+    "requests.jsonl",
+    "metrics.jsonl",
+    "structured_errors.jsonl",
+    "system_samples.jsonl",
+    "system_summary.json",
+    "privacy_scan.json",
+    "report.md"
+  ],
+  "dataset_id": "blocks_json_small",
+  "experiment_id": "l3_7d_structured_json_live_smoke_gemma4_e2b",
+  "generation": {
+    "endpoint_path": "/v1/chat/completions",
+    "helper_mode": "json_schema_single",
+    "max_tokens": 512,
+    "route": "strict_json_chat_completions",
+    "temperature": 0
+  },
+  "load": {
+    "context_length": 8192,
+    "echo_load_config": true,
+    "parallel": 1
+  },
+  "mode": "structured_json_controlled_live_smoke",
+  "model_id": "google/gemma-4-e2b",
+  "model_key": "gemma4_e2b_q4km",
+  "privacy": {
+    "store_local_urls": false,
+    "store_raw_prompt_response": false,
+    "store_state_ids_raw": false
+  },
+  "requested_context_length": 8192,
+  "requested_parallel": 1,
+  "run_id": "l3-7d-structured-json-live-smoke-20260707",
+  "safety": {
+    "final_loaded_instances_required": 0,
+    "generation_allowed": true,
+    "kv_reuse_proven": false,
+    "production_default": false,
+    "unload_required": true,
+    "wvm_runtime_integration": false
+  },
+  "schema_version": "1.0"
+}

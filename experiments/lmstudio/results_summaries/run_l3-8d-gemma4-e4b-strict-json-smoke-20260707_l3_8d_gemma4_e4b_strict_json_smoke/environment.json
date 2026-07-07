@@ -1,0 +1,14 @@
+{
+  "experiment_id": "l3_8d_gemma4_e4b_strict_json_smoke",
+  "final_user_facing_recommendation": false,
+  "kv_reuse_proven": false,
+  "lab_only": true,
+  "live_25k_authorized": false,
+  "managed_live": true,
+  "mode": "strict_json_smoke",
+  "production_default": false,
+  "run_id": "l3-8d-gemma4-e4b-strict-json-smoke-20260707",
+  "schema_version": "1.0",
+  "strict_json_live_smoke": true,
+  "wvm_runtime_integration": false
+}

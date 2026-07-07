@@ -1,0 +1,39 @@
+experiment_id: l3_5r_16k_responses_cache_probe_gemma4_e2b
+endpoint_family: openai_responses
+base_url: http://127.0.0.1:1234
+lmstudio_version: unknown_manual
+model:
+  key: gemma4_e2b_q4km
+  lmstudio_model_id: google/gemma-4-e2b
+safety:
+  production_default: false
+  wvm_runtime_integration: false
+  live_25k_authorized: false
+  max_context_tokens: 16384
+  allow_real_user_content: false
+  kv_reuse_proven: false
+generation:
+  temperature: 0
+  max_output_tokens_root: 64
+  max_output_tokens_branch: 128
+datasets:
+  - synthetic_16k_root
+modes:
+  - responses_root_branch
+  - responses_repeated_prefix
+  - responses_mutated_prefix
+repeats:
+  warmup: 1
+  measured: 3
+privacy:
+  store_raw_prompt_response: false
+  store_response_id_raw: false
+  hash_response_id: true
+artifacts:
+  - environment.json
+  - run_config.json
+  - requests.jsonl
+  - metrics.jsonl
+  - responses_usage_summary.json
+  - privacy_scan.json
+  - report.md

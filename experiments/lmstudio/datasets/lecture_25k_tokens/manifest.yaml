@@ -1,0 +1,15 @@
+dataset_id: lecture_25k_tokens
+kind: synthetic_long_lecture_transcript
+privacy: synthetic
+items_count: 1
+chars: 75000
+estimated_input_tokens: 25000
+actual_input_tokens: null
+estimate_error_ratio: null
+tokenizer:
+  method: heuristic_chars_div_3
+  family: generic
+  version: "1.0"
+content_hash: sha256:lecture-25k-tokens-v1
+source_hash: sha256:lecture-25k-source-v1
+privacy_safe: true

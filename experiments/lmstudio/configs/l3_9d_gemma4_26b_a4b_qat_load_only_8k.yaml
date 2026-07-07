@@ -1,0 +1,37 @@
+experiment_id: l3_9d_gemma4_26b_a4b_qat_load_only_8k
+mode: candidate_load_only_8k
+lmstudio_base_url: http://127.0.0.1:1234
+allow_remote: false
+model:
+  key: gemma4_26b_a4b_qat
+  lmstudio_model_id: google/gemma-4-26b-a4b-qat
+load:
+  context_tiers:
+    - 8192
+  echo_load_config: true
+  flash_attention: true
+  offload_kv_cache_to_gpu: true
+  parallel: 1
+app_concurrency: 1
+safety:
+  generation_allowed: false
+  live_25k_authorized: false
+  unload_required: true
+  final_loaded_instances_required: 0
+  production_default: false
+  wvm_runtime_integration: false
+  kv_reuse_proven: false
+privacy:
+  store_raw_prompt_response: false
+  store_local_urls: false
+  store_state_ids_raw: false
+artifacts:
+  - environment.json
+  - run_config.json
+  - load_attempts.jsonl
+  - load_response_sanitized.jsonl
+  - models_summary.jsonl
+  - system_samples.jsonl
+  - system_summary.json
+  - privacy_scan.json
+  - report.md

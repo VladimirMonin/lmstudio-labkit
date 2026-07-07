@@ -1,0 +1,13 @@
+{
+  "experiment_id": "l3_6c_25k_compact_memory_live_smoke_gemma4_e2b",
+  "generation_allowed": true,
+  "kv_reuse_proven": false,
+  "lab_only": true,
+  "live_25k_authorized": true,
+  "managed_live": true,
+  "mode": "compact_memory_controlled_live_smoke",
+  "production_default": false,
+  "run_id": "l3-6c-compact-memory-live-smoke-20260706-r2",
+  "schema_version": "1.0",
+  "wvm_runtime_integration": false
+}

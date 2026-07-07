@@ -1,0 +1,14 @@
+{
+  "applied_load_config": {
+    "context_length": 8192,
+    "echo_load_config": null,
+    "parallel": 1
+  },
+  "endpoint_kind": "native_load",
+  "instance_id_hash": "sha256:cf28554feb02a3ee4bc60c9066c4f1e467928ecdedf4fbf8d47008a8c0c20925",
+  "load_time_ms": 4106.562,
+  "method": "POST",
+  "response_chars": 552,
+  "response_hash": "sha256:ce316a5d4f7c102489289c13f6fc5b9532b52adf216826879016aee38fda287e",
+  "status": "loaded"
+}

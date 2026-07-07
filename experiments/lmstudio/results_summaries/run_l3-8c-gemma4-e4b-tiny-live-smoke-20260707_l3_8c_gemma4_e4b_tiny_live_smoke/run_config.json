@@ -1,0 +1,56 @@
+{
+  "app_concurrency": 1,
+  "artifacts": [
+    "environment.json",
+    "run_config.json",
+    "load_response_sanitized.json",
+    "requests.jsonl",
+    "metrics.jsonl",
+    "system_samples.jsonl",
+    "system_summary.json",
+    "privacy_scan.json",
+    "report.md"
+  ],
+  "experiment_id": "l3_8c_gemma4_e4b_tiny_live_smoke",
+  "generation": {
+    "endpoint_path": "/api/v1/chat",
+    "max_output_tokens": 64,
+    "route": "tiny_live_chat",
+    "store": false,
+    "temperature": 0
+  },
+  "input_shape": {
+    "estimated_input_tokens": 41,
+    "input_chars": 123,
+    "input_hash": "sha256:a3d5932de025ce53eb45d74a6c0873e364603ba566b06318365d41731bfd724f"
+  },
+  "load": {
+    "context_length": 16384,
+    "echo_load_config": true,
+    "flash_attention": true,
+    "offload_kv_cache_to_gpu": true,
+    "parallel": 1
+  },
+  "mode": "candidate_tiny_live_smoke",
+  "model_id": "google/gemma-4-e4b",
+  "model_key": "gemma4_e4b_q4km",
+  "privacy": {
+    "store_local_urls": false,
+    "store_raw_prompt_response": false,
+    "store_state_ids_raw": false
+  },
+  "requested_context_length": 16384,
+  "requested_parallel": 1,
+  "run_id": "l3-8c-gemma4-e4b-tiny-live-smoke-20260707",
+  "safety": {
+    "final_loaded_instances_required": 0,
+    "final_user_facing_recommendation": false,
+    "generation_allowed": true,
+    "kv_reuse_proven": false,
+    "live_25k_authorized": false,
+    "production_default": false,
+    "unload_required": true,
+    "wvm_runtime_integration": false
+  },
+  "schema_version": "1.0"
+}

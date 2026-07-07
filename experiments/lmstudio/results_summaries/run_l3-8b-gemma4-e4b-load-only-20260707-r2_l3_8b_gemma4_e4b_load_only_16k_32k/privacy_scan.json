@@ -1,0 +1,16 @@
+{
+  "raw_prompt_response_stored": false,
+  "scan_scope": "candidate_load_only_16k_32k_raw_url_path_private_value_scan",
+  "scanned_artifacts": [
+    "environment.json",
+    "run_config.json",
+    "load_attempts.jsonl",
+    "load_response_sanitized.jsonl",
+    "models_summary.jsonl",
+    "system_samples.jsonl",
+    "system_summary.json",
+    "report.md"
+  ],
+  "status": "pass",
+  "violation_count": 0
+}

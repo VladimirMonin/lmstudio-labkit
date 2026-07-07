@@ -1,0 +1,8 @@
+{
+  "dry_run": false,
+  "experiment_id": "l3_9c_gemma_family_blocks_json_gemma4_12b_qat",
+  "managed_live": true,
+  "mode": "managed_runner_medium_chunked_sequential_live",
+  "run_id": "l3-9c-gemma-family-blocks-json-12b-qat-20260707",
+  "schema_version": "1.0"
+}

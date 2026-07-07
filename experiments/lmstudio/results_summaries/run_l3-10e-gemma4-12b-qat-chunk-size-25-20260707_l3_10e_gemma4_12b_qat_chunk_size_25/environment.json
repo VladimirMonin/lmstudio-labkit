@@ -1,0 +1,10 @@
+{
+  "dry_run": false,
+  "experiment_id": "l3_10e_gemma4_12b_qat_chunk_size_25",
+  "managed_live": true,
+  "mode": "managed_runner_medium_chunked_sequential_live",
+  "run_id": "l3-10e-gemma4-12b-qat-chunk-size-25-20260707",
+  "schema_version": "1.0",
+  "structured_prompt_variant": "baseline",
+  "structured_schema_variant": "baseline"
+}

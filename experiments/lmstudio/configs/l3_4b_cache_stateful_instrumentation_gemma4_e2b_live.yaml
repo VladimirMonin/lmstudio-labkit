@@ -1,0 +1,24 @@
+experiment_id: l3_4b_cache_stateful_instrumentation_gemma4_e2b_live
+hardware_profile: local_manual
+lmstudio_base_url: http://127.0.0.1:1234
+allow_remote: false
+models:
+  - key: gemma4_e2b_q4km
+    model_id: google/gemma-4-e2b
+    load:
+      context_length:
+        - 8192
+      parallel:
+        - 1
+modes:
+  - stateful_root_branches
+  - stateless_full_prefix
+  - compact_memory
+datasets:
+  - cache_stateful_smoke
+repeats: 1
+warmup_runs: 0
+privacy:
+  store_prompt_text: false
+  store_response_text: false
+  store_prompt_hash: true

@@ -1,0 +1,32 @@
+experiment_id: l3_5b_32k_load_only_smoke_gemma4_e2b
+mode: load_only
+model:
+  key: gemma4_e2b_q4km
+  lmstudio_model_id: google/gemma-4-e2b
+load:
+  context_length: 32768
+  echo_load_config: true
+  flash_attention: true
+  offload_kv_cache_to_gpu: true
+  parallel: 1
+safety:
+  generation_allowed: false
+  live_25k_authorized: false
+  unload_required: true
+  final_loaded_instances_required: 0
+privacy:
+  store_raw_prompt_response: false
+  store_local_urls: false
+  store_state_ids_raw: false
+artifacts:
+  - environment.json
+  - run_config.json
+  - load_request.json
+  - load_response_sanitized.json
+  - models_before.json
+  - models_after_load.json
+  - unload_response_sanitized.json
+  - models_after_unload.json
+  - system_summary.json
+  - privacy_scan.json
+  - report.md

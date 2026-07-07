@@ -1,0 +1,9 @@
+{
+  "dry_run": false,
+  "experiment_id": "l3_10c_gemma4_12b_qat_prompt_strict_id_contract",
+  "managed_live": true,
+  "mode": "managed_runner_medium_chunked_sequential_live",
+  "run_id": "l3-10c-gemma4-12b-qat-prompt-strict-id-contract-20260707",
+  "schema_version": "1.0",
+  "structured_prompt_variant": "strict_id_contract"
+}

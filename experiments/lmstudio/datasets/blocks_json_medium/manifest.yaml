@@ -1,0 +1,13 @@
+dataset_id: blocks_json_medium
+kind: blocks_json
+privacy: synthetic
+items_count: 100
+chars: 20100
+estimated_input_tokens: 6700
+actual_input_tokens: null
+estimate_error_ratio: null
+tokenizer:
+  method: heuristic
+  family: generic
+  version: "1.0"
+content_hash: sha256:blocks-json-medium-v1

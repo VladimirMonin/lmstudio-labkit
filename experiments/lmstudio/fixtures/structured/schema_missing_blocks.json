@@ -1,0 +1,13 @@
+{
+  "schema_version": "factual_blocks.v1",
+  "status": "success",
+  "items": [
+    {
+      "block_id": 101,
+      "normalized_text": "Synthetic schema-miss fact.",
+      "status": "success",
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

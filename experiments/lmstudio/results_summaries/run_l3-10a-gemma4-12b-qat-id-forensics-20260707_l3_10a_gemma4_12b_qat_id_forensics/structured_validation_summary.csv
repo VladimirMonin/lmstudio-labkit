@@ -1,0 +1,2 @@
+experiment_id,run_id,mode,dataset_id,fixture_set_id,status,schema_version,total_count,json_parse_pass_count,json_parse_pass_rate,schema_pass_count,schema_pass_rate,business_pass_count,business_pass_rate,ids_exact_pass_count,ids_exact_pass_rate,reasoning_leak_count,finish_length_count,duplicate_id_count,empty_text_count,invalid_json_count,schema_error_count
+,l3-10a-gemma4-12b-qat-id-forensics-20260707,managed_runner_medium_chunked_sequential_live,blocks_json_medium_chunked,,completed,1.0,4,4,1.0,4,1.0,3,0.75,3,0.75,0,0,1,0,0,0

@@ -1,0 +1,8 @@
+{
+  "dry_run": false,
+  "experiment_id": "l3_9b_gemma_family_blocks_json_gemma4_e4b",
+  "managed_live": true,
+  "mode": "managed_runner_medium_chunked_sequential_live",
+  "run_id": "l3-9b-gemma-family-blocks-json-e4b-20260707",
+  "schema_version": "1.0"
+}

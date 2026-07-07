@@ -1,0 +1,50 @@
+experiment_id: l3_6c_25k_compact_memory_live_smoke_gemma4_e2b
+mode: compact_memory_controlled_live_smoke
+model:
+  key: gemma4_e2b_q4km
+  lmstudio_model_id: google/gemma-4-e2b
+load:
+  context_length: 32768
+  parallel: 1
+  echo_load_config: true
+  flash_attention: true
+  offload_kv_cache_to_gpu: true
+app_concurrency: 1
+dataset:
+  id: lecture_25k_tokens
+minimized_prompt:
+  estimated_input_tokens: 22700
+  estimated_reduction_tokens: 2300
+  baseline_estimated_input_tokens: 25000
+  output_reserve_tokens: 2048
+generation:
+  route: compact_memory
+  endpoint_path: /api/v1/chat
+  temperature: 0
+  max_output_tokens: 64
+  store: false
+safety:
+  generation_allowed: true
+  live_25k_authorized: true
+  production_default: false
+  wvm_runtime_integration: false
+  kv_reuse_proven: false
+  unload_required: true
+  final_loaded_instances_required: 0
+privacy:
+  store_raw_prompt_response: false
+  store_local_urls: false
+  store_state_ids_raw: false
+memory_safety:
+  max_ram_peak_mb: 131072
+  max_vram_peak_mb: 32768
+artifacts:
+  - environment.json
+  - run_config.json
+  - load_response_sanitized.json
+  - requests.jsonl
+  - metrics.jsonl
+  - system_samples.jsonl
+  - system_summary.json
+  - privacy_scan.json
+  - report.md

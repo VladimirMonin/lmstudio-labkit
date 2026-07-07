@@ -1,0 +1,16 @@
+dataset_id: blocks_json_medium_chunked_10
+kind: blocks_json_chunked
+privacy: synthetic
+source_dataset_id: blocks_json_medium
+chunk_size_blocks: 10
+chunks_count: 10
+items_count: 100
+chars: 20100
+estimated_input_tokens: 6700
+actual_input_tokens: null
+estimate_error_ratio: null
+tokenizer:
+  method: heuristic
+  family: generic
+  version: "1.0"
+content_hash: sha256:blocks-json-medium-chunked-10-v1

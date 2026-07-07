@@ -1,0 +1,14 @@
+{
+  "allow_remote": false,
+  "dry_run": false,
+  "endpoint_family": "model_lifecycle",
+  "experiment_id": "l3_9c_gemma4_12b_qat_load_only_8k_16k",
+  "generation_allowed": false,
+  "kv_reuse_proven": false,
+  "managed_live": true,
+  "mode": "candidate_load_only_8k_16k",
+  "production_default": false,
+  "run_id": "l3-9c-gemma4-12b-qat-load-only-20260707",
+  "schema_version": "1.0",
+  "wvm_runtime_integration": false
+}

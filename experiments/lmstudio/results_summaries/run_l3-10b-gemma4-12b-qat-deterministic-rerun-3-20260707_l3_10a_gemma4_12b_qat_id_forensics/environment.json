@@ -1,0 +1,8 @@
+{
+  "dry_run": false,
+  "experiment_id": "l3_10a_gemma4_12b_qat_id_forensics",
+  "managed_live": true,
+  "mode": "managed_runner_medium_chunked_sequential_live",
+  "run_id": "l3-10b-gemma4-12b-qat-deterministic-rerun-3-20260707",
+  "schema_version": "1.0"
+}

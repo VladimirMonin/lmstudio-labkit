@@ -1,0 +1,13 @@
+dataset_id: cache_stateful_smoke
+kind: stateful_chat_synthetic
+privacy: synthetic
+items_count: 1
+chars: 29112
+estimated_input_tokens: 7278
+actual_input_tokens: null
+estimate_error_ratio: null
+tokenizer:
+  method: heuristic
+  family: generic
+  version: "1.0"
+content_hash: sha256:cache-stateful-smoke-v1

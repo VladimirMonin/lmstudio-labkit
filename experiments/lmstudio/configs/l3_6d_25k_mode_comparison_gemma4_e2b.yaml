@@ -1,0 +1,76 @@
+experiment_id: l3_6d_25k_mode_comparison_gemma4_e2b
+mode: mode_comparison_controlled_live
+model:
+  key: gemma4_e2b_q4km
+  lmstudio_model_id: google/gemma-4-e2b
+load:
+  context_length: 32768
+  parallel: 1
+  echo_load_config: true
+  flash_attention: true
+  offload_kv_cache_to_gpu: true
+app_concurrency: 1
+dataset:
+  id: lecture_25k_tokens
+prompt_shapes:
+  stateful_setup_estimated_input_tokens: 25000
+  compact_memory_estimated_input_tokens: 22700
+  compact_memory_estimated_reduction_tokens: 2300
+  baseline_estimated_input_tokens: 25000
+  output_reserve_tokens: 2048
+mode_comparison:
+  setup_request:
+    mode: native_chat_stateful_setup
+    classification: setup_metadata
+    route: native_chat_stateful
+    endpoint_path: /api/v1/chat
+    previous_response_id_used: false
+    store: true
+  comparable_modes:
+    - mode: compact_memory
+      classification: primary_candidate
+      route: compact_memory
+      endpoint_path: /api/v1/chat
+      previous_response_id_used: false
+      store: false
+    - mode: native_chat_stateful
+      classification: research_latency_candidate
+      route: native_chat_stateful
+      endpoint_path: /api/v1/chat
+      previous_response_id_used: true
+      store: true
+    - mode: stateless_full_prefix
+      classification: baseline
+      route: stateless_full_prefix
+      endpoint_path: /api/v1/chat
+      previous_response_id_used: false
+      store: false
+generation:
+  temperature: 0
+  max_output_tokens: 64
+safety:
+  generation_allowed: true
+  live_25k_authorized: true
+  production_default: false
+  wvm_runtime_integration: false
+  kv_reuse_proven: false
+  unload_required: true
+  final_loaded_instances_required: 0
+privacy:
+  store_raw_prompt_response: false
+  store_local_urls: false
+  store_state_ids_raw: false
+memory_safety:
+  max_ram_peak_mb: 131072
+  max_vram_peak_mb: 32768
+artifacts:
+  - environment.json
+  - run_config.json
+  - load_response_sanitized.json
+  - requests.jsonl
+  - metrics.jsonl
+  - system_samples.jsonl
+  - system_summary.json
+  - comparison_summary.json
+  - privacy_scan.json
+  - report.md

@@ -1,0 +1,40 @@
+fixture_set_id: structured_synthetic_v1
+schema_name: factual_blocks.v1
+cases:
+  - fixture_id: valid_blocks_response
+    file_name: valid_blocks_response.json
+    expected_block_ids: [101, 102]
+  - fixture_id: invalid_json_truncated
+    file_name: invalid_json_truncated.txt
+    expected_block_ids: [101]
+  - fixture_id: schema_missing_blocks
+    file_name: schema_missing_blocks.json
+    expected_block_ids: [101]
+  - fixture_id: business_missing_id
+    file_name: business_missing_id.json
+    expected_block_ids: [101, 102]
+  - fixture_id: business_duplicate_id
+    file_name: business_duplicate_id.json
+    expected_block_ids: [101, 102]
+  - fixture_id: business_new_id
+    file_name: business_new_id.json
+    expected_block_ids: [101, 102]
+  - fixture_id: business_reordered_ids
+    file_name: business_reordered_ids.json
+    expected_block_ids: [101, 102]
+  - fixture_id: business_empty_text
+    file_name: business_empty_text.json
+    expected_block_ids: [101]
+  - fixture_id: reasoning_leak_think_tag
+    file_name: reasoning_leak_think_tag.json
+    expected_block_ids: [101]
+  - fixture_id: reasoning_leak_reasoning_content
+    file_name: reasoning_leak_reasoning_content.json
+    expected_block_ids: [101]
+  - fixture_id: markdown_before_json
+    file_name: markdown_before_json.txt
+    expected_block_ids: [101]
+  - fixture_id: finish_length_case
+    file_name: finish_length_case.json
+    expected_block_ids: [101]
+    finish_reason: length

@@ -1,0 +1,63 @@
+{
+  "app_concurrency": 1,
+  "artifacts": [
+    "environment.json",
+    "run_config.json",
+    "load_response_sanitized.json",
+    "requests.jsonl",
+    "metrics.jsonl",
+    "system_samples.jsonl",
+    "system_summary.json",
+    "privacy_scan.json",
+    "report.md"
+  ],
+  "dataset_id": "lecture_25k_tokens",
+  "experiment_id": "l3_6c_25k_compact_memory_live_smoke_gemma4_e2b",
+  "generation": {
+    "endpoint_path": "/api/v1/chat",
+    "max_output_tokens": 64,
+    "route": "compact_memory",
+    "store": false,
+    "temperature": 0
+  },
+  "input_shape": {
+    "baseline_estimated_input_tokens": 25000,
+    "estimated_input_tokens": 22700,
+    "estimated_reduction_tokens": 2300,
+    "input_chars": 68100,
+    "input_hash": "sha256:53b3f086f57d5898eb2d39d23255d9466abeb5d8f31af8068bc55735916e0f1f",
+    "output_reserve_tokens": 2048
+  },
+  "load": {
+    "context_length": 32768,
+    "echo_load_config": true,
+    "flash_attention": true,
+    "offload_kv_cache_to_gpu": true,
+    "parallel": 1
+  },
+  "memory_safety": {
+    "max_ram_peak_mb": 131072,
+    "max_vram_peak_mb": 32768
+  },
+  "mode": "compact_memory_controlled_live_smoke",
+  "model_id": "google/gemma-4-e2b",
+  "model_key": "gemma4_e2b_q4km",
+  "privacy": {
+    "store_local_urls": false,
+    "store_raw_prompt_response": false,
+    "store_state_ids_raw": false
+  },
+  "requested_context_length": 32768,
+  "requested_parallel": 1,
+  "run_id": "l3-6c-compact-memory-live-smoke-20260706-r2",
+  "safety": {
+    "final_loaded_instances_required": 0,
+    "generation_allowed": true,
+    "kv_reuse_proven": false,
+    "live_25k_authorized": true,
+    "production_default": false,
+    "unload_required": true,
+    "wvm_runtime_integration": false
+  },
+  "schema_version": "1.0"
+}

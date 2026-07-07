@@ -1,0 +1,11 @@
+{
+  "business_failure_retry_limit": 1,
+  "dry_run": false,
+  "experiment_id": "l3_10f_gemma4_12b_qat_business_retry",
+  "managed_live": true,
+  "mode": "managed_runner_medium_chunked_sequential_live",
+  "run_id": "l3-10f-gemma4-12b-qat-business-retry-20260707",
+  "schema_version": "1.0",
+  "structured_prompt_variant": "baseline",
+  "structured_schema_variant": "baseline"
+}

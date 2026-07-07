@@ -1,0 +1,16 @@
+{
+  "raw_prompt_response_stored": false,
+  "scan_scope": "l3_6c_compact_memory_live_smoke_raw_url_path_private_value_scan",
+  "scanned_artifacts": [
+    "environment.json",
+    "run_config.json",
+    "load_response_sanitized.json",
+    "requests.jsonl",
+    "metrics.jsonl",
+    "system_samples.jsonl",
+    "system_summary.json",
+    "report.md"
+  ],
+  "status": "pass",
+  "violation_count": 0
+}

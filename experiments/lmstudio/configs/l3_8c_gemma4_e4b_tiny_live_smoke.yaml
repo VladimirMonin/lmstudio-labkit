@@ -1,0 +1,40 @@
+experiment_id: l3_8c_gemma4_e4b_tiny_live_smoke
+mode: candidate_tiny_live_smoke
+model:
+  key: gemma4_e4b_q4km
+  lmstudio_model_id: google/gemma-4-e4b
+load:
+  context_length: 16384
+  parallel: 1
+  echo_load_config: true
+  flash_attention: true
+  offload_kv_cache_to_gpu: true
+app_concurrency: 1
+generation:
+  route: tiny_live_chat
+  endpoint_path: /api/v1/chat
+  temperature: 0
+  max_output_tokens: 64
+  store: false
+safety:
+  generation_allowed: true
+  live_25k_authorized: false
+  production_default: false
+  wvm_runtime_integration: false
+  kv_reuse_proven: false
+  unload_required: true
+  final_loaded_instances_required: 0
+privacy:
+  store_raw_prompt_response: false
+  store_local_urls: false
+  store_state_ids_raw: false
+artifacts:
+  - environment.json
+  - run_config.json
+  - load_response_sanitized.json
+  - requests.jsonl
+  - metrics.jsonl
+  - system_samples.jsonl
+  - system_summary.json
+  - privacy_scan.json
+  - report.md

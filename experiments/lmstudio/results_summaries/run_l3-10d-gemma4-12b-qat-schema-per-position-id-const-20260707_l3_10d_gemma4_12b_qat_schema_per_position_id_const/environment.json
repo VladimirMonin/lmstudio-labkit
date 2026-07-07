@@ -1,0 +1,10 @@
+{
+  "dry_run": false,
+  "experiment_id": "l3_10d_gemma4_12b_qat_schema_per_position_id_const",
+  "managed_live": true,
+  "mode": "managed_runner_medium_chunked_sequential_live",
+  "run_id": "l3-10d-gemma4-12b-qat-schema-per-position-id-const-20260707",
+  "schema_version": "1.0",
+  "structured_prompt_variant": "baseline",
+  "structured_schema_variant": "per_position_id_const"
+}

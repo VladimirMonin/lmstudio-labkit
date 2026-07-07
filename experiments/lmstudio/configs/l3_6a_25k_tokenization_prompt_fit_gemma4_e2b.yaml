@@ -1,0 +1,42 @@
+experiment_id: l3_6a_25k_tokenization_prompt_fit_gemma4_e2b
+mode: tokenization_prompt_fit_no_live
+model:
+  key: gemma4_e2b_q4km
+  lmstudio_model_id: google/gemma-4-e2b
+target_context_length: 32768
+dataset:
+  id: lecture_25k_tokens
+checks:
+  - heuristic_token_budget
+  - exact_tokenizer_pending
+  - chat_template_overhead
+  - prompt_minimization
+  - output_reserve_policy
+  - privacy_scan
+heuristic_fit:
+  dataset_manifest_estimated_input_tokens: 25000
+  expected_required_tokens: 27048
+  expected_budget_tokens: 27852
+  expected_remaining_safety_margin_tokens: 804
+  output_reserve_tokens: 2048
+overhead_assumptions:
+  estimated_chat_template_overhead_tokens: 512
+  conservative_chat_template_overhead_tokens: 1024
+approval_thresholds:
+  minimum_approved_safety_margin_tokens: 2048
+  minimum_output_reserve_tokens: 2048
+safety:
+  generation_allowed: false
+  generation_called: false
+  live_25k_authorized: false
+  production_default: false
+  wvm_runtime_integration: false
+  kv_reuse_proven: false
+outputs:
+  - tokenization_strategy_report.md
+  - token_budget_breakdown.json
+  - chat_template_overhead_report.json
+  - prompt_minimization_candidates.md
+  - output_reserve_policy.json
+  - l3_6a_report.md
+  - privacy_scan.json

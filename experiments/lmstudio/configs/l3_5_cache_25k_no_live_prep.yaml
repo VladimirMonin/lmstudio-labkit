@@ -1,0 +1,34 @@
+experiment_id: l3_5_cache_25k_no_live_prep
+hardware_profile: synthetic_no_live_lab
+lmstudio_base_url: http://127.0.0.1:1234
+allow_remote: false
+app_concurrency: 1
+models:
+  - key: gemma4_e2b_q4km
+    model_id: google/gemma-4-e2b
+    load:
+      context_length:
+        - 8192
+        - 16384
+        - 32768
+        - 65536
+      parallel:
+        - 1
+modes:
+  - compact_memory_primary
+  - stateful_root_branches_experimental
+  - stateless_full_prefix_baseline
+datasets:
+  - lecture_25k_tokens
+repeats: 1
+warmup_runs: 0
+privacy:
+  store_prompt_text: false
+  store_response_text: false
+  store_root_text: false
+  store_branch_text: false
+  store_material_text: false
+  store_prompt_hash: true
+  store_root_hash: true
+  store_branch_hash: true
+  store_material_hash: true

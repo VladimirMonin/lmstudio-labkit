@@ -1,0 +1,14 @@
+{
+  "experiment_id": "l3_8c_gemma4_e4b_tiny_live_smoke",
+  "final_user_facing_recommendation": false,
+  "generation_allowed": true,
+  "kv_reuse_proven": false,
+  "lab_only": true,
+  "live_25k_authorized": false,
+  "managed_live": true,
+  "mode": "candidate_tiny_live_smoke",
+  "production_default": false,
+  "run_id": "l3-8c-gemma4-e4b-tiny-live-smoke-20260707",
+  "schema_version": "1.0",
+  "wvm_runtime_integration": false
+}

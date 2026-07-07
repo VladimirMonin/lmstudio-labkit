@@ -1,0 +1,13 @@
+{
+  "dry_run": false,
+  "endpoint_family": "model_lifecycle",
+  "experiment_id": "l3_8b_gemma4_e4b_load_only_16k_32k",
+  "generation_allowed": false,
+  "kv_reuse_proven": false,
+  "managed_live": true,
+  "mode": "candidate_load_only_16k_32k",
+  "production_default": false,
+  "run_id": "l3-8b-gemma4-e4b-load-only-20260707-r2",
+  "schema_version": "1.0",
+  "wvm_runtime_integration": false
+}

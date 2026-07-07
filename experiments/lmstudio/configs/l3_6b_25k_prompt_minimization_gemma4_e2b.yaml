@@ -1,0 +1,53 @@
+experiment_id: l3_6b_25k_prompt_minimization_gemma4_e2b
+mode: prompt_minimization_no_live
+model:
+  key: gemma4_e2b_q4km
+  lmstudio_model_id: google/gemma-4-e2b
+target_context_length: 32768
+dataset:
+  id: lecture_25k_tokens
+checks:
+  - baseline_snapshot_validation
+  - minimized_budget_recompute
+  - prompt_shape_minimization
+  - mode_plan_refresh
+  - abort_conditions_update
+  - privacy_scan
+baseline_snapshot:
+  estimated_input_tokens: 25000
+  required_tokens: 27048
+  budget_tokens: 27852
+  remaining_safety_margin_tokens: 804
+  estimated_overhead_margin_tokens: 292
+  conservative_overhead_margin_tokens: -220
+minimized_prompt:
+  estimated_input_tokens: 22700
+  estimated_reduction_tokens: 2300
+  expected_budget_tokens: 27852
+  output_reserve_tokens: 2048
+  expected_required_tokens: 24748
+  expected_remaining_safety_margin_tokens: 3104
+approval_thresholds:
+  minimum_approved_safety_margin_tokens: 2048
+  minimum_output_reserve_tokens: 2048
+overhead_assumptions:
+  estimated_chat_template_overhead_tokens: 512
+  conservative_chat_template_overhead_tokens: 1024
+  estimated_required_tokens: 25260
+  estimated_remaining_safety_margin_tokens: 2592
+  conservative_required_tokens: 25772
+  conservative_remaining_safety_margin_tokens: 2080
+safety:
+  generation_allowed: false
+  generation_called: false
+  live_25k_authorized: false
+  production_default: false
+  wvm_runtime_integration: false
+  kv_reuse_proven: false
+outputs:
+  - minimized_prompt_shape_report.md
+  - minimized_token_budget_breakdown.json
+  - prompt_diff_summary.md
+  - updated_abort_conditions.md
+  - l3_6b_report.md
+  - privacy_scan.json

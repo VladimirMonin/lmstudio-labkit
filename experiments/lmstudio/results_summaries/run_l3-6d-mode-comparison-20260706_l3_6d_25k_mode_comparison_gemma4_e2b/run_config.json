@@ -1,0 +1,106 @@
+{
+  "app_concurrency": 1,
+  "artifacts": [
+    "environment.json",
+    "run_config.json",
+    "load_response_sanitized.json",
+    "requests.jsonl",
+    "metrics.jsonl",
+    "system_samples.jsonl",
+    "system_summary.json",
+    "comparison_summary.json",
+    "privacy_scan.json",
+    "report.md"
+  ],
+  "dataset_id": "lecture_25k_tokens",
+  "experiment_id": "l3_6d_25k_mode_comparison_gemma4_e2b",
+  "generation": {
+    "max_output_tokens": 64,
+    "temperature": 0
+  },
+  "input_shape": {
+    "baseline_estimated_input_tokens": 25000,
+    "compact_memory_estimated_input_tokens": 22700,
+    "compact_memory_estimated_reduction_tokens": 2300,
+    "compact_memory_input_chars": 68100,
+    "compact_memory_input_hash": "sha256:4d03103e8f1d74c0212305ccc5c08e5cc20a50781c5d44fc8954124637d1a6e0",
+    "native_chat_stateful_estimated_input_tokens": 30,
+    "native_chat_stateful_input_chars": 90,
+    "native_chat_stateful_input_hash": "sha256:c27bf1be3df95662c10611b6c50e8178e6ead0f1300fb31a709de6e65d826280",
+    "output_reserve_tokens": 2048,
+    "stateful_setup_estimated_input_tokens": 25000,
+    "stateful_setup_input_chars": 75000,
+    "stateful_setup_input_hash": "sha256:9a96ce65298be94c78191d238ae1cc0690919569c69f14e5c7f4f7030f3c2a65",
+    "stateless_full_prefix_estimated_input_tokens": 25000,
+    "stateless_full_prefix_input_chars": 75000,
+    "stateless_full_prefix_input_hash": "sha256:7bd7b8057368d73dbd4f5508d3d014d9fd57246a933d816a6322d179bdb6b06a"
+  },
+  "load": {
+    "context_length": 32768,
+    "echo_load_config": true,
+    "flash_attention": true,
+    "offload_kv_cache_to_gpu": true,
+    "parallel": 1
+  },
+  "memory_safety": {
+    "max_ram_peak_mb": 131072,
+    "max_vram_peak_mb": 32768
+  },
+  "mode": "mode_comparison_controlled_live",
+  "mode_comparison": {
+    "comparable_modes": [
+      {
+        "classification": "primary_candidate",
+        "endpoint_path": "/api/v1/chat",
+        "mode": "compact_memory",
+        "previous_response_id_used": false,
+        "route": "compact_memory",
+        "store": false
+      },
+      {
+        "classification": "research_latency_candidate",
+        "endpoint_path": "/api/v1/chat",
+        "mode": "native_chat_stateful",
+        "previous_response_id_used": true,
+        "route": "native_chat_stateful",
+        "store": true
+      },
+      {
+        "classification": "baseline",
+        "endpoint_path": "/api/v1/chat",
+        "mode": "stateless_full_prefix",
+        "previous_response_id_used": false,
+        "route": "stateless_full_prefix",
+        "store": false
+      }
+    ],
+    "setup_request": {
+      "classification": "setup_metadata",
+      "endpoint_path": "/api/v1/chat",
+      "mode": "native_chat_stateful_setup",
+      "previous_response_id_used": false,
+      "route": "native_chat_stateful",
+      "store": true
+    }
+  },
+  "model_id": "google/gemma-4-e2b",
+  "model_key": "gemma4_e2b_q4km",
+  "privacy": {
+    "store_local_urls": false,
+    "store_raw_prompt_response": false,
+    "store_state_ids_raw": false
+  },
+  "requested_context_length": 32768,
+  "requested_parallel": 1,
+  "run_id": "l3-6d-mode-comparison-20260706",
+  "safety": {
+    "final_loaded_instances_required": 0,
+    "generation_allowed": true,
+    "kv_reuse_proven": false,
+    "live_25k_authorized": true,
+    "production_default": false,
+    "unload_required": true,
+    "wvm_runtime_integration": false
+  },
+  "schema_version": "1.0"
+}

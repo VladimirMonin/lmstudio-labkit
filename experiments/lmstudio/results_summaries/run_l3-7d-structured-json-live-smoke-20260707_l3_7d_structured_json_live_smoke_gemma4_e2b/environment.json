@@ -1,0 +1,12 @@
+{
+  "experiment_id": "l3_7d_structured_json_live_smoke_gemma4_e2b",
+  "kv_reuse_proven": false,
+  "lab_only": true,
+  "managed_live": true,
+  "mode": "structured_json_controlled_live_smoke",
+  "production_default": false,
+  "run_id": "l3-7d-structured-json-live-smoke-20260707",
+  "schema_version": "1.0",
+  "structured_json_live_smoke": true,
+  "wvm_runtime_integration": false
+}

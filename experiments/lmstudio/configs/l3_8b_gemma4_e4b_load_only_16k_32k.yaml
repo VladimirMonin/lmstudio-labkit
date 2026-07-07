@@ -1,0 +1,36 @@
+experiment_id: l3_8b_gemma4_e4b_load_only_16k_32k
+mode: candidate_load_only_16k_32k
+model:
+  key: gemma4_e4b_q4km
+  lmstudio_model_id: google/gemma-4-e4b
+load:
+  context_tiers:
+    - 16384
+    - 32768
+  echo_load_config: true
+  flash_attention: true
+  offload_kv_cache_to_gpu: true
+  parallel: 1
+app_concurrency: 1
+safety:
+  generation_allowed: false
+  live_25k_authorized: false
+  unload_required: true
+  final_loaded_instances_required: 0
+  production_default: false
+  wvm_runtime_integration: false
+  kv_reuse_proven: false
+privacy:
+  store_raw_prompt_response: false
+  store_local_urls: false
+  store_state_ids_raw: false
+artifacts:
+  - environment.json
+  - run_config.json
+  - load_attempts.jsonl
+  - load_response_sanitized.jsonl
+  - models_summary.jsonl
+  - system_samples.jsonl
+  - system_summary.json
+  - privacy_scan.json
+  - report.md

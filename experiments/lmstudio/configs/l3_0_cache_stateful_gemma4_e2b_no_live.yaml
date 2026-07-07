@@ -1,0 +1,29 @@
+experiment_id: l3_0_cache_stateful_gemma4_e2b_no_live
+model_key: gemma4_e2b_q4km
+model_id: google/gemma-4-e2b
+context_window: 8192
+synthetic_dataset: lecture_25k_synthetic_v1
+root_context:
+  estimated_tokens: 6250
+  estimated_chars: 25000
+  content_hash: sha256:lecture_25k_synthetic_v1
+branches:
+  - summary
+  - glossary
+  - timeline
+variants:
+  - stateful_root_branch
+  - stateless_full_prefix
+  - compact_memory
+metrics:
+  - ttft_ms
+  - prompt_processing_ms
+  - total_latency_ms
+  - cached_tokens
+  - cache_proxy
+  - ram_peak_mb
+  - vram_peak_mb
+privacy:
+  store_root_material: false
+  store_branch_material: false
+  store_output_material: false

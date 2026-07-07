@@ -1,0 +1,51 @@
+{
+  "allow_remote": false,
+  "app_concurrency": 1,
+  "artifacts": [
+    "environment.json",
+    "run_config.json",
+    "load_attempts.jsonl",
+    "load_response_sanitized.jsonl",
+    "models_summary.jsonl",
+    "system_samples.jsonl",
+    "system_summary.json",
+    "privacy_scan.json",
+    "report.md"
+  ],
+  "endpoint_family": "model_lifecycle",
+  "experiment_id": "l3_9c_gemma4_12b_qat_load_only_8k_16k",
+  "load": {
+    "context_tiers": [
+      8192,
+      16384
+    ],
+    "echo_load_config": true,
+    "flash_attention": true,
+    "offload_kv_cache_to_gpu": true,
+    "parallel": 1
+  },
+  "load_context_tiers": [
+    8192,
+    16384
+  ],
+  "mode": "candidate_load_only_8k_16k",
+  "model_id": "google/gemma-4-12b-qat",
+  "model_key": "gemma4_12b_qat",
+  "privacy": {
+    "store_local_urls": false,
+    "store_raw_prompt_response": false,
+    "store_state_ids_raw": false
+  },
+  "requested_parallel": 1,
+  "run_id": "l3-9c-gemma4-12b-qat-load-only-20260707",
+  "safety": {
+    "final_loaded_instances_required": 0,
+    "generation_allowed": false,
+    "kv_reuse_proven": false,
+    "live_25k_authorized": false,
+    "production_default": false,
+    "unload_required": true,
+    "wvm_runtime_integration": false
+  },
+  "schema_version": "1.0"
+}

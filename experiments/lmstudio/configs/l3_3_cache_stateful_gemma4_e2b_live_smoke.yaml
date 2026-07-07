@@ -1,0 +1,22 @@
+experiment_id: l3_3_cache_stateful_gemma4_e2b_live_smoke
+hardware_profile: local_manual
+lmstudio_base_url: http://127.0.0.1:1234
+allow_remote: false
+models:
+  - key: gemma4_e2b_q4km
+    model_id: google/gemma-4-e2b
+    load:
+      context_length:
+        - 8192
+      parallel:
+        - 1
+modes:
+  - stateful_root_branches
+datasets:
+  - cache_stateful_smoke
+repeats: 1
+warmup_runs: 0
+privacy:
+  store_prompt_text: false
+  store_response_text: false
+  store_prompt_hash: true

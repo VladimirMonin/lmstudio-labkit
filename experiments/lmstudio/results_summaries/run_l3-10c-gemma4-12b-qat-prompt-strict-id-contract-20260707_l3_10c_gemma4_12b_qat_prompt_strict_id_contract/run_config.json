@@ -1,0 +1,22 @@
+{
+  "app_concurrency": 1,
+  "chunk_size_blocks": 25,
+  "chunks_count": 4,
+  "dataset_hash": "sha256:blocks-json-medium-chunked-v1",
+  "dataset_id": "blocks_json_medium_chunked",
+  "experiment_id": "l3_10c_gemma4_12b_qat_prompt_strict_id_contract",
+  "managed_live": true,
+  "mode": "managed_runner_medium_chunked_sequential_live",
+  "model_count": 1,
+  "model_id": "google/gemma-4-12b-qat",
+  "model_key": "gemma4_12b_qat",
+  "parallel_semantics": "sequential",
+  "queue_pressure_mode": false,
+  "raw_prompt_response_stored": false,
+  "requested_context_length": 8192,
+  "requested_parallel": 1,
+  "run_id": "l3-10c-gemma4-12b-qat-prompt-strict-id-contract-20260707",
+  "schema_version": "1.0",
+  "structured_prompt_variant": "strict_id_contract",
+  "warmup_runs": 0
+}

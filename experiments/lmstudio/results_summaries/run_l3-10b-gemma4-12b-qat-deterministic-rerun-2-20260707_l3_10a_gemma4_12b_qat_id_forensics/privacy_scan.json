@@ -1,0 +1,19 @@
+{
+  "raw_prompt_response_stored": false,
+  "scan_scope": "managed_live_raw_url_path_private_value_scan",
+  "scanned_artifacts": [
+    "environment.json",
+    "experiment.yaml",
+    "run_config.json",
+    "metrics.jsonl",
+    "structured_errors.jsonl",
+    "batch_summary.json",
+    "structured_validation_summary.json",
+    "structured_validation_summary.csv",
+    "report.md",
+    "system_summary.json",
+    "system_samples.jsonl"
+  ],
+  "status": "pass",
+  "violation_count": 0
+}

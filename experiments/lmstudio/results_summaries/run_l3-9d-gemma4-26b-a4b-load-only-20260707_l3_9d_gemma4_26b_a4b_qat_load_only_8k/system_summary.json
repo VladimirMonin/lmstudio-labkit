@@ -1,0 +1,19 @@
+{
+  "gpu_memory_util_peak_percent": 9.0,
+  "gpu_power_peak_watts": 29.08,
+  "gpu_util_peak_percent": 31.0,
+  "process_rss_after_mb": 216.977,
+  "process_rss_before_mb": 228.273,
+  "process_rss_peak_mb": 228.812,
+  "providers": {
+    "lmstudio_local": "managed_l3_9d_gemma4_26b_a4b_load_only"
+  },
+  "ram_after_mb": 31918.785,
+  "ram_before_mb": 17976.922,
+  "ram_peak_mb": 31960.055,
+  "sample_count": 15,
+  "schema_version": "1.0",
+  "vram_after_mb": 2789.0,
+  "vram_before_mb": 2789.0,
+  "vram_peak_mb": 6362.0
+}

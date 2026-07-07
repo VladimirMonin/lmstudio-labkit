@@ -1,0 +1,19 @@
+experiment_id: dry_run_minimal
+hardware_profile: synthetic_ci
+models:
+  - key: gemma4_12b_qat
+    load:
+      context_length:
+        - 8192
+      parallel:
+        - 1
+      flash_attention: true
+      eval_batch_size: 512
+modes:
+  - json_schema_single
+datasets:
+  - blocks_json_small
+repeats: 1
+warmup_runs: 1
+privacy:
+  store_prompt_hash: true

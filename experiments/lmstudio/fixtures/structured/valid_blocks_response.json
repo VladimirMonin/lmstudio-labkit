@@ -1,0 +1,19 @@
+{
+  "schema_version": "factual_blocks.v1",
+  "status": "success",
+  "blocks": [
+    {
+      "block_id": 101,
+      "normalized_text": "Synthetic alpha fact.",
+      "status": "success",
+      "warnings": []
+    },
+    {
+      "block_id": 102,
+      "normalized_text": "Synthetic beta fact.",
+      "status": "success",
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

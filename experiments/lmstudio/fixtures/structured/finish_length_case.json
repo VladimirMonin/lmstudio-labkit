@@ -1,0 +1,13 @@
+{
+  "schema_version": "factual_blocks.v1",
+  "status": "success",
+  "blocks": [
+    {
+      "block_id": 101,
+      "normalized_text": "Synthetic finish length fact.",
+      "status": "success",
+      "warnings": []
+    }
+  ],
+  "warnings": []
+}

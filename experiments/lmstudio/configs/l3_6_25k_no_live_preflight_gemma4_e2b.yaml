@@ -1,0 +1,29 @@
+experiment_id: l3_6_25k_no_live_preflight_gemma4_e2b
+mode: no_live_preflight
+model:
+  key: gemma4_e2b_q4km
+  lmstudio_model_id: google/gemma-4-e2b
+target_context_length: 32768
+dataset:
+  id: lecture_25k_tokens
+checks:
+  - tokenized_prompt_fit
+  - output_reserve
+  - prompt_shape_minimization
+  - mode_selection
+  - abort_conditions
+  - privacy_artifact_plan
+safety:
+  generation_allowed: false
+  live_25k_authorized: false
+  production_default: false
+  wvm_runtime_integration: false
+  kv_reuse_proven: false
+outputs:
+  - tokenized_prompt_report.json
+  - output_reserve_report.json
+  - prompt_shape_report.md
+  - mode_plan.json
+  - abort_conditions.md
+  - privacy_scan.json
+  - report.md

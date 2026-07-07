@@ -1,0 +1,22 @@
+experiment_id: l3_9c_gemma_family_blocks_json_gemma4_12b_qat
+hardware_profile: local_manual
+lmstudio_base_url: redacted_local_lmstudio_url
+allow_remote: false
+models:
+- key: gemma4_12b_qat
+  model_id: google/gemma-4-12b-qat
+  load:
+    context_length:
+    - 8192
+    parallel:
+    - 1
+modes:
+- json_schema_single
+datasets:
+- blocks_json_medium_chunked
+repeats: 1
+warmup_runs: 0
+privacy:
+  store_prompt_text: false
+  store_response_text: false
+  store_prompt_hash: true
