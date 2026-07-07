@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from libs import lmstudio_managed
 from libs.lmstudio_managed.core_contracts import RouteMode
 from libs.lmstudio_managed.registry.structured_matrix import (
     GEMMA_E2B_LIVE_ARTIFACT_DIR,
@@ -12,6 +11,8 @@ from libs.lmstudio_managed.registry.structured_matrix import (
     get_structured_json_matrix_row,
     render_structured_json_validation_matrix_report,
 )
+
+from libs import lmstudio_managed
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SUMMARY_PATH = (

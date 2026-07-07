@@ -46,7 +46,7 @@ Status: accepted controlled live proof under the managed reusable core. This doc
 ## Promotion policy
 
 - This accepted result does **not** promote Gemma E4B to production default.
-- This accepted result does **not** enable WVM runtime integration.
+- This accepted result does **not** enable host application runtime integration.
 - This accepted result does **not** prove KV reuse.
 - This accepted result does **not** create a user-facing recommendation.
 
@@ -54,6 +54,6 @@ Status: accepted controlled live proof under the managed reusable core. This doc
 
 - This plan originally did **not** mark L3.8c passed.
 - This plan does **not** promote Gemma E4B to production default.
-- This plan does **not** enable WVM runtime integration.
+- This plan does **not** enable host application runtime integration.
 - This plan does **not** prove KV reuse.
 - This plan does **not** create a user-facing recommendation.

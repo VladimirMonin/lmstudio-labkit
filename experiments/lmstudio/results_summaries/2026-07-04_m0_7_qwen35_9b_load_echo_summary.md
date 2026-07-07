@@ -4,7 +4,7 @@
 
 - Date: 2026-07-04
 - Branch: `next/modular-backend-lab`
-- Evidence level: live LM Studio Lab lifecycle experiment, not WVM runtime integration
+- Evidence level: live LM Studio Lab lifecycle experiment, not host application runtime integration
 - Candidate lab key: `qwen35_9b_q4km`
 - Model key: `qwen/qwen3.5-9b`
 - Run ID: `m0_7_policy_backed_smoke_qwen35_9b_001`
@@ -35,7 +35,7 @@ compat_generation
 wildcard_unload
 cache/stateful
 vision
-WVM runtime
+host application runtime
 ```
 
 ## Preflight

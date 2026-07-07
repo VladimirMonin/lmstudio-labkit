@@ -3,9 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass, fields, is_dataclass
 from hashlib import sha256
 
-import pytest
-
 import libs.lmstudio_managed.client as client_pkg
+import pytest
 from libs.lmstudio_managed.client import (
     ApiErrorKind,
     EndpointKind,

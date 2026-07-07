@@ -114,7 +114,7 @@ The model again produced reasoning tokens/content according to envelope metadata
 - It does not prove that Qwen 4B cannot be recovered with an explicit provider-supported reasoning-off request shape.
 - It does not authorize medium Qwen 4B runs or Qwen true_parallel.
 - It does not test Qwen 9B.
-- It does not touch WVM runtime, QueueManager, UI, SQLite, cache/stateful, vision or embeddings.
+- It does not touch host application runtime, QueueManager, UI, SQLite, cache/stateful, vision or embeddings.
 
 ## Next gate
 

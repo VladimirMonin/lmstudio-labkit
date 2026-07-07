@@ -325,7 +325,7 @@ def _build_gemma4_e2b_q4km_profile() -> ModelRegistryProfile:
             ),
         ),
         notes=(
-            "Primary reusable lab candidate only; no WVM runtime integration, no user-facing promotion, "
+            "Primary reusable lab candidate only; no host application runtime integration, no user-facing promotion, "
             "and no KV reuse proof."
         ),
     )

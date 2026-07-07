@@ -198,7 +198,7 @@ def test_dry_run_creates_contract_output_layout(tmp_path) -> None:
     assert "Mode: dry-run" in report_text
     assert "Network: disabled" in report_text
     assert "LM Studio API: not called" in report_text
-    assert "WVM runtime imports: forbidden" in report_text
+    assert "host application runtime imports: forbidden" in report_text
     assert "store_prompt_text: `false`" in report_text
     assert "chars: `3600`" in report_text
     assert "estimated_input_tokens: `1200`" in report_text

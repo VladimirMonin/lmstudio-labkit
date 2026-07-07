@@ -80,7 +80,7 @@ Therefore `native_chat_stateful` is promising for one-root-many-branches workloa
 
 ## Production policy
 
-Do not promote any L3.6 result directly into WVM runtime defaults.
+Do not promote any L3.6 result directly into host application runtime defaults.
 
 - `compact_memory` may be carried forward as the primary practical candidate for a reusable managed core.
 - `native_chat_stateful` may be carried forward only as a research latency accelerator.
@@ -95,7 +95,7 @@ It may stay in the lab only for small-context cache-accounting research. It must
 
 ## Recommended next architecture
 
-Use the L3.6 evidence to start a reusable LM Studio managed core, not WVM runtime integration.
+Use the L3.6 evidence to start a reusable LM Studio managed core, not host application runtime integration.
 
 Recommended roles:
 
@@ -104,7 +104,7 @@ Recommended roles:
 - `stateless_full_prefix`: baseline/fallback.
 - `/v1/responses`: small-context cache-accounting research only.
 
-Do not touch WVM runtime, UI, QueueManager, Vision, Qwen, or long-context `/v1/responses` retry as part of this decision record.
+Do not touch host application runtime, UI, QueueManager, Vision, Qwen, or long-context `/v1/responses` retry as part of this decision record.
 
 ## Next series proposal — L3.7 reusable LM Studio managed core
 

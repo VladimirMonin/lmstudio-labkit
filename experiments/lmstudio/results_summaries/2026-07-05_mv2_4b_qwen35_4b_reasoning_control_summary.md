@@ -134,7 +134,7 @@ Do not spend more time on Qwen 4B structured recovery in MV2.4 unless the LM Stu
 - It does not test manual LM Studio prompt-template overrides such as ChatML.
 - It does not test Qwen 9B.
 - It does not authorize reading `reasoning_content` as production structured output.
-- It does not touch WVM runtime, QueueManager, UI, SQLite, cache/stateful, vision or embeddings.
+- It does not touch host application runtime, QueueManager, UI, SQLite, cache/stateful, vision or embeddings.
 
 ## Next step
 

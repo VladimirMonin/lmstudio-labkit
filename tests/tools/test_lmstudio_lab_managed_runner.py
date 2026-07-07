@@ -8,9 +8,8 @@ from hashlib import sha256
 from pathlib import Path
 
 import pytest
-import yaml
-
 import tools.lmstudio_lab.managed_runner as managed_runner_module
+import yaml
 from libs.lmstudio_managed.cache_contracts.contracts import (
     CacheExperimentPlan,
     CompactMemoryRequest,
@@ -2878,7 +2877,7 @@ def test_run_medium_chunked_sequential_live_runs_exact_native_lifecycle_and_writ
     assert "true live/GPU/LM Studio used" in report_text
     assert "not true_parallel proof" in report_text
     assert "not production default" in report_text
-    assert "not WVM runtime integration" in report_text
+    assert "not host application runtime integration" in report_text
     assert "exact unload cleanup required/verified" in report_text
 
 
@@ -3708,7 +3707,7 @@ def test_run_medium_chunked_true_parallel_live_runs_exact_native_lifecycle_and_w
     assert "true live/GPU/LM Studio used" in report_text
     assert "not sequential proof" in report_text
     assert "not production default" in report_text
-    assert "not WVM runtime integration" in report_text
+    assert "not host application runtime integration" in report_text
     assert "exact unload cleanup required/verified" in report_text
 
     all_artifact_text = "\n".join(
@@ -5476,7 +5475,10 @@ def test_run_l3_9c_gemma4_12b_qat_load_only_8k_16k_runs_two_tiers_and_writes_saf
     report_text = (run_dir / "report.md").read_text(encoding="utf-8")
     assert "# LM Studio Lab L3.9c Gemma4 12B QAT Load-Only 8k/16k Report" in report_text
     assert "| final_loaded_instances | `0` |" in report_text
-    assert "not production default, not WVM runtime integration, no live generation" in report_text
+    assert (
+        "not production default, not host application runtime integration, no live generation"
+        in report_text
+    )
 
     all_artifact_text = "\n".join(
         path.read_text(encoding="utf-8") for path in run_dir.iterdir() if path.is_file()
@@ -7045,7 +7047,7 @@ def test_run_l3_6c_25k_compact_memory_live_smoke_aborts_before_post_load_when_ta
 
     with pytest.raises(
         ValueError,
-        match="target model already has loaded instances before WVM-owned load",
+        match="target model already has loaded instances before host application-owned load",
     ):
         runner.run_l3_6c_25k_compact_memory_live_smoke(
             config_path=config_path,
@@ -7486,7 +7488,7 @@ def test_run_l3_6d_25k_mode_comparison_live_aborts_before_post_load_when_target_
 
     with pytest.raises(
         ValueError,
-        match="target model already has loaded instances before WVM-owned load",
+        match="target model already has loaded instances before host application-owned load",
     ):
         runner.run_l3_6d_25k_mode_comparison_live(
             config_path=config_path,
@@ -7811,7 +7813,7 @@ def test_run_l3_7d_structured_json_live_smoke_aborts_before_post_load_when_targe
 
     with pytest.raises(
         ValueError,
-        match="target model already has loaded instances before WVM-owned load",
+        match="target model already has loaded instances before host application-owned load",
     ):
         runner.run_l3_7d_structured_json_live_smoke(
             config_path=config_path,
@@ -8343,7 +8345,7 @@ def test_run_l3_8b_gemma4_e4b_load_only_16k_32k_runs_two_tiers_and_writes_safe_a
     assert "Model-list context_length/parallel arrays are optional telemetry only" in report_text
     assert "This report remains lab-only" in report_text
     assert "not production default" in report_text
-    assert "not WVM runtime integration" in report_text
+    assert "not host application runtime integration" in report_text
 
     all_artifact_text = "\n".join(
         path.read_text(encoding="utf-8") for path in run_dir.iterdir() if path.is_file()
@@ -9356,7 +9358,7 @@ def test_run_l3_8d_gemma4_e4b_strict_json_smoke_aborts_before_post_load_when_tar
 
     with pytest.raises(
         ValueError,
-        match="target model already has loaded instances before WVM-owned load",
+        match="target model already has loaded instances before host application-owned load",
     ):
         runner.run_l3_8d_gemma4_e4b_strict_json_smoke(
             config_path=config_path,

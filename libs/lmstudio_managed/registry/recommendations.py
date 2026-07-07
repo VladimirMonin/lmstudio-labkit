@@ -400,7 +400,7 @@ def _build_gemma_recommendation(profile: ModelRegistryProfile) -> InternalModelR
             ),
         ),
         notes=(
-            "Internal primary draft only: no production default, no WVM runtime integration, "
+            "Internal primary draft only: no production default, no host application runtime integration, "
             "no KV reuse proof, and no final user-facing recommendation."
         ),
     )

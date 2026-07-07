@@ -21,7 +21,7 @@ Status: preliminary first-pass comparison. E2B/E4B are confirmed working baselin
 - final_user_facing_recommendation: `false`
 - no `/v1/responses`
 - no route matrix
-- no WVM runtime integration
+- no host application runtime integration
 
 ## Expected comparison columns
 

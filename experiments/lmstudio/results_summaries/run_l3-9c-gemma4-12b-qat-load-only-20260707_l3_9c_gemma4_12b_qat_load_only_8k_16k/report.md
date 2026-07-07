@@ -27,9 +27,9 @@
 ## Notes
 
 - This gate is load-only: no inference, no native chat, no responses, and no chat-completions endpoints are allowed.
-- Acceptance requires every configured tier to materialize exactly one WVM-owned instance in the post-load model list, match the requested context_length and parallel in the native load response, and clean up back to zero target loaded instances.
+- Acceptance requires every configured tier to materialize exactly one host application-owned instance in the post-load model list, match the requested context_length and parallel in the native load response, and clean up back to zero target loaded instances.
 - Model-list context_length/parallel arrays are optional telemetry only; when present they are reported, but they do not gate acceptance.
-- This report remains lab-only: not production default, not WVM runtime integration, no live generation, and no user-facing recommendation proof.
+- This report remains lab-only: not production default, not host application runtime integration, no live generation, and no user-facing recommendation proof.
 - Cleanup must be explicitly verified after the final unload and the final target loaded instance count must remain 0.
 
 ## Output Files

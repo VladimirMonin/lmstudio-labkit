@@ -61,7 +61,7 @@ Result: PASS / candidate.
 - `kv_reuse_proven`: `false`.
 - Privacy scan: `pass`.
 
-Interpretation: `/v1/responses` is promoted from a speculative future idea to an official cache-accounting research lane. It remains isolated from production WVM runtime and does not replace native `/api/v1/chat` L3 instrumentation.
+Interpretation: `/v1/responses` is promoted from a speculative future idea to an official cache-accounting research lane. It remains isolated from production host application runtime and does not replace native `/api/v1/chat` L3 instrumentation.
 
 ### L3.5r 16k /v1/responses probe
 
@@ -95,7 +95,7 @@ Interpretation: the 2k/8k `/v1/responses` cache-accounting candidate remains val
 | `/v1/chat/completions` | Strict JSON / factual-blocks lane |
 | `/api/v1/models/*` | Lifecycle ownership lane |
 | 25k live generation | Still blocked |
-| Production WVM integration | Still blocked |
+| Production host application integration | Still blocked |
 | Qwen strict JSON | Still blocked / recovery only |
 | Vision | Out of scope |
 
@@ -108,7 +108,7 @@ Interpretation: the 2k/8k `/v1/responses` cache-accounting candidate remains val
 | L3.5r responses 16k | `responses_blocked_internal_error` |
 | L3.6 25k no-live preflight | `pending_artifact_generation` |
 | L3.6 25k live | `blocked` |
-| WVM runtime integration | `blocked` |
+| host application runtime integration | `blocked` |
 | Qwen strict JSON | `blocked/recovery_only` |
 | Vision | `out_of_scope` |
 
@@ -123,7 +123,7 @@ Not authorized by this record:
 
 - 25k live generation.
 - Production default switch to `/v1/responses`.
-- WVM runtime/QueueManager integration.
+- host application runtime/QueueManager integration.
 - Qwen strict JSON default restoration.
 - Claiming physical KV reuse as proven.
 

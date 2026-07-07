@@ -7,7 +7,7 @@
 - S6.1/S6.2 commit: `bc59fdea` (`tools: Добавить S6 managed-backed Lab runner`)
 - Purpose: prove the Lab runner bridge can execute the S5 contour through `tools/lmstudio_lab.ManagedLabRunner`, which in turn uses `libs.lmstudio_managed` package clients.
 - Live target: local LM Studio loopback.
-- Out of scope: Matrix v2, WVM runtime integration, `src/**`, QueueManager, UI, SQLite, migrations, vision, embeddings, cache/stateful settings, production defaults.
+- Out of scope: Matrix v2, host application runtime integration, `src/**`, QueueManager, UI, SQLite, migrations, vision, embeddings, cache/stateful settings, production defaults.
 
 ## Runner path
 
@@ -22,7 +22,7 @@ tools/lmstudio_lab.ManagedLabRunner
   -> local LM Studio
 ```
 
-The live transport was injected into the runner. No WVM runtime, QueueManager, UI or SQLite path was involved.
+The live transport was injected into the runner. No host application runtime, QueueManager, UI or SQLite path was involved.
 
 ## Fake-first gate before live
 
@@ -76,7 +76,7 @@ The runner emitted safe summary dictionaries only:
 - token counts;
 - finish/reasoning flags.
 
-The live runner output did not store raw prompts, raw responses, raw messages, raw provider bodies, raw instance IDs, raw job IDs, local paths, URLs, API keys or WVM user data.
+The live runner output did not store raw prompts, raw responses, raw messages, raw provider bodies, raw instance IDs, raw job IDs, local paths, URLs, API keys or host application user data.
 
 ## Matrix v2 readiness
 
@@ -100,4 +100,4 @@ Recommended first modes:
 - plain normalized app concurrency 1/2;
 - system metrics.
 
-Still out of scope until a separate gate: vision, embeddings, cache/stateful settings and WVM runtime integration.
+Still out of scope until a separate gate: vision, embeddings, cache/stateful settings and host application runtime integration.

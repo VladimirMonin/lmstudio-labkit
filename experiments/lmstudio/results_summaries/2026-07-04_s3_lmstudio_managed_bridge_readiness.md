@@ -6,7 +6,7 @@
 - Branch: `next/modular-backend-lab`
 - Evidence level: deterministic Lab/contract bridge checks, not live LM Studio proof
 - Purpose: close S3 Lab-to-`lmstudio_managed` bridge work before S4 client design
-- Non-goals: no HTTP client, no WVM runtime integration, no `src/**`, no QueueManager/UI/SQLite/migrations, no live/GPU/model-matrix run
+- Non-goals: no HTTP client, no host application runtime integration, no `src/**`, no QueueManager/UI/SQLite/migrations, no live/GPU/model-matrix run
 
 ## S3 bridge inventory
 
@@ -68,7 +68,7 @@ Forbidden directions remain blocked:
 ```text
 libs/lmstudio_managed -> tools/lmstudio_lab
 libs/lmstudio_managed -> src/**
-tools/lmstudio_lab -> WVM runtime integration
+tools/lmstudio_lab -> host application runtime integration
 ```
 
 ## Privacy boundary
@@ -89,12 +89,12 @@ They must not contain raw prompts, raw responses, messages, raw provider bodies,
 
 S3 is ready for S4 fake-first HTTP client work.
 
-S4 must still begin without live/GPU requirements and without WVM runtime wiring. The first S4 slice should stay inside `libs/lmstudio_managed` contracts/client tests and keep Lab integration fake-first until an explicit live conformance gate is approved.
+S4 must still begin without live/GPU requirements and without host application runtime wiring. The first S4 slice should stay inside `libs/lmstudio_managed` contracts/client tests and keep Lab integration fake-first until an explicit live conformance gate is approved.
 
 Stop gates before S4 execution:
 
 - real HTTP client boundary design must be explicit before implementation;
 - any live LM Studio / GPU run requires explicit approval;
-- WVM runtime integration remains out of scope;
+- host application runtime integration remains out of scope;
 - QueueManager, UI, SQLite and migrations remain untouched;
 - model matrix v2, vision, embeddings and cache remain deferred.

@@ -15,7 +15,6 @@ from urllib import parse as urllib_parse
 from urllib import request as urllib_request
 
 import yaml
-
 from libs.lmstudio_managed.cache_contracts.contracts import (
     CacheEvidence,
     CacheExperimentPlan,
@@ -2534,9 +2533,9 @@ class ManagedLabRunner:
                 "## Notes",
                 "",
                 "- This gate is load-only: no inference, no native chat, no responses, and no chat-completions endpoints are allowed.",
-                "- Acceptance requires every configured tier to materialize exactly one WVM-owned instance in the post-load model list, match the requested context_length and parallel in the native load response, and clean up back to zero target loaded instances.",
+                "- Acceptance requires every configured tier to materialize exactly one host application-owned instance in the post-load model list, match the requested context_length and parallel in the native load response, and clean up back to zero target loaded instances.",
                 "- Model-list context_length/parallel arrays are optional telemetry only; when present they are reported, but they do not gate acceptance.",
-                "- This report remains lab-only: not production default, not WVM runtime integration, no live generation, and no user-facing recommendation proof.",
+                "- This report remains lab-only: not production default, not host application runtime integration, no live generation, and no user-facing recommendation proof.",
                 "- Cleanup must be explicitly verified after the final unload and the final target loaded instance count must remain 0.",
                 "",
                 "## Output Files",
@@ -4277,7 +4276,9 @@ class ManagedLabRunner:
                 response_text=models_before_text,
             )
             if preexisting_loaded_instances:
-                raise ValueError("target model already has loaded instances before WVM-owned load")
+                raise ValueError(
+                    "target model already has loaded instances before host application-owned load"
+                )
 
             load_request_body = {
                 "model": model_id,
@@ -5531,7 +5532,9 @@ class ManagedLabRunner:
                 response_text=models_before_text,
             )
             if preexisting_loaded_instances:
-                raise ValueError("target model already has loaded instances before WVM-owned load")
+                raise ValueError(
+                    "target model already has loaded instances before host application-owned load"
+                )
 
             load_request_body = {
                 "model": model_id,
@@ -6654,7 +6657,9 @@ class ManagedLabRunner:
                 response_text=models_before_text,
             )
             if preexisting_loaded_instances:
-                raise ValueError("target model already has loaded instances before WVM-owned load")
+                raise ValueError(
+                    "target model already has loaded instances before host application-owned load"
+                )
 
             load_request_body = {
                 "model": model_id,
@@ -7567,7 +7572,9 @@ class ManagedLabRunner:
                 response_text=models_before_text,
             )
             if preexisting_loaded_instances:
-                raise ValueError("target model already has loaded instances before WVM-owned load")
+                raise ValueError(
+                    "target model already has loaded instances before host application-owned load"
+                )
 
             load_request_body = {
                 "model": model_id,
@@ -10533,7 +10540,7 @@ def _render_medium_chunked_live_report(
             "- true live/GPU/LM Studio used: `true`",
             "- not true_parallel proof: `true`",
             "- not production default: `true`",
-            "- not WVM runtime integration: `true`",
+            "- not host application runtime integration: `true`",
             "- exact unload cleanup required/verified: `true`",
             "- raw_prompt_response_stored: `false`",
             "",
@@ -10586,7 +10593,7 @@ def _render_medium_chunked_live_report(
             ),
             (
                 "- This artifact set is a Lab-only managed-live proof and does "
-                "not claim WVM runtime integration."
+                "not claim host application runtime integration."
             ),
             f"- privacy_scan_status: `{privacy_scan_status}`",
             "",
@@ -10625,7 +10632,7 @@ def _render_medium_chunked_true_parallel_live_report(
             "- true live/GPU/LM Studio used: `true`",
             "- not sequential proof: `true`",
             "- not production default: `true`",
-            "- not WVM runtime integration: `true`",
+            "- not host application runtime integration: `true`",
             "- exact unload cleanup required/verified: `true`",
             "- raw_prompt_response_stored: `false`",
             "",
@@ -10685,7 +10692,7 @@ def _render_medium_chunked_true_parallel_live_report(
             ),
             (
                 "- This artifact set is a Lab-only managed-live proof and does "
-                "not claim WVM runtime integration."
+                "not claim host application runtime integration."
             ),
             f"- privacy_scan_status: `{privacy_scan_status}`",
             "",
@@ -11680,7 +11687,7 @@ def _render_l3_6_25k_no_live_preflight_prompt_shape_report(
             f"- Experiment: `{config_scope['experiment_id']}`",
             f"- Exact tokenization: `{tokenized_prompt_report['exact_tokenization_status']}`.",
             f"- Chat-template tokenization: `{tokenized_prompt_report['chat_template_tokenization_status']}`.",
-            "- Preferred minimized shape: compact_memory primary candidate for long-context WVM work.",
+            "- Preferred minimized shape: compact_memory primary candidate for long-context host application work.",
             "- Native stateful research path: /api/v1/chat remains an instrumentation and latency candidate only.",
             "- Stateless full prefix remains the explicit baseline for comparison and fallback costing.",
             "- /v1/responses is blocked for 16k and therefore blocked for 25k long-context routing on the current LM Studio build.",
@@ -13269,7 +13276,7 @@ def _render_l3_6b_25k_updated_abort_conditions(
             f"- The minimized no-overhead margin improves to `{minimized_estimate['remaining_safety_margin_tokens']}` with reserve `{output_reserve['current_output_reserve_tokens']}`, but heuristic scenarios alone do not authorize live.",
             f"- Estimated overhead margin improves to `{estimated_overhead_scenario['remaining_safety_margin_tokens']}` and conservative overhead margin improves to `{conservative_overhead_scenario['remaining_safety_margin_tokens']}`; this improves margin/reserve blockers but is still insufficient without exact measurement.",
             "- generation_allowed, generation_called, live_25k_authorized, production_default, wvm_runtime_integration, and kv_reuse_proven must all remain false.",
-            "- This slice does not authorize production defaults, WVM runtime integration, or any live 25k attempt.",
+            "- This slice does not authorize production defaults, host application runtime integration, or any live 25k attempt.",
         )
     )
 
@@ -13935,7 +13942,7 @@ def _render_cache_stateful_no_live_report(
             "## Boundaries",
             "",
             "- No LM Studio lifecycle/load/unload/live smoke helpers are called in this path.",
-            "- No WVM runtime, QueueManager, UI, SQLite, GPU execution, or network activity occurs.",
+            "- No host application runtime, QueueManager, UI, SQLite, GPU execution, or network activity occurs.",
             "- `cache_hit=true`, `branch_ttft_improved=true`, and `kv_reuse_proven=true` are intentionally absent from this no-live report.",
             f"- privacy_scan_status: `{privacy_scan_status}`",
             "",
@@ -14931,7 +14938,7 @@ def _render_cache_stateful_live_smoke_report(
             "- managed live stateful smoke: `true`",
             "- true live/GPU/LM Studio used: `true`",
             "- not production default: `true`",
-            "- not WVM runtime integration: `true`",
+            "- not host application runtime integration: `true`",
             "- exact unload cleanup required/verified: `true`",
             "- raw_prompt_response_stored: `false`",
             "",
@@ -15177,7 +15184,7 @@ def _render_cache_stateful_comparison_live_report(
             "- managed live comparison: `true`",
             "- true live/GPU/LM Studio used: `true`",
             "- not production default: `true`",
-            "- not WVM runtime integration: `true`",
+            "- not host application runtime integration: `true`",
             "- exact unload cleanup required/verified: `true`",
             "- raw_prompt_response_stored: `false`",
             "",
@@ -15481,7 +15488,7 @@ def _render_cache_stateful_instrumentation_live_report(
             "- managed live streaming instrumentation probe: `true`",
             "- true live/GPU/LM Studio used: `true`",
             "- not production default: `true`",
-            "- not WVM runtime integration: `true`",
+            "- not host application runtime integration: `true`",
             "- exact unload cleanup required/verified: `true`",
             "- raw_prompt_response_stored: `false`",
             "",
@@ -16175,7 +16182,7 @@ def _render_responses_cache_probe_report(
             "",
             "## What this does not prove",
             "- This probe does not replace native /api/v1/chat L3 instrumentation.",
-            "- It only checks whether /v1/responses exposes useful cached token accounting for WVM.",
+            "- It only checks whether /v1/responses exposes useful cached token accounting for host application.",
             "- It does not prove production default readiness, 25k live behavior, or KV reuse correctness.",
             "- It does not prove native prompt_processing telemetry, model lifecycle behavior, or load ownership semantics.",
             "",

@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import fields
 
 import pytest
-
 from libs.lmstudio_managed.download import DownloadProgress, DownloadStatus
 from libs.lmstudio_managed.generation import (
     GenerationProfile,

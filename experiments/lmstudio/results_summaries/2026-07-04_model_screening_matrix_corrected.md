@@ -6,7 +6,7 @@
 - Branch: `next/modular-backend-lab`
 - Evidence level: corrected LM Studio Lab synthesis after R0/R1/R2
 - Purpose: compact candidate matrix for future `lmstudio_managed` contracts
-- Non-goals: no WVM runtime integration, no QueueManager/UI/SQLite, no production default selection
+- Non-goals: no host application runtime integration, no QueueManager/UI/SQLite, no production default selection
 
 ## Measurement semantics
 
@@ -151,4 +151,4 @@ parallel semantics enum
 structured validation result DTO
 ```
 
-Do not move HTTP clients, live runners, benchmark CLI, WVM runtime code, PySide6, SQLite, QueueManager or UI in S0.
+Do not move HTTP clients, live runners, benchmark CLI, host application runtime code, PySide6, SQLite, QueueManager or UI in S0.

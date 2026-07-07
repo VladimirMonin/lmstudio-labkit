@@ -95,7 +95,7 @@ The model produced reasoning tokens/content according to the envelope metadata, 
 - It does not test anti-reasoning prompts.
 - It does not test an explicit reasoning-off request flag.
 - It does not authorize medium Qwen 4B runs or Qwen true_parallel.
-- It does not touch WVM runtime, QueueManager, UI, SQLite, cache/stateful, vision or embeddings.
+- It does not touch host application runtime, QueueManager, UI, SQLite, cache/stateful, vision or embeddings.
 
 ## Next gate
 

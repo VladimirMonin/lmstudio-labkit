@@ -4,7 +4,7 @@
 
 - Date: 2026-07-03
 - Branch: `next/modular-backend-lab`
-- Evidence level: live LM Studio Lab lifecycle experiment, not WVM runtime integration
+- Evidence level: live LM Studio Lab lifecycle experiment, not host application runtime integration
 - Lab key: `qwen35_4b_q4km`
 - Model key: `qwen3.5-4b`
 - Scenario: `duplicate_load_behavior`
@@ -42,7 +42,7 @@ download
 wildcard_unload
 cache/stateful
 vision
-WVM runtime
+host application runtime
 ```
 
 ## Observed behavior
@@ -106,7 +106,7 @@ Notes:
 
 ## What this does not prove
 
-- It does not fix or change WVM runtime behavior.
+- It does not fix or change host application runtime behavior.
 - It does not test generation quality.
 - It does not test load timeout reconciliation.
 - It does not test two-model swap.

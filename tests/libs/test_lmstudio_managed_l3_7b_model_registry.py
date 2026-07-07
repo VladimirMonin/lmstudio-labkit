@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from libs import lmstudio_managed
 from libs.lmstudio_managed import StructuredOutputStatus
 from libs.lmstudio_managed.core_contracts import ResultClassification, RouteMode
 from libs.lmstudio_managed.registry.profiles import (
@@ -18,6 +17,8 @@ from libs.lmstudio_managed.registry.profiles import (
     responses_long_context_status_for,
     responses_small_context_status_for,
 )
+
+from libs import lmstudio_managed
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SUMMARY_PATH = (

@@ -23,5 +23,5 @@ Date: 2026-07-06
 ## Notes
 
 - This slice closes the 32k lifecycle-only proof for Gemma E2B ownership and cleanup.
-- It does not authorize 25k live generation, production WVM runtime integration, or KV reuse claims.
+- It does not authorize 25k live generation, production host application runtime integration, or KV reuse claims.
 - Stored summary content remains privacy-safe and excludes raw prompt/response text, raw response IDs, raw URLs, and filesystem paths.

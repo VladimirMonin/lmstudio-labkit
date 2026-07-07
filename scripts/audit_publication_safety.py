@@ -11,8 +11,14 @@ PATTERNS = [
     ("source product full name", re.compile(r"Whisper\s+Voice\s+Machine", re.I)),
     ("source product abbreviation", re.compile(r"\bWVM\b|\bVWM\b", re.I)),
     ("private marketplace/support keyword", re.compile(r"skladchik|складчик", re.I)),
-    ("build-protection keyword", re.compile(r"pyarmor|obfuscat|обфускац|anti[- ]?tamper|protected runtime", re.I)),
-    ("secret-looking token", re.compile(r"(?i)(api[_-]?key|token|secret|password)\s*[:=]\s*['\"][^'\"]+['\"]")),
+    (
+        "build-protection keyword",
+        re.compile(r"pyarmor|obfuscat|обфускац|anti[- ]?tamper|protected runtime", re.I),
+    ),
+    (
+        "secret-looking token",
+        re.compile(r"(?i)(api[_-]?key|token|secret|password)\s*[:=]\s*['\"][^'\"]+['\"]"),
+    ),
     ("private home path", re.compile(r"/home/v/(Syncthing|\.hermes|code/Whisper-Voice-Machine)")),
 ]
 ALLOWLIST = {
@@ -21,12 +27,14 @@ ALLOWLIST = {
     "AGENTS.MD",
 }
 
+
 def should_skip(path: Path) -> bool:
     rel = path.relative_to(ROOT).parts
     for part in rel:
         if part in SKIP_DIRS:
             return True
     return False
+
 
 failures = []
 for path in ROOT.rglob("*"):
@@ -40,7 +48,13 @@ for path in ROOT.rglob("*"):
     except UnicodeDecodeError:
         continue
     for label, pattern in PATTERNS:
-        allow_terms = {"source product full name", "source product abbreviation", "private marketplace/support keyword", "build-protection keyword", "private home path"}
+        allow_terms = {
+            "source product full name",
+            "source product abbreviation",
+            "private marketplace/support keyword",
+            "build-protection keyword",
+            "private home path",
+        }
         if rel in ALLOWLIST and label in allow_terms:
             continue
         for match in pattern.finditer(text):

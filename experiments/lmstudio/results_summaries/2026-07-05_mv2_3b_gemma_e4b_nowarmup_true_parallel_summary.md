@@ -94,4 +94,4 @@ MV2.3 should therefore distinguish two claims:
 1. true_parallel throughput gate: green for Gemma E2B and E4B;
 2. warmup-inclusive end-to-end gate: E4B needs warmup policy semantics before it can be called green.
 
-This does not authorize Qwen recovery, broad CUDA matrix, vision, embeddings, cache/stateful, production default selection or WVM runtime integration.
+This does not authorize Qwen recovery, broad CUDA matrix, vision, embeddings, cache/stateful, production default selection or host application runtime integration.

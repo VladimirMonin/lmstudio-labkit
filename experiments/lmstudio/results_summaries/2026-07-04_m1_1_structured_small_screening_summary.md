@@ -4,7 +4,7 @@
 
 - Date: 2026-07-04
 - Branch: `next/modular-backend-lab`
-- Evidence level: live LM Studio Lab model screening, not WVM runtime integration
+- Evidence level: live LM Studio Lab model screening, not host application runtime integration
 - Dataset: `blocks_json_small`
 - Mode: `json_schema_single`
 - Response format: `json_schema` / `factual_blocks.v1`
@@ -17,7 +17,7 @@
 ## Non-goals
 
 ```text
-no WVM runtime integration
+no host application runtime integration
 no QueueManager/UI
 no app_concurrency=4
 no cache/stateful
@@ -90,7 +90,7 @@ GPU util = 1%
 - Prompt text and response text were not stored.
 - Artifacts keep hashes, counts, validation flags and timing/resource metrics.
 - No raw instance ids are stored; lifecycle artifacts use hashes.
-- No WVM runtime, UI or application queues were involved.
+- No host application runtime, UI or application queues were involved.
 
 ## First-pass gate decision
 

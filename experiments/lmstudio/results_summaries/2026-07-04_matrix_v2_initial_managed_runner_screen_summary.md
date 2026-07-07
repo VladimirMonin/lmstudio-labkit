@@ -6,7 +6,7 @@
 - Branch: `next/modular-backend-lab`
 - Execution path: `tools/lmstudio_lab.ManagedLabRunner -> libs/lmstudio_managed client/contracts -> local LM Studio`
 - Purpose: first controlled Matrix v2 screen through the managed-backed Lab path after S6.
-- This is not the full CUDA matrix: no medium chunked pass, no true-parallel pass, no vision, no embeddings, no cache/stateful settings, no WVM runtime integration.
+- This is not the full CUDA matrix: no medium chunked pass, no true-parallel pass, no vision, no embeddings, no cache/stateful settings, no host application runtime integration.
 
 ## Model set
 
@@ -112,7 +112,7 @@ Recommended next controlled slices:
 
 Still stop before:
 
-- WVM runtime integration;
+- host application runtime integration;
 - QueueManager/UI/SQLite changes;
 - vision;
 - embeddings/reranker;

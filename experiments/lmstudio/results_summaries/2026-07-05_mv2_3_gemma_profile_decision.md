@@ -43,7 +43,7 @@ Gemma E4B passes the throughput gate. Its warmup-inclusive MV2.3 run is mixed (`
 - No vision/image matrix.
 - No embeddings/search work.
 - No cache/stateful/prefix-cache work.
-- No WVM runtime integration.
+- No host application runtime integration.
 - No QueueManager/UI/SQLite changes.
 - No production default selection.
 

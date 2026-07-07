@@ -4,7 +4,6 @@ from dataclasses import fields
 from hashlib import sha256
 
 import pytest
-
 from libs.lmstudio_managed.client import (
     ApiErrorKind,
     EndpointKind,

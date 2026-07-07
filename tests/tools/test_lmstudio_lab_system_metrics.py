@@ -10,10 +10,10 @@ from types import SimpleNamespace
 
 import pytest
 import yaml
-
 from libs.lmstudio_managed.metrics import SystemSummary as ManagedSystemSummary
-from tools import lmstudio_benchmark, lmstudio_lab
 from tools.lmstudio_lab import system_metrics as system_metrics_module
+
+from tools import lmstudio_benchmark, lmstudio_lab
 
 ABSOLUTE_PATH_PATTERNS = (
     re.compile(r"(?i)[A-Z]:[\\/][^\"\r\n]+"),

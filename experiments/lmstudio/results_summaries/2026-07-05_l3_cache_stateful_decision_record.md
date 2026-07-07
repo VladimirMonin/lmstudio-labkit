@@ -95,7 +95,7 @@ Stop before any 25k live run.
 
 ## Non-goals
 
-- No WVM runtime integration.
+- No host application runtime integration.
 - No QueueManager/UI/SQLite changes.
 - No production default selection.
 - No Qwen recovery.

@@ -9,7 +9,7 @@
 - true live/GPU/LM Studio used: `true`
 - not true_parallel proof: `true`
 - not production default: `true`
-- not WVM runtime integration: `true`
+- not host application runtime integration: `true`
 - exact unload cleanup required/verified: `true`
 - raw_prompt_response_stored: `false`
 
@@ -54,7 +54,7 @@
 
 - Sequential managed-live proof validates one allowed L3.9 Blocks JSON candidate config at a time.
 - Native load/unload uses exact owned instance cleanup only; wildcard unload is forbidden.
-- This artifact set is a Lab-only managed-live proof and does not claim WVM runtime integration.
+- This artifact set is a Lab-only managed-live proof and does not claim host application runtime integration.
 - privacy_scan_status: `pass`
 
 ## Output Files

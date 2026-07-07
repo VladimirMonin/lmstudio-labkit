@@ -6,7 +6,7 @@ Status: accepted lab-only registry slice, no new live inference.
 
 - Build the first reusable internal model registry/profile layer on top of L3.7a contracts.
 - Keep all recommendations internal to the LM Studio Lab.
-- Do not promote any model profile to WVM runtime defaults or final user-facing guidance.
+- Do not promote any model profile to host application runtime defaults or final user-facing guidance.
 
 ## Registry map
 

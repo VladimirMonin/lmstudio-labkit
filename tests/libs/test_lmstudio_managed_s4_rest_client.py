@@ -6,7 +6,6 @@ from inspect import signature
 from typing import cast
 
 import pytest
-
 from libs.lmstudio_managed.client import (
     ApiErrorKind,
     EndpointKind,

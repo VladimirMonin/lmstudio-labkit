@@ -104,7 +104,7 @@ Both privacy scans passed:
 - Not Qwen recovery evidence.
 - Not broad CUDA matrix evidence.
 - Not vision, embeddings, cache/stateful or mixed-workload evidence.
-- Not WVM runtime integration and not a production default selection.
+- Not host application runtime integration and not a production default selection.
 
 ## Next gates
 

@@ -4,7 +4,7 @@
 
 - Date: 2026-07-04
 - Branch: `next/modular-backend-lab`
-- Evidence level: live LM Studio Lab structured screening, not WVM runtime integration
+- Evidence level: live LM Studio Lab structured screening, not host application runtime integration
 - Dataset: `blocks_json_medium_chunked`
 - Shape: `4` chunks × `25` blocks
 - Mode: `json_schema_single`
@@ -18,7 +18,7 @@
 ## Non-goals
 
 ```text
-no WVM runtime integration
+no host application runtime integration
 no QueueManager/UI
 no app_concurrency=4
 no cache/stateful

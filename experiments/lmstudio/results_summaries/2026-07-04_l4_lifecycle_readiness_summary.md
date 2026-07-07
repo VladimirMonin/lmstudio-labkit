@@ -4,7 +4,7 @@
 
 - Date: 2026-07-04
 - Branch: `next/modular-backend-lab`
-- Evidence level: Lab-only lifecycle readiness, before WVM runtime integration
+- Evidence level: Lab-only lifecycle readiness, before host application runtime integration
 - Purpose: close the L4 foundation and define the gate for M1/M2 model screening
 
 ## Foundation status
@@ -77,7 +77,7 @@ Single-model-safe swap is viable.
 ## Non-goals
 
 ```text
-no WVM runtime integration
+no host application runtime integration
 no QueueManager/UI changes
 no app_concurrency=4
 no keepModelInMemory / tryMmap experiments

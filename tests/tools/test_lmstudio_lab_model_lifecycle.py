@@ -8,9 +8,9 @@ from pathlib import Path
 from urllib import error as urllib_error
 
 import pytest
+from tools.lmstudio_lab import model_lifecycle as lmstudio_model_lifecycle
 
 from tools import lmstudio_benchmark, lmstudio_lab
-from tools.lmstudio_lab import model_lifecycle as lmstudio_model_lifecycle
 
 ABSOLUTE_PATH_PATTERNS = (
     re.compile(r"(?i)[A-Z]:[\\/][^\"\r\n]+"),

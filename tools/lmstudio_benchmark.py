@@ -19,16 +19,6 @@ from tools.lmstudio_lab.config import (
     validate_experiment_config_payload,
 )
 from tools.lmstudio_lab.datasets import load_dataset_manifest
-from tools.lmstudio_lab.live_config import (
-    is_local_lmstudio_base_url,
-    load_live_smoke_config,
-)
-from tools.lmstudio_lab.live_smoke import (
-    run_live_chunked_structured_smoke,
-    run_live_concurrency_diagnostics,
-    run_live_structured_smoke,
-)
-from tools.lmstudio_lab.managed_runner import ManagedLabRunner
 from tools.lmstudio_lab.metrics import (
     SCHEMA_VERSION,
     LMStudioLabMetricRecord,
@@ -44,14 +34,132 @@ from tools.lmstudio_lab.report import (
     write_json_file,
 )
 from tools.lmstudio_lab.structured import validate_structured_fixture_manifest
-from tools.lmstudio_lab.system_metrics import (
-    SystemMetricsSampler,
-    write_system_telemetry_artifacts,
-)
 
 if TYPE_CHECKING:
     from tools.lmstudio_lab.identity_probe import IdentityProbeResult
     from tools.lmstudio_lab.model_probe import ModelProbeResult
+
+
+def probe_lmstudio_models(*args, **kwargs):
+    from tools.lmstudio_lab.model_probe import probe_lmstudio_models as impl
+
+    return impl(*args, **kwargs)
+
+
+def resolve_candidate_models(*args, **kwargs):
+    from tools.lmstudio_lab.candidate_resolution import resolve_candidate_models as impl
+
+    return impl(*args, **kwargs)
+
+
+def probe_lmstudio_identity(*args, **kwargs):
+    from tools.lmstudio_lab.identity_probe import probe_lmstudio_identity as impl
+
+    return impl(*args, **kwargs)
+
+
+def probe_lmstudio_load(*args, **kwargs):
+    from tools.lmstudio_lab.load_probe import probe_lmstudio_load as impl
+
+    return impl(*args, **kwargs)
+
+
+def acquire_candidate_model(*args, **kwargs):
+    from tools.lmstudio_lab.model_acquisition import acquire_candidate_model as impl
+
+    return impl(*args, **kwargs)
+
+
+def probe_model_lifecycle(*args, **kwargs):
+    from tools.lmstudio_lab.model_lifecycle import probe_model_lifecycle as impl
+
+    return impl(*args, **kwargs)
+
+
+def run_live_structured_smoke(*args, **kwargs):
+    from tools.lmstudio_lab.live_smoke import run_live_structured_smoke as impl
+
+    return impl(*args, **kwargs)
+
+
+def run_live_chunked_structured_smoke(*args, **kwargs):
+    from tools.lmstudio_lab.live_smoke import run_live_chunked_structured_smoke as impl
+
+    return impl(*args, **kwargs)
+
+
+def run_live_concurrency_diagnostics(*args, **kwargs):
+    from tools.lmstudio_lab.live_smoke import run_live_concurrency_diagnostics as impl
+
+    return impl(*args, **kwargs)
+
+
+class ManagedLabRunner:
+    def __new__(cls, *args, **kwargs):
+        from tools.lmstudio_lab.managed_runner import ManagedLabRunner as impl
+
+        return impl(*args, **kwargs)
+
+
+class SystemMetricsSampler:
+    def __new__(cls, *args, **kwargs):
+        from tools.lmstudio_lab.system_metrics import SystemMetricsSampler as impl
+
+        return impl(*args, **kwargs)
+
+
+def write_system_telemetry_artifacts(*args, **kwargs):
+    from tools.lmstudio_lab.system_metrics import write_system_telemetry_artifacts as impl
+
+    return impl(*args, **kwargs)
+
+
+def is_local_lmstudio_base_url(*args, **kwargs):
+    from tools.lmstudio_lab.live_config import is_local_lmstudio_base_url as impl
+
+    return impl(*args, **kwargs)
+
+
+def load_live_smoke_config(*args, **kwargs):
+    from tools.lmstudio_lab.live_config import load_live_smoke_config as impl
+
+    return impl(*args, **kwargs)
+
+
+def _get_live_config_helpers():
+    from tools.lmstudio_lab.live_config import is_local_lmstudio_base_url, load_live_smoke_config
+
+    return is_local_lmstudio_base_url, load_live_smoke_config
+
+
+def _get_live_smoke_helpers():
+    from tools.lmstudio_lab.live_smoke import (
+        run_live_chunked_structured_smoke,
+        run_live_concurrency_diagnostics,
+        run_live_structured_smoke,
+    )
+
+    return (
+        run_live_chunked_structured_smoke,
+        run_live_concurrency_diagnostics,
+        run_live_structured_smoke,
+    )
+
+
+def _managed_lab_runner_cls():
+    from tools.lmstudio_lab.managed_runner import ManagedLabRunner
+
+    return ManagedLabRunner
+
+
+def _get_system_metrics_helpers():
+    from tools.lmstudio_lab.system_metrics import (
+        SystemMetricsSampler,
+        write_system_telemetry_artifacts,
+    )
+
+    return SystemMetricsSampler, write_system_telemetry_artifacts
+
 
 EXIT_OK = 0
 EXIT_PROBE_ERROR = 2
@@ -2537,7 +2645,6 @@ def _run_model_probe(args: argparse.Namespace) -> int:
         MODEL_PROBE_RESULT_FILE_NAMES,
         build_model_probe_url,
         is_local_model_probe_base_url,
-        probe_lmstudio_models,
         render_model_probe_report,
     )
 
@@ -2588,7 +2695,6 @@ def _run_candidate_resolution(args: argparse.Namespace) -> int:
         build_candidate_resolution_url,
         is_local_candidate_resolution_base_url,
         render_candidate_resolution_report,
-        resolve_candidate_models,
     )
 
     if args.timeout_s <= 0:
@@ -2661,7 +2767,6 @@ def _run_candidate_resolution(args: argparse.Namespace) -> int:
 def _run_model_acquisition(args: argparse.Namespace) -> int:
     from tools.lmstudio_lab.model_acquisition import (
         MODEL_ACQUISITION_RESULT_FILE_NAMES,
-        acquire_candidate_model,
         build_model_acquisition_url,
         is_local_model_acquisition_base_url,
         render_model_acquisition_report,
@@ -2742,7 +2847,6 @@ def _run_identity_probe(args: argparse.Namespace) -> int:
         IDENTITY_PROBE_RESULT_FILE_NAMES,
         build_identity_probe_compat_url,
         is_local_identity_probe_base_url,
-        probe_lmstudio_identity,
         render_identity_probe_report,
     )
 
@@ -2788,12 +2892,10 @@ def _run_identity_probe(args: argparse.Namespace) -> int:
 
 
 def _run_load_probe(args: argparse.Namespace) -> int:
-    from tools.lmstudio_lab.identity_probe import probe_lmstudio_identity
     from tools.lmstudio_lab.load_probe import (
         LOAD_PROBE_RESULT_FILE_NAMES,
         build_load_probe_url,
         is_local_load_probe_base_url,
-        probe_lmstudio_load,
         render_load_probe_report,
         validate_load_probe_model_id,
     )
@@ -2884,7 +2986,6 @@ def _run_probe_lifecycle(args: argparse.Namespace) -> int:
         MODEL_LIFECYCLE_RESULT_FILE_NAMES,
         build_model_lifecycle_list_url,
         is_local_model_lifecycle_base_url,
-        probe_model_lifecycle,
         render_model_lifecycle_report,
         validate_model_lifecycle_api_token_env,
         validate_model_lifecycle_model_id,

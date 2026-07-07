@@ -470,7 +470,7 @@ def test_l3_9_gemma_family_collapse_plan_stays_lab_only_and_non_runtime() -> Non
     assert "final_user_facing_recommendation: `false`" in plan_text
     assert "no `/v1/responses`" in plan_text
     assert "no route matrix" in plan_text
-    assert "no WVM runtime integration" in plan_text
+    assert "no host application runtime integration" in plan_text
 
 
 def test_l3_10_12b_id_drift_appeal_plan_stays_lab_only_and_sanitized() -> None:
@@ -497,7 +497,7 @@ def test_l3_10_12b_id_drift_appeal_plan_stays_lab_only_and_sanitized() -> None:
     assert "l3_10c_gemma4_12b_qat_prompt_ultra_minimal_transform.yaml" in plan_text
     assert "L3.10g final decision" in plan_text
     assert "lab-only" in plan_text
-    assert "no WVM runtime" in plan_text
+    assert "no host application runtime" in plan_text
     assert "no UI" in plan_text
     assert "no QueueManager" in plan_text
     assert "no `/v1/responses`" in plan_text

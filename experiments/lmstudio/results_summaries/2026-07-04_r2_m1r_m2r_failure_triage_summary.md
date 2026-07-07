@@ -4,7 +4,7 @@
 
 - Date: 2026-07-04
 - Branch: `next/modular-backend-lab`
-- Evidence level: live LM Studio Lab triage, not WVM runtime integration
+- Evidence level: live LM Studio Lab triage, not host application runtime integration
 - Prerequisite: R0 measurement semantics repair and R1 Gemma E2B true-parallel rescreen
 - Non-goals: no `src/**`, no QueueManager/UI, no SQLite/migrations, no production model verdict
 

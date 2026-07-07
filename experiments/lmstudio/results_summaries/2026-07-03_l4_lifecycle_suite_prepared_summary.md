@@ -7,7 +7,7 @@
 - Evidence level: code readiness + fake/offline QA + dry-run CLI plans
 - Live load/unload executed: no
 - GPU/VRAM touched by this suite: no
-- WVM runtime integration: no
+- host application runtime integration: no
 
 ## Goal
 
@@ -135,7 +135,7 @@ invalid_shape
 - No real model was loaded into RAM/VRAM by this suite.
 - No real unload was performed.
 - No memory deltas were measured.
-- No production WVM runtime/status fix was applied.
+- No production host application runtime/status fix was applied.
 
 ## Next gated live order
 
@@ -151,4 +151,4 @@ L4g unload_already_gone
 L4h load_timeout_reconcile
 ```
 
-After live lifecycle evidence exists, apply the minimal WVM product fix: transitional UI/model states must reconcile against observed `/api/v1/models` state rather than trusting only desired command state.
+After live lifecycle evidence exists, apply the minimal host application product fix: transitional UI/model states must reconcile against observed `/api/v1/models` state rather than trusting only desired command state.

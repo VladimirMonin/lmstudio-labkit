@@ -25,7 +25,7 @@ Status: internal-only lab draft built from L3.7b registry, L3.7c candidate intak
 
 | Model key | Model id | Overall status | Notes |
 | --- | --- | --- | --- |
-| `gemma4_e2b_q4km` | `google/gemma-4-e2b` | `internal_primary_candidate` | Internal primary draft only: no production default, no WVM runtime integration, no KV reuse proof, and no final user-facing recommendation. |
+| `gemma4_e2b_q4km` | `google/gemma-4-e2b` | `internal_primary_candidate` | Internal primary draft only: no production default, no host application runtime integration, no KV reuse proof, and no final user-facing recommendation. |
 | `qwen35_4b` | `qwen3.5-4b` | `blocked_current_evidence` | Blocked current-evidence recovery note only; not eligible for promotion or user-facing advice. |
 | `qwen35_9b` | `qwen/qwen3.5-9b` | `recovery_experimental_only` | Recovery/experimental only; keep separated from internal-primary and user-facing guidance. |
 | `gemma4_e4b_q4km` | `google/gemma-4-e4b` | `unverified_candidate` | Unverified candidate only; requires no-live, load-only, live-smoke, and structured-json gates before any route recommendation. |

@@ -146,7 +146,7 @@ All accepted M2p.1 artifacts were spot-checked for raw prompt/response leakage. 
 
 - It does not prove behavior on unresolved model candidates.
 - It does not evaluate real user content, long text artifacts, cache/stateful behavior, vision, native load/config, `keepModelInMemory`, or `tryMmap`.
-- It does not prove production WVM runtime integration; this remains isolated LM Studio Lab evidence.
+- It does not prove production host application runtime integration; this remains isolated LM Studio Lab evidence.
 
 ## Next gated steps
 

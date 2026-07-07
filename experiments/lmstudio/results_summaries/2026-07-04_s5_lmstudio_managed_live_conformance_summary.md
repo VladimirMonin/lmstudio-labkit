@@ -6,7 +6,7 @@
 - Branch: `next/modular-backend-lab`
 - Purpose: prove the S4 fake-first `lmstudio_managed` package clients against a minimal live LM Studio localhost contour.
 - Live target: local LM Studio at loopback.
-- Out of scope: Matrix v2, WVM runtime integration, `src/**`, QueueManager, UI, SQLite, migrations, vision, embeddings, cache/stateful settings, production defaults.
+- Out of scope: Matrix v2, host application runtime integration, `src/**`, QueueManager, UI, SQLite, migrations, vision, embeddings, cache/stateful settings, production defaults.
 
 ## Conformance result
 
@@ -34,7 +34,7 @@ S5 intentionally used minimal live requests, not a benchmark matrix:
 - no true-parallel matrix;
 - no heavy model sweep;
 - no vision or embeddings;
-- no WVM runtime path.
+- no host application runtime path.
 
 The live contour proved that the package clients can perform:
 
@@ -87,7 +87,7 @@ S5 retained safe public artifacts only:
 - status booleans;
 - safe model keys and counts.
 
-S5 did not store raw prompts, raw responses, raw messages, raw provider bodies, raw instance IDs, raw job IDs, local paths, URLs, API keys or WVM user data.
+S5 did not store raw prompts, raw responses, raw messages, raw provider bodies, raw instance IDs, raw job IDs, local paths, URLs, API keys or host application user data.
 
 ## Verification
 

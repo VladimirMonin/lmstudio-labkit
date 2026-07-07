@@ -14,7 +14,7 @@ The current reusable core can represent:
 - structured JSON validation matrix and managed live gate evidence;
 - internal recommendation draft.
 
-The reusable core is **not** a WVM runtime integration and is **not** a final user-facing recommendation engine.
+The reusable core is **not** a host application runtime integration and is **not** a final user-facing recommendation engine.
 
 Production guardrails remain unchanged:
 
@@ -117,7 +117,7 @@ No item is final user-facing.
 
 The reusable managed core may be carried forward as an internal lab package.
 
-It must not be wired into WVM runtime, UI, QueueManager, Vision, or production defaults until separate production integration gates exist.
+It must not be wired into host application runtime, UI, QueueManager, Vision, or production defaults until separate production integration gates exist.
 
 Required production-gate prerequisites remain open:
 

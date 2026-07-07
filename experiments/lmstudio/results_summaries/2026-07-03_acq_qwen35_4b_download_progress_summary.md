@@ -4,7 +4,7 @@
 
 - Date: 2026-07-03
 - Branch: `next/modular-backend-lab`
-- Evidence level: live LM Studio acquisition experiment, not WVM runtime integration
+- Evidence level: live LM Studio acquisition experiment, not host application runtime integration
 - Lab key: `qwen35_4b_q4km`
 - Command kind: `acquire-candidate`
 - Execute download: yes
@@ -16,7 +16,7 @@
 
 ## Goal
 
-Verify that a fresh/missing LM Studio model can be requested through the native download API and that WVM Lab can observe progress safely.
+Verify that a fresh/missing LM Studio model can be requested through the native download API and that host application Lab can observe progress safely.
 
 This experiment was run after the user removed `qwen3.5-4b` from LM Studio.
 

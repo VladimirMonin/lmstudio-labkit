@@ -144,7 +144,7 @@ def test_l3_8d_strict_json_plan_exists_and_stays_non_promotional() -> None:
     assert "kv_reuse_proven: `false`" in plan_text
     assert "final_user_facing_recommendation: `false`" in plan_text
     assert "This is not production." in plan_text
-    assert "This is not WVM runtime integration." in plan_text
+    assert "This is not host application runtime integration." in plan_text
     assert "This is not route matrix approval." in plan_text
     assert "This is not a final user-facing recommendation." in plan_text
     assert "L3.9a Blocks JSON functional viability" in plan_text

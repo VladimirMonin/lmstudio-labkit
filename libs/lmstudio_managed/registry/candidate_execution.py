@@ -188,7 +188,7 @@ def render_candidate_execution_report(catalog: CandidateExecutionCatalog) -> str
         f"- Accepted L3.8c artifact dir: `{L3_8C_GEMMA4_E4B_TINY_LIVE_SMOKE_ARTIFACT_DIR}`.",
         f"- Accepted L3.8d artifact dir: `{L3_8D_GEMMA4_E4B_STRICT_JSON_SMOKE_ARTIFACT_DIR}`.",
         f"- Accepted L3.8d result plan: `{L3_8D_GEMMA4_E4B_STRICT_JSON_SMOKE_PLAN_PATH}`.",
-        "- Gemma4 E4B is eligible for L3.9 product-shaped viability gates only; this is not production, not WVM runtime integration, not route-matrix approval, and not a final user-facing recommendation.",
+        "- Gemma4 E4B is eligible for L3.9 product-shaped viability gates only; this is not production, not host application runtime integration, not route-matrix approval, and not a final user-facing recommendation.",
         "- Next gate: L3.9a Blocks JSON functional viability.",
         "",
     ]

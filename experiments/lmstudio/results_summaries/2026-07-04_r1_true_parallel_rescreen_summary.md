@@ -4,11 +4,11 @@
 
 - Date: 2026-07-04
 - Branch: `next/modular-backend-lab`
-- Evidence level: live LM Studio Lab rescreen, not WVM runtime integration
+- Evidence level: live LM Studio Lab rescreen, not host application runtime integration
 - Model key: `gemma4_e2b_q4km`
 - Model ID: `google/gemma-4-e2b`
 - Goal: validate corrected R0 measurement semantics before wider M1r/M2r triage
-- Non-goals: no WVM runtime integration, no QueueManager/UI, no `src/**`, no production model verdict
+- Non-goals: no host application runtime integration, no QueueManager/UI, no `src/**`, no production model verdict
 
 ## Lifecycle envelope
 
@@ -117,7 +117,7 @@ R1 restores trust in the corrected measurement path for `gemma4_e2b_q4km`:
 - Plain-text normalized artifact rescreen passed `12/12` measured requests with token-normalized speedup above `1.2x`.
 - Old `app_concurrency=2` over `parallel=1` rows remain queue-pressure evidence only and are not reused as true-parallel throughput proof.
 
-This is still a Lab profile validation, not a WVM runtime integration or production model verdict.
+This is still a Lab profile validation, not a host application runtime integration or production model verdict.
 
 ## Next step
 

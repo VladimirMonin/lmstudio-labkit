@@ -52,7 +52,7 @@
 
 - E4B is now eligible for L3.9 product-shaped viability gates.
 - This is not production.
-- This is not WVM runtime integration.
+- This is not host application runtime integration.
 - This is not route matrix approval.
 - This is not a final user-facing recommendation.
 - Route matrix remains blocked/deferred because the next gate is L3.9a Blocks JSON functional viability, not route-matrix expansion.

@@ -1,0 +1,74 @@
+[
+  {
+    "file": "01_model_registry_ids_and_sources.md",
+    "lines": 151,
+    "words": 1002,
+    "chars": 9315
+  },
+  {
+    "file": "02_model_downloader_progress_and_errors.md",
+    "lines": 191,
+    "words": 925,
+    "chars": 7865
+  },
+  {
+    "file": "03_model_lifecycle_load_unload_context_kv.md",
+    "lines": 158,
+    "words": 1057,
+    "chars": 8260
+  },
+  {
+    "file": "04_parallel_inference_single_model.md",
+    "lines": 161,
+    "words": 990,
+    "chars": 7518
+  },
+  {
+    "file": "05_prompt_cache_stateful_context_and_reuse.md",
+    "lines": 199,
+    "words": 1003,
+    "chars": 7984
+  },
+  {
+    "file": "06_structured_output_json_schema_validation.md",
+    "lines": 200,
+    "words": 921,
+    "chars": 7616
+  },
+  {
+    "file": "07_lmstudio_cache_parallel_benchmark_plan.md",
+    "lines": 146,
+    "words": 938,
+    "chars": 7216
+  },
+  {
+    "file": "08_benchmark_harness_technical_spec.md",
+    "lines": 215,
+    "words": 799,
+    "chars": 6649
+  },
+  {
+    "file": "09_metrics_schema_and_result_format.md",
+    "lines": 207,
+    "words": 791,
+    "chars": 7492
+  },
+  {
+    "file": "10_lmstudio_managed_backend_architecture.md",
+    "lines": 196,
+    "words": 854,
+    "chars": 7539
+  },
+  {
+    "file": "11_test_matrix_5060ti_16gb_cuda.md",
+    "lines": 247,
+    "words": 1093,
+    "chars": 8206
+  },
+  {
+    "file": "README.md",
+    "lines": 42,
+    "words": 294,
+    "chars": 2476
+  }
+]

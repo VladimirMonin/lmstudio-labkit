@@ -28,7 +28,7 @@
 - This gate is load-only: no inference, no native chat, no responses, and no chat-completions endpoints are allowed.
 - Acceptance requires both 16k and 32k tiers to materialize exactly one owned instance in the post-load model list, match the requested context_length and parallel in the native load response, and clean up back to zero target loaded instances.
 - Model-list context_length/parallel arrays are optional telemetry only; when present they are reported, but they do not gate acceptance.
-- Passing L3.8b does not prove production default, WVM runtime integration, KV reuse, user-facing recommendation, live quality, or structured JSON correctness.
+- Passing L3.8b does not prove production default, host application runtime integration, KV reuse, user-facing recommendation, live quality, or structured JSON correctness.
 
 ## Output Files
 

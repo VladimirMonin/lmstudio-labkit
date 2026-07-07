@@ -7,8 +7,8 @@ from pathlib import Path
 from urllib import error as urllib_error
 
 import pytest
-
 import tools.lmstudio_lab.identity_probe as identity_probe_module
+
 from tools import lmstudio_benchmark, lmstudio_lab
 
 ABSOLUTE_PATH_PATTERNS = (

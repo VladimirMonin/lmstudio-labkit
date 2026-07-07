@@ -4,7 +4,6 @@ from pathlib import Path
 
 import pytest
 import yaml
-
 from libs.lmstudio_managed.registry import ModelCapability, ModelVerificationStatus
 from tools.lmstudio_lab.registry_bridge import (
     managed_candidates_from_registry_payload,

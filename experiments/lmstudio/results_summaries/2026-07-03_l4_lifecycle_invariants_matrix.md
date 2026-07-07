@@ -5,7 +5,7 @@
 - Date: 2026-07-03
 - Last updated: 2026-07-04
 - Branch: `next/modular-backend-lab`
-- Evidence level: Lab-only lifecycle evidence, before WVM runtime integration
+- Evidence level: Lab-only lifecycle evidence, before host application runtime integration
 - Primary native-verified model: `qwen35_4b_q4km` / `qwen3.5-4b`
 
 This matrix consolidates the L4 lifecycle facts gathered so far. It is intended to prevent future backend work from re-deriving scattered evidence from individual experiment notes.
@@ -22,7 +22,7 @@ This matrix consolidates the L4 lifecycle facts gathered so far. It is intended 
 | External manual unload | L4d `external_unload_reconcile` | ✅ `1 -> 0`, no Lab unload call | Observed native state wins over desired transitional state. |
 | Duplicate same-config load | L4e `duplicate_load_behavior` | ✅ duplicate confirmed: `0 -> 1 -> 2`, cleanup to `0` | Native load is not idempotent; list-before-load guard is mandatory. |
 | Load timeout reconciliation | L4h `load_timeout_reconcile` | ✅ offline/fake proof | After timeout, always reconcile via native list before declaring failure. |
-| Two-model swap | L4f `policy_two_model_swap` | ✅ `qwen3.5-4b -> google/gemma-4-e4b`, primary `0 -> 1 -> 0`, secondary `0 -> 1 -> 0`, final both `0` | Model switch must be policy-staged: verify clean baseline, exact-unload old WVM-owned instance before loading the new one, then exact cleanup. |
+| Two-model swap | L4f `policy_two_model_swap` | ✅ `qwen3.5-4b -> google/gemma-4-e4b`, primary `0 -> 1 -> 0`, secondary `0 -> 1 -> 0`, final both `0` | Model switch must be policy-staged: verify clean baseline, exact-unload old host application-owned instance before loading the new one, then exact cleanup. |
 | Repeated download already-present | D3 `already_downloaded` | ✅ terminal success | Repeated download classifies already-on-disk as success without polling. |
 
 ## Core lifecycle policies
@@ -36,7 +36,7 @@ verify applied load config
 observed state wins over desired transitional state
 exact instance unload only
 no wildcard unload
-cleanup only WVM-owned/test-owned exact instances
+cleanup only host application-owned/test-owned exact instances
 duplicate instances must block or reconcile before new load
 timeout after load must reconcile through native list
 two-model swap must verify old model is unloaded before loading the new model
@@ -122,10 +122,10 @@ The L4 Lab path uses sanitized artifacts:
 
 ## Non-goals for the current stage
 
-Do not expand this Lab evidence directly into WVM runtime integration yet:
+Do not expand this Lab evidence directly into host application runtime integration yet:
 
 ```text
-no WVM runtime fix
+no host application runtime fix
 no QueueManager/UI changes
 no wildcard unload
 no cache/stateful experiments

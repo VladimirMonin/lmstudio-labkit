@@ -10,15 +10,15 @@ from urllib import error as urllib_error
 
 import pytest
 import yaml
-
 from libs.lmstudio_managed.generation import GenerationResponseEnvelope
 from libs.lmstudio_managed.metrics import batch_metrics_from_request_metrics
 from libs.lmstudio_managed.validation import (
     GenerationFailureKind,
     failure_kind_from_lab_category,
 )
-from tools import lmstudio_benchmark, lmstudio_lab
 from tools.lmstudio_lab import live_smoke as lmstudio_live_smoke
+
+from tools import lmstudio_benchmark, lmstudio_lab
 
 ABSOLUTE_PATH_PATTERNS = (
     re.compile(r"(?i)[A-Z]:[\\/][^\"\r\n]+"),

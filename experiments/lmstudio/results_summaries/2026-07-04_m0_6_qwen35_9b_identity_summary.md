@@ -32,7 +32,7 @@ compat_generation
 wildcard_unload
 cache/stateful
 vision
-WVM runtime
+host application runtime
 ```
 
 ## Observed identity facts

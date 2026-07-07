@@ -42,7 +42,7 @@ All of the above must remain synthetic/numeric-only and privacy-safe.
 ## Guardrails
 
 - lab-only
-- no WVM runtime
+- no host application runtime
 - no UI
 - no QueueManager
 - no `/v1/responses`

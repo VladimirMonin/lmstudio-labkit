@@ -112,7 +112,7 @@ Additional artifact check found no raw localhost URL, synthetic lecture text, br
 - The prompt-processing ratio is promising but should be treated as a candidate signal, not a production claim.
 - This is not a 25k lecture gate.
 - This is not Qwen recovery evidence.
-- This is not broad CUDA, vision, embeddings, WVM runtime integration or production default selection.
+- This is not broad CUDA, vision, embeddings, host application runtime integration or production default selection.
 
 ## Decision update
 

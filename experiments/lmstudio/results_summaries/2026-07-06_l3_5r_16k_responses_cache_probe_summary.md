@@ -25,7 +25,7 @@ Date: 2026-07-06
 - This result does not invalidate the earlier 2k/8k `responses_cache_accounting_candidate` result.
 - This result blocks any escalation toward 25k live through `/v1/responses` until the 16k failure mode is understood.
 - The failure pattern points to 16k payload / Responses endpoint behavior on the current build, not only to `previous_response_id` support.
-- No production WVM runtime, QueueManager, UI, or 25k live generation step is authorized.
+- No production host application runtime, QueueManager, UI, or 25k live generation step is authorized.
 
 ## Route interpretation
 

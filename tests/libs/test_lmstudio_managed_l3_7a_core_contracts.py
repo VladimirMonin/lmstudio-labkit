@@ -4,7 +4,6 @@ import json
 from dataclasses import fields
 from pathlib import Path
 
-from libs import lmstudio_managed
 from libs.lmstudio_managed import core_contracts
 from libs.lmstudio_managed.core_contracts import (
     EXACT_PUBLIC_MARKER_FIELDS,
@@ -26,6 +25,8 @@ from libs.lmstudio_managed.core_contracts import (
     build_l3_7a_recommendation_draft,
     validate_required_artifact_set,
 )
+
+from libs import lmstudio_managed
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 RESULTS_ROOT = PROJECT_ROOT / "experiments" / "lmstudio" / "results_summaries"

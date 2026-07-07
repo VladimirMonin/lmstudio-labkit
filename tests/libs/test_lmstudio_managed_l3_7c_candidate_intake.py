@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from libs import lmstudio_managed
 from libs.lmstudio_managed.core_contracts import RouteMode
 from libs.lmstudio_managed.registry.candidate_intake import (
     CURRENT_RESPONSES_LONG_CONTEXT_EVIDENCE_BUILD,
@@ -13,6 +12,8 @@ from libs.lmstudio_managed.registry.candidate_intake import (
     resolve_openai_responses_long_context_status,
 )
 from libs.lmstudio_managed.registry.profiles import ParameterClass
+
+from libs import lmstudio_managed
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 SUMMARY_PATH = (

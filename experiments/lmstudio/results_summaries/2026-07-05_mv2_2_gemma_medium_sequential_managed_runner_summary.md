@@ -91,10 +91,10 @@ Both privacy scans passed:
 - Not Qwen recovery evidence.
 - Not broad CUDA matrix evidence.
 - Not vision, embeddings, cache/stateful or mixed-workload evidence.
-- Not WVM runtime integration and not a production default selection.
+- Not host application runtime integration and not a production default selection.
 
 ## Next gates
 
 1. Commit the MV2.2-live managed-runner code and this summary.
 2. MV2.3: Gemma true_parallel=2 through ManagedLabRunner only after this sequential gate.
-3. Keep Qwen recovery, broad matrix, vision, embeddings, cache/stateful and WVM runtime integration out of scope until their own gates.
+3. Keep Qwen recovery, broad matrix, vision, embeddings, cache/stateful and host application runtime integration out of scope until their own gates.

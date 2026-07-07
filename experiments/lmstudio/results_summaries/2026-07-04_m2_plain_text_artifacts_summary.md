@@ -4,7 +4,7 @@
 
 - Date: 2026-07-04
 - Branch: `next/modular-backend-lab`
-- Evidence level: live LM Studio Lab plain-text artifact screening, not WVM runtime integration
+- Evidence level: live LM Studio Lab plain-text artifact screening, not host application runtime integration
 - Diagnostic kind: `plain_text_artifacts_normalized`
 - Tasks: `summary_short`, `lecture_notes`, `mic_command_answer`, `freeform_rewrite`
 - Temperature: `0`

@@ -28,5 +28,5 @@ Date: 2026-07-06
 ## Notes
 
 - `/v1/responses` is retained as a research-only cache-accounting lane and not a production default.
-- This slice does not prove physical KV reuse and does not authorize 25k live or WVM runtime integration.
+- This slice does not prove physical KV reuse and does not authorize 25k live or host application runtime integration.
 - Stored summary content remains privacy-safe and excludes raw prompt/response text, raw response IDs, raw URLs, and filesystem paths.

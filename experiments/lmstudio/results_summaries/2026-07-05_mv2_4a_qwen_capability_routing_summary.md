@@ -8,7 +8,7 @@ Date: 2026-07-05
 - Stage: MV2.4a capability/routing probe.
 - Evidence level: live localhost LM Studio GET-only probes.
 - No generation, no native load, no native unload, no download.
-- No broad matrix, no true_parallel Qwen, no WVM runtime integration.
+- No broad matrix, no true_parallel Qwen, no host application runtime integration.
 
 ## Commands
 
@@ -75,7 +75,7 @@ No prompts, responses, generated text, raw provider body, raw URLs, raw paths, A
 - It does not prove that content can be routed from reasoning output into public content.
 - It does not prove timeout/chunk policy for Qwen 9B.
 - It does not prove plain-text verbosity behavior.
-- It does not authorize Qwen true_parallel, broad matrix, vision, embeddings, cache/stateful or WVM runtime integration.
+- It does not authorize Qwen true_parallel, broad matrix, vision, embeddings, cache/stateful or host application runtime integration.
 
 ## Next gate
 

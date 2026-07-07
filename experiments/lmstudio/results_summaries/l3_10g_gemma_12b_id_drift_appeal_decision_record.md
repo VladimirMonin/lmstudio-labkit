@@ -151,7 +151,7 @@ This closes the L3.10 appeal and changes the L3.9 preliminary conclusion:
    - `structured_schema_variant=per_position_id_const`; or
    - baseline schema plus `business_failure_retry_limit=1` as a recovery profile.
 2. Do not make 12B a production default without a sustained hardened-profile run.
-3. Keep `/v1/responses`, route matrix, 26B generation, and WVM runtime integration
+3. Keep `/v1/responses`, route matrix, 26B generation, and host application runtime integration
    out of scope until sustained lab evidence exists.
 
 ## Artifact index

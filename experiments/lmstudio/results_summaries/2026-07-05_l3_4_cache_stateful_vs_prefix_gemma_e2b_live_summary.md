@@ -130,7 +130,7 @@ Additional artifact check found no raw localhost URL, synthetic lecture text, br
 - This is not TTFT or prompt-processing proof.
 - This is not a 25k lecture gate.
 - This is not Qwen recovery evidence.
-- This is not broad CUDA, vision, embeddings, WVM runtime integration or production default selection.
+- This is not broad CUDA, vision, embeddings, host application runtime integration or production default selection.
 
 ## Next gate
 
