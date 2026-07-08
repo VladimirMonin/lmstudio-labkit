@@ -1,4 +1,20 @@
 image_id: code_screenshot
-status: pending_user_asset
-identity_expected: false
-sensitive_attributes_expected: false
+image_type: code_screenshot
+status: ready
+expected_output:
+  summary: Synthetic dark-theme code editor screenshot with colored code-like rows and a neutral window chrome.
+  labels: [code_screenshot, code_editor, dark_theme, syntax_blocks, window_chrome]
+  visible_text_policy: synthetic_code_like_blocks_only
+  required_objects:
+    - window_controls
+    - editor_frame
+    - line_number_column
+    - colored_code_rows
+ground_truth:
+  scene_kind: synthetic_code
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true

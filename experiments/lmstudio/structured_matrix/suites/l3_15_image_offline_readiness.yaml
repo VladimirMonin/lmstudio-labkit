@@ -4,4 +4,4 @@ asset_manifest: ../datasets/image/manifest.yaml
 configs:
   - config: ../configs/matrix.image_offline_readiness.yaml
     required: true
-note: Image live is out of scope for L3.15; real image fixtures will be provided later by the owner.
+note: Image live is out of scope for L3.15; fixtures are deterministic synthetic public-safe PNGs generated inside the repo.

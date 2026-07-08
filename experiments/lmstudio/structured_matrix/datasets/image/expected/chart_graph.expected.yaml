@@ -1,4 +1,21 @@
 image_id: chart_graph
-status: pending_user_asset
-identity_expected: false
-sensitive_attributes_expected: false
+image_type: chart_graph
+status: ready
+expected_output:
+  summary: Synthetic chart with axes, grid lines, four vertical bars, and an overlaid red trend line.
+  labels: [chart_graph, chart, graph, bar_series, trend_line]
+  visible_text_policy: no_text_required
+  required_objects:
+    - x_axis
+    - y_axis
+    - grid_lines
+    - four_bars
+    - trend_line
+ground_truth:
+  scene_kind: synthetic_chart
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true

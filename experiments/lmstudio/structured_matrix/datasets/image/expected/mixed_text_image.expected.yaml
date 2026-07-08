@@ -1,4 +1,20 @@
 image_id: mixed_text_image
-status: pending_user_asset
-identity_expected: false
-sensitive_attributes_expected: false
+image_type: mixed_text_image
+status: ready
+expected_output:
+  summary: Synthetic mixed image with a left illustration panel and right-side text-like content blocks.
+  labels: [mixed_text_image, illustration_panel, text_blocks, callout]
+  visible_text_policy: synthetic_short_labels_only
+  required_objects:
+    - image_panel
+    - circle_icon
+    - horizontal_text_blocks
+    - highlighted_callout
+ground_truth:
+  scene_kind: synthetic_mixed_text_image
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true

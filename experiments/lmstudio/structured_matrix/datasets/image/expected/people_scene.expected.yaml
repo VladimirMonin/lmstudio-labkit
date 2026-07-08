@@ -1,4 +1,19 @@
 image_id: people_scene
-status: pending_user_asset
-identity_expected: false
-sensitive_attributes_expected: false
+image_type: people_scene
+status: ready
+expected_output:
+  summary: Synthetic non-identifying illustration of three generic people in a simple indoor/outdoor scene.
+  labels: [people_scene, synthetic_people, non_identifying, simple_scene]
+  visible_text_policy: no_text_required
+  required_objects:
+    - three_generic_people
+    - background_panels
+    - ground_area
+ground_truth:
+  scene_kind: synthetic_people_scene
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true

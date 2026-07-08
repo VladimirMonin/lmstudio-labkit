@@ -221,6 +221,8 @@ class MatrixCell:
                 "task_id": self.task.task_id,
                 "task_family": self.task.family,
                 "fake_mode": self.task.fake_mode,
+                "cache_mode": self.axes.get("cache_mode", "none"),
+                "is_warmup_request": _is_warmup_first_request(self),
             },
         )
         options = ExecutionOptions(
@@ -558,6 +560,8 @@ def run_matrix(
                 input_char_count=input_char_count,
             )
             recovered = validation.status == "pass" and result.status == "ok"
+        cache_telemetry = _cache_telemetry_fields(cell, request_plan)
+        timing_telemetry = _timing_telemetry_fields(result)
         row = {
             "run_id": config.run_id,
             "cell_id": cell.cell_id,
@@ -573,6 +577,8 @@ def run_matrix(
             "retry_recovered": recovered,
             "status": "pass" if validation.status == "pass" and result.status == "ok" else "fail",
             "error_category": _first_error_category(validation),
+            **cache_telemetry,
+            **timing_telemetry,
         }
         if live_requested:
             row["lab_only_flags"] = LAB_ONLY_LIVE_FLAGS.as_dict()
@@ -620,6 +626,8 @@ def run_live_small_text_screening(
             finish_reason=result.finish_reason,
             input_char_count=input_char_count,
         )
+        cache_telemetry = _cache_telemetry_fields(cell, request_plan)
+        timing_telemetry = _timing_telemetry_fields(result)
         rows.append(
             {
                 "run_id": config.run_id,
@@ -639,6 +647,8 @@ def run_live_small_text_screening(
                 else "fail",
                 "error_category": _first_error_category(validation),
                 "lab_only_flags": LAB_ONLY_LIVE_FLAGS.as_dict(),
+                **cache_telemetry,
+                **timing_telemetry,
             }
         )
     planner_summary = plan.planner_summary(live=True)
@@ -1046,6 +1056,97 @@ def _cell_id(
         ).encode("utf-8")
     ).hexdigest()[:12]
     return f"cell_{digest}"
+
+
+def _is_warmup_first_request(cell: MatrixCell) -> bool:
+    return cell.axes.get("cache_mode", "none") == "warmup_first" and cell.repeat_index == 0
+
+
+def _cache_telemetry_fields(cell: MatrixCell, request_plan: RequestPlan) -> dict[str, Any]:
+    cache_mode = cell.axes.get("cache_mode", "none")
+    request_metadata = request_plan.envelope.safe_metadata()
+    response_contract = request_metadata.get("response_contract")
+    schema_hash = (
+        response_contract.get("schema_hash") if isinstance(response_contract, dict) else None
+    )
+    prompt_template_hash = stable_hash(cell.task.prompt) if cell.task.prompt else None
+    text_inputs = request_metadata.get("text_inputs")
+    image_inputs = request_metadata.get("image_inputs")
+    dynamic_input_hash = _hash_json_payload(
+        {
+            "task_id": cell.task.task_id,
+            "text_inputs": text_inputs if isinstance(text_inputs, list) else [],
+            "image_inputs": image_inputs if isinstance(image_inputs, list) else [],
+        }
+    )
+    stable_prefix_hash = _hash_json_payload(
+        {
+            "endpoint_family": request_plan.options.endpoint_family,
+            "model_id": request_plan.options.model_id,
+            "prompt_template_hash": prompt_template_hash,
+            "schema_hash": schema_hash,
+        }
+    )
+    repeat_group_id = (
+        "repeat_"
+        + _hash_json_payload(
+            {
+                "model_key": cell.model.model_key,
+                "task_id": cell.task.task_id,
+                "axes": cell.axes,
+            }
+        )[:16]
+    )
+    cache_group_id = (
+        "cache_"
+        + _hash_json_payload(
+            {
+                "cache_mode": cache_mode,
+                "model_key": cell.model.model_key,
+                "stable_prefix_hash": stable_prefix_hash,
+                "task_id": cell.task.task_id,
+            }
+        )[:16]
+    )
+    return {
+        "cache_mode": cache_mode,
+        "cache_group_id": cache_group_id,
+        "warmup_request_index": cell.repeat_index + 1 if cache_mode == "warmup_first" else None,
+        "is_warmup_request": _is_warmup_first_request(cell),
+        "stable_prefix_hash": stable_prefix_hash,
+        "schema_hash": schema_hash,
+        "prompt_template_hash": prompt_template_hash,
+        "dynamic_input_hash": dynamic_input_hash,
+        "repeat_group_id": repeat_group_id,
+        "same_input_hash": _hash_json_payload(
+            {
+                "dynamic_input_hash": dynamic_input_hash,
+                "schema_hash": schema_hash,
+                "prompt_template_hash": prompt_template_hash,
+            }
+        ),
+        "cache_hit_inferred": "unknown",
+        "cache_hit_reported": "unknown",
+        "kv_reuse_proven": False,
+    }
+
+
+def _timing_telemetry_fields(result: RequestResult) -> dict[str, Any]:
+    latency_ms = result.latency_ms
+    completion_tokens = result.token_counts.get("completion")
+    tokens_per_sec = None
+    if completion_tokens is not None and latency_ms > 0:
+        tokens_per_sec = round(completion_tokens / (latency_ms / 1000), 4)
+    return {
+        "ttft_ms": None,
+        "prompt_processing_ms": None,
+        "total_latency_ms": latency_ms,
+        "tokens_per_sec": tokens_per_sec,
+    }
+
+
+def _hash_json_payload(payload: dict[str, Any]) -> str:
+    return stable_hash(json.dumps(payload, ensure_ascii=False, sort_keys=True, default=str))
 
 
 def _first_error_category(validation: Any) -> str | None:

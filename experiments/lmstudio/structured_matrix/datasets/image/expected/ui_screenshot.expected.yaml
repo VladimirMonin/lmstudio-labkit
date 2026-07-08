@@ -1,4 +1,20 @@
 image_id: ui_screenshot
-status: pending_user_asset
-identity_expected: false
-sensitive_attributes_expected: false
+image_type: ui_screenshot
+status: ready
+expected_output:
+  summary: Synthetic dashboard-like user interface screenshot with header, sidebar, metric cards, and a line chart.
+  labels: [ui_screenshot, dashboard, sidebar, metric_cards, line_chart]
+  visible_text_policy: synthetic_short_labels_only
+  required_objects:
+    - top_header
+    - left_sidebar
+    - three_metric_cards
+    - chart_panel
+ground_truth:
+  scene_kind: synthetic_ui
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true

@@ -13,8 +13,8 @@ tasks:
     language_policy: strict_ru
     structure_complexity: simple
     volume: single
-    prompt: Synthetic image readiness placeholder. Real assets are provided later by the owner.
-    image_hash: pending_user_assets
+    prompt: Synthetic public-safe image readiness fixture pack. No live image inference is run.
+    image_hash: sha256:synthetic-fixture-manifest-v1
     schema:
       type: object
       required: [description, labels]
@@ -30,10 +30,11 @@ tasks:
             type: string
             minLength: 1
     expected_output:
-      description: Изображения будут добавлены позже
-      labels: [pending_user_assets]
+      description: Синтетический публично-безопасный набор изображений готов
+      labels: [synthetic_public_safe]
     image_ground_truth:
-      asset_status: pending_user_assets
+      asset_status: synthetic_public_safe
+      fixture_count: 6
       identity_expected: false
       sensitive_attributes_expected: false
     fake_mode: valid

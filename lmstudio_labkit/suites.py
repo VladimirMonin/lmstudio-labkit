@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
@@ -13,9 +14,12 @@ from .preflight import preflight_config
 from .privacy import assert_privacy_scan_passed
 from .reports import summarize_run
 
+_SAFE_ID_RE = re.compile(r"^[A-Za-z0-9_.-]{1,120}$")
+
 
 @dataclass(frozen=True, slots=True)
 class SuiteEntry:
+    entry_id: str | None
     config: Path
     required: bool = True
     run_after: tuple[str, ...] = ()
@@ -39,13 +43,17 @@ class SuiteConfig:
         entries: list[SuiteEntry] = []
         for item in raw_entries:
             if isinstance(item, str):
-                entries.append(SuiteEntry(config=_resolve_suite_path(source, item)))
+                entries.append(SuiteEntry(entry_id=None, config=_resolve_suite_path(source, item)))
                 continue
             if not isinstance(item, dict):
                 raise ValueError("suite configs entries must be strings or mappings")
+            config_value = item.get("config", item.get("path"))
+            if config_value is None:
+                raise ValueError("suite config entries require config or path")
             entries.append(
                 SuiteEntry(
-                    config=_resolve_suite_path(source, str(item["config"])),
+                    entry_id=str(item["id"]) if item.get("id") is not None else None,
+                    config=_resolve_suite_path(source, str(config_value)),
                     required=bool(item.get("required", True)),
                     run_after=tuple(str(dep) for dep in item.get("run_after", [])),
                 )
@@ -74,9 +82,11 @@ def plan_suite(suite_path: str | Path, output_root: str | Path) -> dict[str, Any
     suite = SuiteConfig.from_file(suite_path)
     suite_dir = _prepare_suite_dir(suite, output_root, resume=False)
     _copy_suite_config(suite_path, suite_dir)
+    _write_json(suite_dir / "suite_preflight.json", preflight_suite(suite_path))
     records = []
     for entry in _ordered_entries(suite):
         config = BenchmarkConfig.from_file(entry.config)
+        _validate_safe_local_id(config.run_id, field="run_id")
         artifacts = write_matrix_plan(config, suite_dir / "runs")
         records.append(_record(entry, config, "planned", artifacts.as_dict()))
     return _write_suite_artifacts(suite_dir, suite, records, mode="plan")
@@ -94,14 +104,17 @@ def run_suite(
     suite = SuiteConfig.from_file(suite_path)
     suite_dir = _prepare_suite_dir(suite, output_root, resume=resume)
     _copy_suite_config(suite_path, suite_dir)
+    _write_json(suite_dir / "suite_preflight.json", preflight_suite(suite_path))
     records: list[dict[str, Any]] = []
     for entry in _ordered_entries(suite):
         config = BenchmarkConfig.from_file(entry.config)
+        _validate_safe_local_id(config.run_id, field="run_id")
         run_dir = suite_dir / "runs" / config.run_id
-        if resume and _run_complete(run_dir):
+        if resume and _run_complete(run_dir, config):
             records.append(_record(entry, config, "skipped", {"output_dir": str(run_dir)}))
             continue
         if run_dir.exists():
+            _assert_inside_suite_runs(run_dir, suite_dir)
             shutil.rmtree(run_dir)
         artifacts = run_matrix(config, suite_dir / "runs")
         summary = summarize_run(artifacts.output_dir)
@@ -127,6 +140,7 @@ def summarize_suite(suite_run_dir: str | Path) -> dict[str, Any]:
     payload["status"] = "pass" if payload["fail_count"] == 0 else "fail"
     _write_json(suite_dir / "suite_summary.json", payload)
     (suite_dir / "suite_report.md").write_text(_suite_report(payload), encoding="utf-8")
+    _write_decision_record(suite_dir, payload)
     return payload
 
 
@@ -159,6 +173,7 @@ def _resolve_suite_path(source: Path, value: str) -> Path:
 
 
 def _prepare_suite_dir(suite: SuiteConfig, output_root: str | Path, *, resume: bool) -> Path:
+    _validate_safe_local_id(suite.suite_id, field="suite_id")
     suite_dir = Path(output_root) / suite.suite_id
     if suite_dir.exists() and not resume:
         raise FileExistsError(f"suite output directory already exists: {suite_dir}")
@@ -172,7 +187,9 @@ def _copy_suite_config(suite_path: str | Path, suite_dir: Path) -> None:
 
 def _ordered_entries(suite: SuiteConfig) -> tuple[SuiteEntry, ...]:
     # Minimal deterministic order. run_after is validated for known run_ids and otherwise kept declarative.
-    known = {BenchmarkConfig.from_file(entry.config).run_id for entry in suite.entries}
+    known = {
+        _entry_identifier(entry, BenchmarkConfig.from_file(entry.config)) for entry in suite.entries
+    }
     for entry in suite.entries:
         missing = set(entry.run_after) - known
         if missing:
@@ -180,11 +197,12 @@ def _ordered_entries(suite: SuiteConfig) -> tuple[SuiteEntry, ...]:
     return suite.entries
 
 
-def _run_complete(run_dir: Path) -> bool:
+def _run_complete(run_dir: Path, config: BenchmarkConfig) -> bool:
     required = [
         run_dir / "privacy_scan.json",
         run_dir / "report.md",
         run_dir / "cell_results.jsonl",
+        run_dir / "planner_summary.json",
     ]
     if not all(path.exists() for path in required):
         return False
@@ -193,14 +211,18 @@ def _run_complete(run_dir: Path) -> bool:
         assert_privacy_scan_passed(privacy)
     except Exception:
         return False
-    planner = run_dir / "planner_summary.json"
-    return planner.exists()
+    planner = json.loads((run_dir / "planner_summary.json").read_text(encoding="utf-8"))
+    if planner.get("config_hash") != config.safe_hash():
+        return False
+    rows = _read_jsonl(run_dir / "cell_results.jsonl")
+    return len(rows) == int(planner.get("cell_count", 0))
 
 
 def _record(
     entry: SuiteEntry, config: BenchmarkConfig, status: str, artifacts: dict[str, str]
 ) -> dict[str, Any]:
     return {
+        "config_id": _entry_identifier(entry, config),
         "config": str(entry.config),
         "run_id": config.run_id,
         "config_hash": config.safe_hash(),
@@ -225,14 +247,74 @@ def _write_suite_artifacts(
         else "fail",
         "records": records,
     }
+    summary = _suite_summary_payload(suite.suite_id, records, mode=mode)
     _write_json(
         suite_dir / "suite_plan.json",
         payload if mode == "plan" else {"suite_id": suite.suite_id, "records": records},
     )
-    _write_jsonl(suite_dir / "suite_results.jsonl", records)
+    _write_jsonl(suite_dir / "suite_results.jsonl", _dedupe_suite_results(suite_dir, records))
+    _write_json(suite_dir / "suite_summary.json", summary)
+    (suite_dir / "suite_report.md").write_text(_suite_report(summary), encoding="utf-8")
+    _write_decision_record(suite_dir, summary)
     if mode == "run":
         summarize_suite(suite_dir)
     return payload
+
+
+def _entry_identifier(entry: SuiteEntry, config: BenchmarkConfig) -> str:
+    return entry.entry_id or config.run_id
+
+
+def _suite_summary_payload(
+    suite_id: str, records: list[dict[str, Any]], *, mode: str
+) -> dict[str, Any]:
+    passed = sum(1 for item in records if item.get("status") in {"planned", "passed", "skipped"})
+    failed = len(records) - passed
+    return {
+        "suite_id": suite_id,
+        "mode": mode,
+        "status": "pass" if failed == 0 else "fail",
+        "run_count": len(records),
+        "attempt_count": len(records),
+        "pass_count": passed,
+        "fail_count": failed,
+        "records": records,
+    }
+
+
+def _dedupe_suite_results(suite_dir: Path, records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    keyed: dict[tuple[str, str], dict[str, Any]] = {}
+    for row in _read_jsonl(suite_dir / "suite_results.jsonl"):
+        key = (str(row.get("config_id") or row.get("run_id")), str(row.get("config_hash")))
+        keyed[key] = row
+    for row in records:
+        key = (str(row.get("config_id") or row.get("run_id")), str(row.get("config_hash")))
+        keyed[key] = row
+    return [keyed[key] for key in sorted(keyed)]
+
+
+def _write_decision_record(suite_dir: Path, payload: dict[str, Any]) -> None:
+    lines = [
+        "# LabKit suite decision record",
+        "",
+        f"- suite_id: `{payload['suite_id']}`",
+        f"- status: `{payload['status']}`",
+        f"- run_count: `{payload['run_count']}`",
+        f"- pass_count: `{payload['pass_count']}`",
+        f"- fail_count: `{payload['fail_count']}`",
+        "",
+        "## Decision",
+        "",
+        "Review the suite artifacts before any later live execution window.",
+        "",
+        "## Non-claims",
+        "",
+        "- No live inference is proven by offline suite artifacts.",
+        "- No model load or model download is proven by offline suite artifacts.",
+        "- KV reuse, throughput, and image-live readiness require separate explicit live approval.",
+        "",
+    ]
+    (suite_dir / "suite_decision_record.md").write_text("\n".join(lines), encoding="utf-8")
 
 
 def _suite_report(payload: dict[str, Any]) -> str:
@@ -267,3 +349,21 @@ def _write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
     with path.open("w", encoding="utf-8") as stream:
         for row in rows:
             stream.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
+
+
+def _read_jsonl(path: Path) -> list[dict[str, Any]]:
+    if not path.exists() or path.stat().st_size == 0:
+        return []
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
+
+
+def _assert_inside_suite_runs(run_dir: Path, suite_dir: Path) -> None:
+    resolved = run_dir.resolve()
+    runs_root = (suite_dir / "runs").resolve()
+    if not resolved.is_relative_to(runs_root):
+        raise ValueError(f"refusing to rerun outside suite output root: {run_dir}")
+
+
+def _validate_safe_local_id(value: str, *, field: str) -> None:
+    if not _SAFE_ID_RE.fullmatch(value):
+        raise ValueError(f"{field} must be a safe local identifier")

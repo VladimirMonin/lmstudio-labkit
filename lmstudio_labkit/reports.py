@@ -49,6 +49,7 @@ def summarize_run(run_dir: str | Path) -> dict[str, Any]:
         "per_complexity": _axis_counts(rows, axis="structure_complexity"),
         "per_schema_variant": _axis_counts(rows, axis="schema_variant"),
         "per_retry_policy": _axis_counts(rows, axis="retry_policy"),
+        "per_cache_mode": _axis_counts(rows, axis="cache_mode"),
         "failure_taxonomy": _failure_taxonomy(rows),
         "retry_impact": _retry_impact(rows),
     }

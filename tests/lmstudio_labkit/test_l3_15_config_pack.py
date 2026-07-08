@@ -38,17 +38,16 @@ def test_throughput_config_contains_cache_and_parallel_axes_without_live() -> No
     assert len(plan.cells) > 0
 
 
-def test_image_manifest_is_pending_public_safe_contract() -> None:
+def test_image_manifest_is_synthetic_public_safe_contract() -> None:
     manifest = yaml.safe_load(IMAGE_MANIFEST.read_text(encoding="utf-8"))
 
-    assert manifest["asset_status"] == "pending_user_assets"
-    assert manifest["resize_policy"] == {
-        "mode": "fit_max_side",
-        "crop": False,
-        "default_max_side": 1024,
-        "fallback_max_side": 512,
-        "jpeg_quality": 85,
-    }
+    assert manifest["asset_status"] == "synthetic_public_safe"
+    assert manifest["resize_policy"]["mode"] == "fit_max_side"
+    assert manifest["resize_policy"]["crop"] is False
+    assert manifest["resize_policy"]["default_max_side"] == 1024
+    assert manifest["resize_policy"]["fallback_max_side"] == 512
+    assert manifest["resize_policy"]["jpeg_quality"] == 85
     assert len(manifest["fixtures"]) == 6
-    assert all(item["status"] == "pending_user_asset" for item in manifest["fixtures"])
+    assert all(item["status"] == "ready" for item in manifest["fixtures"])
+    assert all(item["synthetic"] is True for item in manifest["fixtures"])
     assert "image_hash" in manifest["report_fields"]

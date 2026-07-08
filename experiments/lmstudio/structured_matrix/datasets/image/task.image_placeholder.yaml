@@ -1,4 +1,4 @@
-task_id: image_placeholder_readiness
+task_id: image_synthetic_readiness
 modality: image
 language: ru_ru
 language_policy: strict_ru
@@ -8,15 +8,17 @@ schema_family: image_simple
 schema_variant: hardened_const
 prompt_template: default
 input_ref:
-  content_hash: pending_user_assets
+  manifest_id: l3_15_image_offline_assets
+  content_hash: sha256:synthetic-fixture-manifest-v1
 expected:
-  labels: [pending_user_assets]
+  labels: [synthetic_public_safe]
   image_ground_truth:
-    asset_status: pending_user_assets
+    asset_status: synthetic_public_safe
+    fixture_count: 6
     identity_expected: false
     sensitive_attributes_expected: false
 privacy:
   synthetic: true
   raw_public_safe: true
 fake_mode: valid
-tags: [synthetic, image_readiness, pending_user_assets]
+tags: [synthetic, image_readiness, offline]

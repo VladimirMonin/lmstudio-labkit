@@ -140,6 +140,19 @@ def _write_cell_summary(
         "context_tier",
         "schema_variant",
         "retry_policy",
+        "cache_mode",
+        "cache_group_id",
+        "warmup_request_index",
+        "is_warmup_request",
+        "stable_prefix_hash",
+        "schema_hash",
+        "prompt_template_hash",
+        "dynamic_input_hash",
+        "repeat_group_id",
+        "same_input_hash",
+        "cache_hit_inferred",
+        "cache_hit_reported",
+        "kv_reuse_proven",
         "repeat_index",
         "status",
         "json_parse_status",
@@ -161,6 +174,10 @@ def _write_cell_summary(
         "retry_recovered",
         "error_category",
         "latency_ms",
+        "ttft_ms",
+        "prompt_processing_ms",
+        "total_latency_ms",
+        "tokens_per_sec",
         "prompt_tokens",
         "completion_tokens",
         "response_char_count",
@@ -204,8 +221,8 @@ def _write_model_summary(
 
 
 def _cell_summary_row(row: dict[str, Any]) -> dict[str, Any]:
-    axes = row.get("axes") if isinstance(row.get("axes"), dict) else {}
-    result = row.get("result") if isinstance(row.get("result"), dict) else {}
+    axes: dict[str, Any] = row["axes"] if isinstance(row.get("axes"), dict) else {}
+    result: dict[str, Any] = row["result"] if isinstance(row.get("result"), dict) else {}
     token_counts = (
         result.get("token_counts") if isinstance(result.get("token_counts"), dict) else {}
     )
@@ -225,6 +242,19 @@ def _cell_summary_row(row: dict[str, Any]) -> dict[str, Any]:
         "context_tier": axes.get("context_tier"),
         "schema_variant": axes.get("schema_variant"),
         "retry_policy": axes.get("retry_policy"),
+        "cache_mode": row.get("cache_mode") or axes.get("cache_mode"),
+        "cache_group_id": row.get("cache_group_id"),
+        "warmup_request_index": row.get("warmup_request_index"),
+        "is_warmup_request": row.get("is_warmup_request"),
+        "stable_prefix_hash": row.get("stable_prefix_hash"),
+        "schema_hash": row.get("schema_hash"),
+        "prompt_template_hash": row.get("prompt_template_hash"),
+        "dynamic_input_hash": row.get("dynamic_input_hash"),
+        "repeat_group_id": row.get("repeat_group_id"),
+        "same_input_hash": row.get("same_input_hash"),
+        "cache_hit_inferred": row.get("cache_hit_inferred"),
+        "cache_hit_reported": row.get("cache_hit_reported"),
+        "kv_reuse_proven": row.get("kv_reuse_proven"),
         "repeat_index": row.get("repeat_index"),
         "status": row.get("status"),
         "json_parse_status": _validation_status(validation_results, "json_parse"),
@@ -248,6 +278,10 @@ def _cell_summary_row(row: dict[str, Any]) -> dict[str, Any]:
         "retry_recovered": row.get("retry_recovered"),
         "error_category": row.get("error_category") or result.get("error_category"),
         "latency_ms": result.get("latency_ms"),
+        "ttft_ms": row.get("ttft_ms"),
+        "prompt_processing_ms": row.get("prompt_processing_ms"),
+        "total_latency_ms": row.get("total_latency_ms"),
+        "tokens_per_sec": row.get("tokens_per_sec"),
         "prompt_tokens": token_counts.get("prompt"),
         "completion_tokens": token_counts.get("completion"),
         "response_char_count": result.get("response_char_count"),
@@ -420,13 +454,26 @@ def _write_resource_summary(
             {
                 "cell_id": row.get("cell_id"),
                 "latency_ms": result.get("latency_ms"),
+                "ttft_ms": row.get("ttft_ms"),
+                "prompt_processing_ms": row.get("prompt_processing_ms"),
+                "total_latency_ms": row.get("total_latency_ms"),
+                "tokens_per_sec": row.get("tokens_per_sec"),
                 "prompt_tokens": token_counts.get("prompt"),
                 "completion_tokens": token_counts.get("completion"),
             }
         )
     _write_csv(
         path,
-        ["cell_id", "latency_ms", "prompt_tokens", "completion_tokens"],
+        [
+            "cell_id",
+            "latency_ms",
+            "ttft_ms",
+            "prompt_processing_ms",
+            "total_latency_ms",
+            "tokens_per_sec",
+            "prompt_tokens",
+            "completion_tokens",
+        ],
         summary_rows,
     )
 
@@ -531,6 +578,10 @@ def _build_report(
         "### Retry",
         "",
         *_retry_lines(retry_counts),
+        "",
+        "### Cache mode",
+        "",
+        *_axis_lines(axis_counts, "cache_mode"),
         "",
         "## Skipped cells",
         "",

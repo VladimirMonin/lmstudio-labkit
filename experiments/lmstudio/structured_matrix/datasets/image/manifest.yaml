@@ -1,42 +1,93 @@
 manifest_id: l3_15_image_offline_assets
-asset_status: pending_user_assets
+asset_status: synthetic_public_safe
+fixture_generator: fixtures/generate_synthetic_fixtures.py
 resize_policy:
   mode: fit_max_side
   crop: false
   default_max_side: 1024
   fallback_max_side: 512
   jpeg_quality: 85
+  hash_algorithm: sha256
+  path_policy: store_repo_relative_paths_only
 fixtures:
   - image_id: ui_screenshot
     image_type: ui_screenshot
-    file_name: pending/ui_screenshot.png
+    file_name: fixtures/ui_screenshot.png
     expected_file: expected/ui_screenshot.expected.yaml
-    status: pending_user_asset
+    status: ready
+    synthetic: true
+    original_width: 320
+    original_height: 200
+    resized_width: 320
+    resized_height: 200
+    image_bytes_before: 1003
+    image_bytes_after: 1003
+    image_hash: sha256:db1792c88a05de0fbacfdbe0c31fe9f80523b2a4848d4d3096e91d6e165aa2f7
   - image_id: code_screenshot
     image_type: code_screenshot
-    file_name: pending/code_screenshot.png
+    file_name: fixtures/code_screenshot.png
     expected_file: expected/code_screenshot.expected.yaml
-    status: pending_user_asset
+    status: ready
+    synthetic: true
+    original_width: 320
+    original_height: 200
+    resized_width: 320
+    resized_height: 200
+    image_bytes_before: 948
+    image_bytes_after: 948
+    image_hash: sha256:acf189c7b40a908deb26f1a72087d13f596965a312867155425aa0dfc1753d01
   - image_id: document_table
     image_type: document_table
-    file_name: pending/document_table.png
+    file_name: fixtures/document_table.png
     expected_file: expected/document_table.expected.yaml
-    status: pending_user_asset
+    status: ready
+    synthetic: true
+    original_width: 320
+    original_height: 200
+    resized_width: 320
+    resized_height: 200
+    image_bytes_before: 924
+    image_bytes_after: 924
+    image_hash: sha256:ce78b684dd7405c2e8bcec2d4aa09695f7d57b0e87c71ad7badf8041bdff47ba
   - image_id: chart_graph
     image_type: chart_graph
-    file_name: pending/chart_graph.png
+    file_name: fixtures/chart_graph.png
     expected_file: expected/chart_graph.expected.yaml
-    status: pending_user_asset
+    status: ready
+    synthetic: true
+    original_width: 320
+    original_height: 200
+    resized_width: 320
+    resized_height: 200
+    image_bytes_before: 1244
+    image_bytes_after: 1244
+    image_hash: sha256:e14a0580566464747d74eeeb3177344f51a45d24a7c9f44831ba62f7e6587d26
   - image_id: people_scene
     image_type: people_scene
-    file_name: pending/people_scene.png
+    file_name: fixtures/people_scene.png
     expected_file: expected/people_scene.expected.yaml
-    status: pending_user_asset
+    status: ready
+    synthetic: true
+    original_width: 320
+    original_height: 200
+    resized_width: 320
+    resized_height: 200
+    image_bytes_before: 1374
+    image_bytes_after: 1374
+    image_hash: sha256:b2054d1380e8dfc48a309100b35f5f44f48cd2718366c1527b19481b9974339f
   - image_id: mixed_text_image
     image_type: mixed_text_image
-    file_name: pending/mixed_text_image.png
+    file_name: fixtures/mixed_text_image.png
     expected_file: expected/mixed_text_image.expected.yaml
-    status: pending_user_asset
+    status: ready
+    synthetic: true
+    original_width: 320
+    original_height: 200
+    resized_width: 320
+    resized_height: 200
+    image_bytes_before: 1035
+    image_bytes_after: 1035
+    image_hash: sha256:859449972913a33ec1c76bb3ad13b2cb870f96289a2d0af92b4cc106d7480092
 report_fields:
   - image_type
   - resize_mode
@@ -49,7 +100,13 @@ report_fields:
   - image_bytes_before
   - image_bytes_after
   - image_hash
+privacy:
+  synthetic: true
+  raw_public_safe: true
+  private_paths_stored: false
+  real_people_stored: false
+  source_application_screenshots_stored: false
 non_claims:
   - No image live inference is part of L3.15.
   - No private/source screenshots are included.
-  - Real assets are pending owner delivery.
+  - Synthetic fixtures are placeholders for future owner-provided assets.

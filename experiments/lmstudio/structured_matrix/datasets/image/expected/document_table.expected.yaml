@@ -1,4 +1,20 @@
 image_id: document_table
-status: pending_user_asset
-identity_expected: false
-sensitive_attributes_expected: false
+image_type: document_table
+status: ready
+expected_output:
+  summary: Synthetic document page containing a four-column table with header row and three data rows.
+  labels: [document_table, document, table, header_row, data_rows]
+  visible_text_policy: synthetic_table_blocks_only
+  required_objects:
+    - document_title_band
+    - four_column_table
+    - header_row
+    - three_body_rows
+ground_truth:
+  scene_kind: synthetic_document_table
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true
