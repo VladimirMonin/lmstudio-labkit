@@ -51,6 +51,10 @@ DEFAULT_AXES = {
     "image_interaction_mode": ["single_question"],
     "image_type": ["none"],
     "output_language": ["none"],
+    "task_intent": ["generic"],
+    "input_profile": ["clean"],
+    "output_language_policy": ["preserve_input_language"],
+    "validation_policy": ["automatic"],
 }
 
 
@@ -88,6 +92,10 @@ class TaskSpec:
     min_length_ratio: float | None = None
     max_length_ratio: float | None = None
     length_ratio_policy: str | dict[str, Any] = "hard"
+    task_intent: str = "generic"
+    input_profile: str = "clean"
+    output_language_policy: str = "preserve_input_language"
+    validation_policy: str = "automatic"
 
 
 @dataclass(frozen=True, slots=True)
@@ -201,7 +209,9 @@ class MatrixCell:
             id_field_names=self.task.id_field_names,
             preserve_order=self.task.preserve_order,
             language=self.axes.get("language"),
-            language_policy=self.task.language_policy,
+            language_policy=self.task.language_policy
+            or self.axes.get("output_language_policy")
+            or self.task.output_language_policy,
             expected_output=self.task.expected_output,
             image_ground_truth=self.task.image_ground_truth,
             min_length_ratio=self.task.min_length_ratio,
@@ -296,6 +306,10 @@ def _build_matrix_plan(config: BenchmarkConfig) -> MatrixPlan:
         ("image_interaction_mode", lambda task: ("single_question",)),
         ("image_type", lambda task: ("none",)),
         ("output_language", lambda task: ("none",)),
+        ("task_intent", lambda task: (task.task_intent,)),
+        ("input_profile", lambda task: (task.input_profile,)),
+        ("output_language_policy", lambda task: (task.output_language_policy,)),
+        ("validation_policy", lambda task: (task.validation_policy,)),
         ("execution_target", lambda task: ("local_managed",)),
         ("resource_telemetry_mode", lambda task: ("full",)),
     )
@@ -364,6 +378,17 @@ def _compatibility_skip_reason(
         return "complexity_mismatch"
     if axes.get("volume", task.volume) != task.volume:
         return "volume_mismatch"
+    if axes.get("task_intent", task.task_intent) != task.task_intent:
+        return "task_intent_mismatch"
+    if axes.get("input_profile", task.input_profile) != task.input_profile:
+        return "input_profile_mismatch"
+    if (
+        axes.get("output_language_policy", task.output_language_policy)
+        != task.output_language_policy
+    ):
+        return "output_language_policy_mismatch"
+    if axes.get("validation_policy", task.validation_policy) != task.validation_policy:
+        return "validation_policy_mismatch"
     context_tier = axes.get("context_tier")
     if model.supported_context_tiers and context_tier not in model.supported_context_tiers:
         return "unsupported_context_tier"
@@ -841,6 +866,12 @@ def _task_from_dict(payload: dict[str, Any]) -> TaskSpec:
         length_ratio_policy=_length_ratio_policy_from_dict(
             payload.get("length_ratio_policy", "hard")
         ),
+        task_intent=str(payload.get("task_intent", "generic")),
+        input_profile=str(payload.get("input_profile", "clean")),
+        output_language_policy=str(
+            payload.get("output_language_policy", "preserve_input_language")
+        ),
+        validation_policy=str(payload.get("validation_policy", "automatic")),
     )
 
 

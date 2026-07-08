@@ -1,0 +1,140 @@
+{
+  "attempt_count": 20,
+  "cache_modes": [
+    "none"
+  ],
+  "cell_count": 20,
+  "config_hash": "c8ebd466b8cb8de5869ddce6b8ebb2a9b1196624de554555177b64127823168f",
+  "execution_modes": [
+    "offline_fake"
+  ],
+  "execution_targets": [
+    "offline_fake"
+  ],
+  "fail_count": 0,
+  "failure_categories": {},
+  "filtered_cell_count": 20,
+  "hard_fail_count": 0,
+  "length_ratio_failures": {
+    "count": 0,
+    "max_actual_ratio": null,
+    "min_actual_ratio": null,
+    "model_ids": [],
+    "policy_max": [],
+    "policy_min": [],
+    "task_ids": []
+  },
+  "length_ratio_warning_count": 0,
+  "lifecycle": {
+    "cleanup_scopes": [],
+    "final_loaded_instances": [],
+    "load_scopes": [],
+    "session_cleanup_verified": [],
+    "session_ids": [],
+    "session_request_counts": [],
+    "session_request_indices": []
+  },
+  "live": false,
+  "live_bridge": {},
+  "model_ids": [
+    "google/gemma-4-e2b",
+    "google/gemma-4-e4b"
+  ],
+  "model_status": {
+    "google/gemma-4-e2b": {
+      "pass": 10
+    },
+    "google/gemma-4-e4b": {
+      "pass": 10
+    }
+  },
+  "models": [
+    "gemma4_e2b",
+    "gemma4_e4b"
+  ],
+  "pass_count": 20,
+  "pass_rate": 1.0,
+  "per_complexity": {
+    "complex": {
+      "pass": 8,
+      "warning": 0
+    },
+    "medium": {
+      "pass": 4,
+      "warning": 0
+    },
+    "simple": {
+      "pass": 8,
+      "warning": 0
+    }
+  },
+  "per_language": {
+    "en_en": {
+      "pass": 4,
+      "warning": 0
+    },
+    "ru_en_mixed": {
+      "pass": 4,
+      "warning": 0
+    },
+    "ru_ru": {
+      "pass": 12,
+      "warning": 0
+    }
+  },
+  "per_volume": {
+    "many": {
+      "pass": 12,
+      "warning": 0
+    },
+    "single": {
+      "pass": 8,
+      "warning": 0
+    }
+  },
+  "resource_telemetry_modes": [
+    "none"
+  ],
+  "retry_impact": {
+    "off": {
+      "pass": 10,
+      "warning": 0
+    },
+    "retry1": {
+      "pass": 10,
+      "warning": 0
+    }
+  },
+  "run_id": "matrix_l3_20_postprocessing_redesign_offline",
+  "safety": {
+    "public_safe": true,
+    "raw_base_url_stored": false,
+    "raw_prompt_response_stored": false,
+    "raw_prompt_stored": false,
+    "raw_response_stored": false
+  },
+  "schema_version": "latest-text-remote-snapshot-v1",
+  "skipped_cell_count": 21580,
+  "timing": {
+    "latency_ms_max": 0.023,
+    "latency_ms_min": 0.007,
+    "total_latency_ms_max": 0.023,
+    "total_latency_ms_min": 0.007
+  },
+  "token_counts": {
+    "completion_tokens": 5540,
+    "prompt_tokens": 3060
+  },
+  "warmup": {
+    "cache_hit_reported": [
+      "unknown"
+    ],
+    "kv_reuse_proven": [
+      "False"
+    ],
+    "measured_request_count": 20,
+    "warmup_request_count": 0
+  },
+  "warning_categories": {},
+  "warning_count": 0
+}

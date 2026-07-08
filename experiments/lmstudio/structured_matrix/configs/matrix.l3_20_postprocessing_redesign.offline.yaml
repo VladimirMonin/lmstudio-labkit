@@ -1,0 +1,395 @@
+run_id: matrix_l3_20_postprocessing_redesign_offline
+models:
+- model_key: gemma4_e2b
+  model_id: google/gemma-4-e2b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - 8192
+- model_key: gemma4_e4b
+  model_id: google/gemma-4-e4b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - 8192
+tasks:
+- task_id: ru_punctuation_simple_preserve
+  family: postprocess_simple
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  volume: single
+  task_intent: punctuate
+  input_profile: asr_noise_ru
+  output_language_policy: preserve_input_language
+  validation_policy: auto_schema_language_manual_quality
+  prompt: 'Synthetic ASR postprocessing: restore punctuation and paragraph breaks for a Russian transcript.
+    Return JSON only with id=0, corrected_text, language. Preserve input language.'
+  schema_family: postprocess_simple
+  schema:
+    type: object
+    required:
+    - id
+    - corrected_text
+    - language
+    additionalProperties: false
+    properties:
+      id:
+        const: 0
+      corrected_text:
+        type: string
+        minLength: 1
+      language:
+        const: ru
+  expected_ids:
+  - 0
+  id_paths:
+  - id
+  expected_output:
+    id: 0
+    corrected_text: Сегодня проверяем импорт Embedding в Django. Нужно убрать слова-паразиты и расставить
+      пунктуацию.
+    language: ru
+  fake_mode: valid
+- task_id: ru_fillers_blocks_preserve
+  family: postprocess_blocks
+  modality: text
+  language: ru_ru
+  structure_complexity: medium
+  volume: many
+  task_intent: remove_fillers_paragraphs
+  input_profile: asr_noise_ru
+  output_language_policy: preserve_input_language
+  validation_policy: auto_schema_language_manual_quality
+  prompt: 'Synthetic ASR postprocessing: remove filler words, split into ordered Russian paragraphs, preserve
+    technical terms. Return JSON only with blocks ids 0..2.'
+  schema_family: blocks
+  schema:
+    type: object
+    required:
+    - blocks
+    additionalProperties: false
+    properties:
+      blocks:
+        type: array
+        minItems: 3
+        maxItems: 3
+        items:
+          type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              enum:
+              - 0
+              - 1
+              - 2
+            text:
+              type: string
+              minLength: 1
+  expected_ids:
+  - 0
+  - 1
+  - 2
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: Настраиваем Django и Celery для очереди задач.
+    - id: 1
+      text: Проверяем Embedding pipeline и Qwen fallback.
+    - id: 2
+      text: Фиксируем action items без слов-паразитов.
+  fake_mode: valid
+- task_id: mixed_terms_complex_preserve
+  family: postprocess_complex
+  modality: text
+  language: ru_en_mixed
+  structure_complexity: complex
+  volume: many
+  task_intent: fix_asr_terms_summary_actions
+  input_profile: asr_noise_ru_en_mixed
+  output_language_policy: preserve_input_language
+  validation_policy: auto_schema_language_manual_quality
+  prompt: 'Synthetic ASR postprocessing: fix ASR-distorted technical terms, summarize, and extract action
+    items. Preserve RU/EN terminology. Return JSON only with sections ids 0..1.'
+  schema_family: complex_sections
+  schema:
+    type: object
+    required:
+    - sections
+    additionalProperties: false
+    properties:
+      sections:
+        type: array
+        minItems: 2
+        maxItems: 2
+        items:
+          type: object
+          required:
+          - id
+          - heading
+          - summary
+          - action_items
+          - terms
+          additionalProperties: false
+          properties:
+            id:
+              enum:
+              - 0
+              - 1
+            heading:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            action_items:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+            terms:
+              type: array
+              minItems: 1
+              maxItems: 6
+              items:
+                type: string
+                minLength: 1
+  expected_ids:
+  - 0
+  - 1
+  id_paths:
+  - sections[*].id
+  expected_output:
+    sections:
+    - id: 0
+      heading: Pipeline review
+      summary: Проверяем Whisper postprocessing и JSON schema contract.
+      action_items:
+      - Уточнить validation policy
+      - Сохранить RU/EN technical terms
+      terms:
+      - Whisper
+      - JSON schema
+      - Embedding
+    - id: 1
+      heading: Model routing
+      summary: Нужно отделить task intent от response schema.
+      action_items:
+      - Добавить prompt variants
+      - Подготовить manual review pack
+      terms:
+      - Gemma
+      - Qwen
+      - retry1
+  fake_mode: valid
+- task_id: en_translation_simple_to_ru
+  family: postprocess_simple
+  modality: text
+  language: en_en
+  structure_complexity: simple
+  volume: single
+  task_intent: translate_summary
+  input_profile: clean_en
+  output_language_policy: translate_to_ru
+  validation_policy: auto_schema_language_manual_quality
+  prompt: 'Synthetic postprocessing: translate the English transcript summary to Russian. Return JSON
+    only with id=0, summary_ru, terms.'
+  schema_family: postprocess_simple
+  schema:
+    type: object
+    required:
+    - id
+    - summary_ru
+    - terms
+    additionalProperties: false
+    properties:
+      id:
+        const: 0
+      summary_ru:
+        type: string
+        minLength: 1
+      terms:
+        type: array
+        minItems: 1
+        maxItems: 5
+        items:
+          type: string
+          minLength: 1
+  expected_ids:
+  - 0
+  id_paths:
+  - id
+  expected_output:
+    id: 0
+    summary_ru: Команда обсуждает качество транскрипции и последующую обработку Whisper.
+    terms:
+    - Whisper
+    - JSON
+  fake_mode: valid
+- task_id: ru_action_items_complex_preserve
+  family: postprocess_complex
+  modality: text
+  language: ru_ru
+  structure_complexity: complex
+  volume: many
+  task_intent: summary_action_items
+  input_profile: asr_noise_ru
+  output_language_policy: preserve_input_language
+  validation_policy: manual_quality_required
+  prompt: 'Synthetic ASR postprocessing: summarize a noisy Russian meeting transcript and extract action
+    items. Return JSON only with sections ids 0..1.'
+  schema_family: complex_sections
+  schema:
+    type: object
+    required:
+    - sections
+    additionalProperties: false
+    properties:
+      sections:
+        type: array
+        minItems: 2
+        maxItems: 2
+        items:
+          type: object
+          required:
+          - id
+          - heading
+          - summary
+          - action_items
+          - terms
+          additionalProperties: false
+          properties:
+            id:
+              enum:
+              - 0
+              - 1
+            heading:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            action_items:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+            terms:
+              type: array
+              minItems: 1
+              maxItems: 6
+              items:
+                type: string
+                minLength: 1
+  expected_ids:
+  - 0
+  - 1
+  id_paths:
+  - sections[*].id
+  expected_output:
+    sections:
+    - id: 0
+      heading: Итог обсуждения
+      summary: Команда разводит intent задачи и JSON-структуру.
+      action_items:
+      - Обновить taxonomy
+      - Добавить offline fixtures
+      terms:
+      - Whisper
+      - LabKit
+    - id: 1
+      heading: Следующий запуск
+      summary: Live запуск откладывается до принятия новой матрицы.
+      action_items:
+      - Проверить validator
+      - Согласовать gate
+      terms:
+      - retry1
+      - schema
+  fake_mode: valid
+axes:
+  modality:
+  - text
+  language:
+  - ru_ru
+  - ru_en_mixed
+  - en_en
+  structure_complexity:
+  - simple
+  - medium
+  - complex
+  volume:
+  - single
+  - many
+  task_intent:
+  - fix_asr_terms_summary_actions
+  - punctuate
+  - remove_fillers_paragraphs
+  - summary_action_items
+  - translate_summary
+  input_profile:
+  - asr_noise_ru
+  - asr_noise_ru_en_mixed
+  - clean_en
+  output_language_policy:
+  - preserve_input_language
+  - translate_to_ru
+  validation_policy:
+  - auto_schema_language_manual_quality
+  - manual_quality_required
+  context_tier:
+  - 8192
+  schema_variant:
+  - hardened_const
+  retry_policy:
+  - 'off'
+  - retry1
+  execution_mode:
+  - offline_fake
+  cache_mode:
+  - none
+  execution_target:
+  - offline_fake
+  resource_telemetry_mode:
+  - none
+  lmstudio_parallel:
+  - 1
+  app_concurrency:
+  - 1
+  queue_pressure_mode:
+  - false
+  text_interaction_mode:
+  - single_question
+structured_runtime:
+  strict_json_schema: true
+safety:
+  live: false
+  allow_model_downloads: false
+  allow_model_loads: false
+  allow_remote_base_url: false
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_requests: 20
+  max_models: 2
+  max_context_tier: 8192
+  max_repeats: 1
+  max_runtime_minutes: 10
+repeats: 1
+review:
+  manual_review_pack: local_only
+  raw_prompt_response_artifacts_in_git: false
+  quality_dimensions:
+  - semantic_preservation
+  - punctuation_quality
+  - term_preservation
+  - action_item_usefulness

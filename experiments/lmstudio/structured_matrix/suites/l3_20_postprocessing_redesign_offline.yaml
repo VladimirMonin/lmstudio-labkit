@@ -1,0 +1,6 @@
+suite_id: l3_20_postprocessing_redesign_offline
+stop_on_failure: true
+configs:
+- id: postprocessing_redesign_offline
+  config: ../configs/matrix.l3_20_postprocessing_redesign.offline.yaml
+  required: true

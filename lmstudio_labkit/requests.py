@@ -12,6 +12,9 @@ LanguagePolicy = Literal[
     "strict_en",
     "mixed_ru_en",
     "allow_code_terms",
+    "preserve_input_language",
+    "translate_to_ru",
+    "translate_to_en",
     "labels_only",
     "skip",
 ]

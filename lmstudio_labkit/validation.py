@@ -421,7 +421,7 @@ def validate_language(
     if resolved_policy is None or resolved_policy == "skip":
         return ValidationResult("language_compliance", "skip")
 
-    text = _flatten_text(value)
+    text = _flatten_language_text(value)
     cyr = len(re.findall(r"[А-Яа-яЁё]", text))
     lat = len(re.findall(r"[A-Za-z]", text))
     total_letters = max(1, cyr + lat)
@@ -444,7 +444,7 @@ def validate_language(
         status, category = "fail", "language_mismatch"
     elif resolved_policy == "strict_en" and lat_ratio < 0.5:
         status, category = "fail", "language_mismatch"
-    elif resolved_policy == "allow_code_terms" and (cyr == 0 or cyr_ratio < 0.25):
+    elif resolved_policy == "allow_code_terms" and (cyr == 0 or cyr_ratio < 0.15):
         status, category = "fail", "language_mismatch"
     elif (
         resolved_policy == "mixed_ru_en"
@@ -456,6 +456,17 @@ def validate_language(
 
 
 def _resolve_language_policy(language: str | None, policy: str | None) -> str | None:
+    if policy == "preserve_input_language":
+        return {
+            "ru_ru": "allow_code_terms",
+            "ru_en_mixed": "mixed_ru_en",
+            "en_ru": "mixed_ru_en",
+            "en_en": "strict_en",
+        }.get(language or "", "skip")
+    if policy == "translate_to_ru":
+        return "allow_code_terms"
+    if policy == "translate_to_en":
+        return "strict_en"
     if policy:
         return policy
     return {
@@ -467,7 +478,7 @@ def _resolve_language_policy(language: str | None, policy: str | None) -> str | 
 
 
 def _has_explicit_mixed_hint(expected_hints: Any | None) -> bool:
-    hint_text = _flatten_text(expected_hints).casefold()
+    hint_text = _flatten_language_text(expected_hints).casefold()
     if len(re.findall(r"[А-Яа-яЁё]", hint_text)) > 0:
         return True
     return any(
@@ -560,3 +571,45 @@ def _flatten_text(value: Any) -> str:
     if isinstance(value, list | tuple):
         return " ".join(_flatten_text(item) for item in value)
     return str(value)
+
+
+_LANGUAGE_METADATA_KEYS = {
+    "id",
+    "language",
+    "schema_version",
+    "status",
+    "type",
+    "intent",
+    "task_intent",
+    "input_profile",
+    "output_language_policy",
+    "validation_policy",
+    "terms",
+    "tags",
+    "keywords",
+}
+
+
+def _flatten_language_text(value: Any) -> str:
+    """Flatten only user-visible language-bearing payload values.
+
+    Language validation should not be dominated by JSON bookkeeping values such
+    as ``language: \"ru\"``, enum/status fields, ids, or schema metadata. It still
+    validates actual content fields and intentionally keeps technical terms that
+    appear inside user-visible text.
+    """
+
+    if value is None:
+        return ""
+    if isinstance(value, str):
+        return value
+    if isinstance(value, dict):
+        parts = []
+        for key, child in value.items():
+            if str(key) in _LANGUAGE_METADATA_KEYS:
+                continue
+            parts.append(_flatten_language_text(child))
+        return " ".join(parts)
+    if isinstance(value, list | tuple):
+        return " ".join(_flatten_language_text(item) for item in value)
+    return ""
