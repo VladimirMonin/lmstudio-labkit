@@ -463,6 +463,7 @@ def run_matrix(
         assert live_options is not None
         _validate_live_transport_safety(config, live_options)
         plan = _build_matrix_plan(config)
+        _validate_live_warmup_session_support(plan.cells)
         validate_live_guardrails(live_options, request_count=len(plan.cells))
         transport_to_use = transport
     else:
@@ -557,6 +558,15 @@ def _live_request_plan_for_cell(cell: MatrixCell) -> RequestPlan:
     return _with_live_execution(request_plan)
 
 
+def _validate_live_warmup_session_support(cells: Sequence[MatrixCell]) -> None:
+    for cell in cells:
+        if (
+            cell.axes.get("cache_mode") == "warmup_first"
+            and cell.axes.get("execution_mode") != "session_loaded"
+        ):
+            raise LiveBridgeError("warmup_first requires execution_mode=session_loaded")
+
+
 def _execution_batches(
     cells: Sequence[MatrixCell], *, live_requested: bool
 ) -> tuple[tuple[MatrixCell, ...], ...]:
@@ -583,10 +593,16 @@ def _execution_batches(
 
 
 def _session_batch_key(cell: MatrixCell) -> tuple[object, ...]:
+    session_axes = {key: value for key, value in cell.axes.items() if key not in {"repeat_index"}}
     return (
         cell.model.model_id,
+        cell.options.context_tier if hasattr(cell, "options") else cell.axes.get("context_tier"),
+        cell.model.endpoint_family,
+        session_axes.get("lmstudio_parallel"),
+        session_axes.get("execution_target"),
+        session_axes.get("schema_variant"),
         cell.task.task_id,
-        tuple(sorted(cell.axes.items())),
+        tuple(sorted(session_axes.items())),
     )
 
 
@@ -645,6 +661,7 @@ def _row_from_execution(
         "retry_recovered": recovered,
         "status": "pass" if validation.status == "pass" and result.status == "ok" else "fail",
         "error_category": _first_error_category(validation),
+        **_lifecycle_telemetry_fields(result),
         **cache_telemetry,
         **timing_telemetry,
         **_resource_telemetry_fields(cell),
@@ -652,6 +669,21 @@ def _row_from_execution(
     if live_requested:
         row["lab_only_flags"] = LAB_ONLY_LIVE_FLAGS.as_dict()
     return row
+
+
+def _lifecycle_telemetry_fields(result: RequestResult) -> dict[str, Any]:
+    metadata = result.lifecycle_metadata
+    return {
+        "session_id": metadata.get("session_id"),
+        "request_index": metadata.get("request_index"),
+        "count": metadata.get("count"),
+        "load_scope": metadata.get("load_scope"),
+        "cleanup_scope": metadata.get("cleanup_scope"),
+        "loaded_before_session": metadata.get("loaded_before_session"),
+        "loaded_after_session_load": metadata.get("loaded_after_session_load"),
+        "final_loaded_instances": metadata.get("final_loaded_instances"),
+        "session_cleanup_verified": metadata.get("session_cleanup_verified"),
+    }
 
 
 def run_live_small_text_screening(

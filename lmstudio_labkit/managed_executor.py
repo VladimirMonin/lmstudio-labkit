@@ -3,6 +3,7 @@ from __future__ import annotations
 import time
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from hashlib import sha256
 from typing import Any, Protocol, cast
 
 from .requests import RequestPlan, RequestResult
@@ -25,6 +26,14 @@ class ManagedExecutionResult:
     post_load_instances: int | None = None
     strict_schema_runtime_support: bool | None = None
     hardened_schema_validation_available: bool = True
+    session_id: str | None = None
+    session_request_index: int | None = None
+    session_request_count: int | None = None
+    load_scope: str | None = None
+    cleanup_scope: str | None = None
+    loaded_before_session: int | None = None
+    loaded_after_session_load: int | None = None
+    session_cleanup_verified: bool | None = None
 
 
 class ManagedHostRunner(Protocol):
@@ -86,9 +95,20 @@ class ManagedLMStudioExecutor:
             raise ManagedExecutorError("managed executor v1 requires temperature 0")
 
     def execute(self, plan: RequestPlan) -> ManagedExecutionResult:
-        return self.execute_session((plan,))[0]
+        return self._execute_plans((plan,), load_scope="per_request", cleanup_scope="per_request")[
+            0
+        ]
 
     def execute_session(self, plans: Sequence[RequestPlan]) -> tuple[ManagedExecutionResult, ...]:
+        return self._execute_plans(plans, load_scope="per_session", cleanup_scope="per_session")
+
+    def _execute_plans(
+        self,
+        plans: Sequence[RequestPlan],
+        *,
+        load_scope: str,
+        cleanup_scope: str,
+    ) -> tuple[ManagedExecutionResult, ...]:
         if not plans:
             return ()
         for plan in plans:
@@ -148,6 +168,7 @@ class ManagedLMStudioExecutor:
                     "managed executor load state and cleanup were not verified"
                 )
             raise ManagedExecutorError("managed executor loaded instance was not visible")
+        session_id = _session_id(model_id=model_id, plans=plans)
         payloads: list[tuple[object, float]] = []
         try:
             for plan in plans:
@@ -172,7 +193,7 @@ class ManagedLMStudioExecutor:
             if final_loaded_instances != 0:
                 raise ManagedExecutorError("managed executor final loaded instances must be zero")
         results: list[ManagedExecutionResult] = []
-        for raw_payload, latency_ms in payloads:
+        for index, (raw_payload, latency_ms) in enumerate(payloads, start=1):
             raw_response, prompt_tokens, completion_tokens, finish_reason = _parse_chat_payload(
                 raw_payload
             )
@@ -189,6 +210,14 @@ class ManagedLMStudioExecutor:
                     post_load_instances=post_load_instances,
                     strict_schema_runtime_support=self.strict_json_schema,
                     hardened_schema_validation_available=True,
+                    session_id=session_id,
+                    session_request_index=index,
+                    session_request_count=len(payloads),
+                    load_scope=load_scope,
+                    cleanup_scope=cleanup_scope,
+                    loaded_before_session=pre_load_instances,
+                    loaded_after_session_load=post_load_instances,
+                    session_cleanup_verified=cleanup_verified,
                 )
             )
         return tuple(results)
@@ -221,7 +250,8 @@ class ManagedLMStudioTransport:
     def execute(self, plan: RequestPlan, *, attempt_index: int = 1) -> tuple[str, RequestResult]:
         if attempt_index < 1:
             raise ManagedExecutorError("attempt_index must be positive")
-        return self.execute_session((plan,), attempt_index=attempt_index)[0]
+        execution = self.executor.execute(plan)
+        return _transport_result(plan=plan, execution=execution)
 
     def execute_session(
         self, plans: Sequence[RequestPlan], *, attempt_index: int = 1
@@ -230,20 +260,46 @@ class ManagedLMStudioTransport:
             raise ManagedExecutorError("attempt_index must be positive")
         executions = self.executor.execute_session(tuple(plans))
         return tuple(
-            (
-                execution.raw_response,
-                RequestResult.from_raw_response(
-                    request_id=plan.envelope.request_id,
-                    model_id=plan.options.model_id,
-                    raw_response=execution.raw_response,
-                    status="ok",
-                    latency_ms=execution.latency_ms,
-                    token_counts=_token_counts(execution),
-                    finish_reason=execution.finish_reason,
-                ),
-            )
+            _transport_result(plan=plan, execution=execution)
             for plan, execution in zip(plans, executions, strict=True)
         )
+
+
+def _transport_result(
+    *, plan: RequestPlan, execution: ManagedExecutionResult
+) -> tuple[str, RequestResult]:
+    return (
+        execution.raw_response,
+        RequestResult.from_raw_response(
+            request_id=plan.envelope.request_id,
+            model_id=plan.options.model_id,
+            raw_response=execution.raw_response,
+            status="ok",
+            latency_ms=execution.latency_ms,
+            token_counts=_token_counts(execution),
+            finish_reason=execution.finish_reason,
+            lifecycle_metadata=_lifecycle_metadata(execution),
+        ),
+    )
+
+
+def _session_id(*, model_id: str, plans: Sequence[RequestPlan]) -> str:
+    material = "|".join([model_id, *(plan.envelope.request_id for plan in plans)])
+    return "session_" + sha256(material.encode("utf-8")).hexdigest()[:16]
+
+
+def _lifecycle_metadata(execution: ManagedExecutionResult) -> dict[str, object]:
+    return {
+        "session_id": execution.session_id,
+        "session_request_index": execution.session_request_index,
+        "session_request_count": execution.session_request_count,
+        "load_scope": execution.load_scope,
+        "cleanup_scope": execution.cleanup_scope,
+        "loaded_before_session": execution.loaded_before_session,
+        "loaded_after_session_load": execution.loaded_after_session_load,
+        "final_loaded_instances": execution.final_loaded_instances,
+        "session_cleanup_verified": execution.session_cleanup_verified,
+    }
 
 
 def _messages_from_plan(plan: RequestPlan) -> tuple[Mapping[str, str], ...]:

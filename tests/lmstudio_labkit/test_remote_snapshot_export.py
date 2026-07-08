@@ -102,6 +102,8 @@ def test_latest_snapshot_export_is_public_safe(tmp_path: Path) -> None:
     result = export_latest_text_remote_snapshot(artifacts.output_dir, tmp_path / "latest")
 
     assert result["status"] == "pass"
+    assert Path(result["report"]).name == "report.md"
+    assert (tmp_path / "latest" / "report.md").exists()
     snapshot_text = Path(result["snapshot"]).read_text(encoding="utf-8")
     snapshot = json.loads(snapshot_text)
     assert snapshot["live_bridge"]["base_url_kind"] == "remote"

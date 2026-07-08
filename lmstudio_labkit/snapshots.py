@@ -11,7 +11,7 @@ from .privacy import assert_privacy_scan_passed, scan_artifact_files
 LATEST_SNAPSHOT_FILE_NAMES = (
     "latest_snapshot.json",
     "latest_snapshot.csv",
-    "README.md",
+    "report.md",
     "privacy_scan.json",
 )
 
@@ -31,7 +31,7 @@ def export_latest_text_remote_snapshot(
 
     json_path = target / "latest_snapshot.json"
     csv_path = target / "latest_snapshot.csv"
-    readme_path = target / "README.md"
+    report_path = target / "report.md"
     scan_path = target / "privacy_scan.json"
 
     json_path.write_text(
@@ -39,9 +39,9 @@ def export_latest_text_remote_snapshot(
         encoding="utf-8",
     )
     _write_snapshot_csv(csv_path, snapshot)
-    readme_path.write_text(_render_readme(snapshot), encoding="utf-8")
+    report_path.write_text(_render_report(snapshot), encoding="utf-8")
 
-    scan = scan_artifact_files((json_path, csv_path, readme_path))
+    scan = scan_artifact_files((json_path, csv_path, report_path))
     scan_path.write_text(
         json.dumps(scan, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -52,7 +52,7 @@ def export_latest_text_remote_snapshot(
         "output_dir": str(target),
         "snapshot": str(json_path),
         "csv": str(csv_path),
-        "readme": str(readme_path),
+        "report": str(report_path),
         "privacy_scan": str(scan_path),
     }
 
@@ -99,6 +99,8 @@ def _build_snapshot(planner: dict[str, Any], rows: list[dict[str, Any]]) -> dict
         "skipped_cell_count": planner.get("skipped_cell_count", 0),
         "timing": _timing_summary(rows),
         "token_counts": _token_summary(rows),
+        "lifecycle": _lifecycle_summary(rows),
+        "warmup": _warmup_summary(rows),
         "safety": {
             "raw_prompt_response_stored": False,
             "raw_prompt_stored": False,
@@ -149,6 +151,57 @@ def _token_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
     return {"prompt_tokens": prompt, "completion_tokens": completion}
 
 
+def _lifecycle_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    return {
+        "session_ids": sorted(
+            {str(row.get("session_id")) for row in rows if row.get("session_id")}
+        ),
+        "load_scopes": sorted(
+            {str(row.get("load_scope")) for row in rows if row.get("load_scope")}
+        ),
+        "cleanup_scopes": sorted(
+            {str(row.get("cleanup_scope")) for row in rows if row.get("cleanup_scope")}
+        ),
+        "final_loaded_instances": sorted(
+            {
+                int(row.get("final_loaded_instances"))
+                for row in rows
+                if row.get("final_loaded_instances") is not None
+            }
+        ),
+        "session_cleanup_verified": sorted(
+            {
+                str(row.get("session_cleanup_verified"))
+                for row in rows
+                if row.get("session_cleanup_verified") is not None
+            }
+        ),
+    }
+
+
+def _warmup_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    warmup = sum(1 for row in rows if row.get("is_warmup_request") is True)
+    measured = sum(1 for row in rows if row.get("is_warmup_request") is False)
+    return {
+        "warmup_request_count": warmup,
+        "measured_request_count": measured,
+        "cache_hit_reported": sorted(
+            {
+                str(row.get("cache_hit_reported"))
+                for row in rows
+                if row.get("cache_hit_reported") is not None
+            }
+        ),
+        "kv_reuse_proven": sorted(
+            {
+                str(row.get("kv_reuse_proven"))
+                for row in rows
+                if row.get("kv_reuse_proven") is not None
+            }
+        ),
+    }
+
+
 def _write_snapshot_csv(path: Path, snapshot: dict[str, Any]) -> None:
     fieldnames = [
         "run_id",
@@ -192,31 +245,77 @@ def _write_snapshot_csv(path: Path, snapshot: dict[str, Any]) -> None:
         writer.writerow(row)
 
 
-def _render_readme(snapshot: dict[str, Any]) -> str:
-    maybe_live_bridge = snapshot.get("live_bridge")
-    live_bridge: dict[str, Any] = maybe_live_bridge if isinstance(maybe_live_bridge, dict) else {}
-    return "\n".join(
-        [
-            "# Latest remote text screening snapshot",
-            "",
-            "This directory is an exported public-safe view of the latest remote-link text screening run.",
-            "",
-            f"- run_id: `{snapshot.get('run_id')}`",
-            f"- live: `{str(snapshot.get('live')).lower()}`",
-            f"- base_url_kind: `{live_bridge.get('base_url_kind')}`",
-            f"- base_url_scheme: `{live_bridge.get('base_url_scheme')}`",
-            f"- execution_targets: `{', '.join(snapshot.get('execution_targets', []))}`",
-            f"- execution_modes: `{', '.join(snapshot.get('execution_modes', []))}`",
-            f"- cache_modes: `{', '.join(snapshot.get('cache_modes', []))}`",
-            f"- resource_telemetry_modes: `{', '.join(snapshot.get('resource_telemetry_modes', []))}`",
-            f"- attempt_count: `{snapshot.get('attempt_count')}`",
-            f"- pass_count: `{snapshot.get('pass_count')}`",
-            f"- fail_count: `{snapshot.get('fail_count')}`",
-            "",
-            "Safety: raw prompts, raw responses, raw URLs, and source run paths are not exported.",
-            "",
-        ]
+def _render_report(snapshot: dict[str, Any]) -> str:
+    lifecycle = snapshot.get("lifecycle") if isinstance(snapshot.get("lifecycle"), dict) else {}
+    warmup = snapshot.get("warmup") if isinstance(snapshot.get("warmup"), dict) else {}
+    timing = snapshot.get("timing") if isinstance(snapshot.get("timing"), dict) else {}
+    safety = snapshot.get("safety") if isinstance(snapshot.get("safety"), dict) else {}
+    session_count = len(lifecycle.get("session_ids", [])) if lifecycle else "not exported"
+    warmup_request_count = warmup.get("warmup_request_count") if warmup else "not exported"
+    measured_request_count = warmup.get("measured_request_count") if warmup else "not exported"
+    cache_hit_reported = (
+        ", ".join(warmup.get("cache_hit_reported", [])) if warmup else "not exported"
     )
+    kv_reuse_proven = ", ".join(warmup.get("kv_reuse_proven", [])) if warmup else "not exported"
+    lines = [
+        "# L3.16.1 latest live session warmup report",
+        "",
+        "## Scope",
+        "",
+        f"- run_id: `{snapshot.get('run_id')}`",
+        f"- models: `{', '.join(snapshot.get('model_ids', []))}`",
+        f"- request_count: `{snapshot.get('attempt_count')}`",
+        f"- execution_modes: `{', '.join(snapshot.get('execution_modes', []))}`",
+        f"- cache_modes: `{', '.join(snapshot.get('cache_modes', []))}`",
+        f"- resource_telemetry_modes: `{', '.join(snapshot.get('resource_telemetry_modes', []))}`",
+        "",
+        "## Session lifecycle proof",
+        "",
+        f"- session_count: `{session_count}`",
+        f"- load_scopes: `{', '.join(lifecycle.get('load_scopes', [])) if lifecycle else 'not exported'}`",
+        f"- cleanup_scopes: `{', '.join(lifecycle.get('cleanup_scopes', [])) if lifecycle else 'not exported'}`",
+        f"- final_loaded_instances: `{', '.join(str(x) for x in lifecycle.get('final_loaded_instances', [])) if lifecycle else 'not exported'}`",
+        f"- session_cleanup_verified: `{', '.join(lifecycle.get('session_cleanup_verified', [])) if lifecycle else 'not exported'}`",
+        "",
+        "Expected L3.16.1 shape on newly exported runs: two model sessions, each loaded once, three requests, cleanup once, final loaded instances zero.",
+        "",
+        "## Warmup/measured split",
+        "",
+        f"- warmup_request_count: `{warmup_request_count}`",
+        f"- measured_request_count: `{measured_request_count}`",
+        f"- cache_hit_reported: `{cache_hit_reported}`",
+        f"- kv_reuse_proven: `{kv_reuse_proven}`",
+        "",
+        "## Validation summary",
+        "",
+        f"- pass_count: `{snapshot.get('pass_count')}`",
+        f"- fail_count: `{snapshot.get('fail_count')}`",
+        f"- pass_rate: `{snapshot.get('pass_rate')}`",
+        "",
+        "## Timing summary",
+        "",
+        f"- latency_ms_min: `{timing.get('latency_ms_min')}`",
+        f"- latency_ms_max: `{timing.get('latency_ms_max')}`",
+        f"- total_latency_ms_min: `{timing.get('total_latency_ms_min')}`",
+        f"- total_latency_ms_max: `{timing.get('total_latency_ms_max')}`",
+        "",
+        "## Privacy summary",
+        "",
+        f"- raw_prompt_response_stored: `{safety.get('raw_prompt_response_stored')}`",
+        f"- raw_base_url_stored: `{safety.get('raw_base_url_stored')}`",
+        "",
+        "## Non-claims",
+        "",
+        "- KV-cache reuse is not proven unless LM Studio reports an explicit cache-hit signal.",
+        "- RAM/VRAM telemetry is not claimed for timing-only remote-link runs.",
+        "- No image, 12B, 26B, Qwen, throughput, parallel, overnight, or stress gate is covered by this snapshot.",
+        "",
+        "## Next allowed gate",
+        "",
+        "L3.17 small text quality screening only after L3.16.1 gates remain green.",
+        "",
+    ]
+    return "\n".join(lines)
 
 
 def _read_json(path: Path) -> dict[str, Any]:
