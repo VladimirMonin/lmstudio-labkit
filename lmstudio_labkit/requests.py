@@ -68,7 +68,7 @@ class ChatMessage:
 class ResponseContract:
     mode: ResponseMode = "json"
     schema: dict[str, Any] | None = None
-    expected_ids: tuple[str, ...] = ()
+    expected_ids: tuple[Any, ...] = ()
     language: str | None = None
     min_length_ratio: float | None = None
     max_length_ratio: float | None = None
@@ -212,6 +212,7 @@ class RequestResult:
     latency_ms: float
     token_counts: dict[str, int] = field(default_factory=dict)
     error_category: str | None = None
+    finish_reason: str | None = None
 
     @classmethod
     def from_raw_response(
@@ -224,6 +225,7 @@ class RequestResult:
         latency_ms: float = 0.0,
         token_counts: dict[str, int] | None = None,
         error_category: str | None = None,
+        finish_reason: str | None = None,
     ) -> RequestResult:
         return cls(
             request_id=request_id,
@@ -234,6 +236,7 @@ class RequestResult:
             latency_ms=latency_ms,
             token_counts=token_counts or {},
             error_category=error_category,
+            finish_reason=finish_reason,
         )
 
     def safe_metadata(self) -> dict[str, Any]:
@@ -246,6 +249,7 @@ class RequestResult:
             "latency_ms": self.latency_ms,
             "token_counts": dict(self.token_counts),
             "error_category": self.error_category,
+            "finish_reason": self.finish_reason,
         }
 
 

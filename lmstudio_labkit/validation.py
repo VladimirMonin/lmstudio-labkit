@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from collections import Counter
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
@@ -38,9 +39,18 @@ class ValidationSummary:
         }
 
 
-def validate_response(raw_response: str, contract: ResponseContract) -> ValidationSummary:
+def validate_response(
+    raw_response: str,
+    contract: ResponseContract,
+    *,
+    finish_reason: str | None = None,
+    input_char_count: int | None = None,
+) -> ValidationSummary:
     parsed: Any | None = None
     results: list[ValidationResult] = []
+
+    results.append(validate_finish_reason(finish_reason))
+    results.append(validate_markdown_fence_leak(raw_response))
 
     if contract.mode == "json":
         try:
@@ -51,8 +61,7 @@ def validate_response(raw_response: str, contract: ResponseContract) -> Validati
             return ValidationSummary("fail", tuple(results))
 
         if contract.schema is not None:
-            schema_result = validate_json_schema(parsed, contract.schema)
-            results.append(schema_result)
+            results.append(validate_json_schema(parsed, contract.schema))
         else:
             results.append(ValidationResult("json_schema", "skip"))
 
@@ -62,7 +71,6 @@ def validate_response(raw_response: str, contract: ResponseContract) -> Validati
             results.append(ValidationResult("id_exact", "skip"))
 
         results.append(validate_no_placeholder_text(parsed))
-
         if contract.language:
             results.append(validate_language(parsed, contract.language))
         else:
@@ -77,6 +85,13 @@ def validate_response(raw_response: str, contract: ResponseContract) -> Validati
         results.append(validate_no_placeholder_text(raw_response))
         if contract.language:
             results.append(validate_language(raw_response, contract.language))
+        else:
+            results.append(ValidationResult("language_compliance", "skip"))
+
+    if input_char_count is not None:
+        results.append(validate_empty_text_for_non_empty_input(raw_response, input_char_count))
+    else:
+        results.append(ValidationResult("empty_text_for_non_empty_input", "skip"))
 
     if contract.min_length_ratio is not None or contract.max_length_ratio is not None:
         results.append(
@@ -99,7 +114,12 @@ def validate_response(raw_response: str, contract: ResponseContract) -> Validati
 def validate_json_schema(value: Any, schema: dict[str, Any]) -> ValidationResult:
     errors = _schema_errors(value, schema)
     if errors:
-        return ValidationResult("json_schema", "fail", "schema_error", {"error_count": len(errors)})
+        return ValidationResult(
+            "json_schema",
+            "fail",
+            "schema_error",
+            {"error_count": len(errors), "first_error": errors[0]},
+        )
     return ValidationResult("json_schema", "pass", metrics={"error_count": 0})
 
 
@@ -108,21 +128,59 @@ def _schema_errors(value: Any, schema: dict[str, Any], path: str = "$") -> list[
     expected_type = schema.get("type")
     if expected_type and not _matches_type(value, expected_type):
         return [f"{path}:type"]
+
     if "const" in schema and value != schema["const"]:
         errors.append(f"{path}:const")
     if "enum" in schema and value not in schema["enum"]:
         errors.append(f"{path}:enum")
+
+    if isinstance(value, str):
+        min_length = schema.get("minLength")
+        max_length = schema.get("maxLength")
+        if min_length is not None and len(value) < int(min_length):
+            errors.append(f"{path}:minLength")
+        if max_length is not None and len(value) > int(max_length):
+            errors.append(f"{path}:maxLength")
+
+    if isinstance(value, int | float) and not isinstance(value, bool):
+        minimum = schema.get("minimum")
+        maximum = schema.get("maximum")
+        if minimum is not None and value < minimum:
+            errors.append(f"{path}:minimum")
+        if maximum is not None and value > maximum:
+            errors.append(f"{path}:maximum")
+
     if isinstance(value, dict):
         for key in schema.get("required", []):
             if key not in value:
                 errors.append(f"{path}.{key}:required")
         properties = schema.get("properties", {})
-        for key, child_schema in properties.items():
-            if key in value and isinstance(child_schema, dict):
-                errors.extend(_schema_errors(value[key], child_schema, f"{path}.{key}"))
-    if isinstance(value, list) and isinstance(schema.get("items"), dict):
-        for index, item in enumerate(value):
-            errors.extend(_schema_errors(item, schema["items"], f"{path}[{index}]"))
+        if isinstance(properties, dict):
+            for key, child_schema in properties.items():
+                if key in value and isinstance(child_schema, dict):
+                    errors.extend(_schema_errors(value[key], child_schema, f"{path}.{key}"))
+        if schema.get("additionalProperties") is False and isinstance(properties, dict):
+            extra = sorted(set(value) - set(properties))
+            errors.extend(f"{path}.{key}:additionalProperties" for key in extra)
+
+    if isinstance(value, list):
+        min_items = schema.get("minItems")
+        max_items = schema.get("maxItems")
+        if min_items is not None and len(value) < int(min_items):
+            errors.append(f"{path}:minItems")
+        if max_items is not None and len(value) > int(max_items):
+            errors.append(f"{path}:maxItems")
+        prefix_items = schema.get("prefixItems")
+        if isinstance(prefix_items, list):
+            for index, child_schema in enumerate(prefix_items):
+                if index >= len(value):
+                    errors.append(f"{path}[{index}]:prefixItems_missing")
+                elif isinstance(child_schema, dict):
+                    errors.extend(_schema_errors(value[index], child_schema, f"{path}[{index}]"))
+        if isinstance(schema.get("items"), dict):
+            start = len(prefix_items) if isinstance(prefix_items, list) else 0
+            for index, item in enumerate(value[start:], start=start):
+                errors.extend(_schema_errors(item, schema["items"], f"{path}[{index}]"))
     return errors
 
 
@@ -140,29 +198,40 @@ def _matches_type(value: Any, expected_type: str | list[str]) -> bool:
     }.get(expected_type, True)
 
 
-def validate_exact_ids(value: Any, expected_ids: tuple[str, ...]) -> ValidationResult:
+def validate_exact_ids(value: Any, expected_ids: tuple[Any, ...]) -> ValidationResult:
     seen = _collect_ids(value)
-    expected = list(expected_ids)
+    expected = [_normalize_id(item) for item in expected_ids]
     missing = [item for item in expected if item not in seen]
     unexpected = [item for item in seen if item not in expected]
-    duplicate_count = len(seen) - len(set(seen))
+    duplicate_count = sum(count - 1 for count in Counter(seen).values() if count > 1)
+    first_mismatch_index: int | None = None
+    for index, expected_id in enumerate(expected):
+        if index >= len(seen) or seen[index] != expected_id:
+            first_mismatch_index = index
+            break
+    if first_mismatch_index is None and len(seen) != len(expected):
+        first_mismatch_index = min(len(seen), len(expected))
+    order_mismatch = first_mismatch_index is not None
     metrics = {
         "expected_count": len(expected),
         "seen_count": len(seen),
         "missing_count": len(missing),
         "unexpected_count": len(unexpected),
         "duplicate_count": duplicate_count,
+        "order_mismatch": order_mismatch,
+        "first_mismatch_index": first_mismatch_index,
     }
-    if missing or unexpected or duplicate_count:
-        return ValidationResult("id_exact", "fail", "id_mismatch", metrics)
+    if missing or unexpected or duplicate_count or order_mismatch:
+        category = "id_order_mismatch" if order_mismatch else "id_mismatch"
+        return ValidationResult("id_exact", "fail", category, metrics)
     return ValidationResult("id_exact", "pass", metrics=metrics)
 
 
 def _collect_ids(value: Any) -> list[str]:
     ids: list[str] = []
     if isinstance(value, dict):
-        if "id" in value and isinstance(value["id"], str):
-            ids.append(value["id"])
+        if "id" in value and isinstance(value["id"], str | int):
+            ids.append(_normalize_id(value["id"]))
         for child in value.values():
             ids.extend(_collect_ids(child))
     elif isinstance(value, list):
@@ -171,9 +240,17 @@ def _collect_ids(value: Any) -> list[str]:
     return ids
 
 
+def _normalize_id(value: Any) -> str:
+    if isinstance(value, int) and not isinstance(value, bool):
+        return str(value)
+    if isinstance(value, str):
+        return value
+    return str(value)
+
+
 def validate_no_placeholder_text(value: Any) -> ValidationResult:
     text = _flatten_text(value).lower()
-    markers = ("todo", "lorem ipsum", "placeholder", "your text here")
+    markers = ("todo", "lorem ipsum", "placeholder", "your text here", "tbd")
     hit_count = sum(text.count(marker) for marker in markers)
     if hit_count:
         return ValidationResult(
@@ -182,25 +259,56 @@ def validate_no_placeholder_text(value: Any) -> ValidationResult:
     return ValidationResult("no_placeholder_text", "pass", metrics={"hit_count": 0})
 
 
+def validate_markdown_fence_leak(raw_response: str) -> ValidationResult:
+    fence_count = raw_response.count("```")
+    if fence_count:
+        return ValidationResult(
+            "markdown_fence_leak", "fail", "markdown_fence", {"fence_count": fence_count}
+        )
+    return ValidationResult("markdown_fence_leak", "pass", metrics={"fence_count": 0})
+
+
+def validate_empty_text_for_non_empty_input(
+    raw_response: str, input_char_count: int
+) -> ValidationResult:
+    is_empty = not raw_response.strip()
+    if input_char_count > 0 and is_empty:
+        return ValidationResult("empty_text_for_non_empty_input", "fail", "empty_output")
+    return ValidationResult("empty_text_for_non_empty_input", "pass")
+
+
+def validate_finish_reason(finish_reason: str | None) -> ValidationResult:
+    if finish_reason is None:
+        return ValidationResult("finish_reason_length", "skip")
+    if finish_reason == "length":
+        return ValidationResult("finish_reason_length", "fail", "finish_length")
+    return ValidationResult(
+        "finish_reason_length", "pass", metrics={"finish_reason": finish_reason}
+    )
+
+
 def validate_language(value: Any, language: str) -> ValidationResult:
     text = _flatten_text(value)
     cyr = len(re.findall(r"[А-Яа-яЁё]", text))
     lat = len(re.findall(r"[A-Za-z]", text))
+    total_letters = max(1, cyr + lat)
+    cyr_ratio = cyr / total_letters
+    lat_ratio = lat / total_letters
     status: ValidationStatus = "pass"
     category = None
-    if language == "ru_ru" and cyr == 0:
+    if language == "ru_ru" and cyr_ratio < 0.5:
         status, category = "fail", "language_mismatch"
-    elif language == "en_en" and lat == 0:
+    elif language == "en_en" and lat_ratio < 0.5:
         status, category = "fail", "language_mismatch"
     elif language == "en_ru" and cyr == 0:
         status, category = "fail", "language_mismatch"
-    elif language == "ru_en_mixed" and cyr == 0 and lat == 0:
+    elif language == "ru_en_mixed" and (cyr == 0 or lat == 0):
         status, category = "fail", "language_mismatch"
     return ValidationResult(
         "language_compliance",
         status,
         category,
-        {"cyrillic_chars": cyr, "latin_chars": lat},
+        {"cyrillic_chars": cyr, "latin_chars": lat, "cyrillic_ratio": round(cyr_ratio, 4)},
     )
 
 
