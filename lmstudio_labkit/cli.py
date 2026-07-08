@@ -102,6 +102,11 @@ def build_parser() -> argparse.ArgumentParser:
     review_pack.add_argument("--run-dir", required=True)
     review_pack.add_argument("--output-dir", required=True)
     review_pack.add_argument("--limit", type=int, default=12)
+    review_pack.add_argument(
+        "--include-raw-outputs-local-only",
+        action="store_true",
+        help="Include local-only raw outputs when run_dir contains raw_cases.jsonl; output dir must be /tmp or gitignored",
+    )
 
     return parser
 
@@ -206,7 +211,12 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0 if result["status"] == "pass" else 2
     if args.command == "export-review-pack":
-        result = export_review_pack(args.run_dir, args.output_dir, limit=args.limit)
+        result = export_review_pack(
+            args.run_dir,
+            args.output_dir,
+            limit=args.limit,
+            include_raw_outputs_local_only=args.include_raw_outputs_local_only,
+        )
         _print_json(
             {"status": result["status"], "mode": "export-review-pack", "review_pack": result}
         )
