@@ -293,6 +293,151 @@ def _first_int_value(mapping: Mapping[str, object], *keys: str) -> int | None:
     return None
 
 
+@dataclass(frozen=True, slots=True)
+class LocalLMStudioHostRunner:
+    """Minimal local LM Studio host runner for explicit operator live-small runs.
+
+    It uses only the local LM Studio HTTP API, never downloads models, and stores no
+    raw prompt/response artifacts by itself. The caller must still opt in through
+    ``ManagedLMStudioExecutor(allow_model_loads=True)`` and CLI live flags.
+    """
+
+    base_url: str = "http://127.0.0.1:1234"
+    default_timeout_s: float = 120.0
+    allow_remote_base_url: bool = False
+
+    def __post_init__(self) -> None:
+        from urllib.parse import urlparse
+
+        parsed = urlparse(self.base_url)
+        if parsed.scheme not in {"http", "https"}:
+            raise ManagedExecutorError("base_url scheme must be http or https")
+        if (
+            parsed.hostname not in {"127.0.0.1", "localhost", "::1"}
+            and not self.allow_remote_base_url
+        ):
+            raise ManagedExecutorError("remote base_url requires allow_remote_base_url=true")
+
+    def load_model(self, *, model_id: str, context_length: int, parallel: int) -> object:
+        payload = {
+            "model": model_id,
+            "context_length": context_length,
+            "parallel": parallel,
+            "echo_load_config": True,
+        }
+        response = self._request_json("/api/v1/models/load", payload, self.default_timeout_s)
+        load_config = response.get("load_config") if isinstance(response, Mapping) else None
+        if not isinstance(load_config, Mapping):
+            load_config = {}
+        return {
+            "load_verified": True,
+            "context_length": _coerce_positive_int(
+                load_config.get("context_length"), context_length
+            ),
+            "parallel": _coerce_positive_int(
+                load_config.get("parallel", load_config.get("n_parallel")), parallel
+            ),
+            "instance_id": _first_str(response, ("instance_id", "instanceId", "id")),
+        }
+
+    def chat_completion(
+        self,
+        *,
+        endpoint_path: str,
+        model_id: str,
+        messages: Sequence[Mapping[str, str]],
+        response_format: Mapping[str, object],
+        temperature: float,
+        timeout_s: float,
+    ) -> object:
+        if endpoint_path != "/v1/chat/completions":
+            raise ManagedExecutorError("local managed runner supports only /v1/chat/completions")
+        payload = {
+            "model": model_id,
+            "messages": list(messages),
+            "response_format": dict(response_format),
+            "temperature": temperature,
+        }
+        return self._request_json(endpoint_path, payload, timeout_s)
+
+    def cleanup_model(self, *, model_id: str) -> object:
+        response = self._request_json(
+            "/api/v1/models/unload",
+            {"model": model_id},
+            self.default_timeout_s,
+        )
+        status = str(response.get("status", "")).lower() if isinstance(response, Mapping) else ""
+        return {"cleanup_verified": status in {"", "ok", "success", "unloaded"} or bool(response)}
+
+    def count_loaded_instances(self, *, model_id: str) -> int | None:
+        response = self._request_json("/api/v1/models", None, self.default_timeout_s)
+        if not isinstance(response, Mapping):
+            return None
+        models = response.get("models", response.get("data"))
+        if not isinstance(models, Sequence) or isinstance(models, (str, bytes, bytearray)):
+            return None
+        count = 0
+        for item in models:
+            if not isinstance(item, Mapping):
+                continue
+            identifiers = {item.get("id"), item.get("model"), item.get("path"), item.get("key")}
+            if model_id in identifiers:
+                loaded = item.get("loaded_instances", item.get("instances"))
+                if isinstance(loaded, Sequence) and not isinstance(loaded, (str, bytes, bytearray)):
+                    count += len(loaded)
+                elif item.get("loaded") is True or item.get("state") == "loaded":
+                    count += 1
+        return count
+
+    def _request_json(
+        self, path: str, payload: Mapping[str, object] | None, timeout_s: float
+    ) -> Mapping[str, object]:
+        import json
+        from urllib import request as urllib_request
+        from urllib.error import HTTPError, URLError
+
+        url = self.base_url.rstrip("/") + path
+        data = None if payload is None else json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        req = urllib_request.Request(
+            url,
+            data=data,
+            method="GET" if payload is None else "POST",
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
+        )
+        try:
+            with urllib_request.urlopen(req, timeout=timeout_s) as response:
+                raw = response.read().decode("utf-8")
+        except HTTPError as error:
+            raise ManagedExecutorError(f"LM Studio HTTP error: {error.code}") from error
+        except URLError as error:
+            raise ManagedExecutorError("LM Studio local endpoint is not reachable") from error
+        try:
+            decoded = json.loads(raw) if raw else {}
+        except json.JSONDecodeError as error:
+            raise ManagedExecutorError("LM Studio response was not JSON") from error
+        if not isinstance(decoded, Mapping):
+            raise ManagedExecutorError("LM Studio response JSON must be an object")
+        return decoded
+
+
+def _coerce_positive_int(value: object, default: int) -> int:
+    if isinstance(value, bool):
+        return default
+    try:
+        parsed = int(value)  # type: ignore[arg-type]
+    except (TypeError, ValueError):
+        return default
+    return parsed if parsed > 0 else default
+
+
+def _first_str(payload: Mapping[str, object], keys: Sequence[str]) -> str | None:
+    for key in keys:
+        value = payload.get(key)
+        if isinstance(value, str) and value:
+            return value
+    return None
+
+
 def _token_counts(result: ManagedExecutionResult) -> dict[str, int]:
     counts: dict[str, int] = {}
     if result.prompt_tokens is not None:
@@ -303,6 +448,7 @@ def _token_counts(result: ManagedExecutionResult) -> dict[str, int]:
 
 
 __all__ = [
+    "LocalLMStudioHostRunner",
     "ManagedExecutionResult",
     "ManagedExecutorError",
     "ManagedHostRunner",

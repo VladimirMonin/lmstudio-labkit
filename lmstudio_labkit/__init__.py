@@ -17,6 +17,7 @@ from .benchmarks import (
 from .datasets import TaskManifest, load_task_manifest, load_task_manifests, load_task_specs
 from .live_bridge import LiveBridgeTransport
 from .managed_executor import (
+    LocalLMStudioHostRunner,
     ManagedExecutionResult,
     ManagedExecutorError,
     ManagedHostRunner,
@@ -53,6 +54,7 @@ __all__ = [
     "ImageInput",
     "LanguagePolicy",
     "LiveBridgeTransport",
+    "LocalLMStudioHostRunner",
     "ManagedExecutionResult",
     "ManagedExecutorError",
     "ManagedHostRunner",

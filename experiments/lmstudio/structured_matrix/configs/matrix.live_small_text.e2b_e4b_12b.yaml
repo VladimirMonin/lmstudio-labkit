@@ -1,17 +1,17 @@
 run_id: matrix_live_small_text_e2b_e4b_12b
 models:
-  - model_key: e2b_text
-    model_id: live/e2b-text
+  - model_key: gemma4_e2b_q4km
+    model_id: google/gemma-4-e2b
     endpoint_family: openai_compat
     supported_modalities: [text]
     supported_context_tiers: [8192]
-  - model_key: e4b_text
-    model_id: live/e4b-text
+  - model_key: gemma4_e4b_q4km
+    model_id: google/gemma-4-e4b
     endpoint_family: openai_compat
     supported_modalities: [text]
     supported_context_tiers: [8192]
-  - model_key: b12_text
-    model_id: live/12b-text
+  - model_key: gemma4_12b_qat
+    model_id: google/gemma-4-12b-qat
     endpoint_family: openai_compat
     supported_modalities: [text]
     supported_context_tiers: [8192]
@@ -19,25 +19,25 @@ tasks:
   - task_id: live_small_text_blocks
     family: blocks
     modality: text
-    language: en_en
-    language_policy: strict_en
+    language: ru_ru
+    language_policy: strict_ru
     structure_complexity: medium
     volume: single
-    prompt: Synthetic live-small text prompt. Return two short English JSON blocks.
+    prompt: Верни только JSON. Сохрани id 0 и 1 по порядку и дай два коротких русских блока.
     schema_family: blocks
     expected_ids: [0, 1]
     expected_output:
       blocks:
         - id: 0
-          text: First synthetic block.
+          text: Первый синтетический блок.
         - id: 1
-          text: Second synthetic block.
+          text: Второй синтетический блок.
     fake_mode: valid
     min_length_ratio: 0.1
     max_length_ratio: 5.0
 axes:
   modality: [text]
-  language: [en_en]
+  language: [ru_ru]
   structure_complexity: [medium]
   volume: [single]
   context_tier: [8192]

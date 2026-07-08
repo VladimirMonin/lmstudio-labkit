@@ -142,7 +142,7 @@ def test_guarded_live_small_text_screening_rejects_images_and_model_loads(tmp_pa
     load_config = BenchmarkConfig.from_dict(
         live_text_payload(safety={**safety_payload, "allow_model_loads": True})
     )
-    with pytest.raises(LiveBridgeError, match="does not load models"):
+    with pytest.raises(LiveBridgeError, match="allow_model_load=True"):
         run_live_small_text_screening(
             load_config,
             tmp_path,

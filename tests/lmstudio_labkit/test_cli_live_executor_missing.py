@@ -47,7 +47,18 @@ def test_live_small_12b_config_can_be_loaded() -> None:
 
     assert config.safety.live is True
     assert config.safety.allow_model_loads is True
-    assert [model.model_key for model in config.models] == ["e2b_text", "e4b_text", "b12_text"]
+    assert [model.model_key for model in config.models] == [
+        "gemma4_e2b_q4km",
+        "gemma4_e4b_q4km",
+        "gemma4_12b_qat",
+    ]
+    assert [model.model_id for model in config.models] == [
+        "google/gemma-4-e2b",
+        "google/gemma-4-e4b",
+        "google/gemma-4-12b-qat",
+    ]
+    assert config.tasks[0].language == "ru_ru"
+    assert config.tasks[0].language_policy == "strict_ru"
     assert config.safety.max_requests == 3
 
 

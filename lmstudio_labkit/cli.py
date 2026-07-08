@@ -10,6 +10,12 @@ import yaml
 
 from .benchmarks import BenchmarkConfig, run_matrix, write_matrix_plan
 from .live_bridge import LiveBridgeOptions, validate_live_guardrails
+from .managed_executor import (
+    LocalLMStudioHostRunner,
+    ManagedExecutorError,
+    ManagedLMStudioExecutor,
+    ManagedLMStudioTransport,
+)
 from .reports import compare_runs, summarize_run, write_summary_csv
 
 _SAFE_PROFILES = {"offline-plan", "offline-fake", "offline", "fake"}
@@ -33,6 +39,11 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--allow-model-loads", action="store_true")
     run.add_argument("--allow-remote-base-url", action="store_true")
     run.add_argument("--allow-stress", action="store_true")
+    run.add_argument(
+        "--operator-live-managed",
+        action="store_true",
+        help="Execute live-small through the local managed LM Studio operator path",
+    )
     run.add_argument("--base-url", default="http://127.0.0.1:1234")
 
     summarize = sub.add_parser("summarize", help="Summarize a run directory")
@@ -60,7 +71,43 @@ def main(argv: list[str] | None = None) -> int:
         config = BenchmarkConfig.from_file(args.config)
         _validate_safe_run_id(config.run_id)
         _reject_existing_run_dir(args.output_root, config.run_id, allow_plan_only=True)
-        artifacts = run_matrix(config, args.output_root)
+        if args.operator_live_managed:
+            options = LiveBridgeOptions(
+                live=True,
+                allow_model_load=args.allow_model_loads,
+                allow_remote=args.allow_remote_base_url,
+                allow_stress=args.allow_stress,
+                base_url=args.base_url,
+                profile=str(args.profile),
+                max_requests=int(config.safety.max_requests),
+            )
+            host_runner = LocalLMStudioHostRunner(
+                base_url=args.base_url,
+                allow_remote_base_url=args.allow_remote_base_url,
+            )
+            executor = ManagedLMStudioExecutor(
+                host_runner=host_runner,
+                allow_model_loads=args.allow_model_loads,
+            )
+            try:
+                artifacts = run_matrix(
+                    config,
+                    args.output_root,
+                    transport=ManagedLMStudioTransport(executor=executor),
+                    live_options=options,
+                )
+            except ManagedExecutorError as error:
+                _print_json(
+                    {
+                        "status": "error",
+                        "mode": "run",
+                        "error_category": "managed_executor_error",
+                        "message": str(error),
+                    }
+                )
+                return 2
+        else:
+            artifacts = run_matrix(config, args.output_root)
         _print_json({"status": "ok", "mode": "run", "artifacts": artifacts.as_dict()})
         return 0
     if args.command == "summarize":
@@ -101,7 +148,7 @@ def _validate_run_profile(args: argparse.Namespace) -> None:
     validate_live_guardrails(
         LiveBridgeOptions(
             live=True,
-            allow_model_load=False,
+            allow_model_load=args.allow_model_loads,
             allow_remote=args.allow_remote_base_url,
             allow_stress=args.allow_stress,
             base_url=args.base_url,
@@ -110,6 +157,8 @@ def _validate_run_profile(args: argparse.Namespace) -> None:
         ),
         request_count=1,
     )
+    if args.operator_live_managed:
+        return
     raise SystemExit("live profile is valid, but no host-managed executor was provided")
 
 

@@ -123,8 +123,10 @@ def validate_live_guardrails(options: LiveBridgeOptions, *, request_count: int) 
         raise LiveBridgeError("live bridge requires explicit live=True")
     if options.profile not in {"live-small", "live-screening"}:
         raise LiveBridgeError("live bridge supports only live-small/live-screening profiles")
-    if options.allow_model_load:
-        raise LiveBridgeError("guarded live screening does not load models")
+    # ``allow_model_load`` is permitted only as an explicit operator signal for
+    # host-managed live runs. The bridge itself never downloads models and does
+    # not own private lifecycle state; concrete transports/executors still have
+    # to enforce their own load/cleanup policy.
     if options.allow_stress:
         raise LiveBridgeError("guarded live screening does not allow stress/overnight runs")
     if request_count > options.max_requests:

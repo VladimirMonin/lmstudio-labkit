@@ -765,8 +765,8 @@ def _validate_live_transport_safety(config: BenchmarkConfig, options: LiveBridge
         raise LiveBridgeError("live transport requires safety.live=true")
     if safety.allow_model_downloads:
         raise LiveBridgeError("live transport does not download models")
-    if safety.allow_model_loads:
-        raise LiveBridgeError("live transport does not load models")
+    if safety.allow_model_loads and not options.allow_model_load:
+        raise LiveBridgeError("model loads require bridge allow_model_load=True")
     if safety.allow_raw_prompt_response_artifacts:
         raise LiveBridgeError("raw prompt/response artifacts are not allowed")
     if safety.allow_image_live:
@@ -792,8 +792,8 @@ def _validate_live_screening_safety(config: BenchmarkConfig, options: LiveBridge
         raise LiveBridgeError("guarded live screening requires safety.live=true")
     if safety.allow_model_downloads:
         raise LiveBridgeError("guarded live screening does not download models")
-    if safety.allow_model_loads:
-        raise LiveBridgeError("guarded live screening does not load models")
+    if safety.allow_model_loads and not options.allow_model_load:
+        raise LiveBridgeError("model loads require bridge allow_model_load=True")
     if safety.allow_raw_prompt_response_artifacts:
         raise LiveBridgeError("raw prompt/response artifacts are not allowed")
     if safety.allow_image_live:
