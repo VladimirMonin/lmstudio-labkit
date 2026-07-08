@@ -1,0 +1,121 @@
+{
+  "attempt_count": 16,
+  "cache_modes": [
+    "none"
+  ],
+  "cell_count": 16,
+  "config_hash": "084248894460f61ba3ca51d40ef28d136a3ee18c920dd7fc49aa5434ec0cb26a",
+  "execution_modes": [
+    "cold_per_request"
+  ],
+  "execution_targets": [
+    "remote_link"
+  ],
+  "fail_count": 4,
+  "failure_categories": {
+    "too_long": 4
+  },
+  "filtered_cell_count": 16,
+  "lifecycle": {
+    "cleanup_scopes": [
+      "per_request"
+    ],
+    "final_loaded_instances": [
+      0
+    ],
+    "load_scopes": [
+      "per_request"
+    ],
+    "session_cleanup_verified": [
+      "True"
+    ],
+    "session_ids": [
+      "session_0c7bc74f80a4db81",
+      "session_1a90762d36d9758d",
+      "session_1b6691f202cf3749",
+      "session_22b2a4b4bf0619f7",
+      "session_2f56ce9870f7e27f",
+      "session_3b3e7d06eb8de42b",
+      "session_4f2403c01a230f4e",
+      "session_5a6b29d7e13c1f65",
+      "session_8d8a6b856d233660",
+      "session_8f458e7abb954421",
+      "session_98011dc3ea70e48d",
+      "session_b3ca26d057da5eb6",
+      "session_d6a8c832edf4ecaf",
+      "session_ddab721c617b9c30",
+      "session_ed757b54b91f2ba7",
+      "session_fd70750b14b75888"
+    ],
+    "session_request_counts": [
+      1
+    ],
+    "session_request_indices": [
+      1
+    ]
+  },
+  "live": true,
+  "live_bridge": {
+    "allow_model_load": true,
+    "allow_remote": true,
+    "allow_stress": false,
+    "base_url_kind": "local",
+    "base_url_scheme": "http",
+    "live": true,
+    "max_requests": 24,
+    "profile": "live-screening"
+  },
+  "model_ids": [
+    "google/gemma-4-e2b",
+    "google/gemma-4-e4b"
+  ],
+  "model_status": {
+    "google/gemma-4-e2b": {
+      "fail": 2,
+      "pass": 6
+    },
+    "google/gemma-4-e4b": {
+      "fail": 2,
+      "pass": 6
+    }
+  },
+  "models": [
+    "gemma4_e2b",
+    "gemma4_e4b"
+  ],
+  "pass_count": 12,
+  "pass_rate": 0.75,
+  "resource_telemetry_modes": [
+    "timing_only"
+  ],
+  "run_id": "matrix_l3_17_text_quality_remote_e2b_e4b",
+  "safety": {
+    "public_safe": true,
+    "raw_base_url_stored": false,
+    "raw_prompt_response_stored": false,
+    "raw_prompt_stored": false,
+    "raw_response_stored": false
+  },
+  "schema_version": "latest-text-remote-snapshot-v1",
+  "skipped_cell_count": 176,
+  "timing": {
+    "latency_ms_max": 1373.167,
+    "latency_ms_min": 679.146,
+    "total_latency_ms_max": 1373.167,
+    "total_latency_ms_min": 679.146
+  },
+  "token_counts": {
+    "completion_tokens": 1058,
+    "prompt_tokens": 732
+  },
+  "warmup": {
+    "cache_hit_reported": [
+      "unknown"
+    ],
+    "kv_reuse_proven": [
+      "False"
+    ],
+    "measured_request_count": 16,
+    "warmup_request_count": 0
+  }
+}

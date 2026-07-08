@@ -1,0 +1,2 @@
+run_id,live,base_url_kind,base_url_scheme,execution_targets,execution_modes,cache_modes,resource_telemetry_modes,attempt_count,pass_count,fail_count,pass_rate,raw_prompt_response_stored,raw_base_url_stored
+matrix_l3_17_text_quality_remote_e2b_e4b,True,local,http,remote_link,cold_per_request,none,timing_only,16,12,4,0.75,False,False

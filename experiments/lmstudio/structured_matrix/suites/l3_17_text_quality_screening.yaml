@@ -1,0 +1,8 @@
+suite_id: l3_17_text_quality_screening
+stop_on_failure: true
+configs:
+  - config: ../configs/matrix.l3_17_text_quality_remote.e2b_e4b.yaml
+    required: true
+  - config: ../configs/matrix.l3_17_text_quality_remote.12b.yaml
+    required: true
+    run_after: [matrix_l3_17_text_quality_remote_e2b_e4b]

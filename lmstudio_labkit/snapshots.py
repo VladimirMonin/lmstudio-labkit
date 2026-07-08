@@ -103,6 +103,8 @@ def _build_snapshot(planner: dict[str, Any], rows: list[dict[str, Any]]) -> dict
         "skipped_cell_count": planner.get("skipped_cell_count", 0),
         "timing": _timing_summary(rows),
         "token_counts": _token_summary(rows),
+        "failure_categories": _failure_category_summary(rows),
+        "model_status": _model_status_summary(rows),
         "lifecycle": _lifecycle_summary(rows),
         "warmup": _warmup_summary(rows),
         "safety": {
@@ -153,6 +155,21 @@ def _token_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
         prompt += int(counts.get("prompt") or 0)
         completion += int(counts.get("completion") or 0)
     return {"prompt_tokens": prompt, "completion_tokens": completion}
+
+
+def _failure_category_summary(rows: list[dict[str, Any]]) -> dict[str, int]:
+    counts = Counter(
+        str(row.get("error_category") or "none") for row in rows if row.get("status") == "fail"
+    )
+    return dict(sorted(counts.items()))
+
+
+def _model_status_summary(rows: list[dict[str, Any]]) -> dict[str, dict[str, int]]:
+    grouped: dict[str, Counter[str]] = {}
+    for row in rows:
+        model_id = str(row.get("model_id") or "unknown")
+        grouped.setdefault(model_id, Counter())[str(row.get("status") or "unknown")] += 1
+    return {model_id: dict(sorted(counts.items())) for model_id, counts in sorted(grouped.items())}
 
 
 def _lifecycle_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
@@ -299,6 +316,14 @@ def _render_report(snapshot: dict[str, Any]) -> str:
     warmup = snapshot.get("warmup") if isinstance(snapshot.get("warmup"), dict) else {}
     timing = snapshot.get("timing") if isinstance(snapshot.get("timing"), dict) else {}
     safety = snapshot.get("safety") if isinstance(snapshot.get("safety"), dict) else {}
+    failure_categories = (
+        snapshot.get("failure_categories")
+        if isinstance(snapshot.get("failure_categories"), dict)
+        else {}
+    )
+    model_status = (
+        snapshot.get("model_status") if isinstance(snapshot.get("model_status"), dict) else {}
+    )
     session_count = len(lifecycle.get("session_ids", [])) if lifecycle else "not exported"
     warmup_request_count = warmup.get("warmup_request_count") if warmup else "not exported"
     measured_request_count = warmup.get("measured_request_count") if warmup else "not exported"
@@ -306,8 +331,30 @@ def _render_report(snapshot: dict[str, Any]) -> str:
         ", ".join(warmup.get("cache_hit_reported", [])) if warmup else "not exported"
     )
     kv_reuse_proven = ", ".join(warmup.get("kv_reuse_proven", [])) if warmup else "not exported"
+    failure_text = (
+        ", ".join(f"{name}={count}" for name, count in sorted(failure_categories.items())) or "none"
+    )
+    model_status_text = (
+        "; ".join(
+            f"{model}: "
+            + ", ".join(f"{status}={count}" for status, count in sorted(counts.items()))
+            for model, counts in sorted(model_status.items())
+            if isinstance(counts, dict)
+        )
+        or "not exported"
+    )
+    downstream_gate = (
+        "blocked until fail_count is zero"
+        if int(snapshot.get("fail_count") or 0) > 0
+        else "open for the next explicitly scoped staged run"
+    )
+    model_ids = {str(model_id) for model_id in snapshot.get("model_ids", [])}
+    excluded_model_gates = ["26B", "Qwen"]
+    if "google/gemma-4-12b-qat" not in model_ids:
+        excluded_model_gates.insert(0, "12B")
+    excluded_model_text = ", ".join(excluded_model_gates)
     lines = [
-        "# L3.16.1 latest live session warmup report",
+        "# Latest remote text live report",
         "",
         "## Scope",
         "",
@@ -318,7 +365,7 @@ def _render_report(snapshot: dict[str, Any]) -> str:
         f"- cache_modes: `{', '.join(snapshot.get('cache_modes', []))}`",
         f"- resource_telemetry_modes: `{', '.join(snapshot.get('resource_telemetry_modes', []))}`",
         "",
-        "## Session lifecycle proof",
+        "## Lifecycle summary",
         "",
         f"- session_count: `{session_count}`",
         f"- load_scopes: `{', '.join(lifecycle.get('load_scopes', [])) if lifecycle else 'not exported'}`",
@@ -328,9 +375,7 @@ def _render_report(snapshot: dict[str, Any]) -> str:
         f"- session_request_indices: `{', '.join(str(x) for x in lifecycle.get('session_request_indices', [])) if lifecycle else 'not exported'}`",
         f"- session_request_counts: `{', '.join(str(x) for x in lifecycle.get('session_request_counts', [])) if lifecycle else 'not exported'}`",
         "",
-        "Observed L3.16.1 shape: two model sessions, each loaded once, requests 1/2/3, cleanup once, final loaded instances zero.",
-        "",
-        "## Warmup/measured split",
+        "## Warmup/cache summary",
         "",
         f"- warmup_request_count: `{warmup_request_count}`",
         f"- measured_request_count: `{measured_request_count}`",
@@ -342,6 +387,8 @@ def _render_report(snapshot: dict[str, Any]) -> str:
         f"- pass_count: `{snapshot.get('pass_count')}`",
         f"- fail_count: `{snapshot.get('fail_count')}`",
         f"- pass_rate: `{snapshot.get('pass_rate')}`",
+        f"- failure_categories: `{failure_text}`",
+        f"- model_status: `{model_status_text}`",
         "",
         "## Timing summary",
         "",
@@ -359,11 +406,12 @@ def _render_report(snapshot: dict[str, Any]) -> str:
         "",
         "- KV-cache reuse is not proven unless LM Studio reports an explicit cache-hit signal.",
         "- RAM/VRAM telemetry is not claimed for timing-only remote-link runs.",
-        "- No image, 12B, 26B, Qwen, throughput, parallel, overnight, or stress gate is covered by this snapshot.",
+        f"- No image, {excluded_model_text}, throughput, parallel, overnight, or stress gate is covered by this snapshot.",
+        "- A downstream staged model wave is not accepted when this snapshot has failures.",
         "",
-        "## Next allowed gate",
+        "## Next gate",
         "",
-        "L3.17 small text quality screening only after L3.16.1 gates remain green.",
+        f"Downstream staged run status: `{downstream_gate}`.",
         "",
     ]
     return "\n".join(lines)
