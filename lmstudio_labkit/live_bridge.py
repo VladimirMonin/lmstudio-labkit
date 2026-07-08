@@ -80,6 +80,8 @@ def validate_live_guardrails(options: LiveBridgeOptions, *, request_count: int) 
     if request_count > options.max_requests:
         raise LiveBridgeError("request_count exceeds max_requests")
     parsed = urlparse(options.base_url)
+    if parsed.scheme not in {"http", "https"}:
+        raise LiveBridgeError("base_url scheme must be http or https")
     hostname = parsed.hostname or ""
     local_hosts = {"localhost", "127.0.0.1", "::1"}
     if hostname not in local_hosts and not options.allow_remote:
@@ -95,12 +97,14 @@ def managed_runner_bridge_factory(
 
 def safe_live_metadata(options: LiveBridgeOptions) -> dict[str, Any]:
     parsed = urlparse(options.base_url)
+    hostname = parsed.hostname or ""
+    base_url_kind = "local" if hostname in {"localhost", "127.0.0.1", "::1"} else "remote"
     return {
         "live": options.live,
         "allow_model_load": options.allow_model_load,
         "allow_remote": options.allow_remote,
         "allow_stress": options.allow_stress,
-        "base_url_host": parsed.hostname,
+        "base_url_kind": base_url_kind,
         "base_url_scheme": parsed.scheme,
         "profile": options.profile,
         "max_requests": options.max_requests,

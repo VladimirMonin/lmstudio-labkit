@@ -6,6 +6,21 @@ from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
+from .privacy import assert_privacy_scan_passed, scan_artifact_files
+
+SUMMARY_SIDECAR_NAMES = (
+    "summary.json",
+    "summary.csv",
+    "axis_summary.csv",
+    "failure_summary.csv",
+    "retry_impact.csv",
+)
+
+COMPARE_SIDECAR_NAMES = (
+    "compare_summary.json",
+    "compare_summary.md",
+)
+
 
 def summarize_run(run_dir: str | Path) -> dict[str, Any]:
     path = Path(run_dir)
@@ -38,6 +53,7 @@ def summarize_run(run_dir: str | Path) -> dict[str, Any]:
         "retry_impact": _retry_impact(rows),
     }
     _write_summary_sidecars(path, summary)
+    _scan_generated_sidecars(path, SUMMARY_SIDECAR_NAMES)
     return summary
 
 
@@ -62,6 +78,7 @@ def compare_runs(left_run_dir: str | Path, right_run_dir: str | Path) -> dict[st
     (right_path / "compare_summary.md").write_text(
         _render_compare_markdown(comparison), encoding="utf-8"
     )
+    _scan_generated_sidecars(right_path, (*SUMMARY_SIDECAR_NAMES, *COMPARE_SIDECAR_NAMES))
     return comparison
 
 
@@ -85,6 +102,15 @@ def _write_summary_sidecars(path: Path, summary: dict[str, Any]) -> None:
         path / "failure_summary.csv", summary["failure_taxonomy"], ["error_category"]
     )
     _write_mapping_csv(path / "retry_impact.csv", summary["retry_impact"], ["retry_policy"])
+
+
+def _scan_generated_sidecars(path: Path, names: tuple[str, ...]) -> None:
+    scan = scan_artifact_files(tuple(path / name for name in names))
+    (path / "privacy_scan.json").write_text(
+        json.dumps(scan, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    assert_privacy_scan_passed(scan)
 
 
 def _group_counts(rows: list[dict[str, Any]], key: str) -> dict[str, dict[str, Any]]:

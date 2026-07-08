@@ -7,12 +7,13 @@ from lmstudio_labkit.privacy import scan_text
 
 def test_privacy_scanner_detects_leaks() -> None:
     violations = scan_text(
-        '{"raw_prompt":"secret", "url":"http://127.0.0.1:1234", "path":"/home/user/private"}'
+        '{"raw_prompt":"secret", "url":"http://127.0.0.1:1234", "base_url_host":"127.0.0.1", "path":"/home/user/private"}'
     )
 
     categories = {item.category for item in violations}
     assert "raw_prompt_key" in categories
     assert "localhost_url" in categories
+    assert "base_url_host_localhost" in categories
     assert "home_path" in categories
 
 

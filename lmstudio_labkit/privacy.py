@@ -12,6 +12,10 @@ _PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("raw_prompt_key", re.compile(r'"raw_prompt"\s*:')),
     ("raw_response_key", re.compile(r'"raw_response"\s*:')),
     ("localhost_url", re.compile(r"https?://(?:localhost|127\.0\.0\.1)(?::\d+)?", re.I)),
+    (
+        "base_url_host_localhost",
+        re.compile(r'"base_url_host"\s*:\s*"(?:localhost|127\.0\.0\.1|::1)"', re.I),
+    ),
     ("home_path", re.compile(r"/(?:home|Users)/[A-Za-z0-9_.-]+/")),
     ("windows_user_path", re.compile(r"[A-Za-z]:\\\\Users\\\\[^\\\\]+\\\\")),
     (
