@@ -22,6 +22,7 @@ class TaskManifest:
     task_id: str
     modality: str
     language: str
+    language_policy: str | None
     structure_complexity: str
     volume: str
     schema_family: str
@@ -39,6 +40,7 @@ class TaskManifest:
             task_id=str(payload["task_id"]),
             modality=str(payload.get("modality", "text")),
             language=str(payload.get("language", "en_en")),
+            language_policy=payload.get("language_policy"),
             structure_complexity=str(payload.get("structure_complexity", "simple")),
             volume=str(payload.get("volume", "single")),
             schema_family=str(payload.get("schema_family", "simple_flat")),
@@ -62,6 +64,7 @@ class TaskManifest:
             family=self.schema_family,
             modality=self.modality,
             language=self.language,
+            language_policy=self.language_policy,
             structure_complexity=self.structure_complexity,
             volume=self.volume,
             prompt=f"synthetic fixture {self.task_id}",

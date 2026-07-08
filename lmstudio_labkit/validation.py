@@ -80,10 +80,15 @@ def validate_response(
 
         results.append(validate_no_placeholder_text(parsed))
         results.append(validate_no_reasoning_leak(parsed))
-        if contract.language:
-            results.append(validate_language(parsed, contract.language))
-        else:
-            results.append(ValidationResult("language_compliance", "skip"))
+        results.append(
+            validate_language(
+                parsed,
+                contract.language,
+                policy=contract.language_policy,
+                expected_hints=contract.expected_output,
+                image_ground_truth=contract.image_ground_truth,
+            )
+        )
 
         if contract.image_ground_truth is not None:
             results.append(validate_image_ground_truth(parsed, contract.image_ground_truth))
@@ -93,10 +98,15 @@ def validate_response(
         results.append(ValidationResult("json_parse", "skip"))
         results.append(validate_no_placeholder_text(raw_response))
         results.append(validate_no_reasoning_leak(raw_response))
-        if contract.language:
-            results.append(validate_language(raw_response, contract.language))
-        else:
-            results.append(ValidationResult("language_compliance", "skip"))
+        results.append(
+            validate_language(
+                raw_response,
+                contract.language,
+                policy=contract.language_policy,
+                expected_hints=contract.expected_output,
+                image_ground_truth=contract.image_ground_truth,
+            )
+        )
 
     if input_char_count is not None:
         results.append(validate_empty_text_for_non_empty_input(raw_response, input_char_count))
@@ -398,29 +408,90 @@ def validate_finish_reason(finish_reason: str | None) -> ValidationResult:
     )
 
 
-def validate_language(value: Any, language: str) -> ValidationResult:
+def validate_language(
+    value: Any,
+    language: str | None,
+    *,
+    policy: str | None = None,
+    expected_hints: Any | None = None,
+    image_ground_truth: dict[str, Any] | None = None,
+) -> ValidationResult:
+    resolved_policy = _resolve_language_policy(language, policy)
+    if resolved_policy is None or resolved_policy == "skip":
+        return ValidationResult("language_compliance", "skip")
+
     text = _flatten_text(value)
     cyr = len(re.findall(r"[А-Яа-яЁё]", text))
     lat = len(re.findall(r"[A-Za-z]", text))
     total_letters = max(1, cyr + lat)
     cyr_ratio = cyr / total_letters
     lat_ratio = lat / total_letters
+    metrics = {
+        "policy": resolved_policy,
+        "cyrillic_chars": cyr,
+        "latin_chars": lat,
+        "cyrillic_ratio": round(cyr_ratio, 4),
+        "latin_ratio": round(lat_ratio, 4),
+    }
+
+    if resolved_policy == "labels_only":
+        return _validate_language_labels_only(text, image_ground_truth, metrics)
+
     status: ValidationStatus = "pass"
     category = None
-    if language == "ru_ru" and cyr_ratio < 0.5:
+    if resolved_policy == "strict_ru" and cyr_ratio < 0.5:
         status, category = "fail", "language_mismatch"
-    elif language == "en_en" and lat_ratio < 0.5:
+    elif resolved_policy == "strict_en" and lat_ratio < 0.5:
         status, category = "fail", "language_mismatch"
-    elif language == "en_ru" and cyr == 0:
+    elif resolved_policy == "allow_code_terms" and (cyr == 0 or cyr_ratio < 0.25):
         status, category = "fail", "language_mismatch"
-    elif language == "ru_en_mixed" and (cyr == 0 or lat == 0):
+    elif (
+        resolved_policy == "mixed_ru_en"
+        and cyr == 0
+        and not _has_explicit_mixed_hint(expected_hints)
+    ):
         status, category = "fail", "language_mismatch"
-    return ValidationResult(
-        "language_compliance",
-        status,
-        category,
-        {"cyrillic_chars": cyr, "latin_chars": lat, "cyrillic_ratio": round(cyr_ratio, 4)},
+    return ValidationResult("language_compliance", status, category, metrics)
+
+
+def _resolve_language_policy(language: str | None, policy: str | None) -> str | None:
+    if policy:
+        return policy
+    return {
+        "ru_ru": "strict_ru",
+        "en_en": "strict_en",
+        "en_ru": "mixed_ru_en",
+        "ru_en_mixed": "mixed_ru_en",
+    }.get(language or "")
+
+
+def _has_explicit_mixed_hint(expected_hints: Any | None) -> bool:
+    hint_text = _flatten_text(expected_hints).casefold()
+    if len(re.findall(r"[А-Яа-яЁё]", hint_text)) > 0:
+        return True
+    return any(
+        marker in hint_text for marker in ("mixed", "ru_en", "ru-en", "ru+en", "russian", "рус")
     )
+
+
+def _validate_language_labels_only(
+    text: str,
+    image_ground_truth: dict[str, Any] | None,
+    metrics: dict[str, Any],
+) -> ValidationResult:
+    labels = [str(item).casefold() for item in (image_ground_truth or {}).get("labels", [])]
+    lowered = text.casefold()
+    missing = [label for label in labels if label not in lowered]
+    label_metrics = {
+        **metrics,
+        "expected_label_count": len(labels),
+        "missing_label_count": len(missing),
+    }
+    if missing:
+        return ValidationResult(
+            "language_compliance", "fail", "language_label_mismatch", label_metrics
+        )
+    return ValidationResult("language_compliance", "pass", metrics=label_metrics)
 
 
 def validate_length_ratio(

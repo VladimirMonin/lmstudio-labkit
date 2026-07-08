@@ -7,6 +7,14 @@ from typing import Any, Literal
 Modality = Literal["text", "image"]
 ResponseMode = Literal["json", "text"]
 EndpointFamily = Literal["openai_compat", "native"]
+LanguagePolicy = Literal[
+    "strict_ru",
+    "strict_en",
+    "mixed_ru_en",
+    "allow_code_terms",
+    "labels_only",
+    "skip",
+]
 
 
 def stable_hash(value: str | bytes) -> str:
@@ -73,6 +81,7 @@ class ResponseContract:
     id_field_names: tuple[str, ...] = ("id",)
     preserve_order: bool = True
     language: str | None = None
+    language_policy: LanguagePolicy | str | None = None
     min_length_ratio: float | None = None
     max_length_ratio: float | None = None
     expected_output: Any | None = None
@@ -93,6 +102,7 @@ class ResponseContract:
             "id_field_names": list(self.id_field_names),
             "preserve_order": self.preserve_order,
             "language": self.language,
+            "language_policy": self.language_policy,
             "min_length_ratio": self.min_length_ratio,
             "max_length_ratio": self.max_length_ratio,
             "expected_output_hash": expected_hash,
@@ -289,6 +299,7 @@ __all__ = [
     "EndpointFamily",
     "ExecutionOptions",
     "ImageInput",
+    "LanguagePolicy",
     "Modality",
     "RequestEnvelope",
     "RequestPlan",

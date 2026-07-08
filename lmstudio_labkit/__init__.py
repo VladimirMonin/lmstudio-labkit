@@ -17,6 +17,7 @@ from .requests import (
     ChatMessage,
     ExecutionOptions,
     ImageInput,
+    LanguagePolicy,
     RequestEnvelope,
     RequestPlan,
     RequestResult,
@@ -28,6 +29,7 @@ from .validation import (
     ValidationResult,
     ValidationSummary,
     collect_ids_by_path,
+    validate_language,
     validate_response,
 )
 
@@ -38,6 +40,7 @@ __all__ = [
     "ChatMessage",
     "ExecutionOptions",
     "ImageInput",
+    "LanguagePolicy",
     "MatrixCell",
     "MatrixPlan",
     "ModelSpec",
@@ -59,6 +62,7 @@ __all__ = [
     "plan_matrix",
     "run_live_small_text_screening",
     "run_matrix",
+    "validate_language",
     "validate_response",
     "write_run_artifacts",
 ]

@@ -58,6 +58,7 @@ class TaskSpec:
     family: str
     modality: str = "text"
     language: str = "en_en"
+    language_policy: str | None = None
     structure_complexity: str = "simple"
     volume: str = "single"
     prompt: str = ""
@@ -180,6 +181,7 @@ class MatrixCell:
             id_field_names=self.task.id_field_names,
             preserve_order=self.task.preserve_order,
             language=self.axes.get("language"),
+            language_policy=self.task.language_policy,
             expected_output=self.task.expected_output,
             image_ground_truth=self.task.image_ground_truth,
             min_length_ratio=self.task.min_length_ratio,
@@ -545,6 +547,7 @@ def _task_from_dict(payload: dict[str, Any]) -> TaskSpec:
         family=str(payload.get("family", "simple_flat")),
         modality=str(payload.get("modality", "text")),
         language=str(payload.get("language", "en_en")),
+        language_policy=payload.get("language_policy"),
         structure_complexity=str(payload.get("structure_complexity", "simple")),
         volume=str(payload.get("volume", "single")),
         prompt=str(payload.get("prompt", "")),
