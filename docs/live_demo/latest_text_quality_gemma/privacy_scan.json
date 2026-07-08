@@ -4,7 +4,10 @@
     "latest_snapshot.json",
     "latest_snapshot.csv",
     "README.md",
-    "report.md"
+    "report.md",
+    "model_summary.csv",
+    "failure_summary.csv",
+    "retry_summary.csv"
   ],
   "status": "pass",
   "violation_count": 0,

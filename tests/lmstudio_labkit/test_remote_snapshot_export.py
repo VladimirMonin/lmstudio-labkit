@@ -104,6 +104,13 @@ def test_latest_snapshot_export_is_public_safe(tmp_path: Path) -> None:
     assert result["status"] == "pass"
     assert Path(result["report"]).name == "report.md"
     assert (tmp_path / "latest" / "report.md").exists()
+    for summary_name in ("model_summary.csv", "failure_summary.csv", "retry_summary.csv"):
+        summary_path = tmp_path / "latest" / summary_name
+        assert summary_path.exists()
+        assert summary_path.read_text(encoding="utf-8").strip()
+    assert Path(result["model_summary"]).name == "model_summary.csv"
+    assert Path(result["failure_summary"]).name == "failure_summary.csv"
+    assert Path(result["retry_summary"]).name == "retry_summary.csv"
     snapshot_text = Path(result["snapshot"]).read_text(encoding="utf-8")
     snapshot = json.loads(snapshot_text)
     assert snapshot["live_bridge"]["base_url_kind"] == "remote"

@@ -1,0 +1,1247 @@
+run_id: matrix_l3_17_text_quality_e2b_e4b
+models:
+- model_key: gemma4_e2b
+  model_id: google/gemma-4-e2b
+  endpoint_family: openai_compat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - 8192
+- model_key: gemma4_e4b
+  model_id: google/gemma-4-e4b
+  endpoint_family: openai_compat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - 8192
+tasks:
+- task_id: ru_ru_simple_single
+  family: simple_flat
+  modality: text
+  language: ru_ru
+  language_policy: strict_ru
+  structure_complexity: simple
+  volume: single
+  prompt: 'Русский simple single: верни только JSON объекта с id=0, title, summary,
+    tags и language. Без markdown.'
+  schema_family: simple_flat
+  schema:
+    type: object
+    required:
+    - id
+    - title
+    - summary
+    - tags
+    - language
+    additionalProperties: false
+    properties:
+      id:
+        const: 0
+      title:
+        type: string
+        minLength: 1
+      summary:
+        type: string
+        minLength: 1
+      tags:
+        type: array
+        minItems: 1
+        maxItems: 4
+        items:
+          type: string
+          minLength: 1
+      language:
+        const: ru
+  expected_ids:
+  - 0
+  id_paths:
+  - id
+  expected_output:
+    id: 0
+    title: Короткий заголовок
+    summary: Короткое русское резюме.
+    tags:
+    - тест
+    language: ru
+  fake_mode: valid
+- task_id: ru_ru_simple_many
+  family: simple_items
+  modality: text
+  language: ru_ru
+  language_policy: strict_ru
+  structure_complexity: simple
+  volume: many
+  prompt: 'Русский simple many: верни только JSON с массивом items из 10 объектов
+    id 0..9, title, summary, tags. Без markdown.'
+  schema_family: simple_items
+  schema:
+    type: object
+    required:
+    - items
+    additionalProperties: false
+    properties:
+      items:
+        type: array
+        minItems: 10
+        maxItems: 10
+        prefixItems:
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 0
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 1
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 2
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 3
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 4
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 5
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 6
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 7
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 8
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 9
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        items: false
+  expected_ids:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  id_paths:
+  - items[*].id
+  expected_output:
+    items:
+    - id: 0
+      title: Пункт 0
+      summary: Короткое русское описание 0.
+      tags:
+      - тест
+    - id: 1
+      title: Пункт 1
+      summary: Короткое русское описание 1.
+      tags:
+      - тест
+    - id: 2
+      title: Пункт 2
+      summary: Короткое русское описание 2.
+      tags:
+      - тест
+    - id: 3
+      title: Пункт 3
+      summary: Короткое русское описание 3.
+      tags:
+      - тест
+    - id: 4
+      title: Пункт 4
+      summary: Короткое русское описание 4.
+      tags:
+      - тест
+    - id: 5
+      title: Пункт 5
+      summary: Короткое русское описание 5.
+      tags:
+      - тест
+    - id: 6
+      title: Пункт 6
+      summary: Короткое русское описание 6.
+      tags:
+      - тест
+    - id: 7
+      title: Пункт 7
+      summary: Короткое русское описание 7.
+      tags:
+      - тест
+    - id: 8
+      title: Пункт 8
+      summary: Короткое русское описание 8.
+      tags:
+      - тест
+    - id: 9
+      title: Пункт 9
+      summary: Короткое русское описание 9.
+      tags:
+      - тест
+  fake_mode: valid
+- task_id: ru_ru_medium_single
+  family: blocks
+  modality: text
+  language: ru_ru
+  language_policy: strict_ru
+  structure_complexity: medium
+  volume: single
+  prompt: 'Русский medium single: верни только JSON с blocks id 0,1,2 по порядку.
+    Короткий text в каждом блоке. Без markdown.'
+  schema_family: blocks
+  schema:
+    type: object
+    required:
+    - blocks
+    additionalProperties: false
+    properties:
+      blocks:
+        type: array
+        minItems: 3
+        maxItems: 3
+        prefixItems:
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 0
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 1
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 2
+            text:
+              type: string
+              minLength: 1
+        items: false
+  expected_ids:
+  - 0
+  - 1
+  - 2
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: Короткий русский блок 0.
+    - id: 1
+      text: Короткий русский блок 1.
+    - id: 2
+      text: Короткий русский блок 2.
+  fake_mode: valid
+- task_id: ru_ru_medium_many
+  family: blocks
+  modality: text
+  language: ru_ru
+  language_policy: strict_ru
+  structure_complexity: medium
+  volume: many
+  prompt: 'Русский medium many: верни только JSON с blocks id 0..7 по порядку. Короткий
+    text в каждом блоке. Без markdown.'
+  schema_family: blocks
+  schema:
+    type: object
+    required:
+    - blocks
+    additionalProperties: false
+    properties:
+      blocks:
+        type: array
+        minItems: 8
+        maxItems: 8
+        prefixItems:
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 0
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 1
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 2
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 3
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 4
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 5
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 6
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 7
+            text:
+              type: string
+              minLength: 1
+        items: false
+  expected_ids:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: Короткий русский блок 0.
+    - id: 1
+      text: Короткий русский блок 1.
+    - id: 2
+      text: Короткий русский блок 2.
+    - id: 3
+      text: Короткий русский блок 3.
+    - id: 4
+      text: Короткий русский блок 4.
+    - id: 5
+      text: Короткий русский блок 5.
+    - id: 6
+      text: Короткий русский блок 6.
+    - id: 7
+      text: Короткий русский блок 7.
+  fake_mode: valid
+- task_id: ru_en_mixed_simple_single
+  family: simple_flat
+  modality: text
+  language: ru_en_mixed
+  language_policy: mixed_ru_en
+  structure_complexity: simple
+  volume: single
+  prompt: 'Смешанный RU/EN simple single: верни только JSON объекта с id=0, title,
+    summary, tags и language. Без markdown.'
+  schema_family: simple_flat
+  schema:
+    type: object
+    required:
+    - id
+    - title
+    - summary
+    - tags
+    - language
+    additionalProperties: false
+    properties:
+      id:
+        const: 0
+      title:
+        type: string
+        minLength: 1
+      summary:
+        type: string
+        minLength: 1
+      tags:
+        type: array
+        minItems: 1
+        maxItems: 4
+        items:
+          type: string
+          minLength: 1
+      language:
+        type: string
+        minLength: 2
+  expected_ids:
+  - 0
+  id_paths:
+  - id
+  expected_output:
+    id: 0
+    title: Короткий заголовок
+    summary: Короткое русское резюме.
+    tags:
+    - тест
+    language: ru_en
+  fake_mode: valid
+- task_id: ru_en_mixed_simple_many
+  family: simple_items
+  modality: text
+  language: ru_en_mixed
+  language_policy: mixed_ru_en
+  structure_complexity: simple
+  volume: many
+  prompt: 'Смешанный RU/EN simple many: верни только JSON с массивом items из 10 объектов
+    id 0..9, title, summary, tags. Без markdown.'
+  schema_family: simple_items
+  schema:
+    type: object
+    required:
+    - items
+    additionalProperties: false
+    properties:
+      items:
+        type: array
+        minItems: 10
+        maxItems: 10
+        prefixItems:
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 0
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 1
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 2
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 3
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 4
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 5
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 6
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 7
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 8
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        - type: object
+          required:
+          - id
+          - title
+          - summary
+          - tags
+          additionalProperties: false
+          properties:
+            id:
+              const: 9
+            title:
+              type: string
+              minLength: 1
+            summary:
+              type: string
+              minLength: 1
+            tags:
+              type: array
+              minItems: 1
+              maxItems: 4
+              items:
+                type: string
+                minLength: 1
+        items: false
+  expected_ids:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  id_paths:
+  - items[*].id
+  expected_output:
+    items:
+    - id: 0
+      title: Пункт 0
+      summary: Короткое русское описание 0.
+      tags:
+      - тест
+    - id: 1
+      title: Пункт 1
+      summary: Короткое русское описание 1.
+      tags:
+      - тест
+    - id: 2
+      title: Пункт 2
+      summary: Короткое русское описание 2.
+      tags:
+      - тест
+    - id: 3
+      title: Пункт 3
+      summary: Короткое русское описание 3.
+      tags:
+      - тест
+    - id: 4
+      title: Пункт 4
+      summary: Short English summary.
+      tags:
+      - тест
+    - id: 5
+      title: Пункт 5
+      summary: Короткое русское описание 5.
+      tags:
+      - тест
+    - id: 6
+      title: Пункт 6
+      summary: Короткое русское описание 6.
+      tags:
+      - тест
+    - id: 7
+      title: Пункт 7
+      summary: Короткое русское описание 7.
+      tags:
+      - тест
+    - id: 8
+      title: Пункт 8
+      summary: Короткое русское описание 8.
+      tags:
+      - тест
+    - id: 9
+      title: Пункт 9
+      summary: Short English summary.
+      tags:
+      - тест
+  fake_mode: valid
+- task_id: ru_en_mixed_medium_single
+  family: blocks
+  modality: text
+  language: ru_en_mixed
+  language_policy: mixed_ru_en
+  structure_complexity: medium
+  volume: single
+  prompt: 'Смешанный RU/EN medium single: верни только JSON с blocks id 0,1,2 по порядку.
+    Короткий text в каждом блоке. Без markdown.'
+  schema_family: blocks
+  schema:
+    type: object
+    required:
+    - blocks
+    additionalProperties: false
+    properties:
+      blocks:
+        type: array
+        minItems: 3
+        maxItems: 3
+        prefixItems:
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 0
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 1
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 2
+            text:
+              type: string
+              minLength: 1
+        items: false
+  expected_ids:
+  - 0
+  - 1
+  - 2
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: Короткий русский блок 0.
+    - id: 1
+      text: Short English block.
+    - id: 2
+      text: Короткий русский блок 2.
+  fake_mode: valid
+- task_id: ru_en_mixed_medium_many
+  family: blocks
+  modality: text
+  language: ru_en_mixed
+  language_policy: mixed_ru_en
+  structure_complexity: medium
+  volume: many
+  prompt: 'Смешанный RU/EN medium many: верни только JSON с blocks id 0..7 по порядку.
+    Короткий text в каждом блоке. Без markdown.'
+  schema_family: blocks
+  schema:
+    type: object
+    required:
+    - blocks
+    additionalProperties: false
+    properties:
+      blocks:
+        type: array
+        minItems: 8
+        maxItems: 8
+        prefixItems:
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 0
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 1
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 2
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 3
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 4
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 5
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 6
+            text:
+              type: string
+              minLength: 1
+        - type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              const: 7
+            text:
+              type: string
+              minLength: 1
+        items: false
+  expected_ids:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+  - 5
+  - 6
+  - 7
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: Короткий русский блок 0.
+    - id: 1
+      text: Short English block.
+    - id: 2
+      text: Короткий русский блок 2.
+    - id: 3
+      text: Короткий русский блок 3.
+    - id: 4
+      text: Short English block.
+    - id: 5
+      text: Короткий русский блок 5.
+    - id: 6
+      text: Короткий русский блок 6.
+    - id: 7
+      text: Short English block.
+  fake_mode: valid
+axes:
+  modality:
+  - text
+  language:
+  - ru_ru
+  - ru_en_mixed
+  structure_complexity:
+  - simple
+  - medium
+  volume:
+  - single
+  - many
+  context_tier:
+  - 8192
+  schema_variant:
+  - hardened_const
+  retry_policy:
+  - 'off'
+  - retry1
+  execution_mode:
+  - cold_per_request
+  cache_mode:
+  - none
+  execution_target:
+  - remote_link
+  resource_telemetry_mode:
+  - timing_only
+  lmstudio_parallel:
+  - 1
+  app_concurrency:
+  - 1
+  queue_pressure_mode:
+  - false
+  text_interaction_mode:
+  - single_question
+structured_runtime:
+  strict_json_schema: true
+remote_link:
+  enabled: true
+  telemetry_policy:
+    base_url_kind: remote
+    scheme: https
+    raw_base_url_stored: false
+    raw_prompt_response_stored: false
+    kv_reuse_proven: false
+    allowed_artifact_fields:
+    - base_url_kind
+    - scheme
+    - endpoint_family
+    - status
+    - timing_ms
+    - execution_target
+    - resource_telemetry_mode
+    - resource_telemetry_status
+    - cache_hit_inferred
+    - cache_hit_reported
+    forbidden_artifact_fields:
+    - base_url
+    - prompt
+    - response
+    - messages
+    - content
+safety:
+  live: true
+  allow_model_downloads: false
+  allow_model_loads: true
+  allow_remote_base_url: true
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_requests: 40
+  max_models: 2
+  max_context_tier: 8192
+  max_repeats: 1
+  max_runtime_minutes: 60

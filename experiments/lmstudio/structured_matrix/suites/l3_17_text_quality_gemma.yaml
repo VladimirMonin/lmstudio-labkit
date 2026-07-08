@@ -1,0 +1,11 @@
+suite_id: l3_17_text_quality_gemma
+stop_on_failure: true
+configs:
+- id: e2b_e4b_text_quality
+  config: ../configs/matrix.l3_17_text_quality.e2b_e4b.yaml
+  required: true
+- id: gemma_12b_text_quality
+  config: ../configs/matrix.l3_17_text_quality.12b.yaml
+  required: false
+  run_after:
+  - e2b_e4b_text_quality

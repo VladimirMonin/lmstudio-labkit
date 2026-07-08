@@ -14,6 +14,7 @@ Current code includes extracted managed LM Studio backend contracts, lab runners
 ## Live demo snapshots
 
 - [Latest remote text screening snapshot](docs/live_demo/latest_text_remote_e2b_e4b/README.md) — public-safe export target for the latest L3.16 Gemma E2B/E4B remote-link text run. The directory may contain only sanitized summaries and no raw prompts, raw responses, hostnames, tokens, or base URLs.
+- [Latest Gemma text quality snapshot](docs/live_demo/latest_text_quality_gemma/README.md) — public-safe export target for the latest L3.17 staged Gemma text-quality run. The directory includes sanitized summaries only: no raw prompts, raw responses, hostnames, tokens, base URLs, or source run paths.
 
 ## Quick start
 

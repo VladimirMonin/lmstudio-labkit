@@ -13,6 +13,9 @@ LATEST_SNAPSHOT_FILE_NAMES = (
     "latest_snapshot.csv",
     "README.md",
     "report.md",
+    "model_summary.csv",
+    "failure_summary.csv",
+    "retry_summary.csv",
     "privacy_scan.json",
 )
 
@@ -34,6 +37,9 @@ def export_latest_text_remote_snapshot(
     csv_path = target / "latest_snapshot.csv"
     readme_path = target / "README.md"
     report_path = target / "report.md"
+    model_summary_path = target / "model_summary.csv"
+    failure_summary_path = target / "failure_summary.csv"
+    retry_summary_path = target / "retry_summary.csv"
     scan_path = target / "privacy_scan.json"
 
     json_path.write_text(
@@ -43,8 +49,21 @@ def export_latest_text_remote_snapshot(
     _write_snapshot_csv(csv_path, snapshot)
     readme_path.write_text(_render_readme(snapshot), encoding="utf-8")
     report_path.write_text(_render_report(snapshot), encoding="utf-8")
+    _copy_summary_csv(source / "model_summary.csv", model_summary_path)
+    _copy_summary_csv(source / "failure_summary.csv", failure_summary_path)
+    _copy_summary_csv(source / "retry_summary.csv", retry_summary_path)
 
-    scan = scan_artifact_files((json_path, csv_path, readme_path, report_path))
+    scan = scan_artifact_files(
+        (
+            json_path,
+            csv_path,
+            readme_path,
+            report_path,
+            model_summary_path,
+            failure_summary_path,
+            retry_summary_path,
+        )
+    )
     scan_path.write_text(
         json.dumps(scan, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -57,6 +76,9 @@ def export_latest_text_remote_snapshot(
         "csv": str(csv_path),
         "readme": str(readme_path),
         "report": str(report_path),
+        "model_summary": str(model_summary_path),
+        "failure_summary": str(failure_summary_path),
+        "retry_summary": str(retry_summary_path),
         "privacy_scan": str(scan_path),
     }
 
@@ -415,6 +437,13 @@ def _render_report(snapshot: dict[str, Any]) -> str:
         "",
     ]
     return "\n".join(lines)
+
+
+def _copy_summary_csv(source: Path, target: Path) -> None:
+    if not source.exists():
+        target.write_text("\n", encoding="utf-8")
+        return
+    target.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
 
 
 def _read_json(path: Path) -> dict[str, Any]:

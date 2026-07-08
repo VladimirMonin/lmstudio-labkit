@@ -1,21 +1,21 @@
 {
-  "attempt_count": 16,
+  "attempt_count": 32,
   "cache_modes": [
     "none"
   ],
-  "cell_count": 16,
-  "config_hash": "084248894460f61ba3ca51d40ef28d136a3ee18c920dd7fc49aa5434ec0cb26a",
+  "cell_count": 32,
+  "config_hash": "cc28c412720ef650db3aa3bc64de4c659178dd9a293943f415c7d0ee67b1873b",
   "execution_modes": [
     "cold_per_request"
   ],
   "execution_targets": [
     "remote_link"
   ],
-  "fail_count": 4,
+  "fail_count": 6,
   "failure_categories": {
-    "too_long": 4
+    "language_mismatch": 6
   },
-  "filtered_cell_count": 16,
+  "filtered_cell_count": 32,
   "lifecycle": {
     "cleanup_scopes": [
       "per_request"
@@ -30,22 +30,38 @@
       "True"
     ],
     "session_ids": [
-      "session_0c7bc74f80a4db81",
-      "session_1a90762d36d9758d",
-      "session_1b6691f202cf3749",
-      "session_22b2a4b4bf0619f7",
-      "session_2f56ce9870f7e27f",
-      "session_3b3e7d06eb8de42b",
-      "session_4f2403c01a230f4e",
-      "session_5a6b29d7e13c1f65",
-      "session_8d8a6b856d233660",
-      "session_8f458e7abb954421",
-      "session_98011dc3ea70e48d",
-      "session_b3ca26d057da5eb6",
-      "session_d6a8c832edf4ecaf",
-      "session_ddab721c617b9c30",
-      "session_ed757b54b91f2ba7",
-      "session_fd70750b14b75888"
+      "session_01a679620c05e85f",
+      "session_034202bd5e0d1e5c",
+      "session_1122b3164004bce6",
+      "session_12371fee48f99efc",
+      "session_1819089adea7c304",
+      "session_1e825145a9240f4a",
+      "session_261dca4e856ea66c",
+      "session_295b25f71b1a85c2",
+      "session_2a59c91ae31b6640",
+      "session_37866db33b21feab",
+      "session_3de752adc1c1e3cd",
+      "session_4d432143524cd876",
+      "session_5178202f221d105c",
+      "session_53a0ccd897d59334",
+      "session_598e096bd6628033",
+      "session_59dc6ba4a9de2b9f",
+      "session_62b8b5f47c40ac68",
+      "session_6554c9c2213d29ba",
+      "session_7085bc24694ddf09",
+      "session_789bad961f722f47",
+      "session_82fac7438249a62f",
+      "session_8cda27eac47bab04",
+      "session_8d6b1b9549110b8e",
+      "session_9317953038fac37a",
+      "session_b4d7ebfe8a46e084",
+      "session_c5433410bf0cef06",
+      "session_ce9a150a2faca4c1",
+      "session_d66f29544cdb8ee0",
+      "session_e2337d9772fdc0a9",
+      "session_eacd1d3aab9470ac",
+      "session_f59ad0f4581cba9e",
+      "session_f6db5e4a53e5e337"
     ],
     "session_request_counts": [
       1
@@ -62,8 +78,8 @@
     "base_url_kind": "local",
     "base_url_scheme": "http",
     "live": true,
-    "max_requests": 24,
-    "profile": "live-screening"
+    "max_requests": 40,
+    "profile": "live-small"
   },
   "model_ids": [
     "google/gemma-4-e2b",
@@ -71,24 +87,24 @@
   ],
   "model_status": {
     "google/gemma-4-e2b": {
-      "fail": 2,
-      "pass": 6
+      "fail": 4,
+      "pass": 12
     },
     "google/gemma-4-e4b": {
       "fail": 2,
-      "pass": 6
+      "pass": 14
     }
   },
   "models": [
     "gemma4_e2b",
     "gemma4_e4b"
   ],
-  "pass_count": 12,
-  "pass_rate": 0.75,
+  "pass_count": 26,
+  "pass_rate": 0.8125,
   "resource_telemetry_modes": [
     "timing_only"
   ],
-  "run_id": "matrix_l3_17_text_quality_remote_e2b_e4b",
+  "run_id": "matrix_l3_17_text_quality_e2b_e4b",
   "safety": {
     "public_safe": true,
     "raw_base_url_stored": false,
@@ -97,16 +113,16 @@
     "raw_response_stored": false
   },
   "schema_version": "latest-text-remote-snapshot-v1",
-  "skipped_cell_count": 176,
+  "skipped_cell_count": 224,
   "timing": {
-    "latency_ms_max": 1373.167,
-    "latency_ms_min": 679.146,
-    "total_latency_ms_max": 1373.167,
-    "total_latency_ms_min": 679.146
+    "latency_ms_max": 5454.184,
+    "latency_ms_min": 601.019,
+    "total_latency_ms_max": 5454.184,
+    "total_latency_ms_min": 601.019
   },
   "token_counts": {
-    "completion_tokens": 1058,
-    "prompt_tokens": 732
+    "completion_tokens": 6122,
+    "prompt_tokens": 1576
   },
   "warmup": {
     "cache_hit_reported": [
@@ -115,7 +131,7 @@
     "kv_reuse_proven": [
       "False"
     ],
-    "measured_request_count": 16,
+    "measured_request_count": 32,
     "warmup_request_count": 0
   }
 }

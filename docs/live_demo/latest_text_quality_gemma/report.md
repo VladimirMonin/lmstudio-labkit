@@ -2,16 +2,16 @@
 
 ## Scope
 
-- run_id: `matrix_l3_17_text_quality_remote_e2b_e4b`
+- run_id: `matrix_l3_17_text_quality_e2b_e4b`
 - models: `google/gemma-4-e2b, google/gemma-4-e4b`
-- request_count: `16`
+- request_count: `32`
 - execution_modes: `cold_per_request`
 - cache_modes: `none`
 - resource_telemetry_modes: `timing_only`
 
 ## Lifecycle summary
 
-- session_count: `16`
+- session_count: `32`
 - load_scopes: `per_request`
 - cleanup_scopes: `per_request`
 - final_loaded_instances: `0`
@@ -22,24 +22,24 @@
 ## Warmup/cache summary
 
 - warmup_request_count: `0`
-- measured_request_count: `16`
+- measured_request_count: `32`
 - cache_hit_reported: `unknown`
 - kv_reuse_proven: `False`
 
 ## Validation summary
 
-- pass_count: `12`
-- fail_count: `4`
-- pass_rate: `0.75`
-- failure_categories: `too_long=4`
-- model_status: `google/gemma-4-e2b: fail=2, pass=6; google/gemma-4-e4b: fail=2, pass=6`
+- pass_count: `26`
+- fail_count: `6`
+- pass_rate: `0.8125`
+- failure_categories: `language_mismatch=6`
+- model_status: `google/gemma-4-e2b: fail=4, pass=12; google/gemma-4-e4b: fail=2, pass=14`
 
 ## Timing summary
 
-- latency_ms_min: `679.146`
-- latency_ms_max: `1373.167`
-- total_latency_ms_min: `679.146`
-- total_latency_ms_max: `1373.167`
+- latency_ms_min: `601.019`
+- latency_ms_max: `5454.184`
+- total_latency_ms_min: `601.019`
+- total_latency_ms_max: `5454.184`
 
 ## Privacy summary
 
