@@ -1,0 +1,170 @@
+{
+  "attempt_count": 6,
+  "cache_modes": [
+    "none"
+  ],
+  "cell_count": 6,
+  "config_hash": "f8a883a5d3ef38facc041b35ee55a3d4c616ee0c5921ca619136f4b25198d540",
+  "execution_modes": [
+    "cold_per_request"
+  ],
+  "execution_targets": [
+    "live_small"
+  ],
+  "fail_count": 4,
+  "failure_categories": {
+    "paragraphing_mismatch": 2,
+    "schema_error": 2
+  },
+  "filtered_cell_count": 6,
+  "hard_fail_count": 4,
+  "length_ratio_failures": {
+    "count": 0,
+    "max_actual_ratio": null,
+    "min_actual_ratio": null,
+    "model_ids": [],
+    "policy_max": [],
+    "policy_min": [],
+    "task_ids": []
+  },
+  "length_ratio_warning_count": 0,
+  "lifecycle": {
+    "cleanup_scopes": [
+      "per_request"
+    ],
+    "final_loaded_instances": [
+      0
+    ],
+    "load_scopes": [
+      "per_request"
+    ],
+    "session_cleanup_verified": [
+      "True"
+    ],
+    "session_ids": [
+      "session_3663ba6cfc0bee6e",
+      "session_4162f6606532fda8",
+      "session_74063f6a14b12c9b",
+      "session_945689a96c1a2987",
+      "session_be7a5c85c6d047b1",
+      "session_fb76ae0d3baee460"
+    ],
+    "session_request_counts": [
+      1
+    ],
+    "session_request_indices": [
+      1
+    ]
+  },
+  "live": true,
+  "live_bridge": {
+    "allow_model_load": true,
+    "allow_remote": false,
+    "allow_stress": false,
+    "base_url_kind": "local",
+    "base_url_scheme": "http",
+    "live": true,
+    "max_requests": 6,
+    "profile": "live-screening"
+  },
+  "model_ids": [
+    "google/gemma-4-e2b",
+    "google/gemma-4-e4b"
+  ],
+  "model_status": {
+    "google/gemma-4-e2b": {
+      "fail": 2,
+      "pass": 1
+    },
+    "google/gemma-4-e4b": {
+      "fail": 2,
+      "pass": 1
+    }
+  },
+  "models": [
+    "gemma4_e2b",
+    "gemma4_e4b"
+  ],
+  "pass_count": 2,
+  "pass_rate": 0.3333,
+  "per_complexity": {
+    "medium": {
+      "fail": 2,
+      "hard_fail": 2,
+      "warning": 4
+    },
+    "simple": {
+      "fail": 2,
+      "hard_fail": 2,
+      "pass": 2,
+      "warning": 4
+    }
+  },
+  "per_language": {
+    "ru_ru": {
+      "fail": 4,
+      "hard_fail": 4,
+      "pass": 2,
+      "warning": 8
+    }
+  },
+  "per_volume": {
+    "many": {
+      "fail": 2,
+      "hard_fail": 2,
+      "warning": 4
+    },
+    "single": {
+      "fail": 2,
+      "hard_fail": 2,
+      "pass": 2,
+      "warning": 4
+    }
+  },
+  "resource_telemetry_modes": [
+    "timing_only"
+  ],
+  "retry_impact": {
+    "off": {
+      "fail": 4,
+      "hard_fail": 4,
+      "pass": 2,
+      "warning": 8
+    }
+  },
+  "run_id": "matrix_l3_21_1_postprocessing_canary_live",
+  "safety": {
+    "public_safe": true,
+    "raw_base_url_stored": false,
+    "raw_prompt_response_stored": false,
+    "raw_prompt_stored": false,
+    "raw_response_stored": false
+  },
+  "schema_version": "latest-text-remote-snapshot-v1",
+  "skipped_cell_count": 5178,
+  "timing": {
+    "latency_ms_max": 1724.789,
+    "latency_ms_min": 721.082,
+    "total_latency_ms_max": 1724.789,
+    "total_latency_ms_min": 721.082
+  },
+  "token_counts": {
+    "completion_tokens": 443,
+    "prompt_tokens": 1642
+  },
+  "warmup": {
+    "cache_hit_reported": [
+      "unknown"
+    ],
+    "kv_reuse_proven": [
+      "False"
+    ],
+    "measured_request_count": 6,
+    "warmup_request_count": 0
+  },
+  "warning_categories": {
+    "manual_review_required": 4,
+    "punctuation_metrics": 2
+  },
+  "warning_count": 8
+}

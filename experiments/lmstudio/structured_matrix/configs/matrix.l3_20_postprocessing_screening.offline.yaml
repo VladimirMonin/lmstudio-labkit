@@ -87,20 +87,26 @@ tasks:
         type: array
         minItems: 2
         maxItems: 2
-        items:
-          type: object
-          required:
+        prefixItems:
+        - type: object
+          required: &id001
           - id
           - text
           additionalProperties: false
           properties:
             id:
-              enum:
-              - 0
-              - 1
-            text:
+              const: 0
+            text: &id002
               type: string
               minLength: 1
+        - type: object
+          required: *id001
+          additionalProperties: false
+          properties:
+            id:
+              const: 1
+            text: *id002
+        items: false
   expected_ids:
   - 0
   - 1
@@ -130,7 +136,7 @@ tasks:
   response_schema_complexity: simple
   volume: single
   task_intent: paragraphing
-  input_profile: raw_asr_ru_fillers
+  input_profile: raw_asr_ru_paragraphing
   output_language_policy: preserve_input_language
   prompt_variant: paragraphing_focused
   validation_policy: auto_schema_language_manual_quality
@@ -157,7 +163,12 @@ tasks:
   id_paths: []
   expected_output:
     language: same_as_input
-    clean_text: Сегодня проверяем Django и JSON schema.
+    clean_text: 'Сегодня мы обсудим архитектуру сервиса: сначала посмотрим, как устроены
+      модели и миграции.
+
+
+      Потом отдельно разберём обработку фоновых задач, проверим отчёты и решим следующие
+      шаги.'
     warnings: []
   fake_mode: valid
   manual_review_policy: sampled
@@ -166,7 +177,7 @@ tasks:
   - summary
   - title
   - tags[*]
-  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_fillers.yaml
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_paragraphing.yaml
   prompt_template: experiments/lmstudio/structured_matrix/prompts/paragraphing_focused.md
   paragraphing_policy: hard
   paragraph_count_min: 2
@@ -181,7 +192,7 @@ tasks:
   response_schema_complexity: blocks
   volume: many
   task_intent: paragraphing
-  input_profile: raw_asr_ru_fillers
+  input_profile: raw_asr_ru_paragraphing
   output_language_policy: preserve_input_language
   prompt_variant: paragraphing_focused
   validation_policy: auto_schema_language_manual_quality
@@ -197,20 +208,26 @@ tasks:
         type: array
         minItems: 2
         maxItems: 2
-        items:
-          type: object
-          required:
+        prefixItems:
+        - type: object
+          required: &id003
           - id
           - text
           additionalProperties: false
           properties:
             id:
-              enum:
-              - 0
-              - 1
-            text:
+              const: 0
+            text: &id004
               type: string
               minLength: 1
+        - type: object
+          required: *id003
+          additionalProperties: false
+          properties:
+            id:
+              const: 1
+            text: *id004
+        items: false
   expected_ids:
   - 0
   - 1
@@ -219,14 +236,16 @@ tasks:
   expected_output:
     blocks:
     - id: 0
-      text: 'Блок 0: проверяем Django и Qwen.'
+      text: 'Сегодня мы обсудим архитектуру сервиса: сначала посмотрим, как устроены
+        модели и миграции.'
     - id: 1
-      text: 'Блок 1: проверяем Django и Qwen.'
+      text: Потом отдельно разберём обработку фоновых задач, проверим отчёты и решим
+        следующие шаги.
   fake_mode: valid
   manual_review_policy: sampled
   language_include_paths:
   - blocks[*].text
-  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_fillers.yaml
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_paragraphing.yaml
   prompt_template: experiments/lmstudio/structured_matrix/prompts/paragraphing_focused.md
   paragraphing_policy: hard
   paragraph_count_min: 2
@@ -268,7 +287,7 @@ tasks:
   id_paths: []
   expected_output:
     language: same_as_input
-    clean_text: Сегодня проверяем Django и JSON schema.
+    clean_text: Сегодня мы используем Django, PySide6, embedding model через LM Studio.
     warnings: []
   fake_mode: valid
   manual_review_policy: sampled
@@ -307,20 +326,26 @@ tasks:
         type: array
         minItems: 2
         maxItems: 2
-        items:
-          type: object
-          required:
+        prefixItems:
+        - type: object
+          required: &id005
           - id
           - text
           additionalProperties: false
           properties:
             id:
-              enum:
-              - 0
-              - 1
-            text:
+              const: 0
+            text: &id006
               type: string
               minLength: 1
+        - type: object
+          required: *id005
+          additionalProperties: false
+          properties:
+            id:
+              const: 1
+            text: *id006
+        items: false
   expected_ids:
   - 0
   - 1
@@ -329,9 +354,9 @@ tasks:
   expected_output:
     blocks:
     - id: 0
-      text: 'Блок 0: проверяем Django и Qwen.'
+      text: Сегодня мы используем Django, PySide6 и embedding model.
     - id: 1
-      text: 'Блок 1: проверяем Django и Qwen.'
+      text: Работа идёт через LM Studio.
   fake_mode: valid
   manual_review_policy: sampled
   language_include_paths:
@@ -416,20 +441,26 @@ tasks:
         type: array
         minItems: 2
         maxItems: 2
-        items:
-          type: object
-          required:
+        prefixItems:
+        - type: object
+          required: &id007
           - id
           - text
           additionalProperties: false
           properties:
             id:
-              enum:
-              - 0
-              - 1
-            text:
+              const: 0
+            text: &id008
               type: string
               minLength: 1
+        - type: object
+          required: *id007
+          additionalProperties: false
+          properties:
+            id:
+              const: 1
+            text: *id008
+        items: false
   expected_ids:
   - 0
   - 1
@@ -464,9 +495,10 @@ axes:
   - paragraphing
   input_profile:
   - raw_asr_ru_no_punctuation
-  - raw_asr_ru_fillers
+  - raw_asr_ru_paragraphing
   - raw_asr_ru_term_noise
   - ru_en_mixed_tech
+  - raw_asr_ru_fillers
   output_language_policy:
   - preserve_input_language
   - preserve_mixed_language

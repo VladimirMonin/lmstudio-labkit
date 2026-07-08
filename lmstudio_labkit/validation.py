@@ -599,9 +599,10 @@ def _postprocessing_validation_results(
         "transcript_cleanup",
         "mixed_postprocess",
     }:
+        expected_terms = filter_expected_terms_for_source(contract.expected_terms, source_text)
         results.append(
             _apply_validation_policy(
-                validate_term_normalization(value, contract.expected_terms), term_policy
+                validate_term_normalization(output_text, expected_terms), term_policy
             )
         )
     else:
@@ -742,6 +743,30 @@ def _primary_user_facing_text(value: Any, contract: ResponseContract) -> str:
         response_schema_complexity=contract.response_schema_complexity,
         include_paths=contract.language_include_paths,
     )
+
+
+def filter_expected_terms_for_source(
+    expected_terms: tuple[dict[str, Any], ...], source_text: str | None
+) -> tuple[dict[str, Any], ...]:
+    """Keep only terms that are actually present in the source transcript.
+
+    Fixture glossaries can contain more known ASR variants than a specific source
+    text uses. Live validation should not fail a model for omitting a term that
+    never appeared in the source text.
+    """
+
+    if source_text is None:
+        return expected_terms
+    lowered = source_text.casefold()
+    filtered: list[dict[str, Any]] = []
+    for term in expected_terms:
+        normalized = str(term.get("normalized", "")).casefold()
+        variants = tuple(str(item).casefold() for item in term.get("source_variants", ()))
+        if (normalized and normalized in lowered) or any(
+            variant and variant in lowered for variant in variants
+        ):
+            filtered.append(term)
+    return tuple(filtered)
 
 
 def validate_term_normalization(

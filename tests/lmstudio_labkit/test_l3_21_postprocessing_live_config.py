@@ -47,3 +47,27 @@ def test_l3_21_postprocessing_live_cells_keep_text_only_no_parallel() -> None:
     assert {cell.axes["app_concurrency"] for cell in plan.cells} == {"1"}
     assert {cell.axes["queue_pressure_mode"] for cell in plan.cells} == {"off"}
     assert {cell.axes["resource_telemetry_mode"] for cell in plan.cells} == {"timing_only"}
+
+
+def test_l3_21_blocks_schema_uses_positional_const_ids() -> None:
+    config = BenchmarkConfig.from_file(CONFIG)
+    block_tasks = [task for task in config.tasks if task.response_schema_complexity == "blocks"]
+
+    assert block_tasks
+    for task in block_tasks:
+        blocks_schema = task.schema["properties"]["blocks"]
+        assert [item["properties"]["id"]["const"] for item in blocks_schema["prefixItems"]] == [
+            0,
+            1,
+        ]
+        assert blocks_schema["items"] is False
+
+
+def test_l3_21_paragraphing_uses_dedicated_paragraphing_fixture() -> None:
+    config = BenchmarkConfig.from_file(CONFIG)
+    paragraphing_tasks = [task for task in config.tasks if task.task_intent == "paragraphing"]
+
+    assert paragraphing_tasks
+    for task in paragraphing_tasks:
+        assert task.input_profile == "raw_asr_ru_paragraphing"
+        assert str(task.source_fixture).endswith("raw_asr_ru_paragraphing.yaml")
