@@ -9,7 +9,7 @@ Canonical L3.17 Wave 1 ran a controlled live text-only structured-output quality
 - `google/gemma-4-e2b`
 - `google/gemma-4-e4b`
 
-Wave 2 (`google/gemma-4-12b-qat`) was configured but was not run because Wave 1 did not pass.
+Wave 2 (`google/gemma-4-12b-qat`) was initially configured but blocked until L3.17.1 Wave 1 reached `hard_fail_count=0`; it was then run as a medium-only 12B follow-up.
 
 Configs:
 
@@ -39,12 +39,17 @@ Forbidden scopes were not run: image, 26B, Qwen, throughput, parallel, stress, o
 ## Request counts
 
 ```text
-Wave 1 planned_request_count: 32
-Wave 1 attempt_count: 32
-Wave 1 pass_count: 26
-Wave 1 fail_count: 6
-Wave 1 pass_rate: 0.8125
-Wave 2 12B: not run
+Wave 1 original attempt_count: 32
+Wave 1 original pass_count: 26
+Wave 1 original fail_count: 6
+Wave 1 original pass_rate: 0.8125
+Wave 1 L3.17.1 rerun attempt_count: 16
+Wave 1 L3.17.1 rerun pass_count: 16
+Wave 1 L3.17.1 rerun hard_fail_count: 0
+Wave 1 L3.17.1 rerun warning_count: 4
+Wave 2 12B attempt_count: 8
+Wave 2 12B pass_count: 0
+Wave 2 12B hard_fail_count: 8
 ```
 
 ## Validation summary
@@ -182,9 +187,19 @@ L3.17.1 reran canonical Wave 1 after this policy fix. The `too_long` blocker is 
 
 ## 12B interpretation
 
-12B remains blocked. It was not run because the required E2B/E4B gate had failures.
+12B was run only after the L3.17.1 Wave 1 rerun reached `hard_fail_count=0`.
 
-Previous L3.10 evidence suggested 12B can be conditionally viable under hardened schema and/or retry. L3.17 does not update that conclusion yet because the staged 12B config did not execute.
+The 12B medium-only Wave 2 did not pass:
+
+```text
+attempt_count: 8
+pass_count: 0
+hard_fail_count: 8
+failure_category: schema_error=8
+retry1_recovered_count: 0
+```
+
+This updates the prior 12B status from blocked-not-run to tested-and-not-accepted for the current medium structured-output contract.
 
 ## Cleanup proof
 
@@ -249,20 +264,20 @@ Missing RAM/VRAM/GPU telemetry is not a failure for this mode.
 
 ## Decision
 
-Outcome: E2B/E4B Wave 1 failed.
+Outcome: L3.17.1 Wave 1 rerun passed the hard acceptance gate with visible simple length-ratio warnings; the subsequent 12B Wave 2 failed the medium structured schema contract.
 
 Decision:
 
 ```text
-Stop scaling.
-Do not run 12B.
-Do not run throughput/parallel.
-Do not run image live.
-Fix schema/tasks/runner validation before more models.
+Accept L3.17.1 Wave 1 hard gate.
+Record simple length-ratio observations as warnings.
+Do not scale beyond 12B.
+Do not run 26B, Qwen, image, throughput, parallel, stress, or overnight work.
+Treat 12B as not accepted for the current medium structured-output contract.
 ```
 
 Recommended next action:
 
-1. Inspect the strict-Russian language validator against flat/simple JSON schemas with Latin field names (`id`, `title`, `summary`, `tags`, `language`).
-2. Decide whether language compliance should evaluate user-visible string values only, not schema key names.
-3. Rerun canonical Wave 1 only after that rule is explicit and covered by tests.
+1. For E2B/E4B, keep the current length-ratio warning policy and public warning visibility.
+2. For 12B, run a narrow schema-contract forensic slice using sanitized validation metadata only.
+3. Do not broaden the model matrix until the 12B schema mismatch is understood.

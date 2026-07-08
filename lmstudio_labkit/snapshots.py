@@ -87,6 +87,9 @@ def _build_snapshot(planner: dict[str, Any], rows: list[dict[str, Any]]) -> dict
     status_counts = Counter(str(row.get("status", "unknown")) for row in rows)
     attempts = len(rows)
     pass_count = status_counts.get("pass", 0)
+    hard_fail_count = _hard_fail_count(rows)
+    warning_count = _warning_count(rows)
+    length_ratio_warning_count = _length_ratio_warning_count(rows)
     axes = _axis_values(rows)
     maybe_live_bridge = planner.get("live_bridge")
     live_bridge: dict[str, Any] = maybe_live_bridge if isinstance(maybe_live_bridge, dict) else {}
@@ -119,6 +122,9 @@ def _build_snapshot(planner: dict[str, Any], rows: list[dict[str, Any]]) -> dict
         "attempt_count": attempts,
         "pass_count": pass_count,
         "fail_count": status_counts.get("fail", 0),
+        "hard_fail_count": hard_fail_count,
+        "warning_count": warning_count,
+        "length_ratio_warning_count": length_ratio_warning_count,
         "pass_rate": round(pass_count / attempts, 4) if attempts else 0.0,
         "cell_count": planner.get("cell_count", attempts),
         "filtered_cell_count": planner.get("filtered_cell_count"),
@@ -126,7 +132,13 @@ def _build_snapshot(planner: dict[str, Any], rows: list[dict[str, Any]]) -> dict
         "timing": _timing_summary(rows),
         "token_counts": _token_summary(rows),
         "failure_categories": _failure_category_summary(rows),
+        "warning_categories": _warning_category_summary(rows),
+        "length_ratio_failures": _length_ratio_stats(rows),
         "model_status": _model_status_summary(rows),
+        "per_language": _axis_status_summary(rows, "language"),
+        "per_complexity": _axis_status_summary(rows, "structure_complexity"),
+        "per_volume": _axis_status_summary(rows, "volume"),
+        "retry_impact": _axis_status_summary(rows, "retry_policy"),
         "lifecycle": _lifecycle_summary(rows),
         "warmup": _warmup_summary(rows),
         "safety": {
@@ -184,6 +196,86 @@ def _failure_category_summary(rows: list[dict[str, Any]]) -> dict[str, int]:
         str(row.get("error_category") or "none") for row in rows if row.get("status") == "fail"
     )
     return dict(sorted(counts.items()))
+
+
+def _warning_category_summary(rows: list[dict[str, Any]]) -> dict[str, int]:
+    counts = Counter(
+        str(row.get("warning_category")) for row in rows if row.get("warning_category")
+    )
+    return dict(sorted(counts.items()))
+
+
+def _hard_fail_count(rows: list[dict[str, Any]]) -> int:
+    return sum(1 for row in rows if row.get("hard_fail") is True or row.get("status") == "fail")
+
+
+def _warning_count(rows: list[dict[str, Any]]) -> int:
+    return sum(int(row.get("warning_count") or 0) for row in rows)
+
+
+def _length_ratio_warning_count(rows: list[dict[str, Any]]) -> int:
+    return sum(
+        1 for row in rows if _validation_result(row, "length_ratio").get("status") == "warning"
+    )
+
+
+def _length_ratio_stats(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    ratio_rows = []
+    for row in rows:
+        item = _validation_result(row, "length_ratio")
+        if item.get("status") not in {"fail", "warning"}:
+            continue
+        metrics = item.get("metrics") if isinstance(item.get("metrics"), dict) else {}
+        ratio_rows.append((row, metrics))
+    ratios = [
+        float(metrics["ratio"]) for _, metrics in ratio_rows if metrics.get("ratio") is not None
+    ]
+    return {
+        "count": len(ratio_rows),
+        "task_ids": sorted(
+            {str(row.get("task_id")) for row, _ in ratio_rows if row.get("task_id")}
+        ),
+        "model_ids": sorted(
+            {str(row.get("model_id")) for row, _ in ratio_rows if row.get("model_id")}
+        ),
+        "min_actual_ratio": min(ratios) if ratios else None,
+        "max_actual_ratio": max(ratios) if ratios else None,
+        "policy_min": sorted(
+            {
+                metrics.get("policy_min")
+                for _, metrics in ratio_rows
+                if metrics.get("policy_min") is not None
+            }
+        ),
+        "policy_max": sorted(
+            {
+                metrics.get("policy_max")
+                for _, metrics in ratio_rows
+                if metrics.get("policy_max") is not None
+            }
+        ),
+    }
+
+
+def _validation_result(row: dict[str, Any], name: str) -> dict[str, Any]:
+    validation = row.get("validation") if isinstance(row.get("validation"), dict) else {}
+    results = validation.get("results") if isinstance(validation.get("results"), list) else []
+    for item in results:
+        if isinstance(item, dict) and item.get("name") == name:
+            return item
+    return {}
+
+
+def _axis_status_summary(rows: list[dict[str, Any]], axis_name: str) -> dict[str, dict[str, int]]:
+    grouped: dict[str, Counter[str]] = {}
+    for row in rows:
+        axes = row.get("axes") if isinstance(row.get("axes"), dict) else {}
+        axis_value = str(axes.get(axis_name, "unknown"))
+        grouped.setdefault(axis_value, Counter())[str(row.get("status") or "unknown")] += 1
+        if row.get("hard_fail") is True:
+            grouped[axis_value]["hard_fail"] += 1
+        grouped[axis_value]["warning"] += int(row.get("warning_count") or 0)
+    return {axis: dict(sorted(counts.items())) for axis, counts in sorted(grouped.items())}
 
 
 def _model_status_summary(rows: list[dict[str, Any]]) -> dict[str, dict[str, int]]:
@@ -272,6 +364,9 @@ def _write_snapshot_csv(path: Path, snapshot: dict[str, Any]) -> None:
         "attempt_count",
         "pass_count",
         "fail_count",
+        "hard_fail_count",
+        "warning_count",
+        "length_ratio_warning_count",
         "pass_rate",
         "raw_prompt_response_stored",
         "raw_base_url_stored",
@@ -292,6 +387,9 @@ def _write_snapshot_csv(path: Path, snapshot: dict[str, Any]) -> None:
         "attempt_count": snapshot.get("attempt_count"),
         "pass_count": snapshot.get("pass_count"),
         "fail_count": snapshot.get("fail_count"),
+        "hard_fail_count": snapshot.get("hard_fail_count"),
+        "warning_count": snapshot.get("warning_count"),
+        "length_ratio_warning_count": snapshot.get("length_ratio_warning_count"),
         "pass_rate": snapshot.get("pass_rate"),
         "raw_prompt_response_stored": safety.get("raw_prompt_response_stored"),
         "raw_base_url_stored": safety.get("raw_base_url_stored"),
@@ -320,6 +418,9 @@ def _render_readme(snapshot: dict[str, Any]) -> str:
         f"- attempt_count: `{snapshot.get('attempt_count')}`",
         f"- pass_count: `{snapshot.get('pass_count')}`",
         f"- fail_count: `{snapshot.get('fail_count')}`",
+        f"- hard_fail_count: `{snapshot.get('hard_fail_count')}`",
+        f"- warning_count: `{snapshot.get('warning_count')}`",
+        f"- length_ratio_warning_count: `{snapshot.get('length_ratio_warning_count')}`",
         f"- pass_rate: `{snapshot.get('pass_rate')}`",
         "",
         "## Privacy",
@@ -343,6 +444,16 @@ def _render_report(snapshot: dict[str, Any]) -> str:
         if isinstance(snapshot.get("failure_categories"), dict)
         else {}
     )
+    warning_categories = (
+        snapshot.get("warning_categories")
+        if isinstance(snapshot.get("warning_categories"), dict)
+        else {}
+    )
+    length_ratio_failures = (
+        snapshot.get("length_ratio_failures")
+        if isinstance(snapshot.get("length_ratio_failures"), dict)
+        else {}
+    )
     model_status = (
         snapshot.get("model_status") if isinstance(snapshot.get("model_status"), dict) else {}
     )
@@ -356,6 +467,18 @@ def _render_report(snapshot: dict[str, Any]) -> str:
     failure_text = (
         ", ".join(f"{name}={count}" for name, count in sorted(failure_categories.items())) or "none"
     )
+    warning_text = (
+        ", ".join(f"{name}={count}" for name, count in sorted(warning_categories.items())) or "none"
+    )
+    length_ratio_text = (
+        f"count={length_ratio_failures.get('count', 0)}; "
+        f"task_ids={','.join(length_ratio_failures.get('task_ids', [])) or 'none'}; "
+        f"model_ids={','.join(length_ratio_failures.get('model_ids', [])) or 'none'}; "
+        f"min_actual_ratio={length_ratio_failures.get('min_actual_ratio')}; "
+        f"max_actual_ratio={length_ratio_failures.get('max_actual_ratio')}; "
+        f"policy_min={length_ratio_failures.get('policy_min')}; "
+        f"policy_max={length_ratio_failures.get('policy_max')}"
+    )
     model_status_text = (
         "; ".join(
             f"{model}: "
@@ -367,7 +490,7 @@ def _render_report(snapshot: dict[str, Any]) -> str:
     )
     downstream_gate = (
         "blocked until fail_count is zero"
-        if int(snapshot.get("fail_count") or 0) > 0
+        if int(snapshot.get("hard_fail_count") or snapshot.get("fail_count") or 0) > 0
         else "open for the next explicitly scoped staged run"
     )
     model_ids = {str(model_id) for model_id in snapshot.get("model_ids", [])}
@@ -408,9 +531,21 @@ def _render_report(snapshot: dict[str, Any]) -> str:
         "",
         f"- pass_count: `{snapshot.get('pass_count')}`",
         f"- fail_count: `{snapshot.get('fail_count')}`",
+        f"- hard_fail_count: `{snapshot.get('hard_fail_count')}`",
+        f"- warning_count: `{snapshot.get('warning_count')}`",
+        f"- length_ratio_warning_count: `{snapshot.get('length_ratio_warning_count')}`",
         f"- pass_rate: `{snapshot.get('pass_rate')}`",
         f"- failure_categories: `{failure_text}`",
+        f"- warning_categories: `{warning_text}`",
+        f"- length_ratio_failures: `{length_ratio_text}`",
         f"- model_status: `{model_status_text}`",
+        "",
+        "## Axis summaries",
+        "",
+        f"- per_language: `{_status_map_text(snapshot.get('per_language'))}`",
+        f"- per_complexity: `{_status_map_text(snapshot.get('per_complexity'))}`",
+        f"- per_volume: `{_status_map_text(snapshot.get('per_volume'))}`",
+        f"- retry_impact: `{_status_map_text(snapshot.get('retry_impact'))}`",
         "",
         "## Timing summary",
         "",
@@ -437,6 +572,18 @@ def _render_report(snapshot: dict[str, Any]) -> str:
         "",
     ]
     return "\n".join(lines)
+
+
+def _status_map_text(value: Any) -> str:
+    if not isinstance(value, dict) or not value:
+        return "not exported"
+    parts = []
+    for key, counts in sorted(value.items()):
+        if isinstance(counts, dict):
+            parts.append(
+                f"{key}:" + ",".join(f"{name}={count}" for name, count in sorted(counts.items()))
+            )
+    return "; ".join(parts) or "not exported"
 
 
 def _copy_summary_csv(source: Path, target: Path) -> None:

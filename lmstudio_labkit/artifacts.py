@@ -169,6 +169,9 @@ def _write_cell_summary(
         "resource_vram_required",
         "repeat_index",
         "status",
+        "hard_fail",
+        "warning_count",
+        "warning_category",
         "json_parse_status",
         "json_schema_status",
         "business_status",
@@ -187,6 +190,13 @@ def _write_cell_summary(
         "retry_count",
         "retry_recovered",
         "error_category",
+        "length_ratio_status",
+        "length_ratio_category",
+        "length_ratio_actual",
+        "length_ratio_policy",
+        "length_ratio_policy_min",
+        "length_ratio_policy_max",
+        "input_char_count",
         "latency_ms",
         "ttft_ms",
         "prompt_processing_ms",
@@ -224,6 +234,9 @@ def _write_model_summary(
             "attempt_count",
             "pass_count",
             "fail_count",
+            "hard_fail_count",
+            "warning_count",
+            "length_ratio_warning_count",
             "pass_rate",
             "json_parse_pass_rate",
             "schema_pass_rate",
@@ -250,6 +263,8 @@ def _cell_summary_row(row: dict[str, Any]) -> dict[str, Any]:
     id_metrics = _validation_metrics(validation_results, "id_exact")
     placeholder_metrics = _validation_metrics(validation_results, "no_placeholder_text")
     fence_metrics = _validation_metrics(validation_results, "markdown_fence_leak")
+    length_metrics = _validation_metrics(validation_results, "length_ratio")
+    length_result = validation_results.get("length_ratio", {})
     return {
         "cell_id": row.get("cell_id"),
         "model_key": row.get("model_key"),
@@ -292,6 +307,9 @@ def _cell_summary_row(row: dict[str, Any]) -> dict[str, Any]:
         "resource_vram_required": row.get("resource_vram_required"),
         "repeat_index": row.get("repeat_index"),
         "status": row.get("status"),
+        "hard_fail": row.get("hard_fail"),
+        "warning_count": row.get("warning_count"),
+        "warning_category": row.get("warning_category"),
         "json_parse_status": _validation_status(validation_results, "json_parse"),
         "json_schema_status": _validation_status(validation_results, "json_schema"),
         "business_status": _business_status(validation_results),
@@ -312,6 +330,13 @@ def _cell_summary_row(row: dict[str, Any]) -> dict[str, Any]:
         "retry_count": row.get("retry_count"),
         "retry_recovered": row.get("retry_recovered"),
         "error_category": row.get("error_category") or result.get("error_category"),
+        "length_ratio_status": length_result.get("status"),
+        "length_ratio_category": length_result.get("category"),
+        "length_ratio_actual": length_metrics.get("ratio"),
+        "length_ratio_policy": length_metrics.get("policy"),
+        "length_ratio_policy_min": length_metrics.get("policy_min"),
+        "length_ratio_policy_max": length_metrics.get("policy_max"),
+        "input_char_count": row.get("input_char_count"),
         "latency_ms": result.get("latency_ms"),
         "ttft_ms": row.get("ttft_ms"),
         "prompt_processing_ms": row.get("prompt_processing_ms"),
@@ -344,6 +369,9 @@ def _model_summary_row(model_key: str, model_id: str, rows: list[dict[str, Any]]
         "attempt_count": len(rows),
         "pass_count": status_counts.get("pass", 0),
         "fail_count": status_counts.get("fail", 0),
+        "hard_fail_count": _hard_fail_count(rows),
+        "warning_count": _row_warning_count(rows),
+        "length_ratio_warning_count": _length_ratio_warning_count(rows),
         "pass_rate": _rate(status_counts.get("pass", 0), len(rows)),
         "json_parse_pass_rate": _validation_pass_rate(rows, "json_parse"),
         "schema_pass_rate": _validation_pass_rate(rows, "json_schema"),
@@ -355,6 +383,73 @@ def _model_summary_row(model_key: str, model_id: str, rows: list[dict[str, Any]]
         "finish_length_count": _finish_length_count(rows),
         "median_latency_ms": _rounded_float(median(latencies)) if latencies else None,
         "p95_latency_ms": _rounded_float(_p95(latencies)) if latencies else None,
+    }
+
+
+def _hard_fail_count(rows: list[dict[str, Any]]) -> int:
+    return sum(1 for row in rows if row.get("hard_fail") is True or row.get("status") == "fail")
+
+
+def _row_warning_count(rows: list[dict[str, Any]]) -> int:
+    return sum(int(row.get("warning_count") or 0) for row in rows)
+
+
+def _length_ratio_warning_count(rows: list[dict[str, Any]]) -> int:
+    count = 0
+    for row in rows:
+        validation_results = _validation_results_by_name(row)
+        if _validation_status(validation_results, "length_ratio") == "warning":
+            count += 1
+    return count
+
+
+def _warning_category_summary(
+    rows: list[dict[str, Any]] | tuple[dict[str, Any], ...],
+) -> dict[str, int]:
+    counts: Counter[str] = Counter()
+    for row in rows:
+        category = row.get("warning_category")
+        if category:
+            counts[str(category)] += 1
+    return dict(sorted(counts.items()))
+
+
+def _length_ratio_stats(rows: list[dict[str, Any]] | tuple[dict[str, Any], ...]) -> dict[str, Any]:
+    ratio_rows = []
+    for row in rows:
+        validation_results = _validation_results_by_name(row)
+        item = validation_results.get("length_ratio")
+        if not isinstance(item, dict) or item.get("status") not in {"fail", "warning"}:
+            continue
+        metrics = item.get("metrics") if isinstance(item.get("metrics"), dict) else {}
+        ratio_rows.append((row, item, metrics))
+    ratios = [
+        float(metrics["ratio"]) for _, _, metrics in ratio_rows if metrics.get("ratio") is not None
+    ]
+    return {
+        "count": len(ratio_rows),
+        "task_ids": sorted(
+            {str(row.get("task_id")) for row, _, _ in ratio_rows if row.get("task_id")}
+        ),
+        "model_ids": sorted(
+            {str(row.get("model_id")) for row, _, _ in ratio_rows if row.get("model_id")}
+        ),
+        "min_actual_ratio": min(ratios) if ratios else None,
+        "max_actual_ratio": max(ratios) if ratios else None,
+        "policy_min": sorted(
+            {
+                metrics.get("policy_min")
+                for _, _, metrics in ratio_rows
+                if metrics.get("policy_min") is not None
+            }
+        ),
+        "policy_max": sorted(
+            {
+                metrics.get("policy_max")
+                for _, _, metrics in ratio_rows
+                if metrics.get("policy_max") is not None
+            }
+        ),
     }
 
 
@@ -390,7 +485,7 @@ def _business_status(results: dict[str, dict[str, Any]]) -> str | None:
     statuses = [_validation_status(results, name) for name in business_checks]
     if "fail" in statuses:
         return "fail"
-    if "pass" in statuses:
+    if "warning" in statuses or "pass" in statuses:
         return "pass"
     if "skip" in statuses:
         return "skip"
@@ -591,6 +686,11 @@ def _build_report(
     run_id = planner_summary.get("run_id", "unknown_run")
     passed = sum(1 for row in cell_results if row.get("status") == "pass")
     failed = sum(1 for row in cell_results if row.get("status") == "fail")
+    hard_failed = _hard_fail_count(list(cell_results))
+    warning_count = _row_warning_count(list(cell_results))
+    length_ratio_warning_count = _length_ratio_warning_count(list(cell_results))
+    warning_categories = _warning_category_summary(cell_results)
+    length_ratio_stats = _length_ratio_stats(cell_results)
     model_counts: dict[str, Counter[str]] = defaultdict(Counter)
     axis_counts: dict[str, Counter[str]] = defaultdict(Counter)
     retry_counts: dict[str, Counter[str]] = defaultdict(Counter)
@@ -617,8 +717,17 @@ def _build_report(
         f"- result_count: `{len(cell_results)}`",
         f"- passed: `{passed}`",
         f"- failed: `{failed}`",
+        f"- hard_fail_count: `{hard_failed}`",
+        f"- warning_count: `{warning_count}`",
+        f"- length_ratio_warning_count: `{length_ratio_warning_count}`",
         f"- live: `{str(planner_summary.get('live', False)).lower()}`",
         f"- privacy_scan: `{privacy_scan['status']}`",
+        "",
+        "",
+        "## Warning summary",
+        "",
+        f"- warning_categories: `{', '.join(f'{k}={v}' for k, v in warning_categories.items()) or 'none'}`",
+        f"- length_ratio_failures: `count={length_ratio_stats['count']}; task_ids={','.join(length_ratio_stats['task_ids']) or 'none'}; model_ids={','.join(length_ratio_stats['model_ids']) or 'none'}; min_actual_ratio={length_ratio_stats['min_actual_ratio']}; max_actual_ratio={length_ratio_stats['max_actual_ratio']}; policy_min={length_ratio_stats['policy_min']}; policy_max={length_ratio_stats['policy_max']}`",
         "",
         "## Model summary",
         "",

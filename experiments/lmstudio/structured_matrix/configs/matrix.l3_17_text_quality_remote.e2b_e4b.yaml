@@ -1,109 +1,151 @@
 run_id: matrix_l3_17_text_quality_remote_e2b_e4b
 models:
-  - model_key: gemma4_e2b
-    model_id: google/gemma-4-e2b
-    endpoint_family: openai_compat
-    supported_modalities: [text]
-    supported_context_tiers: [8192]
-  - model_key: gemma4_e4b
-    model_id: google/gemma-4-e4b
-    endpoint_family: openai_compat
-    supported_modalities: [text]
-    supported_context_tiers: [8192]
+- model_key: gemma4_e2b
+  model_id: google/gemma-4-e2b
+  endpoint_family: openai_compat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - 8192
+- model_key: gemma4_e4b
+  model_id: google/gemma-4-e4b
+  endpoint_family: openai_compat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - 8192
 tasks:
-  - task_id: ru_ru_simple_single
-    family: blocks
-    modality: text
-    language: ru_ru
-    language_policy: strict_ru
-    structure_complexity: simple
-    volume: single
-    prompt: Верни только JSON по схеме. Сохрани id 0. Ответ должен быть на русском языке.
-    schema_family: blocks
-    expected_ids: [0]
-    expected_output:
-      blocks:
-        - id: 0
-          text: Русский блок ноль
-    fake_mode: valid
-    min_length_ratio: 0.1
-    max_length_ratio: 5.0
-    length_ratio_policy: diagnostic
-  - task_id: ru_ru_medium_single
-    family: blocks
-    modality: text
-    language: ru_ru
-    language_policy: strict_ru
-    structure_complexity: medium
-    volume: single
-    prompt: Верни только JSON по схеме. Сохрани id 0 и 1 по порядку. Ответ должен быть на русском языке.
-    schema_family: blocks
-    expected_ids: [0, 1]
-    expected_output:
-      blocks:
-        - id: 0
-          text: Русский блок ноль
-        - id: 1
-          text: Русский блок один
-    fake_mode: valid
-    min_length_ratio: 0.1
-    max_length_ratio: 5.0
-  - task_id: ru_ru_complex_many
-    family: blocks
-    modality: text
-    language: ru_ru
-    language_policy: strict_ru
-    structure_complexity: complex
-    volume: many
-    prompt: Верни только JSON по схеме. Сохрани id 0, 1 и 2 по порядку. Ответ должен быть на русском языке.
-    schema_family: blocks
-    expected_ids: [0, 1, 2]
-    expected_output:
-      blocks:
-        - id: 0
-          text: Русский блок ноль
-        - id: 1
-          text: Русский блок один
-        - id: 2
-          text: Русский блок два
-    fake_mode: valid
-    min_length_ratio: 0.1
-    max_length_ratio: 5.0
-  - task_id: ru_en_mixed_medium_single
-    family: blocks
-    modality: text
-    language: ru_en_mixed
-    language_policy: mixed_ru_en
-    structure_complexity: medium
-    volume: single
-    prompt: Верни только JSON по схеме. Сохрани id 0 и 1 по порядку. Блок 0 должен быть на русском, блок 1 может содержать короткий English phrase.
-    schema_family: blocks
-    expected_ids: [0, 1]
-    expected_output:
-      blocks:
-        - id: 0
-          text: Русский блок ноль
-        - id: 1
-          text: Short English block one
-    fake_mode: valid
-    min_length_ratio: 0.1
-    max_length_ratio: 5.0
+- task_id: ru_ru_simple_single
+  family: blocks
+  modality: text
+  language: ru_ru
+  language_policy: strict_ru
+  structure_complexity: simple
+  volume: single
+  prompt: Верни только JSON по схеме. Сохрани id 0. Ответ должен быть на русском языке.
+  schema_family: blocks
+  expected_ids:
+  - 0
+  expected_output:
+    blocks:
+    - id: 0
+      text: Русский блок ноль
+  fake_mode: valid
+  min_length_ratio: 0.1
+  max_length_ratio: 5.0
+  length_ratio_policy:
+    mode: warning
+- task_id: ru_ru_medium_single
+  family: blocks
+  modality: text
+  language: ru_ru
+  language_policy: strict_ru
+  structure_complexity: medium
+  volume: single
+  prompt: Верни только JSON по схеме. Сохрани id 0 и 1 по порядку. Ответ должен быть
+    на русском языке.
+  schema_family: blocks
+  expected_ids:
+  - 0
+  - 1
+  expected_output:
+    blocks:
+    - id: 0
+      text: Русский блок ноль
+    - id: 1
+      text: Русский блок один
+  fake_mode: valid
+  min_length_ratio: 0.1
+  max_length_ratio: 5.0
+  length_ratio_policy:
+    mode: hard
+- task_id: ru_ru_complex_many
+  family: blocks
+  modality: text
+  language: ru_ru
+  language_policy: strict_ru
+  structure_complexity: complex
+  volume: many
+  prompt: Верни только JSON по схеме. Сохрани id 0, 1 и 2 по порядку. Ответ должен
+    быть на русском языке.
+  schema_family: blocks
+  expected_ids:
+  - 0
+  - 1
+  - 2
+  expected_output:
+    blocks:
+    - id: 0
+      text: Русский блок ноль
+    - id: 1
+      text: Русский блок один
+    - id: 2
+      text: Русский блок два
+  fake_mode: valid
+  min_length_ratio: 0.1
+  max_length_ratio: 5.0
+  length_ratio_policy:
+    mode: hard
+- task_id: ru_en_mixed_medium_single
+  family: blocks
+  modality: text
+  language: ru_en_mixed
+  language_policy: mixed_ru_en
+  structure_complexity: medium
+  volume: single
+  prompt: Верни только JSON по схеме. Сохрани id 0 и 1 по порядку. Блок 0 должен быть
+    на русском, блок 1 может содержать короткий English phrase.
+  schema_family: blocks
+  expected_ids:
+  - 0
+  - 1
+  expected_output:
+    blocks:
+    - id: 0
+      text: Русский блок ноль
+    - id: 1
+      text: Short English block one
+  fake_mode: valid
+  min_length_ratio: 0.1
+  max_length_ratio: 5.0
+  length_ratio_policy:
+    mode: hard
 axes:
-  modality: [text]
-  language: [ru_ru, ru_en_mixed]
-  structure_complexity: [simple, medium, complex]
-  volume: [single, many]
-  context_tier: [8192]
-  schema_variant: [hardened_const]
-  retry_policy: ["off", retry1]
-  execution_mode: [cold_per_request]
-  execution_target: [remote_link]
-  resource_telemetry_mode: [timing_only]
-  cache_mode: ["none"]
-  lmstudio_parallel: [1]
-  app_concurrency: [1]
-  queue_pressure_mode: [false]
-  text_interaction_mode: [single_question]
+  modality:
+  - text
+  language:
+  - ru_ru
+  - ru_en_mixed
+  structure_complexity:
+  - simple
+  - medium
+  - complex
+  volume:
+  - single
+  - many
+  context_tier:
+  - 8192
+  schema_variant:
+  - hardened_const
+  retry_policy:
+  - 'off'
+  - retry1
+  execution_mode:
+  - cold_per_request
+  execution_target:
+  - remote_link
+  resource_telemetry_mode:
+  - timing_only
+  cache_mode:
+  - none
+  lmstudio_parallel:
+  - 1
+  app_concurrency:
+  - 1
+  queue_pressure_mode:
+  - false
+  text_interaction_mode:
+  - single_question
 structured_runtime:
   strict_json_schema: true
 remote_link:
@@ -115,22 +157,22 @@ remote_link:
     raw_prompt_response_stored: false
     kv_reuse_proven: false
     allowed_artifact_fields:
-      - base_url_kind
-      - scheme
-      - endpoint_family
-      - status
-      - timing_ms
-      - execution_target
-      - resource_telemetry_mode
-      - resource_telemetry_status
-      - cache_hit_inferred
-      - cache_hit_reported
+    - base_url_kind
+    - scheme
+    - endpoint_family
+    - status
+    - timing_ms
+    - execution_target
+    - resource_telemetry_mode
+    - resource_telemetry_status
+    - cache_hit_inferred
+    - cache_hit_reported
     forbidden_artifact_fields:
-      - base_url
-      - prompt
-      - response
-      - messages
-      - content
+    - base_url
+    - prompt
+    - response
+    - messages
+    - content
 safety:
   live: true
   allow_model_downloads: false

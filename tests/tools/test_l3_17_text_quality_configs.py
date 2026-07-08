@@ -147,7 +147,7 @@ def test_l3_17_wave2_config_is_12b_medium_only_and_guarded() -> None:
     }
 
 
-def test_legacy_l3_17_simple_length_ratio_is_diagnostic_only() -> None:
+def test_legacy_l3_17_simple_length_ratio_is_warning_only() -> None:
     for path in (LEGACY_REMOTE_WAVE1_CONFIG, LEGACY_REMOTE_WAVE2_CONFIG):
         payload = _load_yaml(path)
         simple_tasks = [
@@ -157,7 +157,7 @@ def test_legacy_l3_17_simple_length_ratio_is_diagnostic_only() -> None:
         for task in simple_tasks:
             assert task.get("min_length_ratio") is not None
             assert task.get("max_length_ratio") is not None
-            assert task.get("length_ratio_policy") == "diagnostic"
+            assert task.get("length_ratio_policy") == {"mode": "warning"}
 
 
 def test_l3_17_suite_runs_12b_only_after_e2b_e4b() -> None:

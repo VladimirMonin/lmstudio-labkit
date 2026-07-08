@@ -15,7 +15,7 @@ LanguagePolicy = Literal[
     "labels_only",
     "skip",
 ]
-LengthRatioPolicy = Literal["hard", "diagnostic"]
+LengthRatioPolicy = Literal["off", "warning", "hard"]
 
 
 def stable_hash(value: str | bytes) -> str:
@@ -85,7 +85,7 @@ class ResponseContract:
     language_policy: LanguagePolicy | str | None = None
     min_length_ratio: float | None = None
     max_length_ratio: float | None = None
-    length_ratio_policy: LengthRatioPolicy | str = "hard"
+    length_ratio_policy: LengthRatioPolicy | str | dict[str, Any] = "hard"
     expected_output: Any | None = None
     image_ground_truth: dict[str, Any] | None = None
 

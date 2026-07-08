@@ -87,7 +87,7 @@ class TaskSpec:
     fake_mode: str = "valid"
     min_length_ratio: float | None = None
     max_length_ratio: float | None = None
-    length_ratio_policy: str = "hard"
+    length_ratio_policy: str | dict[str, Any] = "hard"
 
 
 @dataclass(frozen=True, slots=True)
@@ -659,10 +659,14 @@ def _row_from_execution(
         "request": request_plan.envelope.safe_metadata(),
         "result": result.safe_metadata(),
         "validation": validation.to_dict(),
+        "input_char_count": input_char_count,
         "retry_count": retry_count,
         "retry_recovered": recovered,
         "status": "pass" if validation.status == "pass" and result.status == "ok" else "fail",
         "error_category": _first_error_category(validation),
+        "warning_category": _first_warning_category(validation),
+        "hard_fail": validation.status == "fail" or result.status != "ok",
+        "warning_count": _warning_count(validation),
         **_lifecycle_telemetry_fields(result),
         **cache_telemetry,
         **timing_telemetry,
@@ -736,12 +740,16 @@ def run_live_small_text_screening(
                 "request": request_plan.envelope.safe_metadata(),
                 "result": result.safe_metadata(),
                 "validation": validation.to_dict(),
+                "input_char_count": input_char_count,
                 "retry_count": 0,
                 "retry_recovered": False,
                 "status": "pass"
                 if validation.status == "pass" and result.status == "ok"
                 else "fail",
                 "error_category": _first_error_category(validation),
+                "warning_category": _first_warning_category(validation),
+                "hard_fail": validation.status == "fail" or result.status != "ok",
+                "warning_count": _warning_count(validation),
                 "lab_only_flags": LAB_ONLY_LIVE_FLAGS.as_dict(),
                 **cache_telemetry,
                 **timing_telemetry,
@@ -830,8 +838,22 @@ def _task_from_dict(payload: dict[str, Any]) -> TaskSpec:
         fake_mode=str(payload.get("fake_mode", "valid")),
         min_length_ratio=payload.get("min_length_ratio"),
         max_length_ratio=payload.get("max_length_ratio"),
-        length_ratio_policy=str(payload.get("length_ratio_policy", "hard")),
+        length_ratio_policy=_length_ratio_policy_from_dict(
+            payload.get("length_ratio_policy", "hard")
+        ),
     )
+
+
+def _length_ratio_policy_from_dict(payload: Any) -> str:
+    if isinstance(payload, dict):
+        value = payload.get("mode", "hard")
+    else:
+        value = payload
+    if value == "diagnostic":
+        return "warning"
+    if value in {"off", "warning", "hard"}:
+        return str(value)
+    return "hard"
 
 
 def _structured_runtime_from_dict(payload: Any) -> StructuredRuntimeConfig:
@@ -1271,3 +1293,14 @@ def _first_error_category(validation: Any) -> str | None:
         if item.status == "fail":
             return item.category or item.name
     return None
+
+
+def _first_warning_category(validation: Any) -> str | None:
+    for item in validation.results:
+        if item.status == "warning":
+            return item.category or item.name
+    return None
+
+
+def _warning_count(validation: Any) -> int:
+    return sum(1 for item in validation.results if item.status == "warning")

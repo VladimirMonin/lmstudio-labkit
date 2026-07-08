@@ -8,7 +8,7 @@ from typing import Any, Literal
 
 from .requests import ResponseContract
 
-ValidationStatus = Literal["pass", "fail", "skip"]
+ValidationStatus = Literal["pass", "fail", "warning", "skip"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -503,19 +503,39 @@ def validate_length_ratio(
     *,
     policy: str = "hard",
 ) -> ValidationResult:
+    normalized_policy = _normalize_length_ratio_policy(policy)
     baseline = max(1, len(_flatten_text(expected_output)))
     ratio = len(raw_response) / baseline
-    status: ValidationStatus = "pass"
+    metrics = {
+        "ratio": round(ratio, 4),
+        "policy": normalized_policy,
+        "policy_min": min_ratio,
+        "policy_max": max_ratio,
+        "baseline_char_count": baseline,
+        "response_char_count": len(raw_response),
+    }
+    if normalized_policy == "off":
+        return ValidationResult("length_ratio", "skip", metrics=metrics)
+
     category = None
     if min_ratio is not None and ratio < min_ratio:
-        status, category = "fail", "too_short"
+        category = "too_short"
     if max_ratio is not None and ratio > max_ratio:
-        status, category = "fail", "too_long"
-    metrics = {"ratio": round(ratio, 4), "policy": policy}
-    if status == "fail" and policy == "diagnostic":
-        metrics["diagnostic"] = True
-        return ValidationResult("length_ratio", "skip", category, metrics)
-    return ValidationResult("length_ratio", status, category, metrics)
+        category = "too_long"
+    if category is None:
+        return ValidationResult("length_ratio", "pass", metrics=metrics)
+    if normalized_policy == "warning":
+        metrics["warning"] = True
+        return ValidationResult("length_ratio", "warning", category, metrics)
+    return ValidationResult("length_ratio", "fail", category, metrics)
+
+
+def _normalize_length_ratio_policy(policy: str) -> str:
+    if policy == "diagnostic":
+        return "warning"
+    if policy in {"off", "warning", "hard"}:
+        return policy
+    return "hard"
 
 
 def validate_image_ground_truth(value: Any, ground_truth: dict[str, Any]) -> ValidationResult:
