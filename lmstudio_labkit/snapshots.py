@@ -85,6 +85,8 @@ def _build_snapshot(planner: dict[str, Any], rows: list[dict[str, Any]]) -> dict
         "live": planner.get("live"),
         "live_bridge": safe_live_bridge,
         "execution_targets": axes.get("execution_target", []),
+        "execution_modes": axes.get("execution_mode", []),
+        "cache_modes": axes.get("cache_mode", []),
         "resource_telemetry_modes": axes.get("resource_telemetry_mode", []),
         "models": sorted({str(row.get("model_key")) for row in rows if row.get("model_key")}),
         "model_ids": sorted({str(row.get("model_id")) for row in rows if row.get("model_id")}),
@@ -154,6 +156,8 @@ def _write_snapshot_csv(path: Path, snapshot: dict[str, Any]) -> None:
         "base_url_kind",
         "base_url_scheme",
         "execution_targets",
+        "execution_modes",
+        "cache_modes",
         "resource_telemetry_modes",
         "attempt_count",
         "pass_count",
@@ -172,6 +176,8 @@ def _write_snapshot_csv(path: Path, snapshot: dict[str, Any]) -> None:
         "base_url_kind": live_bridge.get("base_url_kind"),
         "base_url_scheme": live_bridge.get("base_url_scheme"),
         "execution_targets": ";".join(snapshot.get("execution_targets", [])),
+        "execution_modes": ";".join(snapshot.get("execution_modes", [])),
+        "cache_modes": ";".join(snapshot.get("cache_modes", [])),
         "resource_telemetry_modes": ";".join(snapshot.get("resource_telemetry_modes", [])),
         "attempt_count": snapshot.get("attempt_count"),
         "pass_count": snapshot.get("pass_count"),
@@ -181,7 +187,7 @@ def _write_snapshot_csv(path: Path, snapshot: dict[str, Any]) -> None:
         "raw_base_url_stored": safety.get("raw_base_url_stored"),
     }
     with path.open("w", encoding="utf-8", newline="") as stream:
-        writer = csv.DictWriter(stream, fieldnames=fieldnames)
+        writer = csv.DictWriter(stream, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         writer.writerow(row)
 
@@ -200,6 +206,8 @@ def _render_readme(snapshot: dict[str, Any]) -> str:
             f"- base_url_kind: `{live_bridge.get('base_url_kind')}`",
             f"- base_url_scheme: `{live_bridge.get('base_url_scheme')}`",
             f"- execution_targets: `{', '.join(snapshot.get('execution_targets', []))}`",
+            f"- execution_modes: `{', '.join(snapshot.get('execution_modes', []))}`",
+            f"- cache_modes: `{', '.join(snapshot.get('cache_modes', []))}`",
             f"- resource_telemetry_modes: `{', '.join(snapshot.get('resource_telemetry_modes', []))}`",
             f"- attempt_count: `{snapshot.get('attempt_count')}`",
             f"- pass_count: `{snapshot.get('pass_count')}`",

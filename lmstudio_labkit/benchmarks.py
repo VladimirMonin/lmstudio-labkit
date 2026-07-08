@@ -3,6 +3,7 @@ from __future__ import annotations
 import itertools
 import json
 import time
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field
 from hashlib import sha256
 from pathlib import Path
@@ -478,66 +479,179 @@ def run_matrix(
         if config.safety.max_runtime_minutes is not None
         else None
     )
-    for cell in plan.cells:
+    for batch in _execution_batches(plan.cells, live_requested=live_requested):
         _raise_if_runtime_budget_exceeded(deadline)
-        request_plan = cell.to_request_plan()
-        if live_requested:
-            if request_plan.envelope.modality == "image":
-                raise NotImplementedError("image live execution is not implemented")
-            request_plan = _with_live_execution(request_plan)
-        raw_response, result = transport_to_use.execute(request_plan, attempt_index=1)
-        input_char_count = sum(
-            item.safe_metadata()["char_count"] for item in request_plan.envelope.text_inputs
-        )
-        validation = validate_response(
-            raw_response,
-            request_plan.envelope.response_contract,
-            finish_reason=result.finish_reason,
-            input_char_count=input_char_count,
-        )
-        retry_count = 0
-        recovered = False
-        if validation.status == "fail" and cell.axes.get("retry_policy") == "retry1":
-            retry_count = 1
-            raw_response, result = transport_to_use.execute(request_plan, attempt_index=2)
+        if live_requested and _is_session_loaded_batch(batch):
+            request_plans = tuple(_live_request_plan_for_cell(cell) for cell in batch)
+            session_results = _execute_transport_session(transport_to_use, request_plans)
+            for cell, request_plan, (raw_response, result) in zip(
+                batch, request_plans, session_results, strict=True
+            ):
+                rows.append(
+                    _row_from_execution(
+                        config=config,
+                        cell=cell,
+                        request_plan=request_plan,
+                        raw_response=raw_response,
+                        result=result,
+                        retry_count=0,
+                        recovered=False,
+                        live_requested=live_requested,
+                    )
+                )
+                _raise_if_runtime_budget_exceeded(deadline)
+            continue
+        for cell in batch:
+            _raise_if_runtime_budget_exceeded(deadline)
+            request_plan = cell.to_request_plan()
+            if live_requested:
+                request_plan = _live_request_plan_for_cell(cell)
+            raw_response, result = transport_to_use.execute(request_plan, attempt_index=1)
+            input_char_count = sum(
+                item.safe_metadata()["char_count"] for item in request_plan.envelope.text_inputs
+            )
             validation = validate_response(
                 raw_response,
                 request_plan.envelope.response_contract,
                 finish_reason=result.finish_reason,
                 input_char_count=input_char_count,
             )
-            recovered = validation.status == "pass" and result.status == "ok"
-        cache_telemetry = _cache_telemetry_fields(cell, request_plan)
-        timing_telemetry = _timing_telemetry_fields(result)
-        row = {
-            "run_id": config.run_id,
-            "cell_id": cell.cell_id,
-            "repeat_index": cell.repeat_index,
-            "model_key": cell.model.model_key,
-            "model_id": cell.model.model_id,
-            "task_id": cell.task.task_id,
-            "axes": cell.axes,
-            "request": request_plan.envelope.safe_metadata(),
-            "result": result.safe_metadata(),
-            "validation": validation.to_dict(),
-            "retry_count": retry_count,
-            "retry_recovered": recovered,
-            "status": "pass" if validation.status == "pass" and result.status == "ok" else "fail",
-            "error_category": _first_error_category(validation),
-            **cache_telemetry,
-            **timing_telemetry,
-            **_resource_telemetry_fields(cell),
-        }
-        if live_requested:
-            row["lab_only_flags"] = LAB_ONLY_LIVE_FLAGS.as_dict()
-        rows.append(row)
-        _raise_if_runtime_budget_exceeded(deadline)
+            retry_count = 0
+            recovered = False
+            if validation.status == "fail" and cell.axes.get("retry_policy") == "retry1":
+                retry_count = 1
+                raw_response, result = transport_to_use.execute(request_plan, attempt_index=2)
+                validation = validate_response(
+                    raw_response,
+                    request_plan.envelope.response_contract,
+                    finish_reason=result.finish_reason,
+                    input_char_count=input_char_count,
+                )
+                recovered = validation.status == "pass" and result.status == "ok"
+            rows.append(
+                _row_from_execution(
+                    config=config,
+                    cell=cell,
+                    request_plan=request_plan,
+                    raw_response=raw_response,
+                    result=result,
+                    retry_count=retry_count,
+                    recovered=recovered,
+                    live_requested=live_requested,
+                    validation=validation,
+                )
+            )
+            _raise_if_runtime_budget_exceeded(deadline)
     run_dir = Path(output_root) / config.run_id
     planner_summary = plan.planner_summary(live=live_requested)
     if live_requested:
         planner_summary["live_bridge"] = safe_live_metadata(live_options)
         planner_summary["lab_only_flags"] = LAB_ONLY_LIVE_FLAGS.as_dict()
     return write_run_artifacts(run_dir, planner_summary, rows)
+
+
+def _live_request_plan_for_cell(cell: MatrixCell) -> RequestPlan:
+    request_plan = cell.to_request_plan()
+    if request_plan.envelope.modality == "image":
+        raise NotImplementedError("image live execution is not implemented")
+    return _with_live_execution(request_plan)
+
+
+def _execution_batches(
+    cells: Sequence[MatrixCell], *, live_requested: bool
+) -> tuple[tuple[MatrixCell, ...], ...]:
+    batches: list[tuple[MatrixCell, ...]] = []
+    index = 0
+    while index < len(cells):
+        cell = cells[index]
+        if not live_requested or cell.axes.get("execution_mode") != "session_loaded":
+            batches.append((cell,))
+            index += 1
+            continue
+        if cell.axes.get("retry_policy") != "off":
+            raise LiveBridgeError("session_loaded execution does not support retry_policy")
+        key = _session_batch_key(cell)
+        group = [cell]
+        index += 1
+        while index < len(cells) and _session_batch_key(cells[index]) == key:
+            if cells[index].axes.get("retry_policy") != "off":
+                raise LiveBridgeError("session_loaded execution does not support retry_policy")
+            group.append(cells[index])
+            index += 1
+        batches.append(tuple(group))
+    return tuple(batches)
+
+
+def _session_batch_key(cell: MatrixCell) -> tuple[object, ...]:
+    return (
+        cell.model.model_id,
+        cell.task.task_id,
+        tuple(sorted(cell.axes.items())),
+    )
+
+
+def _is_session_loaded_batch(batch: Sequence[MatrixCell]) -> bool:
+    return bool(batch) and batch[0].axes.get("execution_mode") == "session_loaded"
+
+
+def _execute_transport_session(
+    transport: MatrixTransport, request_plans: Sequence[RequestPlan]
+) -> tuple[tuple[str, RequestResult], ...]:
+    execute_session = getattr(transport, "execute_session", None)
+    if not callable(execute_session):
+        raise LiveBridgeError("session_loaded execution requires transport.execute_session")
+    result = execute_session(tuple(request_plans), attempt_index=1)
+    if not isinstance(result, tuple) or len(result) != len(request_plans):
+        raise LiveBridgeError("transport.execute_session returned an invalid result set")
+    return result
+
+
+def _row_from_execution(
+    *,
+    config: BenchmarkConfig,
+    cell: MatrixCell,
+    request_plan: RequestPlan,
+    raw_response: str,
+    result: RequestResult,
+    retry_count: int,
+    recovered: bool,
+    live_requested: bool,
+    validation: Any | None = None,
+) -> dict[str, Any]:
+    input_char_count = sum(
+        item.safe_metadata()["char_count"] for item in request_plan.envelope.text_inputs
+    )
+    if validation is None:
+        validation = validate_response(
+            raw_response,
+            request_plan.envelope.response_contract,
+            finish_reason=result.finish_reason,
+            input_char_count=input_char_count,
+        )
+    cache_telemetry = _cache_telemetry_fields(cell, request_plan)
+    timing_telemetry = _timing_telemetry_fields(result)
+    row = {
+        "run_id": config.run_id,
+        "cell_id": cell.cell_id,
+        "repeat_index": cell.repeat_index,
+        "model_key": cell.model.model_key,
+        "model_id": cell.model.model_id,
+        "task_id": cell.task.task_id,
+        "axes": cell.axes,
+        "request": request_plan.envelope.safe_metadata(),
+        "result": result.safe_metadata(),
+        "validation": validation.to_dict(),
+        "retry_count": retry_count,
+        "retry_recovered": recovered,
+        "status": "pass" if validation.status == "pass" and result.status == "ok" else "fail",
+        "error_category": _first_error_category(validation),
+        **cache_telemetry,
+        **timing_telemetry,
+        **_resource_telemetry_fields(cell),
+    }
+    if live_requested:
+        row["lab_only_flags"] = LAB_ONLY_LIVE_FLAGS.as_dict()
+    return row
 
 
 def run_live_small_text_screening(

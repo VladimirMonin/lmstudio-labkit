@@ -107,6 +107,8 @@ def test_latest_snapshot_export_is_public_safe(tmp_path: Path) -> None:
     assert snapshot["live_bridge"]["base_url_kind"] == "remote"
     assert snapshot["live_bridge"]["base_url_scheme"] == "https"
     assert snapshot["execution_targets"] == ["remote_link"]
+    assert snapshot["execution_modes"] == ["cold_per_request"]
+    assert snapshot["cache_modes"] == ["none"]
     assert snapshot["resource_telemetry_modes"] == ["timing_only"]
     assert snapshot["safety"]["raw_prompt_response_stored"] is False
     assert "Synthetic prompt" not in snapshot_text

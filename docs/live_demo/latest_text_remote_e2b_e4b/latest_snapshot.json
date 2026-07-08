@@ -1,7 +1,13 @@
 {
   "attempt_count": 6,
+  "cache_modes": [
+    "warmup_first"
+  ],
   "cell_count": 6,
   "config_hash": "a5a332c9bd8ce96539dd424f6b83f133118bd65c14cbaa026eb2bb069d356379",
+  "execution_modes": [
+    "session_loaded"
+  ],
   "execution_targets": [
     "remote_link"
   ],
@@ -42,13 +48,13 @@
   "schema_version": "latest-text-remote-snapshot-v1",
   "skipped_cell_count": 0,
   "timing": {
-    "latency_ms_max": 6062.922,
-    "latency_ms_min": 4386.537,
-    "total_latency_ms_max": 6062.922,
-    "total_latency_ms_min": 4386.537
+    "latency_ms_max": 4128.283,
+    "latency_ms_min": 2537.202,
+    "total_latency_ms_max": 4128.283,
+    "total_latency_ms_min": 2537.202
   },
   "token_counts": {
-    "completion_tokens": 351,
+    "completion_tokens": 357,
     "prompt_tokens": 264
   }
 }

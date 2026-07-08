@@ -86,19 +86,34 @@ class ManagedLMStudioExecutor:
             raise ManagedExecutorError("managed executor v1 requires temperature 0")
 
     def execute(self, plan: RequestPlan) -> ManagedExecutionResult:
-        self._validate_plan(plan)
+        return self.execute_session((plan,))[0]
+
+    def execute_session(self, plans: Sequence[RequestPlan]) -> tuple[ManagedExecutionResult, ...]:
+        if not plans:
+            return ()
+        for plan in plans:
+            self._validate_plan(plan)
         if not self.allow_model_loads:
             raise ManagedExecutorError(
                 "managed executor model loads require allow_model_loads=true"
             )
-        started = time.monotonic()
-        pre_load_instances = self.host_runner.count_loaded_instances(model_id=plan.options.model_id)
+        first_plan = plans[0]
+        model_id = first_plan.options.model_id
+        if any(plan.options.model_id != model_id for plan in plans):
+            raise ManagedExecutorError("managed executor session requires one model_id")
+        if any(plan.options.context_tier != first_plan.options.context_tier for plan in plans):
+            raise ManagedExecutorError("managed executor session requires one context_tier")
+        if any(
+            plan.options.endpoint_family != first_plan.options.endpoint_family for plan in plans
+        ):
+            raise ManagedExecutorError("managed executor session requires one endpoint_family")
+        pre_load_instances = self.host_runner.count_loaded_instances(model_id=model_id)
         if pre_load_instances is None:
             raise ManagedExecutorError("managed executor pre-load state was not verified")
         if pre_load_instances != 0:
             raise ManagedExecutorError("managed executor refuses to reuse dirty loaded state")
         load_response = self.host_runner.load_model(
-            model_id=plan.options.model_id,
+            model_id=model_id,
             context_length=self.context_length,
             parallel=self.parallel,
         )
@@ -108,77 +123,75 @@ class ManagedLMStudioExecutor:
             parallel=self.parallel,
         )
         if not load_verified:
-            cleanup_response = self.host_runner.cleanup_model(model_id=plan.options.model_id)
+            cleanup_response = self.host_runner.cleanup_model(model_id=model_id)
             cleanup_verified = _verified_flag(cleanup_response, "cleanup_verified")
-            final_loaded_instances = self.host_runner.count_loaded_instances(
-                model_id=plan.options.model_id
-            )
+            final_loaded_instances = self.host_runner.count_loaded_instances(model_id=model_id)
             if not cleanup_verified or final_loaded_instances != 0:
                 raise ManagedExecutorError("managed executor load and cleanup were not verified")
             raise ManagedExecutorError("managed executor load was not verified")
-        post_load_instances = self.host_runner.count_loaded_instances(
-            model_id=plan.options.model_id
-        )
+        post_load_instances = self.host_runner.count_loaded_instances(model_id=model_id)
         if post_load_instances is None:
-            cleanup_response = self.host_runner.cleanup_model(model_id=plan.options.model_id)
+            cleanup_response = self.host_runner.cleanup_model(model_id=model_id)
             cleanup_verified = _verified_flag(cleanup_response, "cleanup_verified")
-            final_loaded_instances = self.host_runner.count_loaded_instances(
-                model_id=plan.options.model_id
-            )
+            final_loaded_instances = self.host_runner.count_loaded_instances(model_id=model_id)
             if not cleanup_verified or final_loaded_instances != 0:
                 raise ManagedExecutorError(
                     "managed executor load state and cleanup were not verified"
                 )
             raise ManagedExecutorError("managed executor loaded state was not verified")
         if post_load_instances <= 0:
-            cleanup_response = self.host_runner.cleanup_model(model_id=plan.options.model_id)
+            cleanup_response = self.host_runner.cleanup_model(model_id=model_id)
             cleanup_verified = _verified_flag(cleanup_response, "cleanup_verified")
-            final_loaded_instances = self.host_runner.count_loaded_instances(
-                model_id=plan.options.model_id
-            )
+            final_loaded_instances = self.host_runner.count_loaded_instances(model_id=model_id)
             if not cleanup_verified or final_loaded_instances != 0:
                 raise ManagedExecutorError(
                     "managed executor load state and cleanup were not verified"
                 )
             raise ManagedExecutorError("managed executor loaded instance was not visible")
+        payloads: list[tuple[object, float]] = []
         try:
-            raw_payload = self.host_runner.chat_completion(
-                endpoint_path=self.endpoint_path,
-                model_id=plan.options.model_id,
-                messages=_messages_from_plan(plan),
-                response_format=_response_format_from_plan(
-                    plan, strict_json_schema=self.strict_json_schema
-                ),
-                temperature=self.temperature,
-                timeout_s=plan.options.timeout_s,
-            )
+            for plan in plans:
+                started = time.monotonic()
+                raw_payload = self.host_runner.chat_completion(
+                    endpoint_path=self.endpoint_path,
+                    model_id=model_id,
+                    messages=_messages_from_plan(plan),
+                    response_format=_response_format_from_plan(
+                        plan, strict_json_schema=self.strict_json_schema
+                    ),
+                    temperature=self.temperature,
+                    timeout_s=plan.options.timeout_s,
+                )
+                payloads.append((raw_payload, round((time.monotonic() - started) * 1000, 3)))
         finally:
-            cleanup_response = self.host_runner.cleanup_model(model_id=plan.options.model_id)
+            cleanup_response = self.host_runner.cleanup_model(model_id=model_id)
             cleanup_verified = _verified_flag(cleanup_response, "cleanup_verified")
-            final_loaded_instances = self.host_runner.count_loaded_instances(
-                model_id=plan.options.model_id
-            )
+            final_loaded_instances = self.host_runner.count_loaded_instances(model_id=model_id)
             if not cleanup_verified:
                 raise ManagedExecutorError("managed executor cleanup was not verified")
             if final_loaded_instances != 0:
                 raise ManagedExecutorError("managed executor final loaded instances must be zero")
-        raw_response, prompt_tokens, completion_tokens, finish_reason = _parse_chat_payload(
-            raw_payload
-        )
-        latency_ms = round((time.monotonic() - started) * 1000, 3)
-        return ManagedExecutionResult(
-            raw_response=raw_response,
-            latency_ms=latency_ms,
-            prompt_tokens=prompt_tokens,
-            completion_tokens=completion_tokens,
-            finish_reason=finish_reason,
-            load_verified=load_verified,
-            cleanup_verified=cleanup_verified,
-            final_loaded_instances=final_loaded_instances,
-            post_load_instances=post_load_instances,
-            strict_schema_runtime_support=self.strict_json_schema,
-            hardened_schema_validation_available=True,
-        )
+        results: list[ManagedExecutionResult] = []
+        for raw_payload, latency_ms in payloads:
+            raw_response, prompt_tokens, completion_tokens, finish_reason = _parse_chat_payload(
+                raw_payload
+            )
+            results.append(
+                ManagedExecutionResult(
+                    raw_response=raw_response,
+                    latency_ms=latency_ms,
+                    prompt_tokens=prompt_tokens,
+                    completion_tokens=completion_tokens,
+                    finish_reason=finish_reason,
+                    load_verified=load_verified,
+                    cleanup_verified=cleanup_verified,
+                    final_loaded_instances=final_loaded_instances,
+                    post_load_instances=post_load_instances,
+                    strict_schema_runtime_support=self.strict_json_schema,
+                    hardened_schema_validation_available=True,
+                )
+            )
+        return tuple(results)
 
     def _validate_plan(self, plan: RequestPlan) -> None:
         if plan.envelope.modality == "image":
@@ -208,15 +221,28 @@ class ManagedLMStudioTransport:
     def execute(self, plan: RequestPlan, *, attempt_index: int = 1) -> tuple[str, RequestResult]:
         if attempt_index < 1:
             raise ManagedExecutorError("attempt_index must be positive")
-        execution = self.executor.execute(plan)
-        return execution.raw_response, RequestResult.from_raw_response(
-            request_id=plan.envelope.request_id,
-            model_id=plan.options.model_id,
-            raw_response=execution.raw_response,
-            status="ok",
-            latency_ms=execution.latency_ms,
-            token_counts=_token_counts(execution),
-            finish_reason=execution.finish_reason,
+        return self.execute_session((plan,), attempt_index=attempt_index)[0]
+
+    def execute_session(
+        self, plans: Sequence[RequestPlan], *, attempt_index: int = 1
+    ) -> tuple[tuple[str, RequestResult], ...]:
+        if attempt_index < 1:
+            raise ManagedExecutorError("attempt_index must be positive")
+        executions = self.executor.execute_session(tuple(plans))
+        return tuple(
+            (
+                execution.raw_response,
+                RequestResult.from_raw_response(
+                    request_id=plan.envelope.request_id,
+                    model_id=plan.options.model_id,
+                    raw_response=execution.raw_response,
+                    status="ok",
+                    latency_ms=execution.latency_ms,
+                    token_counts=_token_counts(execution),
+                    finish_reason=execution.finish_reason,
+                ),
+            )
+            for plan, execution in zip(plans, executions, strict=True)
         )
 
 

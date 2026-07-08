@@ -7,6 +7,8 @@ This directory is an exported public-safe view of the latest remote-link text sc
 - base_url_kind: `local`
 - base_url_scheme: `http`
 - execution_targets: `remote_link`
+- execution_modes: `session_loaded`
+- cache_modes: `warmup_first`
 - resource_telemetry_modes: `timing_only`
 - attempt_count: `6`
 - pass_count: `6`
