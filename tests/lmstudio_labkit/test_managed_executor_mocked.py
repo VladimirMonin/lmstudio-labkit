@@ -130,18 +130,19 @@ def test_managed_executor_executes_single_mocked_compat_chat_request() -> None:
     assert result.cleanup_verified is True
     assert result.final_loaded_instances == 0
     assert [name for name, _payload in host.calls] == [
+        "count_loaded_instances",
         "load_model",
         "count_loaded_instances",
         "chat_completion",
         "cleanup_model",
         "count_loaded_instances",
     ]
-    chat_payload = host.calls[2][1]
+    chat_payload = host.calls[3][1]
     assert chat_payload["endpoint_path"] == "/v1/chat/completions"
     assert chat_payload["temperature"] == 0.0
     assert chat_payload["response_format"]["type"] == "json_schema"
-    assert host.calls[0][1]["context_length"] == 8192
-    assert host.calls[0][1]["parallel"] == 1
+    assert host.calls[1][1]["context_length"] == 8192
+    assert host.calls[1][1]["parallel"] == 1
 
 
 @pytest.mark.parametrize(

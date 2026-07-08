@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Any, ClassVar
 
 import pytest
 
 from lmstudio_labkit import (
     ChatMessage,
     ExecutionOptions,
+    LocalLMStudioHostRunner,
     ManagedExecutorError,
     ManagedLMStudioExecutor,
     RequestEnvelope,
@@ -107,6 +108,7 @@ def test_managed_executor_cleans_up_when_chat_completion_fails() -> None:
         executor.execute(structured_plan())
 
     assert [name for name, _payload in host.calls] == [
+        "count_loaded_instances",
         "load_model",
         "count_loaded_instances",
         "chat_completion",
@@ -131,6 +133,7 @@ def test_managed_executor_fails_when_load_shape_is_not_verified() -> None:
         executor.execute(structured_plan())
 
     assert [name for name, _payload in host.calls] == [
+        "count_loaded_instances",
         "load_model",
         "cleanup_model",
         "count_loaded_instances",
@@ -150,3 +153,47 @@ def test_managed_executor_fails_when_final_instances_remain_loaded() -> None:
 
     with pytest.raises(ManagedExecutorError, match="final loaded instances"):
         executor.execute(structured_plan())
+
+
+class RecordingLocalRunner(LocalLMStudioHostRunner):
+    calls: ClassVar[list[tuple[str, object]]] = []
+    loaded_instances: ClassVar[list[str]] = []
+
+    def __init__(self) -> None:
+        super().__init__()
+        type(self).calls = []
+        type(self).loaded_instances = ["google/gemma-4-e2b", "google/gemma-4-e2b:2"]
+
+    def _request_json(self, path: str, payload: object, timeout_s: float) -> dict[str, object]:
+        type(self).calls.append((path, payload))
+        if path == "/api/v1/models" and payload is None:
+            return {
+                "models": [
+                    {
+                        "key": "google/gemma-4-e2b",
+                        "type": "llm",
+                        "loaded_instances": [{"id": item} for item in type(self).loaded_instances],
+                    }
+                ]
+            }
+        if path == "/api/v1/models/unload" and isinstance(payload, dict):
+            instance_id = payload.get("instance_id")
+            if isinstance(instance_id, str) and instance_id in type(self).loaded_instances:
+                type(self).loaded_instances.remove(instance_id)
+            return {"status": "ok"}
+        raise AssertionError(f"unexpected request {path} {payload}")
+
+
+def test_local_runner_unloads_loaded_instances_by_instance_id() -> None:
+    runner = RecordingLocalRunner()
+
+    result = runner.cleanup_model(model_id="google/gemma-4-e2b")
+
+    assert result == {"cleanup_verified": True}
+    assert runner.loaded_instances == []
+    assert runner.calls == [
+        ("/api/v1/models", None),
+        ("/api/v1/models/unload", {"instance_id": "google/gemma-4-e2b"}),
+        ("/api/v1/models/unload", {"instance_id": "google/gemma-4-e2b:2"}),
+        ("/api/v1/models", None),
+    ]

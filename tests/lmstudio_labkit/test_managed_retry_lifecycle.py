@@ -89,10 +89,12 @@ def test_managed_retry_runs_full_lifecycle_per_attempt(tmp_path) -> None:  # typ
     )
 
     assert host.calls == [
+        "count_loaded_instances",
         "load_model",
         "count_loaded_instances",
         "chat_completion",
         "cleanup_model",
+        "count_loaded_instances",
         "count_loaded_instances",
         "load_model",
         "count_loaded_instances",

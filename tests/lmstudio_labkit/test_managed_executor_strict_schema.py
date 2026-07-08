@@ -12,6 +12,7 @@ from lmstudio_labkit import (
     RequestEnvelope,
     RequestPlan,
     ResponseContract,
+    build_blocks_schema,
     build_simple_flat_schema,
 )
 
@@ -94,6 +95,35 @@ def test_managed_executor_allows_explicit_non_strict_schema() -> None:
 
     assert host.response_formats[0]["json_schema"]["strict"] is False
     assert result.strict_schema_runtime_support is False
+
+
+def test_managed_executor_lowers_prefix_items_for_runtime_schema() -> None:
+    host = CapturingHostRunner()
+    executor = ManagedLMStudioExecutor(host_runner=host, allow_model_loads=True)
+    plan = structured_plan()
+    plan = RequestPlan(
+        cell_id=plan.cell_id,
+        envelope=RequestEnvelope(
+            request_id=plan.envelope.request_id,
+            modality=plan.envelope.modality,
+            chat_messages=plan.envelope.chat_messages,
+            response_contract=ResponseContract(
+                mode="json",
+                schema=build_blocks_schema([0, 1], "hardened_const"),
+                expected_ids=(0, 1),
+            ),
+        ),
+        options=plan.options,
+    )
+
+    executor.execute(plan)
+
+    schema = host.response_formats[0]["json_schema"]["schema"]
+    blocks = schema["properties"]["blocks"]
+    assert "prefixItems" not in blocks
+    assert blocks["items"]["properties"]["id"] == {"enum": [0, 1]}
+    assert blocks["minItems"] == 2
+    assert blocks["maxItems"] == 2
 
 
 def test_benchmark_config_parses_structured_runtime_default_and_override() -> None:

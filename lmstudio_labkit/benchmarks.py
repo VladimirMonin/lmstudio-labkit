@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import itertools
 import json
 import time
 from dataclasses import asdict, dataclass, field
@@ -275,126 +276,60 @@ def _build_matrix_plan(config: BenchmarkConfig) -> MatrixPlan:
     cells: list[MatrixCell] = []
     raw_cartesian_cell_count = 0
     skip_reasons: dict[str, int] = {}
+    axis_specs = (
+        ("modality", lambda task: (task.modality,)),
+        ("language", lambda task: ("en_en",)),
+        ("structure_complexity", lambda task: ("simple",)),
+        ("volume", lambda task: ("single",)),
+        ("context_tier", lambda task: ("8192",)),
+        ("schema_variant", lambda task: ("baseline_loose",)),
+        ("retry_policy", lambda task: ("off",)),
+        ("execution_mode", lambda task: ("cold_per_request",)),
+        ("cache_mode", lambda task: ("none",)),
+        ("lmstudio_parallel", lambda task: ("1",)),
+        ("app_concurrency", lambda task: ("1",)),
+        ("queue_pressure_mode", lambda task: ("off",)),
+        ("text_interaction_mode", lambda task: ("single_question",)),
+        ("image_interaction_mode", lambda task: ("single_question",)),
+        ("image_type", lambda task: ("none",)),
+        ("output_language", lambda task: ("none",)),
+        ("execution_target", lambda task: ("local_managed",)),
+        ("resource_telemetry_mode", lambda task: ("full",)),
+    )
     for model in config.models:
         for task in config.tasks:
-            for modality in config.axes.get("modality", (task.modality,)):
-                for language in config.axes.get("language", ("en_en",)):
-                    for complexity in config.axes.get("structure_complexity", ("simple",)):
-                        for volume in config.axes.get("volume", ("single",)):
-                            for context_tier in config.axes.get("context_tier", ("8192",)):
-                                for schema_variant in config.axes.get(
-                                    "schema_variant", ("baseline_loose",)
-                                ):
-                                    for retry_policy in config.axes.get("retry_policy", ("off",)):
-                                        for execution_mode in config.axes.get(
-                                            "execution_mode", ("cold_per_request",)
-                                        ):
-                                            for cache_mode in config.axes.get(
-                                                "cache_mode", ("none",)
-                                            ):
-                                                for lmstudio_parallel in config.axes.get(
-                                                    "lmstudio_parallel", ("1",)
-                                                ):
-                                                    for app_concurrency in config.axes.get(
-                                                        "app_concurrency", ("1",)
-                                                    ):
-                                                        for queue_pressure_mode in config.axes.get(
-                                                            "queue_pressure_mode", ("off",)
-                                                        ):
-                                                            for (
-                                                                text_interaction_mode
-                                                            ) in config.axes.get(
-                                                                "text_interaction_mode",
-                                                                ("single_question",),
-                                                            ):
-                                                                for (
-                                                                    image_interaction_mode
-                                                                ) in config.axes.get(
-                                                                    "image_interaction_mode",
-                                                                    ("single_question",),
-                                                                ):
-                                                                    for (
-                                                                        image_type
-                                                                    ) in config.axes.get(
-                                                                        "image_type", ("none",)
-                                                                    ):
-                                                                        for (
-                                                                            output_language
-                                                                        ) in config.axes.get(
-                                                                            "output_language",
-                                                                            ("none",),
-                                                                        ):
-                                                                            for (
-                                                                                execution_target
-                                                                            ) in config.axes.get(
-                                                                                "execution_target",
-                                                                                ("local_managed",),
-                                                                            ):
-                                                                                for resource_telemetry_mode in config.axes.get(
-                                                                                    "resource_telemetry_mode",
-                                                                                    ("full",),
-                                                                                ):
-                                                                                    for (
-                                                                                        repeat_index
-                                                                                    ) in range(
-                                                                                        config.repeats
-                                                                                    ):
-                                                                                        raw_cartesian_cell_count += 1
-                                                                                        axes = {
-                                                                                            "modality": modality,
-                                                                                            "language": language,
-                                                                                            "structure_complexity": complexity,
-                                                                                            "volume": volume,
-                                                                                            "context_tier": context_tier,
-                                                                                            "schema_variant": schema_variant,
-                                                                                            "retry_policy": retry_policy,
-                                                                                            "execution_mode": execution_mode,
-                                                                                            "cache_mode": cache_mode,
-                                                                                            "lmstudio_parallel": lmstudio_parallel,
-                                                                                            "app_concurrency": app_concurrency,
-                                                                                            "queue_pressure_mode": queue_pressure_mode,
-                                                                                            "text_interaction_mode": text_interaction_mode,
-                                                                                            "image_interaction_mode": image_interaction_mode,
-                                                                                            "image_type": image_type,
-                                                                                            "output_language": output_language,
-                                                                                            "execution_target": execution_target,
-                                                                                            "resource_telemetry_mode": resource_telemetry_mode,
-                                                                                        }
-                                                                                        skip_reason = _compatibility_skip_reason(
-                                                                                            model=model,
-                                                                                            task=task,
-                                                                                            axes=axes,
-                                                                                        )
-                                                                                        if (
-                                                                                            skip_reason
-                                                                                            is not None
-                                                                                        ):
-                                                                                            skip_reasons[
-                                                                                                skip_reason
-                                                                                            ] = (
-                                                                                                skip_reasons.get(
-                                                                                                    skip_reason,
-                                                                                                    0,
-                                                                                                )
-                                                                                                + 1
-                                                                                            )
-                                                                                            continue
-                                                                                        cell_id = _cell_id(
-                                                                                            config.run_id,
-                                                                                            model.model_key,
-                                                                                            task.task_id,
-                                                                                            axes,
-                                                                                            repeat_index,
-                                                                                        )
-                                                                                        cells.append(
-                                                                                            MatrixCell(
-                                                                                                cell_id,
-                                                                                                model,
-                                                                                                task,
-                                                                                                axes,
-                                                                                                repeat_index,
-                                                                                            )
-                                                                                        )
+            axis_names = tuple(name for name, _default in axis_specs)
+            axis_values = tuple(
+                config.axes.get(name, default(task)) for name, default in axis_specs
+            )
+            for axis_tuple in itertools.product(*axis_values, range(config.repeats)):
+                *axis_value_items, repeat_index = axis_tuple
+                raw_cartesian_cell_count += 1
+                axes = dict(zip(axis_names, axis_value_items, strict=True))
+                skip_reason = _compatibility_skip_reason(
+                    model=model,
+                    task=task,
+                    axes=axes,
+                )
+                if skip_reason is not None:
+                    skip_reasons[skip_reason] = skip_reasons.get(skip_reason, 0) + 1
+                    continue
+                cell_id = _cell_id(
+                    config.run_id,
+                    model.model_key,
+                    task.task_id,
+                    axes,
+                    repeat_index,
+                )
+                cells.append(
+                    MatrixCell(
+                        cell_id,
+                        model,
+                        task,
+                        axes,
+                        repeat_index,
+                    )
+                )
     plan = MatrixPlan(
         config.run_id,
         config.safe_hash(),

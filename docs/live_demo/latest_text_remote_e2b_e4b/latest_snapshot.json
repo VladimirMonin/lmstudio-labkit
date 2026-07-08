@@ -1,0 +1,54 @@
+{
+  "attempt_count": 6,
+  "cell_count": 6,
+  "config_hash": "a5a332c9bd8ce96539dd424f6b83f133118bd65c14cbaa026eb2bb069d356379",
+  "execution_targets": [
+    "remote_link"
+  ],
+  "fail_count": 0,
+  "filtered_cell_count": 6,
+  "live": true,
+  "live_bridge": {
+    "allow_model_load": true,
+    "allow_remote": true,
+    "allow_stress": false,
+    "base_url_kind": "local",
+    "base_url_scheme": "http",
+    "live": true,
+    "max_requests": 6,
+    "profile": "live-small"
+  },
+  "model_ids": [
+    "google/gemma-4-e2b",
+    "google/gemma-4-e4b"
+  ],
+  "models": [
+    "gemma4_e2b",
+    "gemma4_e4b"
+  ],
+  "pass_count": 6,
+  "pass_rate": 1.0,
+  "resource_telemetry_modes": [
+    "timing_only"
+  ],
+  "run_id": "matrix_live_small_text_remote_warmup_e2b_e4b",
+  "safety": {
+    "public_safe": true,
+    "raw_base_url_stored": false,
+    "raw_prompt_response_stored": false,
+    "raw_prompt_stored": false,
+    "raw_response_stored": false
+  },
+  "schema_version": "latest-text-remote-snapshot-v1",
+  "skipped_cell_count": 0,
+  "timing": {
+    "latency_ms_max": 6062.922,
+    "latency_ms_min": 4386.537,
+    "total_latency_ms_max": 6062.922,
+    "total_latency_ms_min": 4386.537
+  },
+  "token_counts": {
+    "completion_tokens": 351,
+    "prompt_tokens": 264
+  }
+}

@@ -9,6 +9,7 @@ from urllib import request as urllib_request
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 
+from . import benchmarks
 from .benchmarks import BenchmarkConfig, plan_matrix
 
 
@@ -42,7 +43,7 @@ def preflight_config(config_path: str | Path, *, base_url: str | None = None) ->
             checks["chunk_count_axis_absent"] = "fail"
             raise ValueError("chunk_count must not be a top-level axis")
         checks["chunk_count_axis_absent"] = "pass"
-        plan = plan_matrix(config)
+        plan = benchmarks._build_matrix_plan(config) if config.safety.live else plan_matrix(config)
         checks["plan_build"] = "pass"
         checks["budget"] = "pass"
         _validate_privacy_defaults(config)

@@ -1,0 +1,11 @@
+{
+  "policy": "artifact-privacy-v1",
+  "scanned_artifacts": [
+    "latest_snapshot.json",
+    "latest_snapshot.csv",
+    "README.md"
+  ],
+  "status": "pass",
+  "violation_count": 0,
+  "violations": []
+}

@@ -3,7 +3,7 @@ from __future__ import annotations
 import time
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Protocol
+from typing import Any, Protocol, cast
 
 from .requests import RequestPlan, RequestResult
 
@@ -92,6 +92,11 @@ class ManagedLMStudioExecutor:
                 "managed executor model loads require allow_model_loads=true"
             )
         started = time.monotonic()
+        pre_load_instances = self.host_runner.count_loaded_instances(model_id=plan.options.model_id)
+        if pre_load_instances is None:
+            raise ManagedExecutorError("managed executor pre-load state was not verified")
+        if pre_load_instances != 0:
+            raise ManagedExecutorError("managed executor refuses to reuse dirty loaded state")
         load_response = self.host_runner.load_model(
             model_id=plan.options.model_id,
             context_length=self.context_length,
@@ -234,10 +239,79 @@ def _response_format_from_plan(
         "type": "json_schema",
         "json_schema": {
             "name": "labkit_response",
-            "schema": schema,
+            "schema": _lmstudio_runtime_schema(schema),
             "strict": strict_json_schema,
         },
     }
+
+
+def _lmstudio_runtime_schema(schema: Mapping[str, object]) -> Mapping[str, object]:
+    """Lower LabKit validation schemas to the LM Studio JSON-schema subset.
+
+    LabKit keeps stricter validation locally (including ordered ``prefixItems``
+    with per-position ``const`` ids). LM Studio's live ``json_schema`` endpoint
+    rejects that shape, so the runtime request uses an equivalent-enough array
+    item schema and LabKit validates exact order after generation.
+    """
+
+    return cast(Mapping[str, object], _lower_prefix_items_schema(schema))
+
+
+def _lower_prefix_items_schema(value: Any) -> Any:
+    if isinstance(value, Mapping):
+        lowered = {str(key): _lower_prefix_items_schema(item) for key, item in value.items()}
+        prefix_items = value.get("prefixItems")
+        if isinstance(prefix_items, Sequence) and not isinstance(
+            prefix_items, (str, bytes, bytearray)
+        ):
+            merged = _merge_prefix_items(tuple(prefix_items))
+            if merged is not None:
+                lowered.pop("prefixItems", None)
+                if lowered.get("items") is False:
+                    lowered.pop("items", None)
+                lowered["items"] = merged
+        return lowered
+    if isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+        return [_lower_prefix_items_schema(item) for item in value]
+    return value
+
+
+def _merge_prefix_items(prefix_items: Sequence[object]) -> dict[str, Any] | None:
+    if not prefix_items or not all(isinstance(item, Mapping) for item in prefix_items):
+        return None
+    first = prefix_items[0]
+    assert isinstance(first, Mapping)
+    merged: dict[str, Any] = {
+        str(key): _lower_prefix_items_schema(item) for key, item in first.items()
+    }
+    properties = first.get("properties")
+    if not isinstance(properties, Mapping):
+        return merged
+    maybe_merged_properties = merged.get("properties", {})
+    merged_properties: dict[str, Any] = (
+        dict(maybe_merged_properties) if isinstance(maybe_merged_properties, Mapping) else {}
+    )
+    for prop_name, prop_schema in properties.items():
+        if not isinstance(prop_name, str) or not isinstance(prop_schema, Mapping):
+            continue
+        const_values: list[object] = []
+        all_have_const = True
+        for item in prefix_items:
+            assert isinstance(item, Mapping)
+            item_properties = item.get("properties")
+            if not isinstance(item_properties, Mapping):
+                all_have_const = False
+                break
+            maybe_schema = item_properties.get(prop_name)
+            if not isinstance(maybe_schema, Mapping) or "const" not in maybe_schema:
+                all_have_const = False
+                break
+            const_values.append(maybe_schema["const"])
+        if all_have_const:
+            merged_properties[prop_name] = {"enum": const_values}
+    if merged_properties:
+        merged["properties"] = merged_properties
+    return merged
 
 
 def _parse_chat_payload(payload: object) -> tuple[str, int | None, int | None, str | None]:
@@ -405,33 +479,53 @@ class LocalLMStudioHostRunner:
         return self._request_json(endpoint_path, payload, timeout_s)
 
     def cleanup_model(self, *, model_id: str) -> object:
-        response = self._request_json(
-            "/api/v1/models/unload",
-            {"model": model_id},
-            self.default_timeout_s,
-        )
-        status = str(response.get("status", "")).lower() if isinstance(response, Mapping) else ""
-        return {"cleanup_verified": status in {"", "ok", "success", "unloaded"} or bool(response)}
+        instance_ids = self._loaded_instance_ids(model_id=model_id)
+        if instance_ids is None:
+            return {"cleanup_verified": False}
+        for instance_id in instance_ids:
+            self._request_json(
+                "/api/v1/models/unload",
+                {"instance_id": instance_id},
+                self.default_timeout_s,
+            )
+        return {"cleanup_verified": self.count_loaded_instances(model_id=model_id) == 0}
 
     def count_loaded_instances(self, *, model_id: str) -> int | None:
+        instance_ids = self._loaded_instance_ids(model_id=model_id)
+        return None if instance_ids is None else len(instance_ids)
+
+    def _loaded_instance_ids(self, *, model_id: str) -> list[str] | None:
         response = self._request_json("/api/v1/models", None, self.default_timeout_s)
         if not isinstance(response, Mapping):
             return None
         models = response.get("models", response.get("data"))
         if not isinstance(models, Sequence) or isinstance(models, (str, bytes, bytearray)):
             return None
-        count = 0
+        instance_ids: list[str] = []
         for item in models:
             if not isinstance(item, Mapping):
                 continue
-            identifiers = {item.get("id"), item.get("model"), item.get("path"), item.get("key")}
+            identifiers = {
+                item.get("id"),
+                item.get("model"),
+                item.get("path"),
+                item.get("key"),
+                item.get("name"),
+            }
             if model_id in identifiers:
                 loaded = item.get("loaded_instances", item.get("instances"))
                 if isinstance(loaded, Sequence) and not isinstance(loaded, (str, bytes, bytearray)):
-                    count += len(loaded)
-                elif item.get("loaded") is True or item.get("state") == "loaded":
-                    count += 1
-        return count
+                    for instance in loaded:
+                        if isinstance(instance, Mapping):
+                            instance_id = _first_str(instance, ("id", "instance_id", "instanceId"))
+                            if instance_id is not None:
+                                instance_ids.append(instance_id)
+                    continue
+                if item.get("loaded") is True or item.get("state") == "loaded":
+                    instance_id = _first_str(item, ("instance_id", "instanceId", "id", "key"))
+                    if instance_id is not None:
+                        instance_ids.append(instance_id)
+        return instance_ids
 
     def _request_json(
         self, path: str, payload: Mapping[str, object] | None, timeout_s: float
@@ -452,7 +546,10 @@ class LocalLMStudioHostRunner:
             with urllib_request.urlopen(req, timeout=timeout_s) as response:
                 raw = response.read().decode("utf-8")
         except HTTPError as error:
-            raise ManagedExecutorError(f"LM Studio HTTP error: {error.code}") from error
+            detail = _safe_http_error_detail(error)
+            raise ManagedExecutorError(
+                f"LM Studio HTTP error: {error.code} at {path}{detail}"
+            ) from error
         except URLError as error:
             raise ManagedExecutorError("LM Studio local endpoint is not reachable") from error
         try:
@@ -472,6 +569,45 @@ def _coerce_positive_int(value: object, default: int) -> int:
     except (TypeError, ValueError):
         return default
     return parsed if parsed > 0 else default
+
+
+def _safe_http_error_detail(error: object) -> str:
+    read = getattr(error, "read", None)
+    if not callable(read):
+        return ""
+    try:
+        raw_value = read()
+        raw = (
+            raw_value.decode("utf-8", errors="replace")[:500]
+            if isinstance(raw_value, bytes | bytearray)
+            else str(raw_value)[:500]
+        )
+    except Exception:
+        return ""
+    if not raw:
+        return ""
+    try:
+        import json
+
+        payload = json.loads(raw)
+    except Exception:
+        return ": response_body=non_json"
+    if not isinstance(payload, Mapping):
+        return ": response_body=non_object"
+    maybe_error = payload.get("error")
+    if isinstance(maybe_error, Mapping):
+        payload = maybe_error
+    safe: dict[str, object] = {}
+    for key in ("error", "message", "code", "type", "param"):
+        value = payload.get(key)
+        if isinstance(value, str):
+            safe[key] = value[:200]
+        elif isinstance(value, (int, float, bool)) or value is None:
+            safe[key] = value
+    if not safe:
+        return ": response_body=object_without_safe_error_fields"
+    parts = [f"{key}={safe[key]!r}" for key in sorted(safe)]
+    return ": " + ", ".join(parts)
 
 
 def _first_str(payload: Mapping[str, object], keys: Sequence[str]) -> str | None:

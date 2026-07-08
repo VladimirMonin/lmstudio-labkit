@@ -42,7 +42,12 @@ def _planned_cell_count(payload: dict[str, Any]) -> int:
     axes = payload["axes"]
     axis_values = [axes[name] for name in sorted(axes)]
     axis_product = tuple(product(*axis_values))
-    return len(payload["models"]) * len(payload["tasks"]) * len(axis_product)
+    return (
+        len(payload["models"])
+        * len(payload["tasks"])
+        * len(axis_product)
+        * payload.get("repeats", 1)
+    )
 
 
 def _assert_remote_small_text_config(
@@ -50,13 +55,16 @@ def _assert_remote_small_text_config(
     *,
     expected_run_id: str,
     expected_cache_mode: str,
+    expected_execution_mode: str,
+    expected_text_interaction_mode: str,
     expected_max_requests: int,
+    expected_max_repeats: int,
 ) -> None:
     assert payload["run_id"] == expected_run_id
     assert {model["model_id"] for model in payload["models"]} == EXPECTED_MODEL_IDS
     assert len(payload["models"]) == 2
     assert len(payload["tasks"]) == 1
-    assert _planned_cell_count(payload) == 2
+    assert _planned_cell_count(payload) == expected_max_requests
 
     task = payload["tasks"][0]
     assert task["modality"] == "text"
@@ -68,9 +76,13 @@ def _assert_remote_small_text_config(
 
     axes = payload["axes"]
     for name, expected in EXPECTED_AXES.items():
+        if name in {"execution_mode", "text_interaction_mode"}:
+            continue
         assert axes[name] == expected
     assert axes["cache_mode"] == [expected_cache_mode]
+    assert axes["execution_mode"] == [expected_execution_mode]
     assert axes["resource_telemetry_mode"] == ["timing_only"]
+    assert axes["text_interaction_mode"] == [expected_text_interaction_mode]
 
     assert payload["structured_runtime"] == {"strict_json_schema": True}
     remote_policy = payload["remote_link"]["telemetry_policy"]
@@ -101,7 +113,7 @@ def _assert_remote_small_text_config(
         "max_runtime_minutes": safety["max_runtime_minutes"],
         "max_context_tier": 8192,
         "max_models": 2,
-        "max_repeats": 1,
+        "max_repeats": expected_max_repeats,
     }
 
 
@@ -113,14 +125,21 @@ def test_l3_16_remote_text_configs_parse_and_plan_offline() -> None:
         baseline,
         expected_run_id="matrix_live_small_text_remote_e2b_e4b",
         expected_cache_mode="none",
+        expected_execution_mode="cold_per_request",
+        expected_text_interaction_mode="single_question",
         expected_max_requests=2,
+        expected_max_repeats=1,
     )
     _assert_remote_small_text_config(
         warmup,
         expected_run_id="matrix_live_small_text_remote_warmup_e2b_e4b",
         expected_cache_mode="warmup_first",
-        expected_max_requests=4,
+        expected_execution_mode="session_loaded",
+        expected_text_interaction_mode="same_text_repeat",
+        expected_max_requests=6,
+        expected_max_repeats=3,
     )
+    assert warmup["repeats"] == 3
 
     warmup_policy = warmup["remote_link"]["telemetry_policy"]
     assert warmup_policy["warmup_request_recorded"] is True

@@ -52,6 +52,8 @@ class StrictLoadHostRunner:
 
     def count_loaded_instances(self, *, model_id: str) -> int | None:
         self.calls.append("count_loaded_instances")
+        if "load_model" not in self.calls:
+            return 0
         if "chat_completion" in self.calls or "cleanup_model" in self.calls:
             return self.final_instances
         return self.post_load_instances

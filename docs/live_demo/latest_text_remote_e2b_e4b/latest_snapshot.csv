@@ -1,0 +1,2 @@
+run_id,live,base_url_kind,base_url_scheme,execution_targets,resource_telemetry_modes,attempt_count,pass_count,fail_count,pass_rate,raw_prompt_response_stored,raw_base_url_stored
+matrix_live_small_text_remote_warmup_e2b_e4b,True,local,http,remote_link,timing_only,6,6,0,1.0,False,False

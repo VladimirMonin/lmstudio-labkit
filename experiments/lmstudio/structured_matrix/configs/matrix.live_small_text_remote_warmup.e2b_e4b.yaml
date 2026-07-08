@@ -38,14 +38,14 @@ axes:
   context_tier: [8192]
   schema_variant: [hardened_const]
   retry_policy: ["off"]
-  execution_mode: [cold_per_request]
+  execution_mode: [session_loaded]
   execution_target: [remote_link]
   resource_telemetry_mode: [timing_only]
   cache_mode: [warmup_first]
   lmstudio_parallel: [1]
   app_concurrency: [1]
   queue_pressure_mode: [false]
-  text_interaction_mode: [single_question]
+  text_interaction_mode: [same_text_repeat]
 structured_runtime:
   strict_json_schema: true
 remote_link:
@@ -88,8 +88,9 @@ safety:
   allow_raw_prompt_response_artifacts: false
   allow_image_live: false
   allow_stress: false
-  max_requests: 4
+  max_requests: 6
   max_runtime_minutes: 20
   max_context_tier: 8192
   max_models: 2
-  max_repeats: 1
+  max_repeats: 3
+repeats: 3
