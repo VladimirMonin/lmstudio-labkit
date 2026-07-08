@@ -2,7 +2,7 @@
 
 LM Studio LabKit is a Python/uv project for a reusable LM Studio request core and an extensible benchmark harness. The roadmap covers text, image, chat, structured, and non-structured experiments while keeping default checks offline and publication-safe.
 
-Current code includes extracted managed LM Studio backend contracts, lab runners/probes, experiment assets, and regression tests. Some roadmap items are planned and are not yet implemented.
+Current code includes extracted managed LM Studio backend contracts, lab runners/probes, experiment assets, regression tests, a public `lmstudio_labkit` facade, offline matrix planning/execution, hardened structured validators, fake failure modes, privacy-scanned artifacts, richer summaries, and a guarded live bridge interface. Live execution remains explicit opt-in and is not run by default.
 
 ## Docs
 

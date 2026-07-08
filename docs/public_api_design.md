@@ -152,6 +152,28 @@ from lmstudio_labkit.benchmarks import BenchmarkRunner
 
 Private adapters can live outside this repository and depend only on stable public interfaces.
 
+## L3.12 implementation status
+
+Implemented public modules now include:
+
+```text
+lmstudio_labkit.requests
+lmstudio_labkit.benchmarks
+lmstudio_labkit.validation
+lmstudio_labkit.schema_builders
+lmstudio_labkit.datasets
+lmstudio_labkit.artifacts
+lmstudio_labkit.privacy
+lmstudio_labkit.reports
+lmstudio_labkit.live_bridge
+lmstudio_labkit.adapters
+lmstudio_labkit.cli
+```
+
+The compatibility layer remains in place: existing `libs.*` and `tools.*` imports are not removed.
+
+Live-run procedure status: guarded interface implemented, real execution host-managed and explicit opt-in only. The default CLI still performs offline/fake execution and rejects live profiles unless live intent and config safety flags agree.
+
 ## Documentation contract
 
 Public docs should distinguish clearly between:

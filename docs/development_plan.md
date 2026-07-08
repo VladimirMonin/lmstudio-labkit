@@ -30,7 +30,39 @@ Acceptance gate:
 python scripts/audit_publication_safety.py
 uv run ruff check .
 uv run ruff format --check .
-uv run pytest -q tests/libs tests/tools tests/architecture
+uv run pytest -q tests/libs tests/tools tests/architecture tests/lmstudio_labkit
+uv build
+```
+
+## L3.12 — Matrix Harness Hardening + Live Bridge
+
+Status: implemented as an offline/default-safe hardening slice. No live LM Studio calls or model downloads are required by this phase.
+
+Implemented scope:
+
+- Hardened JSON Schema subset support for `type`, `required`, `properties`, `items`, `prefixItems`, `const`, `enum`, `additionalProperties: false`, `minItems`, `maxItems`, `minLength`, `maxLength`, `minimum`, and `maximum`.
+- Exact ID validation now supports string and integer IDs, nested IDs, duplicate/missing/unexpected counts, preserved order, and first mismatch index.
+- Business validators now cover empty output for non-empty input, length-ratio bounds, placeholder text, Markdown fence leakage, language compliance, image ground-truth labels, and finish-reason length failures.
+- Schema builders exist for simple flat, Blocks JSON, complex nested, and image task families. The Blocks JSON `hardened_const` variant uses per-position `const` IDs.
+- Public-safe task manifests exist under `experiments/lmstudio/structured_matrix/datasets/` with a loader in `lmstudio_labkit.datasets`.
+- Offline fake transport supports deterministic failure/retry modes including invalid JSON, schema violation, missing/duplicate/reordered IDs, wrong language, placeholder text, Markdown-wrapped JSON, finish-length, retry recovery, deterministic retry failure, and image ground-truth misses.
+- Artifact writing now performs a real privacy scan instead of emitting an unconditional pass.
+- Reports now include per-model, per-axis, per-language, per-modality, per-complexity, per-schema-variant, retry-impact, and failure-taxonomy summaries.
+- A guarded live bridge interface exists in `lmstudio_labkit.live_bridge`; it requires explicit `live=True`, rejects remote URLs without an explicit flag, rejects stress/overnight profiles without an explicit flag, and uses an injected executor so unit tests do not make network calls.
+- CLI profiles distinguish offline and guarded live intent. Offline remains the default; live profiles fail without explicit flags and currently require a host-managed executor.
+
+L3.12 acceptance gate:
+
+```bash
+python scripts/audit_publication_safety.py
+uv run ruff check .
+uv run ruff format --check .
+uv run pytest -q tests/libs tests/tools tests/architecture tests/lmstudio_labkit
+uv build
+uv run lmstudio-benchmark --help
+uv run lmstudio-benchmark plan --config experiments/lmstudio/structured_matrix/configs/matrix.smoke.yaml --output-root /tmp/labkit-plan
+uv run lmstudio-benchmark run --config experiments/lmstudio/structured_matrix/configs/matrix.smoke.yaml --output-root /tmp/labkit-run --profile offline-fake
+uv run lmstudio-benchmark summarize --run-dir /tmp/labkit-run/matrix_smoke
 ```
 
 ## Phase 1 — Public package facade

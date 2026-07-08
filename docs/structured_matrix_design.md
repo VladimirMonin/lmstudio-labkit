@@ -4,7 +4,7 @@
 
 The structured matrix benchmark harness is a planned LabKit component for evaluating LM Studio models across configurable structured-output scenarios. It should support text, image, chat, structured, and non-structured request modes through the reusable request core while keeping artifacts publication-safe.
 
-This document describes the target design. It does not claim that every lane is already implemented.
+This document describes the target design and the current L3.12 implementation status. Offline/fake planning and execution, hardened validators, schema builders, privacy scanning, richer reports, CLI profiles, and a guarded live bridge interface are implemented. Real live LM Studio execution remains opt-in and host-managed.
 
 ## Matrix axes
 
