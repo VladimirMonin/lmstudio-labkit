@@ -87,6 +87,7 @@ class TaskSpec:
     fake_mode: str = "valid"
     min_length_ratio: float | None = None
     max_length_ratio: float | None = None
+    length_ratio_policy: str = "hard"
 
 
 @dataclass(frozen=True, slots=True)
@@ -205,6 +206,7 @@ class MatrixCell:
             image_ground_truth=self.task.image_ground_truth,
             min_length_ratio=self.task.min_length_ratio,
             max_length_ratio=self.task.max_length_ratio,
+            length_ratio_policy=self.task.length_ratio_policy,
         )
         text_inputs = (TextInput(self.task.prompt),) if self.task.prompt else ()
         image_inputs = (
@@ -828,6 +830,7 @@ def _task_from_dict(payload: dict[str, Any]) -> TaskSpec:
         fake_mode=str(payload.get("fake_mode", "valid")),
         min_length_ratio=payload.get("min_length_ratio"),
         max_length_ratio=payload.get("max_length_ratio"),
+        length_ratio_policy=str(payload.get("length_ratio_policy", "hard")),
     )
 
 

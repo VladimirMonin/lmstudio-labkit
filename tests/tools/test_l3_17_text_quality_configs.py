@@ -12,6 +12,8 @@ CONFIG_ROOT = STRUCTURED_MATRIX_ROOT / "configs"
 SUITE_ROOT = STRUCTURED_MATRIX_ROOT / "suites"
 WAVE1_CONFIG = CONFIG_ROOT / "matrix.l3_17_text_quality.e2b_e4b.yaml"
 WAVE2_CONFIG = CONFIG_ROOT / "matrix.l3_17_text_quality.12b.yaml"
+LEGACY_REMOTE_WAVE1_CONFIG = CONFIG_ROOT / "matrix.l3_17_text_quality_remote.e2b_e4b.yaml"
+LEGACY_REMOTE_WAVE2_CONFIG = CONFIG_ROOT / "matrix.l3_17_text_quality_remote.12b.yaml"
 SUITE = SUITE_ROOT / "l3_17_text_quality_gemma.yaml"
 
 
@@ -143,6 +145,19 @@ def test_l3_17_wave2_config_is_12b_medium_only_and_guarded() -> None:
         "max_repeats": 1,
         "max_runtime_minutes": 45,
     }
+
+
+def test_legacy_l3_17_simple_length_ratio_is_diagnostic_only() -> None:
+    for path in (LEGACY_REMOTE_WAVE1_CONFIG, LEGACY_REMOTE_WAVE2_CONFIG):
+        payload = _load_yaml(path)
+        simple_tasks = [
+            task for task in payload["tasks"] if task["structure_complexity"] == "simple"
+        ]
+        assert simple_tasks
+        for task in simple_tasks:
+            assert task.get("min_length_ratio") is not None
+            assert task.get("max_length_ratio") is not None
+            assert task.get("length_ratio_policy") == "diagnostic"
 
 
 def test_l3_17_suite_runs_12b_only_after_e2b_e4b() -> None:

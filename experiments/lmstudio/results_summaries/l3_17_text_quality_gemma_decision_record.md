@@ -160,7 +160,25 @@ retry1,16,3,0,0.0
 }
 ```
 
-All Wave 1 failures were `language_mismatch` on strict Russian simple tasks. The failing rows still passed JSON parse, JSON schema, ID exactness/order, missing/extra/duplicate ID checks, markdown-fence, placeholder, reasoning-leak, and finish-reason checks.
+All Wave 1 failures were `language_mismatch` on strict Russian simple tasks. The failing rows still passed JSON parse, JSON schema, ID exactness/order, missing/extra/duplicate ID checks, markdown-fence, placeholder, reasoning-leak, finish-reason, and business checks.
+
+## L3.17.1 length-ratio policy update
+
+The earlier Wave 1 remote config exposed `length_ratio=too_long` on `ru_ru_simple_single` while JSON structure, schema, ID, language, placeholder, reasoning-leak, and finish-reason checks passed. That case is now treated as a simple-task policy conflict rather than a model JSON failure:
+
+```text
+simple structured task + length_ratio violation => diagnostic only
+medium/blocks task + length_ratio violation => hard failure by default
+```
+
+Implementation notes:
+
+- `ResponseContract.length_ratio_policy` supports `hard` and `diagnostic`.
+- Diagnostic length-ratio violations keep the validation row public-safe, but do not flip the whole validation summary to failure.
+- Legacy L3.17 remote simple tasks that still carry length-ratio bounds declare `length_ratio_policy: diagnostic` explicitly.
+- The canonical L3.17 config does not apply length-ratio bounds to simple flat/items tasks.
+
+L3.17.1 reran canonical Wave 1 after this policy fix. The `too_long` blocker is gone for the canonical Wave 1 path; the remaining accepted-gate failures are the strict-Russian `language_mismatch` rows above.
 
 ## 12B interpretation
 

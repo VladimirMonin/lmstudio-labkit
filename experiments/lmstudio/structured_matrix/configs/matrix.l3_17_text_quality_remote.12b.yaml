@@ -23,6 +23,7 @@ tasks:
     fake_mode: valid
     min_length_ratio: 0.1
     max_length_ratio: 5.0
+    length_ratio_policy: diagnostic
   - task_id: ru_ru_medium_single
     family: blocks
     modality: text

@@ -36,10 +36,10 @@
 
 ## Timing summary
 
-- latency_ms_min: `601.019`
-- latency_ms_max: `5454.184`
-- total_latency_ms_min: `601.019`
-- total_latency_ms_max: `5454.184`
+- latency_ms_min: `599.236`
+- latency_ms_max: `5477.72`
+- total_latency_ms_min: `599.236`
+- total_latency_ms_max: `5477.72`
 
 ## Privacy summary
 

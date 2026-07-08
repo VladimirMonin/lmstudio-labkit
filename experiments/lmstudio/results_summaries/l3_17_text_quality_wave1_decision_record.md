@@ -110,6 +110,8 @@ L3.17 Wave 1 is a useful live quality finding, but it is not an acceptance pass.
 
 Recommended next action:
 
-1. Decide whether `ru_ru_simple_single` length-ratio should remain a hard quality failure.
-2. If hard: tune prompt/schema expectations and rerun Wave 1 only.
-3. If diagnostic: encode that rule explicitly in tests/config/reporting before opening the 12B wave.
+1. `ru_ru_simple_single` length-ratio is diagnostic for simple structured tasks, not a hard quality failure.
+2. Keep length-ratio hard by default for medium/blocks tasks where relative compression remains a real quality gate.
+3. Rerun Wave 1 only after encoding the rule in tests/config/reporting.
+
+L3.17.1 follow-up encoded this policy with `ResponseContract.length_ratio_policy`, marked legacy L3.17 remote simple tasks as `diagnostic`, and reran canonical E2B/E4B Wave 1. The length-ratio blocker is resolved; canonical Wave 1 still fails on strict-Russian language compliance, so 12B remains blocked.

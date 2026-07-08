@@ -120,6 +120,7 @@ def validate_response(
                 contract.expected_output,
                 contract.min_length_ratio,
                 contract.max_length_ratio,
+                policy=str(contract.length_ratio_policy),
             )
         )
     else:
@@ -499,6 +500,8 @@ def validate_length_ratio(
     expected_output: Any,
     min_ratio: float | None,
     max_ratio: float | None,
+    *,
+    policy: str = "hard",
 ) -> ValidationResult:
     baseline = max(1, len(_flatten_text(expected_output)))
     ratio = len(raw_response) / baseline
@@ -508,7 +511,11 @@ def validate_length_ratio(
         status, category = "fail", "too_short"
     if max_ratio is not None and ratio > max_ratio:
         status, category = "fail", "too_long"
-    return ValidationResult("length_ratio", status, category, {"ratio": round(ratio, 4)})
+    metrics = {"ratio": round(ratio, 4), "policy": policy}
+    if status == "fail" and policy == "diagnostic":
+        metrics["diagnostic"] = True
+        return ValidationResult("length_ratio", "skip", category, metrics)
+    return ValidationResult("length_ratio", status, category, metrics)
 
 
 def validate_image_ground_truth(value: Any, ground_truth: dict[str, Any]) -> ValidationResult:

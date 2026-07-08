@@ -115,10 +115,10 @@
   "schema_version": "latest-text-remote-snapshot-v1",
   "skipped_cell_count": 224,
   "timing": {
-    "latency_ms_max": 5454.184,
-    "latency_ms_min": 601.019,
-    "total_latency_ms_max": 5454.184,
-    "total_latency_ms_min": 601.019
+    "latency_ms_max": 5477.72,
+    "latency_ms_min": 599.236,
+    "total_latency_ms_max": 5477.72,
+    "total_latency_ms_min": 599.236
   },
   "token_counts": {
     "completion_tokens": 6122,

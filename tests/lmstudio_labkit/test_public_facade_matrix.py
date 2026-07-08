@@ -6,6 +6,7 @@ from pathlib import Path
 import yaml
 from lmstudio_labkit.benchmarks import plan_matrix
 from lmstudio_labkit.cli import main as cli_main
+from lmstudio_labkit.requests import ResponseContract
 from lmstudio_labkit.validation import validate_response
 
 from lmstudio_labkit import BenchmarkConfig, RequestEnvelope, run_matrix
@@ -124,6 +125,28 @@ def test_validators_cover_json_schema_ids_language_and_placeholders() -> None:
         "id_exact",
         "no_placeholder_text",
     }
+
+
+def test_diagnostic_length_ratio_does_not_fail_simple_structured_task() -> None:
+    contract = ResponseContract(
+        mode="json",
+        expected_output={"id": 0, "summary": "Кратко"},
+        min_length_ratio=0.1,
+        max_length_ratio=1.0,
+        length_ratio_policy="diagnostic",
+    )
+
+    summary = validate_response(
+        '{"id":0,"summary":"Очень подробное русское резюме, которое намеренно длиннее baseline."}',
+        contract,
+        input_char_count=20,
+    )
+    length_ratio = next(item for item in summary.results if item.name == "length_ratio")
+
+    assert summary.status == "pass"
+    assert length_ratio.status == "skip"
+    assert length_ratio.category == "too_long"
+    assert length_ratio.metrics["diagnostic"] is True
 
 
 def test_cli_plan_run_summarize_compare(tmp_path: Path, capsys) -> None:
