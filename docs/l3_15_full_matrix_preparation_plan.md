@@ -247,7 +247,22 @@ lmstudio-benchmark compare-suite --left-suite-run-dir <a> --right-suite-run-dir 
 
 `base-url` must be treated as sensitive operational input. Persist only safe classification fields such as base URL kind and scheme.
 
-### D2. Suite config format
+### D2. Executable implementation requirement
+
+This workstream is not complete if only suite YAML files are added. It requires executable code for:
+
+- Suite config parsing.
+- Dependency ordering via `run_after`.
+- `plan-suite`.
+- `run-suite`.
+- `summarize-suite`.
+- `compare-suite`.
+- Incremental `suite_results.jsonl` writing.
+- Stop-on-failure policy.
+- Optional-config failure handling.
+- Privacy-safe suite artifacts.
+
+### D3. Suite config format
 
 Create:
 
@@ -318,7 +333,7 @@ budgets:
   max_context_tier: 8192
 ```
 
-### D3. Suite output contract
+### D4. Suite output contract
 
 A suite run directory must have this shape:
 
@@ -749,7 +764,15 @@ safety:
   max_repeats: 3
 ```
 
-This suite must not be run until tiny live E2B/E4B passes.
+This suite must not be run live until all of these gates are true:
+
+1. Tiny E2B/E4B true-live passes.
+2. Cleanup `final_loaded_instances=0` is proven for tiny live.
+3. Strict load and cleanup verification are implemented.
+4. Suite runner and resume pass offline dry-run.
+5. The owner explicitly approves throughput live.
+
+In L3.15, throughput/parallel configs are preparation-only. They may be planned and run with offline/fake transport, but not executed against LM Studio.
 
 ## 13. Workstream J — image offline asset pack
 
@@ -777,7 +800,20 @@ Assets must be public-safe and synthetic or explicitly approved:
 5. People/scene: public/stock/synthetic, non-identifying, no sensitive attributes.
 6. Mixed text image: UI + text + small icon/chart, public-safe.
 
-### J3. Fixture layout
+### J3. Synthetic fallback policy
+
+If the owner has not provided image assets yet, create only synthetic placeholder fixtures generated inside the repository.
+
+Do not use:
+
+- Private screenshots.
+- Local desktop screenshots.
+- Source application screenshots with private markers.
+- Real people unless the image is public, stock, synthetic, and non-identifying.
+
+Synthetic placeholders are acceptable for offline validator tests.
+
+### J4. Fixture layout
 
 ```text
 experiments/lmstudio/structured_matrix/datasets/image/
@@ -798,7 +834,7 @@ experiments/lmstudio/structured_matrix/datasets/image/
     └── mixed_text_image.expected.yaml
 ```
 
-### J4. Ground-truth shape
+### J5. Ground-truth shape
 
 ```yaml
 fixture_id: ui_screenshot_001
@@ -827,7 +863,39 @@ Required future tests:
 - `tests/lmstudio_labkit/test_image_manifest_offline.py`
 - `tests/lmstudio_labkit/test_image_ground_truth_contract.py`
 
-## 14. Proposed implementation order
+## 14. Workstream K — report templates
+
+Create report/decision-record templates for the future suite outputs:
+
+```text
+docs/l3_15_suite_readiness_report.md
+experiments/lmstudio/results_summaries/l3_15_text_quality_screening_decision_record.template.md
+experiments/lmstudio/results_summaries/l3_15_throughput_parallel_decision_record.template.md
+experiments/lmstudio/results_summaries/l3_15_image_readiness_decision_record.template.md
+```
+
+Each template must include:
+
+- Scope.
+- Models.
+- Configs.
+- Request count.
+- Axes.
+- Preflight results.
+- Fake/offline results.
+- Live evidence, if any.
+- Validation pass rates.
+- Failure taxonomy.
+- Retry impact.
+- Parallelism impact.
+- Cache/warmup impact.
+- Resource summary.
+- Cleanup summary.
+- Privacy summary.
+- Non-claims.
+- Next allowed gate.
+
+## 15. Proposed implementation order
 
 1. Strict managed lifecycle verification.
 2. Strict JSON Schema runtime option.
@@ -840,9 +908,10 @@ Required future tests:
 9. Execution/cache/parallel axes and reporting fields.
 10. Throughput/parallel suite definitions.
 11. Image offline asset manifest and validators.
-12. Runbook update for the later explicit live window.
+12. Report and decision-record templates.
+13. Runbook update for the later explicit live window.
 
-## 15. Non-live verification gates for L3.15
+## 16. Non-live verification gates for L3.15
 
 Before committing implementation work in this stage, run at least:
 
@@ -864,7 +933,7 @@ python scripts/audit_publication_safety.py
 
 No command in this stage may call live generation endpoints or model lifecycle mutation endpoints.
 
-## 16. Future explicit live sequence, not part of L3.15
+## 17. Future explicit live sequence, not part of L3.15
 
 Only after owner approval:
 
@@ -877,19 +946,117 @@ Only after owner approval:
 7. Only after review, consider optional 12B.
 8. Do not run 26B, Qwen, image live, stress, or overnight without a separate approval and profile.
 
-## 17. Open decisions for the owner
+## 18. Owner inputs required before extended packs
 
-Before implementing the optional/extended packs, decide:
+Before implementing optional or extended packs, the owner must provide or explicitly approve these inputs.
 
-- Exact overnight candidate model list.
-- Hard maximum request count.
-- Hard maximum runtime hours.
-- Hard maximum context tier.
-- Whether 12B may be included after tiny E2B/E4B passes.
-- Whether 26B remains documentation-only or may enter a later candidate pack.
-- Whether Qwen remains example-only or enters a separate non-first-live suite.
-- Whether the first optimization objective is quality or throughput.
+### 18.1 Exact model list
 
-## 18. Working conclusion
+For every model candidate:
+
+- `model_key`.
+- `model_id`.
+- Allowed suites.
+- Maximum context tier.
+- Whether generation is allowed in a later explicit live stage.
+
+### 18.2 Run budgets
+
+Required budget decisions:
+
+- Maximum first-live request count.
+- Maximum screening request count.
+- Maximum overnight request count.
+- Maximum runtime hours.
+- Maximum context tier.
+
+Suggested initial policy until changed by the owner:
+
+```yaml
+allow_12b_after_e2b_e4b_pass: false
+allow_26b_generation: false
+allow_qwen_generation_first_wave: false
+allow_image_live_first_wave: false
+max_first_live_requests: 2
+max_screening_requests: 50
+max_overnight_requests: 300
+max_runtime_hours: 8
+max_context_tier_first: 8192
+```
+
+### 18.3 First priority
+
+Choose one first optimization target:
+
+1. Quality first.
+2. Throughput/parallelism first.
+3. Image readiness first.
+
+Recommended order:
+
+```text
+quality first -> throughput/parallelism -> image readiness
+```
+
+### 18.4 Image assets
+
+The owner must provide six public-safe image fixtures or approve synthetic placeholder generation inside the repository:
+
+- UI screenshot.
+- Code screenshot.
+- Document/table.
+- Chart/graph.
+- People/scene.
+- Mixed text image.
+
+For every image, provide or approve:
+
+- Visible text.
+- Object labels.
+- Counts.
+- Table/chart values when applicable.
+- Language.
+- Privacy status.
+- Explicit confirmation that no private screenshots are included.
+
+## 19. Definition of Done
+
+L3.15 is closed only when all items below are true:
+
+1. Strict load verification is implemented and tested.
+2. Strict cleanup verification is implemented and tested.
+3. `strict_json_schema` option is implemented and tested.
+4. Managed retry lifecycle is implemented or explicitly deferred with configs adjusted.
+5. Suite runner is implemented as executable code, not only YAML.
+6. Suite resume is implemented.
+7. Config preflight is implemented.
+8. Read-only LM Studio preflight is implemented.
+9. Suite preflight is implemented.
+10. Text quality config pack is created.
+11. Throughput/parallel config pack is created.
+12. Cache, parallel, and execution axes are parsed, planned, reported, and covered by tests.
+13. Image offline asset manifest exists.
+14. Image ground-truth contract exists.
+15. Report templates exist.
+16. All new commands are tested.
+17. No live inference was run during L3.15 implementation.
+18. No model load was run during L3.15 implementation.
+19. No model download was run during L3.15 implementation.
+20. No raw prompt/response artifacts are possible by default.
+21. All required checks pass.
+
+Do not accept L3.15 as done if:
+
+- Only docs were added.
+- Configs were added but no suite runner exists.
+- Suite runner has no resume.
+- Preflight performs generation or model load.
+- Strict load verification still trusts requested config values.
+- `retry_policy` exists but managed retry is unsupported and not explicitly deferred.
+- Parallelism axes exist but reports do not include them.
+- `cache_mode` exists but is not represented in summaries.
+- Image assets are not public-safe.
+
+## 20. Working conclusion
 
 The project is ready for L3.15 as a non-live harness expansion. The main missing layer is not model availability; it is orchestration discipline: strict lifecycle proof, strict schema mode, retry lifecycle isolation, suite preflight, resume, richer text config packs, and explicit cache/parallel axes. Once these are implemented and dry-run verified, the later live window can start with a small reviewed suite instead of discovering harness gaps during a long run.
