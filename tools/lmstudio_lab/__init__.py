@@ -101,6 +101,15 @@ _EXPORTS_BY_MODULE: dict[str, tuple[str, ...]] = {
         "ManagedLabRunner",
         "ManagedTransport",
     ),
+    "matrix": (
+        "MATRIX_CELL_FIELDNAMES",
+        "MATRIX_FAKE_RUN_OUTPUT_FILE_NAMES",
+        "MATRIX_PLAN_OUTPUT_FILE_NAMES",
+        "StructuredMatrixPlan",
+        "build_structured_matrix_plan",
+        "create_structured_matrix_fake_run_artifacts",
+        "create_structured_matrix_plan_artifacts",
+    ),
     "metrics": (
         "SAFE_ERROR_CATEGORIES",
         "SCHEMA_VERSION",

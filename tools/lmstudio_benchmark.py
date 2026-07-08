@@ -19,6 +19,10 @@ from tools.lmstudio_lab.config import (
     validate_experiment_config_payload,
 )
 from tools.lmstudio_lab.datasets import load_dataset_manifest
+from tools.lmstudio_lab.matrix import (
+    create_structured_matrix_fake_run_artifacts,
+    create_structured_matrix_plan_artifacts,
+)
 from tools.lmstudio_lab.metrics import (
     SCHEMA_VERSION,
     LMStudioLabMetricRecord,
@@ -408,6 +412,27 @@ def _build_parser() -> argparse.ArgumentParser:
     plan_cache_parser.add_argument("config_path", type=Path)
     plan_cache_parser.add_argument("--output-root", type=Path, default=_default_results_root())
     plan_cache_parser.add_argument("--run-id")
+
+    plan_matrix_parser = subparsers.add_parser(
+        "plan-matrix",
+        help="create offline structured matrix planning artifacts",
+    )
+    plan_matrix_parser.add_argument("config_path", type=Path)
+    plan_matrix_parser.add_argument("--output-root", type=Path, default=_default_results_root())
+    plan_matrix_parser.add_argument("--run-id")
+
+    run_matrix_parser = subparsers.add_parser(
+        "run-matrix",
+        help="execute the offline fake structured matrix runner",
+    )
+    run_matrix_parser.add_argument("config_path", type=Path)
+    run_matrix_parser.add_argument("--output-root", type=Path, default=_default_results_root())
+    run_matrix_parser.add_argument("--run-id")
+    run_matrix_parser.add_argument(
+        "--fake",
+        action="store_true",
+        help="required: use deterministic fake responses and no network calls",
+    )
     return parser
 
 
@@ -889,6 +914,26 @@ def _run_plan_cache(args: argparse.Namespace) -> int:
         args.config_path,
         output_root=args.output_root,
         run_id=run_id,
+    )
+    return EXIT_OK
+
+
+def _run_plan_matrix(args: argparse.Namespace) -> int:
+    create_structured_matrix_plan_artifacts(
+        args.config_path,
+        output_root=args.output_root,
+        run_id=args.run_id,
+    )
+    return EXIT_OK
+
+
+def _run_matrix_fake(args: argparse.Namespace) -> int:
+    if not args.fake:
+        raise ValueError("run-matrix is offline-only and requires --fake")
+    create_structured_matrix_fake_run_artifacts(
+        args.config_path,
+        output_root=args.output_root,
+        run_id=args.run_id,
     )
     return EXIT_OK
 
@@ -3241,6 +3286,10 @@ def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv_list)
     if args.command == "plan-cache":
         return _run_plan_cache(args)
+    if args.command == "plan-matrix":
+        return _run_plan_matrix(args)
+    if args.command == "run-matrix":
+        return _run_matrix_fake(args)
     if args.command == "run":
         if args.managed_l3_8b_gemma4_e4b_load_only:
             return _run_managed_l3_8b_gemma4_e4b_load_only(args)

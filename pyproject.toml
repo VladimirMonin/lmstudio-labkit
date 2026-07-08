@@ -1,7 +1,7 @@
 [project]
 name = "lmstudio-labkit"
 version = "0.1.0a0"
-description = "Standalone Python/uv lab kit for managed LM Studio experiments and backend contracts."
+description = "Python/uv lab kit for reusable LM Studio request core and benchmark harness."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -15,14 +15,14 @@ dev = [
 ]
 
 [project.scripts]
-lmstudio-benchmark = "tools.lmstudio_benchmark:main"
+lmstudio-benchmark = "lmstudio_labkit.cli:main"
 
 [build-system]
 requires = ["hatchling>=1.25"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["libs/lmstudio_managed", "tools/lmstudio_lab"]
+packages = ["lmstudio_labkit", "libs/lmstudio_managed", "tools/lmstudio_lab"]
 force-include = {"tools/lmstudio_benchmark.py" = "tools/lmstudio_benchmark.py"}
 
 [tool.uv]
@@ -39,7 +39,7 @@ markers = [
 [tool.ruff]
 target-version = "py312"
 line-length = 100
-src = ["libs", "tools", "tests"]
+src = ["lmstudio_labkit", "libs", "tools", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "C4"]
