@@ -18,6 +18,7 @@ from .managed_executor import (
 )
 from .preflight import preflight_config
 from .reports import compare_runs, summarize_run, write_summary_csv
+from .snapshots import export_latest_text_remote_snapshot
 from .suites import compare_suites, plan_suite, preflight_suite, run_suite, summarize_suite
 
 _SAFE_PROFILES = {"offline-plan", "offline-fake", "offline", "fake"}
@@ -82,6 +83,16 @@ def build_parser() -> argparse.ArgumentParser:
     compare = sub.add_parser("compare", help="Compare two run directories")
     compare.add_argument("--left-run-dir", required=True)
     compare.add_argument("--right-run-dir", required=True)
+
+    export_snapshot = sub.add_parser(
+        "export-latest-snapshot",
+        help="Export a public-safe latest remote text snapshot",
+    )
+    export_snapshot.add_argument("--run-dir", required=True)
+    export_snapshot.add_argument(
+        "--output-dir",
+        default="docs/live_demo/latest_text_remote_e2b_e4b",
+    )
 
     return parser
 
@@ -179,6 +190,12 @@ def main(argv: list[str] | None = None) -> int:
         comparison = compare_runs(args.left_run_dir, args.right_run_dir)
         _print_json({"status": "ok", "comparison": comparison})
         return 0
+    if args.command == "export-latest-snapshot":
+        result = export_latest_text_remote_snapshot(args.run_dir, args.output_dir)
+        _print_json(
+            {"status": result["status"], "mode": "export-latest-snapshot", "snapshot": result}
+        )
+        return 0 if result["status"] == "pass" else 2
     raise AssertionError(f"Unhandled command {args.command}")
 
 

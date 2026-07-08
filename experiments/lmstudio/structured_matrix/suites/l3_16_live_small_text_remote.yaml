@@ -1,0 +1,8 @@
+suite_id: l3_16_live_small_text_remote
+stop_on_failure: true
+configs:
+  - config: ../configs/matrix.live_small_text_remote.e2b_e4b.yaml
+    required: true
+  - config: ../configs/matrix.live_small_text_remote_warmup.e2b_e4b.yaml
+    required: true
+    run_after: [matrix_live_small_text_remote_e2b_e4b]

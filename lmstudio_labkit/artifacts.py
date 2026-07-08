@@ -153,6 +153,11 @@ def _write_cell_summary(
         "cache_hit_inferred",
         "cache_hit_reported",
         "kv_reuse_proven",
+        "execution_target",
+        "resource_telemetry_mode",
+        "resource_telemetry_status",
+        "resource_ram_required",
+        "resource_vram_required",
         "repeat_index",
         "status",
         "json_parse_status",
@@ -181,6 +186,12 @@ def _write_cell_summary(
         "prompt_tokens",
         "completion_tokens",
         "response_char_count",
+        "ram_before_mb",
+        "ram_peak_mb",
+        "ram_after_mb",
+        "vram_before_mb",
+        "vram_peak_mb",
+        "vram_after_mb",
     ]
     _write_csv(path, fieldnames, (_cell_summary_row(row) for row in rows))
 
@@ -255,6 +266,12 @@ def _cell_summary_row(row: dict[str, Any]) -> dict[str, Any]:
         "cache_hit_inferred": row.get("cache_hit_inferred"),
         "cache_hit_reported": row.get("cache_hit_reported"),
         "kv_reuse_proven": row.get("kv_reuse_proven"),
+        "execution_target": row.get("execution_target") or axes.get("execution_target"),
+        "resource_telemetry_mode": row.get("resource_telemetry_mode")
+        or axes.get("resource_telemetry_mode"),
+        "resource_telemetry_status": row.get("resource_telemetry_status"),
+        "resource_ram_required": row.get("resource_ram_required"),
+        "resource_vram_required": row.get("resource_vram_required"),
         "repeat_index": row.get("repeat_index"),
         "status": row.get("status"),
         "json_parse_status": _validation_status(validation_results, "json_parse"),
@@ -285,6 +302,12 @@ def _cell_summary_row(row: dict[str, Any]) -> dict[str, Any]:
         "prompt_tokens": token_counts.get("prompt"),
         "completion_tokens": token_counts.get("completion"),
         "response_char_count": result.get("response_char_count"),
+        "ram_before_mb": row.get("ram_before_mb"),
+        "ram_peak_mb": row.get("ram_peak_mb"),
+        "ram_after_mb": row.get("ram_after_mb"),
+        "vram_before_mb": row.get("vram_before_mb"),
+        "vram_peak_mb": row.get("vram_peak_mb"),
+        "vram_after_mb": row.get("vram_after_mb"),
     }
 
 
@@ -460,6 +483,17 @@ def _write_resource_summary(
                 "tokens_per_sec": row.get("tokens_per_sec"),
                 "prompt_tokens": token_counts.get("prompt"),
                 "completion_tokens": token_counts.get("completion"),
+                "execution_target": row.get("execution_target"),
+                "resource_telemetry_mode": row.get("resource_telemetry_mode"),
+                "resource_telemetry_status": row.get("resource_telemetry_status"),
+                "resource_ram_required": row.get("resource_ram_required"),
+                "resource_vram_required": row.get("resource_vram_required"),
+                "ram_before_mb": row.get("ram_before_mb"),
+                "ram_peak_mb": row.get("ram_peak_mb"),
+                "ram_after_mb": row.get("ram_after_mb"),
+                "vram_before_mb": row.get("vram_before_mb"),
+                "vram_peak_mb": row.get("vram_peak_mb"),
+                "vram_after_mb": row.get("vram_after_mb"),
             }
         )
     _write_csv(
@@ -473,6 +507,17 @@ def _write_resource_summary(
             "tokens_per_sec",
             "prompt_tokens",
             "completion_tokens",
+            "execution_target",
+            "resource_telemetry_mode",
+            "resource_telemetry_status",
+            "resource_ram_required",
+            "resource_vram_required",
+            "ram_before_mb",
+            "ram_peak_mb",
+            "ram_after_mb",
+            "vram_before_mb",
+            "vram_peak_mb",
+            "vram_after_mb",
         ],
         summary_rows,
     )

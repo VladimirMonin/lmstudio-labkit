@@ -37,6 +37,7 @@ from .requests import (
     TextInput,
 )
 from .schema_builders import build_blocks_schema, build_simple_flat_schema
+from .snapshots import export_latest_text_remote_snapshot
 from .validation import (
     ValidationResult,
     ValidationSummary,
@@ -78,6 +79,7 @@ __all__ = [
     "build_blocks_schema",
     "build_simple_flat_schema",
     "collect_ids_by_path",
+    "export_latest_text_remote_snapshot",
     "load_task_manifest",
     "load_task_manifests",
     "load_task_specs",

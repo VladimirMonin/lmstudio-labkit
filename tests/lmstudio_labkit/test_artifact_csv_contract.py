@@ -30,6 +30,11 @@ CELL_SUMMARY_COLUMNS = {
     "cache_hit_inferred",
     "cache_hit_reported",
     "kv_reuse_proven",
+    "execution_target",
+    "resource_telemetry_mode",
+    "resource_telemetry_status",
+    "resource_ram_required",
+    "resource_vram_required",
     "repeat_index",
     "status",
     "json_parse_status",
@@ -58,6 +63,12 @@ CELL_SUMMARY_COLUMNS = {
     "prompt_tokens",
     "completion_tokens",
     "response_char_count",
+    "ram_before_mb",
+    "ram_peak_mb",
+    "ram_after_mb",
+    "vram_before_mb",
+    "vram_peak_mb",
+    "vram_after_mb",
 }
 
 MODEL_SUMMARY_COLUMNS = {

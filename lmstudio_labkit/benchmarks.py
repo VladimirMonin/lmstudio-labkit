@@ -325,64 +325,76 @@ def _build_matrix_plan(config: BenchmarkConfig) -> MatrixPlan:
                                                                             ("none",),
                                                                         ):
                                                                             for (
-                                                                                repeat_index
-                                                                            ) in range(
-                                                                                config.repeats
+                                                                                execution_target
+                                                                            ) in config.axes.get(
+                                                                                "execution_target",
+                                                                                ("local_managed",),
                                                                             ):
-                                                                                raw_cartesian_cell_count += 1
-                                                                                axes = {
-                                                                                    "modality": modality,
-                                                                                    "language": language,
-                                                                                    "structure_complexity": complexity,
-                                                                                    "volume": volume,
-                                                                                    "context_tier": context_tier,
-                                                                                    "schema_variant": schema_variant,
-                                                                                    "retry_policy": retry_policy,
-                                                                                    "execution_mode": execution_mode,
-                                                                                    "cache_mode": cache_mode,
-                                                                                    "lmstudio_parallel": lmstudio_parallel,
-                                                                                    "app_concurrency": app_concurrency,
-                                                                                    "queue_pressure_mode": queue_pressure_mode,
-                                                                                    "text_interaction_mode": text_interaction_mode,
-                                                                                    "image_interaction_mode": image_interaction_mode,
-                                                                                    "image_type": image_type,
-                                                                                    "output_language": output_language,
-                                                                                }
-                                                                                skip_reason = _compatibility_skip_reason(
-                                                                                    model=model,
-                                                                                    task=task,
-                                                                                    axes=axes,
-                                                                                )
-                                                                                if (
-                                                                                    skip_reason
-                                                                                    is not None
+                                                                                for resource_telemetry_mode in config.axes.get(
+                                                                                    "resource_telemetry_mode",
+                                                                                    ("full",),
                                                                                 ):
-                                                                                    skip_reasons[
-                                                                                        skip_reason
-                                                                                    ] = (
-                                                                                        skip_reasons.get(
-                                                                                            skip_reason,
-                                                                                            0,
+                                                                                    for (
+                                                                                        repeat_index
+                                                                                    ) in range(
+                                                                                        config.repeats
+                                                                                    ):
+                                                                                        raw_cartesian_cell_count += 1
+                                                                                        axes = {
+                                                                                            "modality": modality,
+                                                                                            "language": language,
+                                                                                            "structure_complexity": complexity,
+                                                                                            "volume": volume,
+                                                                                            "context_tier": context_tier,
+                                                                                            "schema_variant": schema_variant,
+                                                                                            "retry_policy": retry_policy,
+                                                                                            "execution_mode": execution_mode,
+                                                                                            "cache_mode": cache_mode,
+                                                                                            "lmstudio_parallel": lmstudio_parallel,
+                                                                                            "app_concurrency": app_concurrency,
+                                                                                            "queue_pressure_mode": queue_pressure_mode,
+                                                                                            "text_interaction_mode": text_interaction_mode,
+                                                                                            "image_interaction_mode": image_interaction_mode,
+                                                                                            "image_type": image_type,
+                                                                                            "output_language": output_language,
+                                                                                            "execution_target": execution_target,
+                                                                                            "resource_telemetry_mode": resource_telemetry_mode,
+                                                                                        }
+                                                                                        skip_reason = _compatibility_skip_reason(
+                                                                                            model=model,
+                                                                                            task=task,
+                                                                                            axes=axes,
                                                                                         )
-                                                                                        + 1
-                                                                                    )
-                                                                                    continue
-                                                                                cell_id = _cell_id(
-                                                                                    config.run_id,
-                                                                                    model.model_key,
-                                                                                    task.task_id,
-                                                                                    axes,
-                                                                                    repeat_index,
-                                                                                )
-                                                                                cells.append(
-                                                                                    MatrixCell(
-                                                                                        cell_id,
-                                                                                        model,
-                                                                                        task,
-                                                                                        axes,
-                                                                                        repeat_index,
-                                                                                    )
-                                                                                )
+                                                                                        if (
+                                                                                            skip_reason
+                                                                                            is not None
+                                                                                        ):
+                                                                                            skip_reasons[
+                                                                                                skip_reason
+                                                                                            ] = (
+                                                                                                skip_reasons.get(
+                                                                                                    skip_reason,
+                                                                                                    0,
+                                                                                                )
+                                                                                                + 1
+                                                                                            )
+                                                                                            continue
+                                                                                        cell_id = _cell_id(
+                                                                                            config.run_id,
+                                                                                            model.model_key,
+                                                                                            task.task_id,
+                                                                                            axes,
+                                                                                            repeat_index,
+                                                                                        )
+                                                                                        cells.append(
+                                                                                            MatrixCell(
+                                                                                                cell_id,
+                                                                                                model,
+                                                                                                task,
+                                                                                                axes,
+                                                                                                repeat_index,
+                                                                                            )
+                                                                                        )
     plan = MatrixPlan(
         config.run_id,
         config.safe_hash(),
@@ -579,6 +591,7 @@ def run_matrix(
             "error_category": _first_error_category(validation),
             **cache_telemetry,
             **timing_telemetry,
+            **_resource_telemetry_fields(cell),
         }
         if live_requested:
             row["lab_only_flags"] = LAB_ONLY_LIVE_FLAGS.as_dict()
@@ -649,6 +662,7 @@ def run_live_small_text_screening(
                 "lab_only_flags": LAB_ONLY_LIVE_FLAGS.as_dict(),
                 **cache_telemetry,
                 **timing_telemetry,
+                **_resource_telemetry_fields(cell),
             }
         )
     planner_summary = plan.planner_summary(live=True)
@@ -1142,6 +1156,25 @@ def _timing_telemetry_fields(result: RequestResult) -> dict[str, Any]:
         "prompt_processing_ms": None,
         "total_latency_ms": latency_ms,
         "tokens_per_sec": tokens_per_sec,
+    }
+
+
+def _resource_telemetry_fields(cell: MatrixCell) -> dict[str, Any]:
+    mode = cell.axes.get("resource_telemetry_mode", "full")
+    execution_target = cell.axes.get("execution_target", "local_managed")
+    missing_allowed = mode == "timing_only" or execution_target == "remote_link"
+    return {
+        "execution_target": execution_target,
+        "resource_telemetry_mode": mode,
+        "resource_telemetry_status": "timing_only" if missing_allowed else "not_collected",
+        "resource_ram_required": not missing_allowed,
+        "resource_vram_required": not missing_allowed,
+        "ram_before_mb": None,
+        "ram_peak_mb": None,
+        "ram_after_mb": None,
+        "vram_before_mb": None,
+        "vram_peak_mb": None,
+        "vram_after_mb": None,
     }
 
 

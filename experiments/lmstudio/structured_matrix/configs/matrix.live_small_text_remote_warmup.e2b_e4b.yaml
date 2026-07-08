@@ -1,0 +1,95 @@
+run_id: matrix_live_small_text_remote_warmup_e2b_e4b
+models:
+  - model_key: gemma4_e2b
+    model_id: google/gemma-4-e2b
+    endpoint_family: openai_compat
+    supported_modalities: [text]
+    supported_context_tiers: [8192]
+  - model_key: gemma4_e4b
+    model_id: google/gemma-4-e4b
+    endpoint_family: openai_compat
+    supported_modalities: [text]
+    supported_context_tiers: [8192]
+tasks:
+  - task_id: ru_ru_medium_remote_blocks_warmup
+    family: blocks
+    modality: text
+    language: ru_ru
+    language_policy: strict_ru
+    structure_complexity: medium
+    volume: single
+    prompt: Верни только JSON по схеме. Сохрани id 0 и 1 по порядку и дай два коротких русских блока.
+    schema_family: blocks
+    expected_ids: [0, 1]
+    expected_output:
+      blocks:
+        - id: 0
+          text: Первый синтетический блок.
+        - id: 1
+          text: Второй синтетический блок.
+    fake_mode: valid
+    min_length_ratio: 0.1
+    max_length_ratio: 5.0
+axes:
+  modality: [text]
+  language: [ru_ru]
+  structure_complexity: [medium]
+  volume: [single]
+  context_tier: [8192]
+  schema_variant: [hardened_const]
+  retry_policy: ["off"]
+  execution_mode: [cold_per_request]
+  execution_target: [remote_link]
+  resource_telemetry_mode: [timing_only]
+  cache_mode: [warmup_first]
+  lmstudio_parallel: [1]
+  app_concurrency: [1]
+  queue_pressure_mode: [false]
+  text_interaction_mode: [single_question]
+structured_runtime:
+  strict_json_schema: true
+remote_link:
+  enabled: true
+  telemetry_policy:
+    base_url_kind: remote
+    scheme: https
+    raw_base_url_stored: false
+    raw_prompt_response_stored: false
+    warmup_request_recorded: true
+    measured_request_recorded: true
+    kv_reuse_proven: false
+    allowed_artifact_fields:
+      - base_url_kind
+      - scheme
+      - endpoint_family
+      - status
+      - timing_ms
+      - execution_target
+      - resource_telemetry_mode
+      - resource_telemetry_status
+      - is_warmup_request
+      - cache_group_id
+      - stable_prefix_hash
+      - prompt_template_hash
+      - dynamic_input_hash
+      - cache_hit_inferred
+      - cache_hit_reported
+    forbidden_artifact_fields:
+      - base_url
+      - prompt
+      - response
+      - messages
+      - content
+safety:
+  live: true
+  allow_model_downloads: false
+  allow_model_loads: true
+  allow_remote_base_url: true
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_requests: 4
+  max_runtime_minutes: 20
+  max_context_tier: 8192
+  max_models: 2
+  max_repeats: 1

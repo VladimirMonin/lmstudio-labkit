@@ -11,6 +11,10 @@ Current code includes extracted managed LM Studio backend contracts, lab runners
 - [Public API design](docs/public_api_design.md)
 - [Current state analysis](docs/analysis_current_state.md)
 
+## Live demo snapshots
+
+- [Latest remote text screening snapshot](docs/live_demo/latest_text_remote_e2b_e4b/README.md) — public-safe export target for the latest L3.16 Gemma E2B/E4B remote-link text run. The directory may contain only sanitized summaries and no raw prompts, raw responses, hostnames, tokens, or base URLs.
+
 ## Quick start
 
 ```bash
