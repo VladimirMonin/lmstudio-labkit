@@ -68,6 +68,9 @@ class TaskSpec:
     tags: tuple[str, ...] = ()
     expected_output: Any | None = None
     expected_ids: tuple[Any, ...] = ()
+    id_paths: tuple[str, ...] = ()
+    id_field_names: tuple[str, ...] = ("id",)
+    preserve_order: bool = True
     image_ground_truth: dict[str, Any] | None = None
     fake_mode: str = "valid"
     min_length_ratio: float | None = None
@@ -166,10 +169,16 @@ class MatrixCell:
         schema_variant = self.axes.get("schema_variant") or self.task.schema_variant
         if schema is None and self.task.schema_family == "blocks":
             schema = build_blocks_schema(self.task.expected_ids, schema_variant or "baseline_loose")
+        id_paths = self.task.id_paths
+        if not id_paths and self.task.schema_family == "blocks":
+            id_paths = ("blocks[*].id",)
         contract = ResponseContract(
             mode="json" if schema is not None else "text",
             schema=schema,
             expected_ids=self.task.expected_ids,
+            id_paths=id_paths,
+            id_field_names=self.task.id_field_names,
+            preserve_order=self.task.preserve_order,
             language=self.axes.get("language"),
             expected_output=self.task.expected_output,
             image_ground_truth=self.task.image_ground_truth,
@@ -546,6 +555,9 @@ def _task_from_dict(payload: dict[str, Any]) -> TaskSpec:
         tags=tuple(str(item) for item in payload.get("tags", [])),
         expected_output=payload.get("expected_output"),
         expected_ids=tuple(payload.get("expected_ids", [])),
+        id_paths=tuple(str(item) for item in payload.get("id_paths", [])),
+        id_field_names=tuple(str(item) for item in payload.get("id_field_names", ["id"])),
+        preserve_order=bool(payload.get("preserve_order", True)),
         image_ground_truth=payload.get("image_ground_truth"),
         fake_mode=str(payload.get("fake_mode", "valid")),
         min_length_ratio=payload.get("min_length_ratio"),

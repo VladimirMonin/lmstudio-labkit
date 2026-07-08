@@ -66,7 +66,15 @@ def validate_response(
             results.append(ValidationResult("json_schema", "skip"))
 
         if contract.expected_ids:
-            results.append(validate_exact_ids(parsed, contract.expected_ids))
+            results.append(
+                validate_exact_ids(
+                    parsed,
+                    contract.expected_ids,
+                    id_paths=contract.id_paths,
+                    id_field_names=contract.id_field_names,
+                    preserve_order=contract.preserve_order,
+                )
+            )
         else:
             results.append(ValidationResult("id_exact", "skip"))
 
@@ -209,19 +217,27 @@ def _matches_type(value: Any, expected_type: str | list[str]) -> bool:
     }.get(expected_type, True)
 
 
-def validate_exact_ids(value: Any, expected_ids: tuple[Any, ...]) -> ValidationResult:
-    seen = _collect_ids(value)
+def validate_exact_ids(
+    value: Any,
+    expected_ids: tuple[Any, ...],
+    *,
+    id_paths: tuple[str, ...] = (),
+    id_field_names: tuple[str, ...] = ("id",),
+    preserve_order: bool = True,
+) -> ValidationResult:
+    seen = _collect_ids_for_contract(value, id_paths, id_field_names)
     expected = [_normalize_id(item) for item in expected_ids]
     missing = [item for item in expected if item not in seen]
     unexpected = [item for item in seen if item not in expected]
     duplicate_count = sum(count - 1 for count in Counter(seen).values() if count > 1)
     first_mismatch_index: int | None = None
-    for index, expected_id in enumerate(expected):
-        if index >= len(seen) or seen[index] != expected_id:
-            first_mismatch_index = index
-            break
-    if first_mismatch_index is None and len(seen) != len(expected):
-        first_mismatch_index = min(len(seen), len(expected))
+    if preserve_order:
+        for index, expected_id in enumerate(expected):
+            if index >= len(seen) or seen[index] != expected_id:
+                first_mismatch_index = index
+                break
+        if first_mismatch_index is None and len(seen) != len(expected):
+            first_mismatch_index = min(len(seen), len(expected))
     order_mismatch = first_mismatch_index is not None
     metrics = {
         "expected_count": len(expected),
@@ -238,17 +254,68 @@ def validate_exact_ids(value: Any, expected_ids: tuple[Any, ...]) -> ValidationR
     return ValidationResult("id_exact", "pass", metrics=metrics)
 
 
-def _collect_ids(value: Any) -> list[str]:
+def collect_ids_by_path(value: Any, path: str = "blocks[*].id") -> list[str]:
+    ids: list[str] = []
+    for item in _values_by_path(value, _parse_id_path(path)):
+        if isinstance(item, str | int) and not isinstance(item, bool):
+            ids.append(_normalize_id(item))
+    return ids
+
+
+def _collect_ids_for_contract(
+    value: Any, id_paths: tuple[str, ...], id_field_names: tuple[str, ...]
+) -> list[str]:
+    if id_paths:
+        ids: list[str] = []
+        for path in id_paths:
+            ids.extend(collect_ids_by_path(value, path))
+        return ids
+    return _collect_ids(value, id_field_names)
+
+
+def _collect_ids(value: Any, id_field_names: tuple[str, ...]) -> list[str]:
     ids: list[str] = []
     if isinstance(value, dict):
-        if "id" in value and isinstance(value["id"], str | int):
-            ids.append(_normalize_id(value["id"]))
+        for field_name in id_field_names:
+            if (
+                field_name in value
+                and isinstance(value[field_name], str | int)
+                and not isinstance(value[field_name], bool)
+            ):
+                ids.append(_normalize_id(value[field_name]))
         for child in value.values():
-            ids.extend(_collect_ids(child))
+            ids.extend(_collect_ids(child, id_field_names))
     elif isinstance(value, list):
         for child in value:
-            ids.extend(_collect_ids(child))
+            ids.extend(_collect_ids(child, id_field_names))
     return ids
+
+
+def _parse_id_path(path: str) -> tuple[str, ...]:
+    if not path or path.startswith(".") or path.endswith(".") or ".." in path:
+        raise ValueError("id path must be a dotted path such as blocks[*].id")
+    return tuple(path.split("."))
+
+
+def _values_by_path(value: Any, segments: tuple[str, ...]) -> list[Any]:
+    if not segments:
+        return [value]
+    head, *tail = segments
+    child_segments = tuple(tail)
+    if head.endswith("[*]"):
+        key = head[:-3]
+        if not isinstance(value, dict):
+            return []
+        child = value.get(key)
+        if not isinstance(child, list):
+            return []
+        matches: list[Any] = []
+        for item in child:
+            matches.extend(_values_by_path(item, child_segments))
+        return matches
+    if isinstance(value, dict) and head in value:
+        return _values_by_path(value[head], child_segments)
+    return []
 
 
 def _normalize_id(value: Any) -> str:

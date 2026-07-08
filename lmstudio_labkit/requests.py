@@ -69,6 +69,9 @@ class ResponseContract:
     mode: ResponseMode = "json"
     schema: dict[str, Any] | None = None
     expected_ids: tuple[Any, ...] = ()
+    id_paths: tuple[str, ...] = ()
+    id_field_names: tuple[str, ...] = ("id",)
+    preserve_order: bool = True
     language: str | None = None
     min_length_ratio: float | None = None
     max_length_ratio: float | None = None
@@ -86,6 +89,9 @@ class ResponseContract:
             "mode": self.mode,
             "schema_hash": schema_hash,
             "expected_ids": list(self.expected_ids),
+            "id_paths": list(self.id_paths),
+            "id_field_names": list(self.id_field_names),
+            "preserve_order": self.preserve_order,
             "language": self.language,
             "min_length_ratio": self.min_length_ratio,
             "max_length_ratio": self.max_length_ratio,

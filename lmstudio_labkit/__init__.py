@@ -24,7 +24,12 @@ from .requests import (
     TextInput,
 )
 from .schema_builders import build_blocks_schema, build_simple_flat_schema
-from .validation import ValidationResult, ValidationSummary, validate_response
+from .validation import (
+    ValidationResult,
+    ValidationSummary,
+    collect_ids_by_path,
+    validate_response,
+)
 
 __all__ = [
     "ArtifactSet",
@@ -47,6 +52,7 @@ __all__ = [
     "ValidationSummary",
     "build_blocks_schema",
     "build_simple_flat_schema",
+    "collect_ids_by_path",
     "load_task_manifest",
     "load_task_manifests",
     "load_task_specs",
