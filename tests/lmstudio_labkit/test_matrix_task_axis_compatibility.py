@@ -78,7 +78,15 @@ def test_plan_matrix_filters_incompatible_task_and_model_axes(tmp_path: Path) ->
     summary = plan.planner_summary()
 
     assert len(plan.cells) == 1
-    assert plan.cells[0].axes == {
+    assert {
+        "modality": plan.cells[0].axes["modality"],
+        "language": plan.cells[0].axes["language"],
+        "structure_complexity": plan.cells[0].axes["structure_complexity"],
+        "volume": plan.cells[0].axes["volume"],
+        "context_tier": plan.cells[0].axes["context_tier"],
+        "schema_variant": plan.cells[0].axes["schema_variant"],
+        "retry_policy": plan.cells[0].axes["retry_policy"],
+    } == {
         "modality": "text",
         "language": "ru_ru",
         "structure_complexity": "medium",

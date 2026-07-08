@@ -40,6 +40,15 @@ DEFAULT_AXES = {
     "context_tier": ["8192"],
     "schema_variant": ["baseline_loose"],
     "retry_policy": ["off"],
+    "execution_mode": ["cold_per_request"],
+    "cache_mode": ["none"],
+    "lmstudio_parallel": ["1"],
+    "app_concurrency": ["1"],
+    "queue_pressure_mode": ["off"],
+    "text_interaction_mode": ["single_question"],
+    "image_interaction_mode": ["single_question"],
+    "image_type": ["none"],
+    "output_language": ["none"],
 }
 
 
@@ -95,6 +104,11 @@ class BenchmarkSafetyConfig:
 
 
 @dataclass(frozen=True, slots=True)
+class StructuredRuntimeConfig:
+    strict_json_schema: bool = True
+
+
+@dataclass(frozen=True, slots=True)
 class BenchmarkConfig:
     run_id: str
     models: tuple[ModelSpec, ...]
@@ -102,6 +116,7 @@ class BenchmarkConfig:
     axes: dict[str, tuple[str, ...]]
     repeats: int = 1
     safety: BenchmarkSafetyConfig = field(default_factory=BenchmarkSafetyConfig)
+    structured_runtime: StructuredRuntimeConfig = field(default_factory=StructuredRuntimeConfig)
 
     @classmethod
     def from_file(cls, path: str | Path) -> BenchmarkConfig:
@@ -137,6 +152,7 @@ class BenchmarkConfig:
             axes=axes,
             repeats=repeats,
             safety=_safety_from_dict(payload.get("safety", {})),
+            structured_runtime=_structured_runtime_from_dict(payload.get("structured_runtime", {})),
         )
 
     def safe_hash(self) -> str:
@@ -149,6 +165,7 @@ class BenchmarkConfig:
                     "axes": self.axes,
                     "repeats": self.repeats,
                     "safety": asdict(self.safety),
+                    "structured_runtime": asdict(self.structured_runtime),
                 },
                 sort_keys=True,
                 default=list,
@@ -226,6 +243,7 @@ class MatrixPlan:
     raw_cartesian_cell_count: int
     skip_reasons: dict[str, int]
     safety_budget: dict[str, Any]
+    structured_runtime: StructuredRuntimeConfig
 
     def planner_summary(self, *, live: bool = False) -> dict[str, Any]:
         return {
@@ -240,6 +258,7 @@ class MatrixPlan:
             "repeats": self.repeats,
             "live": live,
             "privacy_mode": "safe-default",
+            "structured_runtime": asdict(self.structured_runtime),
             "safety_budget": dict(sorted(self.safety_budget.items())),
             "schema_version": "structured-matrix-v1",
         }
@@ -265,37 +284,103 @@ def _build_matrix_plan(config: BenchmarkConfig) -> MatrixPlan:
                                     "schema_variant", ("baseline_loose",)
                                 ):
                                     for retry_policy in config.axes.get("retry_policy", ("off",)):
-                                        for repeat_index in range(config.repeats):
-                                            raw_cartesian_cell_count += 1
-                                            axes = {
-                                                "modality": modality,
-                                                "language": language,
-                                                "structure_complexity": complexity,
-                                                "volume": volume,
-                                                "context_tier": context_tier,
-                                                "schema_variant": schema_variant,
-                                                "retry_policy": retry_policy,
-                                            }
-                                            skip_reason = _compatibility_skip_reason(
-                                                model=model,
-                                                task=task,
-                                                axes=axes,
-                                            )
-                                            if skip_reason is not None:
-                                                skip_reasons[skip_reason] = (
-                                                    skip_reasons.get(skip_reason, 0) + 1
-                                                )
-                                                continue
-                                            cell_id = _cell_id(
-                                                config.run_id,
-                                                model.model_key,
-                                                task.task_id,
-                                                axes,
-                                                repeat_index,
-                                            )
-                                            cells.append(
-                                                MatrixCell(cell_id, model, task, axes, repeat_index)
-                                            )
+                                        for execution_mode in config.axes.get(
+                                            "execution_mode", ("cold_per_request",)
+                                        ):
+                                            for cache_mode in config.axes.get(
+                                                "cache_mode", ("none",)
+                                            ):
+                                                for lmstudio_parallel in config.axes.get(
+                                                    "lmstudio_parallel", ("1",)
+                                                ):
+                                                    for app_concurrency in config.axes.get(
+                                                        "app_concurrency", ("1",)
+                                                    ):
+                                                        for queue_pressure_mode in config.axes.get(
+                                                            "queue_pressure_mode", ("off",)
+                                                        ):
+                                                            for (
+                                                                text_interaction_mode
+                                                            ) in config.axes.get(
+                                                                "text_interaction_mode",
+                                                                ("single_question",),
+                                                            ):
+                                                                for (
+                                                                    image_interaction_mode
+                                                                ) in config.axes.get(
+                                                                    "image_interaction_mode",
+                                                                    ("single_question",),
+                                                                ):
+                                                                    for (
+                                                                        image_type
+                                                                    ) in config.axes.get(
+                                                                        "image_type", ("none",)
+                                                                    ):
+                                                                        for (
+                                                                            output_language
+                                                                        ) in config.axes.get(
+                                                                            "output_language",
+                                                                            ("none",),
+                                                                        ):
+                                                                            for (
+                                                                                repeat_index
+                                                                            ) in range(
+                                                                                config.repeats
+                                                                            ):
+                                                                                raw_cartesian_cell_count += 1
+                                                                                axes = {
+                                                                                    "modality": modality,
+                                                                                    "language": language,
+                                                                                    "structure_complexity": complexity,
+                                                                                    "volume": volume,
+                                                                                    "context_tier": context_tier,
+                                                                                    "schema_variant": schema_variant,
+                                                                                    "retry_policy": retry_policy,
+                                                                                    "execution_mode": execution_mode,
+                                                                                    "cache_mode": cache_mode,
+                                                                                    "lmstudio_parallel": lmstudio_parallel,
+                                                                                    "app_concurrency": app_concurrency,
+                                                                                    "queue_pressure_mode": queue_pressure_mode,
+                                                                                    "text_interaction_mode": text_interaction_mode,
+                                                                                    "image_interaction_mode": image_interaction_mode,
+                                                                                    "image_type": image_type,
+                                                                                    "output_language": output_language,
+                                                                                }
+                                                                                skip_reason = _compatibility_skip_reason(
+                                                                                    model=model,
+                                                                                    task=task,
+                                                                                    axes=axes,
+                                                                                )
+                                                                                if (
+                                                                                    skip_reason
+                                                                                    is not None
+                                                                                ):
+                                                                                    skip_reasons[
+                                                                                        skip_reason
+                                                                                    ] = (
+                                                                                        skip_reasons.get(
+                                                                                            skip_reason,
+                                                                                            0,
+                                                                                        )
+                                                                                        + 1
+                                                                                    )
+                                                                                    continue
+                                                                                cell_id = _cell_id(
+                                                                                    config.run_id,
+                                                                                    model.model_key,
+                                                                                    task.task_id,
+                                                                                    axes,
+                                                                                    repeat_index,
+                                                                                )
+                                                                                cells.append(
+                                                                                    MatrixCell(
+                                                                                        cell_id,
+                                                                                        model,
+                                                                                        task,
+                                                                                        axes,
+                                                                                        repeat_index,
+                                                                                    )
+                                                                                )
     plan = MatrixPlan(
         config.run_id,
         config.safe_hash(),
@@ -305,6 +390,7 @@ def _build_matrix_plan(config: BenchmarkConfig) -> MatrixPlan:
         raw_cartesian_cell_count,
         skip_reasons,
         _safe_safety_budget(config.safety),
+        config.structured_runtime,
     )
     _validate_plan_safety(config, plan)
     return plan
@@ -638,6 +724,17 @@ def _task_from_dict(payload: dict[str, Any]) -> TaskSpec:
         min_length_ratio=payload.get("min_length_ratio"),
         max_length_ratio=payload.get("max_length_ratio"),
     )
+
+
+def _structured_runtime_from_dict(payload: Any) -> StructuredRuntimeConfig:
+    if payload is None:
+        payload = {}
+    if not isinstance(payload, dict):
+        raise ValueError("structured_runtime must be a mapping")
+    value = payload.get("strict_json_schema", True)
+    if not isinstance(value, bool):
+        raise ValueError("structured_runtime.strict_json_schema must be a boolean")
+    return StructuredRuntimeConfig(strict_json_schema=value)
 
 
 def _safety_from_dict(payload: Any) -> BenchmarkSafetyConfig:

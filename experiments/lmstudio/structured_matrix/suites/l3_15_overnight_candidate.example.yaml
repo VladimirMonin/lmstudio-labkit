@@ -1,0 +1,6 @@
+suite_id: l3_15_overnight_candidate_example
+stop_on_failure: true
+configs:
+  - config: ../configs/matrix.text_ru_extended_gemma.yaml
+    required: false
+note: Example only. Do not run as overnight in L3.15.

@@ -25,7 +25,10 @@ class MockManagedHostRunner:
     def load_model(self, *, model_id: str, context_length: int, parallel: int) -> object:
         self.calls.append(("load_model", {"model_id": model_id}))
         self.loaded_instances = 1
-        return {"load_verified": True, "context_length": context_length, "parallel": parallel}
+        return {
+            "load_verified": True,
+            "applied_load_config": {"context_length": context_length, "parallel": parallel},
+        }
 
     def chat_completion(self, **kwargs: object) -> object:
         self.calls.append(("chat_completion", dict(kwargs)))
@@ -90,7 +93,10 @@ class InsufficientLoadHostRunner(MockManagedHostRunner):
     def load_model(self, *, model_id: str, context_length: int, parallel: int) -> object:
         self.calls.append(("load_model", {"model_id": model_id}))
         self.loaded_instances = 1
-        return {"load_verified": True, "context_length": 4096, "parallel": parallel}
+        return {
+            "load_verified": True,
+            "applied_load_config": {"context_length": 4096, "parallel": parallel},
+        }
 
 
 def test_managed_executor_cleans_up_when_chat_completion_fails() -> None:
@@ -102,6 +108,7 @@ def test_managed_executor_cleans_up_when_chat_completion_fails() -> None:
 
     assert [name for name, _payload in host.calls] == [
         "load_model",
+        "count_loaded_instances",
         "chat_completion",
         "cleanup_model",
         "count_loaded_instances",
@@ -123,7 +130,11 @@ def test_managed_executor_fails_when_load_shape_is_not_verified() -> None:
     with pytest.raises(ManagedExecutorError, match="load was not verified"):
         executor.execute(structured_plan())
 
-    assert [name for name, _payload in host.calls] == ["load_model", "cleanup_model"]
+    assert [name for name, _payload in host.calls] == [
+        "load_model",
+        "cleanup_model",
+        "count_loaded_instances",
+    ]
 
 
 def test_managed_executor_fails_when_final_instances_remain_loaded() -> None:

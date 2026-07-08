@@ -1,0 +1,8 @@
+suite_id: l3_15_text_quality_screening
+stop_on_failure: true
+configs:
+  - config: ../configs/matrix.text_ru_tiny.e2b_e4b.yaml
+    required: true
+  - config: ../configs/matrix.text_ru_screening.e2b_e4b.yaml
+    required: true
+    run_after: [matrix_text_ru_tiny_e2b_e4b]

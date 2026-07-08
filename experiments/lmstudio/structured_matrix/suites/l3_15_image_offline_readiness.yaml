@@ -1,0 +1,7 @@
+suite_id: l3_15_image_offline_readiness
+stop_on_failure: true
+asset_manifest: ../datasets/image/manifest.yaml
+configs:
+  - config: ../configs/matrix.image_offline_readiness.yaml
+    required: true
+note: Image live is out of scope for L3.15; real image fixtures will be provided later by the owner.

@@ -1,0 +1,64 @@
+run_id: matrix_image_offline_readiness
+models:
+  - model_key: fake_vision
+    model_id: fake/vision
+    endpoint_family: openai_compat
+    supported_modalities: [image]
+    supported_context_tiers: [8192]
+tasks:
+  - task_id: image_manifest_placeholder
+    family: image_readiness
+    modality: image
+    language: ru_ru
+    language_policy: strict_ru
+    structure_complexity: simple
+    volume: single
+    prompt: Synthetic image readiness placeholder. Real assets are provided later by the owner.
+    image_hash: pending_user_assets
+    schema:
+      type: object
+      required: [description, labels]
+      additionalProperties: false
+      properties:
+        description:
+          type: string
+          minLength: 1
+        labels:
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
+    expected_output:
+      description: Изображения будут добавлены позже
+      labels: [pending_user_assets]
+    image_ground_truth:
+      asset_status: pending_user_assets
+      identity_expected: false
+      sensitive_attributes_expected: false
+    fake_mode: valid
+axes:
+  modality: [image]
+  language: [ru_ru]
+  image_type: [ui_screenshot, code_screenshot, document_table, chart_graph, people_scene, mixed_text_image]
+  output_language: [ru_ru, en_en]
+  structure_complexity: [simple]
+  volume: [single]
+  context_tier: [8192]
+  schema_variant: [hardened_const]
+  retry_policy: [off]
+  image_interaction_mode: [single_question]
+structured_runtime:
+  strict_json_schema: true
+safety:
+  live: false
+  allow_model_downloads: false
+  allow_model_loads: false
+  allow_remote_base_url: false
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_requests: 20
+  max_runtime_minutes: 120
+  max_context_tier: 8192
+  max_models: 10

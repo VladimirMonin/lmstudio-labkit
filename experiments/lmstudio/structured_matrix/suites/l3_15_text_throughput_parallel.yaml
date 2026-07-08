@@ -1,0 +1,5 @@
+suite_id: l3_15_text_throughput_parallel
+stop_on_failure: true
+configs:
+  - config: ../configs/matrix.throughput_text_ru.e2b_e4b.yaml
+    required: true

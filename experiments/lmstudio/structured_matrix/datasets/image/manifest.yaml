@@ -1,18 +1,55 @@
-task_id: image_ui_screenshot_001
-modality: image
-language: en_en
-structure_complexity: medium
-volume: single
-schema_family: image_medium
-schema_variant: baseline_loose
-prompt_template: image_labels_v1
-input_ref:
-  content_hash: sha256:3333333333333333333333333333333333333333333333333333333333333333
-  char_count: 0
-expected:
-  labels: [button, table]
-  image_ground_truth:
-    labels: [button, table]
-privacy:
-  synthetic: true
-  raw_public_safe: true
+manifest_id: l3_15_image_offline_assets
+asset_status: pending_user_assets
+resize_policy:
+  mode: fit_max_side
+  crop: false
+  default_max_side: 1024
+  fallback_max_side: 512
+  jpeg_quality: 85
+fixtures:
+  - image_id: ui_screenshot
+    image_type: ui_screenshot
+    file_name: pending/ui_screenshot.png
+    expected_file: expected/ui_screenshot.expected.yaml
+    status: pending_user_asset
+  - image_id: code_screenshot
+    image_type: code_screenshot
+    file_name: pending/code_screenshot.png
+    expected_file: expected/code_screenshot.expected.yaml
+    status: pending_user_asset
+  - image_id: document_table
+    image_type: document_table
+    file_name: pending/document_table.png
+    expected_file: expected/document_table.expected.yaml
+    status: pending_user_asset
+  - image_id: chart_graph
+    image_type: chart_graph
+    file_name: pending/chart_graph.png
+    expected_file: expected/chart_graph.expected.yaml
+    status: pending_user_asset
+  - image_id: people_scene
+    image_type: people_scene
+    file_name: pending/people_scene.png
+    expected_file: expected/people_scene.expected.yaml
+    status: pending_user_asset
+  - image_id: mixed_text_image
+    image_type: mixed_text_image
+    file_name: pending/mixed_text_image.png
+    expected_file: expected/mixed_text_image.expected.yaml
+    status: pending_user_asset
+report_fields:
+  - image_type
+  - resize_mode
+  - resize_default_max_side
+  - resize_fallback_max_side
+  - original_width
+  - original_height
+  - resized_width
+  - resized_height
+  - image_bytes_before
+  - image_bytes_after
+  - image_hash
+non_claims:
+  - No image live inference is part of L3.15.
+  - No private/source screenshots are included.
+  - Real assets are pending owner delivery.

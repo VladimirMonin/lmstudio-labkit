@@ -91,7 +91,13 @@ def load_task_manifest(path: str | Path) -> TaskManifest:
 
 def load_task_manifests(root: str | Path) -> tuple[TaskManifest, ...]:
     base = Path(root)
-    return tuple(load_task_manifest(path) for path in sorted(base.rglob("*.yaml")))
+    manifests: list[TaskManifest] = []
+    for path in sorted(base.rglob("*.yaml")):
+        payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+        if not isinstance(payload, dict) or "task_id" not in payload:
+            continue
+        manifests.append(TaskManifest.from_dict(payload))
+    return tuple(manifests)
 
 
 def load_task_specs(root: str | Path) -> tuple[TaskSpec, ...]:

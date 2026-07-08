@@ -22,6 +22,9 @@ class ManagedExecutionResult:
     load_verified: bool
     cleanup_verified: bool
     final_loaded_instances: int | None
+    post_load_instances: int | None = None
+    strict_schema_runtime_support: bool | None = None
+    hardened_schema_validation_available: bool = True
 
 
 class ManagedHostRunner(Protocol):
@@ -70,6 +73,7 @@ class ManagedLMStudioExecutor:
     context_length: int = 8192
     parallel: int = 1
     temperature: float = 0.0
+    strict_json_schema: bool = True
 
     def __post_init__(self) -> None:
         if self.endpoint_path != "/v1/chat/completions":
@@ -101,15 +105,45 @@ class ManagedLMStudioExecutor:
         if not load_verified:
             cleanup_response = self.host_runner.cleanup_model(model_id=plan.options.model_id)
             cleanup_verified = _verified_flag(cleanup_response, "cleanup_verified")
-            if not cleanup_verified:
+            final_loaded_instances = self.host_runner.count_loaded_instances(
+                model_id=plan.options.model_id
+            )
+            if not cleanup_verified or final_loaded_instances != 0:
                 raise ManagedExecutorError("managed executor load and cleanup were not verified")
             raise ManagedExecutorError("managed executor load was not verified")
+        post_load_instances = self.host_runner.count_loaded_instances(
+            model_id=plan.options.model_id
+        )
+        if post_load_instances is None:
+            cleanup_response = self.host_runner.cleanup_model(model_id=plan.options.model_id)
+            cleanup_verified = _verified_flag(cleanup_response, "cleanup_verified")
+            final_loaded_instances = self.host_runner.count_loaded_instances(
+                model_id=plan.options.model_id
+            )
+            if not cleanup_verified or final_loaded_instances != 0:
+                raise ManagedExecutorError(
+                    "managed executor load state and cleanup were not verified"
+                )
+            raise ManagedExecutorError("managed executor loaded state was not verified")
+        if post_load_instances <= 0:
+            cleanup_response = self.host_runner.cleanup_model(model_id=plan.options.model_id)
+            cleanup_verified = _verified_flag(cleanup_response, "cleanup_verified")
+            final_loaded_instances = self.host_runner.count_loaded_instances(
+                model_id=plan.options.model_id
+            )
+            if not cleanup_verified or final_loaded_instances != 0:
+                raise ManagedExecutorError(
+                    "managed executor load state and cleanup were not verified"
+                )
+            raise ManagedExecutorError("managed executor loaded instance was not visible")
         try:
             raw_payload = self.host_runner.chat_completion(
                 endpoint_path=self.endpoint_path,
                 model_id=plan.options.model_id,
                 messages=_messages_from_plan(plan),
-                response_format=_response_format_from_plan(plan),
+                response_format=_response_format_from_plan(
+                    plan, strict_json_schema=self.strict_json_schema
+                ),
                 temperature=self.temperature,
                 timeout_s=plan.options.timeout_s,
             )
@@ -121,7 +155,7 @@ class ManagedLMStudioExecutor:
             )
             if not cleanup_verified:
                 raise ManagedExecutorError("managed executor cleanup was not verified")
-            if final_loaded_instances not in (0, None):
+            if final_loaded_instances != 0:
                 raise ManagedExecutorError("managed executor final loaded instances must be zero")
         raw_response, prompt_tokens, completion_tokens, finish_reason = _parse_chat_payload(
             raw_payload
@@ -136,6 +170,9 @@ class ManagedLMStudioExecutor:
             load_verified=load_verified,
             cleanup_verified=cleanup_verified,
             final_loaded_instances=final_loaded_instances,
+            post_load_instances=post_load_instances,
+            strict_schema_runtime_support=self.strict_json_schema,
+            hardened_schema_validation_available=True,
         )
 
     def _validate_plan(self, plan: RequestPlan) -> None:
@@ -164,8 +201,8 @@ class ManagedLMStudioTransport:
     executor: ManagedLMStudioExecutor
 
     def execute(self, plan: RequestPlan, *, attempt_index: int = 1) -> tuple[str, RequestResult]:
-        if attempt_index != 1:
-            raise ManagedExecutorError("managed executor v1 does not support retry/concurrency")
+        if attempt_index < 1:
+            raise ManagedExecutorError("attempt_index must be positive")
         execution = self.executor.execute(plan)
         return execution.raw_response, RequestResult.from_raw_response(
             request_id=plan.envelope.request_id,
@@ -187,7 +224,9 @@ def _messages_from_plan(plan: RequestPlan) -> tuple[Mapping[str, str], ...]:
     return tuple({"role": "user", "content": item.text} for item in plan.envelope.text_inputs)
 
 
-def _response_format_from_plan(plan: RequestPlan) -> Mapping[str, object]:
+def _response_format_from_plan(
+    plan: RequestPlan, *, strict_json_schema: bool = True
+) -> Mapping[str, object]:
     schema = plan.envelope.response_contract.schema
     if schema is None:
         raise ManagedExecutorError("managed executor v1 requires a JSON schema")
@@ -196,7 +235,7 @@ def _response_format_from_plan(plan: RequestPlan) -> Mapping[str, object]:
         "json_schema": {
             "name": "labkit_response",
             "schema": schema,
-            "strict": False,
+            "strict": strict_json_schema,
         },
     }
 
@@ -275,12 +314,17 @@ def _load_verified(value: object, *, context_length: int, parallel: int) -> bool
     if not _verified_flag(value, "load_verified"):
         return False
     if not isinstance(value, Mapping):
-        return True
-    observed_context = _first_int_value(value, "context_length", "contextLength")
-    observed_parallel = _first_int_value(value, "parallel", "n_parallel", "numParallelSequences")
-    if observed_context is not None and observed_context < context_length:
         return False
-    if observed_parallel is not None and observed_parallel < parallel:
+    applied = value.get("applied_load_config")
+    if not isinstance(applied, Mapping):
+        applied = value.get("load_config")
+    if not isinstance(applied, Mapping):
+        return False
+    observed_context = _first_int_value(applied, "context_length", "contextLength")
+    observed_parallel = _first_int_value(applied, "parallel", "n_parallel", "numParallelSequences")
+    if observed_context != context_length:
+        return False
+    if observed_parallel != parallel:
         return False
     return True
 
@@ -326,17 +370,17 @@ class LocalLMStudioHostRunner:
             "echo_load_config": True,
         }
         response = self._request_json("/api/v1/models/load", payload, self.default_timeout_s)
-        load_config = response.get("load_config") if isinstance(response, Mapping) else None
-        if not isinstance(load_config, Mapping):
-            load_config = {}
+        if not isinstance(response, Mapping):
+            return {"load_verified": False}
+        applied = response.get("applied_load_config")
+        if not isinstance(applied, Mapping):
+            applied = response.get("load_config")
         return {
-            "load_verified": True,
-            "context_length": _coerce_positive_int(
-                load_config.get("context_length"), context_length
-            ),
-            "parallel": _coerce_positive_int(
-                load_config.get("parallel", load_config.get("n_parallel")), parallel
-            ),
+            "load_verified": isinstance(applied, Mapping),
+            "applied_load_config": applied if isinstance(applied, Mapping) else None,
+            "load_config": response.get("load_config")
+            if isinstance(response.get("load_config"), Mapping)
+            else None,
             "instance_id": _first_str(response, ("instance_id", "instanceId", "id")),
         }
 

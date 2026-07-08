@@ -31,7 +31,10 @@ class MockManagedHostRunner:
             )
         )
         self.loaded_instances = 1
-        return {"load_verified": True, "context_length": context_length, "parallel": parallel}
+        return {
+            "load_verified": True,
+            "applied_load_config": {"context_length": context_length, "parallel": parallel},
+        }
 
     def chat_completion(
         self,
@@ -128,11 +131,12 @@ def test_managed_executor_executes_single_mocked_compat_chat_request() -> None:
     assert result.final_loaded_instances == 0
     assert [name for name, _payload in host.calls] == [
         "load_model",
+        "count_loaded_instances",
         "chat_completion",
         "cleanup_model",
         "count_loaded_instances",
     ]
-    chat_payload = host.calls[1][1]
+    chat_payload = host.calls[2][1]
     assert chat_payload["endpoint_path"] == "/v1/chat/completions"
     assert chat_payload["temperature"] == 0.0
     assert chat_payload["response_format"]["type"] == "json_schema"

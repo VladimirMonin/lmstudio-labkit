@@ -16,7 +16,9 @@ from .managed_executor import (
     ManagedLMStudioExecutor,
     ManagedLMStudioTransport,
 )
+from .preflight import preflight_config
 from .reports import compare_runs, summarize_run, write_summary_csv
+from .suites import compare_suites, plan_suite, preflight_suite, run_suite, summarize_suite
 
 _SAFE_PROFILES = {"offline-plan", "offline-fake", "offline", "fake"}
 _LIVE_PROFILES = {"live-small", "live-screening", "overnight"}
@@ -26,6 +28,16 @@ _SAFE_RUN_ID_RE = re.compile(r"^[A-Za-z0-9_.-]{1,120}$")
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="lmstudio-benchmark")
     sub = parser.add_subparsers(dest="command", required=True)
+
+    preflight = sub.add_parser("preflight", help="Validate a matrix config without generation")
+    preflight.add_argument("--config", required=True)
+    preflight.add_argument("--base-url")
+
+    preflight_suite_cmd = sub.add_parser(
+        "preflight-suite", help="Validate a suite without generation"
+    )
+    preflight_suite_cmd.add_argument("--suite", required=True)
+    preflight_suite_cmd.add_argument("--base-url")
 
     plan = sub.add_parser("plan", aliases=["plan-matrix"], help="Write an offline matrix plan")
     plan.add_argument("--config", required=True)
@@ -46,6 +58,23 @@ def build_parser() -> argparse.ArgumentParser:
     )
     run.add_argument("--base-url", default="http://127.0.0.1:1234")
 
+    plan_suite_cmd = sub.add_parser("plan-suite", help="Write offline plans for every suite config")
+    plan_suite_cmd.add_argument("--suite", required=True)
+    plan_suite_cmd.add_argument("--output-root", required=True)
+
+    run_suite_cmd = sub.add_parser("run-suite", help="Run an offline/fake suite")
+    run_suite_cmd.add_argument("--suite", required=True)
+    run_suite_cmd.add_argument("--output-root", required=True)
+    run_suite_cmd.add_argument("--profile", default="offline-fake")
+    run_suite_cmd.add_argument("--resume", action="store_true")
+
+    summarize_suite_cmd = sub.add_parser("summarize-suite", help="Summarize a suite run directory")
+    summarize_suite_cmd.add_argument("--suite-run-dir", required=True)
+
+    compare_suite_cmd = sub.add_parser("compare-suite", help="Compare two suite run directories")
+    compare_suite_cmd.add_argument("--left-suite-run-dir", required=True)
+    compare_suite_cmd.add_argument("--right-suite-run-dir", required=True)
+
     summarize = sub.add_parser("summarize", help="Summarize a run directory")
     summarize.add_argument("--run-dir", required=True)
     summarize.add_argument("--output-csv")
@@ -59,6 +88,14 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    if args.command == "preflight":
+        result = preflight_config(args.config, base_url=args.base_url).as_dict()
+        _print_json({"status": result["status"], "mode": "preflight", "preflight": result})
+        return 0 if result["status"] == "pass" else 2
+    if args.command == "preflight-suite":
+        result = preflight_suite(args.suite, base_url=args.base_url)
+        _print_json({"status": result["status"], "mode": "preflight-suite", "preflight": result})
+        return 0 if result["status"] == "pass" else 2
     if args.command in {"plan", "plan-matrix"}:
         config = BenchmarkConfig.from_file(args.config)
         _validate_safe_run_id(config.run_id)
@@ -88,6 +125,7 @@ def main(argv: list[str] | None = None) -> int:
             executor = ManagedLMStudioExecutor(
                 host_runner=host_runner,
                 allow_model_loads=args.allow_model_loads,
+                strict_json_schema=config.structured_runtime.strict_json_schema,
             )
             try:
                 artifacts = run_matrix(
@@ -109,6 +147,27 @@ def main(argv: list[str] | None = None) -> int:
         else:
             artifacts = run_matrix(config, args.output_root)
         _print_json({"status": "ok", "mode": "run", "artifacts": artifacts.as_dict()})
+        return 0
+    if args.command == "plan-suite":
+        result = plan_suite(args.suite, args.output_root)
+        _print_json({"status": result["status"], "mode": "plan-suite", "suite": result})
+        return 0 if result["status"] == "pass" else 2
+    if args.command == "run-suite":
+        result = run_suite(
+            args.suite,
+            args.output_root,
+            profile=args.profile,
+            resume=args.resume,
+        )
+        _print_json({"status": result["status"], "mode": "run-suite", "suite": result})
+        return 0 if result["status"] == "pass" else 2
+    if args.command == "summarize-suite":
+        summary = summarize_suite(args.suite_run_dir)
+        _print_json({"status": summary["status"], "summary": summary})
+        return 0 if summary["status"] == "pass" else 2
+    if args.command == "compare-suite":
+        comparison = compare_suites(args.left_suite_run_dir, args.right_suite_run_dir)
+        _print_json({"status": "ok", "comparison": comparison})
         return 0
     if args.command == "summarize":
         summary = summarize_run(args.run_dir)

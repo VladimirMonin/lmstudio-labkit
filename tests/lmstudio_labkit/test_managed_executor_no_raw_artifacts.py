@@ -24,7 +24,10 @@ class MockManagedHostRunner:
 
     def load_model(self, *, model_id: str, context_length: int, parallel: int) -> object:
         self.loaded_instances = 1
-        return {"load_verified": True, "context_length": context_length, "parallel": parallel}
+        return {
+            "load_verified": True,
+            "applied_load_config": {"context_length": context_length, "parallel": parallel},
+        }
 
     def chat_completion(self, **kwargs: object) -> object:
         return {

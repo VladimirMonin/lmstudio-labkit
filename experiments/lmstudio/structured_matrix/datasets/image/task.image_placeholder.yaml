@@ -1,0 +1,22 @@
+task_id: image_placeholder_readiness
+modality: image
+language: ru_ru
+language_policy: strict_ru
+structure_complexity: simple
+volume: single
+schema_family: image_simple
+schema_variant: hardened_const
+prompt_template: default
+input_ref:
+  content_hash: pending_user_assets
+expected:
+  labels: [pending_user_assets]
+  image_ground_truth:
+    asset_status: pending_user_assets
+    identity_expected: false
+    sensitive_attributes_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true
+fake_mode: valid
+tags: [synthetic, image_readiness, pending_user_assets]

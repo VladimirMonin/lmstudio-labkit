@@ -1,0 +1,97 @@
+run_id: matrix_text_ru_screening_e2b_e4b_12b
+models:
+  - model_key: gemma4_e2b
+    model_id: google/gemma-4-e2b
+    endpoint_family: openai_compat
+    supported_modalities: [text]
+    supported_context_tiers: [8192]
+  - model_key: gemma4_e4b
+    model_id: google/gemma-4-e4b
+    endpoint_family: openai_compat
+    supported_modalities: [text]
+    supported_context_tiers: [8192]
+  - model_key: gemma4_12b_qat
+    model_id: google/gemma-4-12b-qat
+    endpoint_family: openai_compat
+    supported_modalities: [text]
+    supported_context_tiers: [8192]
+tasks:
+  - task_id: ru_ru_simple_single
+    family: blocks
+    modality: text
+    language: ru_ru
+    language_policy: strict_ru
+    structure_complexity: simple
+    volume: single
+    prompt: Верни только JSON по схеме. Сохрани порядок блоков.
+    schema_family: blocks
+    expected_ids: [0]
+    expected_output:
+      blocks:
+        - id: 0
+          text: Русский блок ноль
+    fake_mode: valid
+  - task_id: ru_ru_medium_single
+    family: blocks
+    modality: text
+    language: ru_ru
+    language_policy: strict_ru
+    structure_complexity: medium
+    volume: single
+    prompt: Верни только JSON по схеме. Сохрани порядок блоков.
+    schema_family: blocks
+    expected_ids: [0, 1]
+    expected_output:
+      blocks:
+        - id: 0
+          text: Русский блок ноль
+        - id: 1
+          text: Русский блок один
+    fake_mode: valid
+  - task_id: ru_ru_complex_many
+    family: blocks
+    modality: text
+    language: ru_ru
+    language_policy: strict_ru
+    structure_complexity: complex
+    volume: many
+    prompt: Верни только JSON по схеме. Сохрани порядок блоков.
+    schema_family: blocks
+    expected_ids: [0, 1, 2]
+    expected_output:
+      blocks:
+        - id: 0
+          text: Русский блок ноль
+        - id: 1
+          text: Русский блок один
+        - id: 2
+          text: Русский блок два
+    fake_mode: valid
+axes:
+  modality: [text]
+  language: [ru_ru]
+  structure_complexity: [simple, medium, complex]
+  volume: [single, many]
+  context_tier: [8192]
+  schema_variant: [hardened_const]
+  retry_policy: [off, retry1]
+  execution_mode: [cold_per_request]
+  cache_mode: [none]
+  lmstudio_parallel: [1]
+  app_concurrency: [1]
+  queue_pressure_mode: [false]
+  text_interaction_mode: [single_question]
+structured_runtime:
+  strict_json_schema: true
+safety:
+  live: false
+  allow_model_downloads: false
+  allow_model_loads: false
+  allow_remote_base_url: false
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_requests: 80
+  max_runtime_minutes: 120
+  max_context_tier: 8192
+  max_models: 10
