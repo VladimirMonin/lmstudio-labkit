@@ -634,6 +634,38 @@ Validators:
 - No Markdown fence.
 - No reasoning leak.
 
+### G4. Dataset sizing is reported, not a matrix axis
+
+Do not add a top-level `chunk_count` axis in L3.15. Chunk count is a consequence of:
+
+- `structure_complexity`.
+- `volume`.
+- Dataset/task shape.
+- Chunking policy.
+
+The matrix should keep these axes:
+
+```yaml
+structure_complexity: [simple, medium, complex]
+volume: [single, many, stress]
+```
+
+Actual dataset and chunk sizes must be persisted as metrics, not multiplied into the matrix as another axis. `cell_results.jsonl`, `cell_summary.csv`, and suite summaries must include the safe sizing fields below when available:
+
+- `dataset_id`
+- `block_count`
+- `item_count`
+- `section_count`
+- `entity_count`
+- `planned_chunk_count`
+- `actual_chunk_count`
+- `items_per_chunk_min`
+- `items_per_chunk_max`
+- `items_per_chunk_avg`
+- `estimated_input_tokens`
+- `expected_output_tokens`
+- `schema_token_estimate`
+
 ## 11. Workstream H — execution, cache, lifecycle, and parallelism axes
 
 Add optional axes to config parsing, planning summaries, artifact rows, and reports:
@@ -666,13 +698,32 @@ Definitions:
 
 - `cold_per_request`: load, one request, cleanup. Safest and slowest baseline.
 - `session_loaded`: load once, run multiple sequential requests, cleanup. Requires drift and cleanup tracking.
-- `cache_mode=none`: no warmup baseline.
-- `cache_mode=warmup_first`: first request warms shared prompt/schema/prefix, following requests reuse the stable prefix if the runtime supports it.
-- `cache_mode=prompt_prefix_reuse`: same system prompt and schema prefix across requests; measure TTFT/prompt-processing deltas.
-- `cache_mode=compact_memory_like`: lab-only approximation of compact-memory/stateful workflows; no production claim.
+- `cache_mode=none`: normal baseline. Requests may repeat as part of a suite, but no intentionally stable prefix/warmup scenario is configured.
+- `cache_mode=warmup_first`: repeated-request scenario where request 1 warms the shared stable prefix/schema/system prompt and later requests are measured.
+- `cache_mode=prompt_prefix_reuse`: repeated-request scenario where all requests use the same stable system prompt, schema, and instruction prefix with different dynamic content; measure whether later requests become faster than the first.
+- `cache_mode=compact_memory_like`: lab-only approximation of compact-memory/stateful workflows; no KV reuse proof may be claimed.
 - `lmstudio_parallel`: requested LM Studio parallel/concurrent prediction setting; must be verified from applied load config.
 - `app_concurrency`: concurrent app-side requests.
 - `queue_pressure_mode`: intentionally submits more work than the loaded parallel setting; disabled for first live runs.
+
+Cache/warmup semantics are execution semantics, not labels. A cache scenario must define the repeated-request group and make first-vs-subsequent comparison possible:
+
+```text
+cache_mode=warmup_first
+request 1 = warmup
+request 2 = measured
+request 3 = measured
+```
+
+Compare:
+
+- Warmup latency.
+- Subsequent latency.
+- TTFT delta.
+- Prompt-processing delta.
+- Tokens/sec delta.
+
+All `compact_memory_like` and cache-related artifacts must keep `kv_reuse_proven: false` unless a later explicit benchmark proves physical reuse. L3.15 only prepares axes, configs, reports, and tests. It does not run a live cache benchmark.
 
 First future live profile must keep:
 
@@ -694,6 +745,17 @@ Reports must include:
 
 - `execution_mode`
 - `cache_mode`
+- `cache_group_id`
+- `warmup_request_index`
+- `is_warmup_request`
+- `stable_prefix_hash`
+- `schema_hash`
+- `prompt_template_hash`
+- `dynamic_input_hash`
+- `text_interaction_mode`
+- `interaction_mode`
+- `repeat_group_id`
+- `same_input_hash`
 - `lmstudio_parallel`
 - `app_concurrency`
 - `queue_pressure_mode`
@@ -706,9 +768,25 @@ Reports must include:
 - `tokens_per_sec`
 - `prompt_tokens`
 - `completion_tokens`
+- `cache_hit_inferred`
+- `cache_hit_reported`
 - `ram_peak_mb`
 - `vram_peak_mb`
 - `cleanup_status`
+
+`cache_hit_reported` may be `unknown` when LM Studio does not expose an explicit cache metric.
+
+Text interaction modes may be prepared but must default to single-question behavior:
+
+```yaml
+text_interaction_mode: [single_question]
+```
+
+Future cache suites may opt into:
+
+```yaml
+text_interaction_mode: [same_text_repeat, same_text_different_schema]
+```
 
 Required test files:
 
@@ -778,7 +856,7 @@ In L3.15, throughput/parallel configs are preparation-only. They may be planned 
 
 Image live remains unsupported. Prepare only offline fixtures, manifests, schemas, and validators.
 
-### J1. Fixture families
+### J1. Fixture families and image axes
 
 Prepare these six image fixture families:
 
@@ -788,6 +866,46 @@ Prepare these six image fixture families:
 - `chart_graph`
 - `people_scene`
 - `mixed_text_image`
+
+Do not add `image_count` as a matrix axis in L3.15. Multiple images in one request are out of scope for this stage.
+
+Allowed image-readiness axes are:
+
+```yaml
+image_type:
+  - ui_screenshot
+  - code_screenshot
+  - document_table
+  - chart_graph
+  - people_scene
+  - mixed_text_image
+
+output_language:
+  - ru_ru
+  - en_en
+
+structure_complexity:
+  - simple
+  - medium
+  - complex
+
+schema_variant:
+  - hardened_const
+
+image_interaction_mode:
+  - single_question
+```
+
+Future-only image interaction modes are:
+
+```yaml
+image_interaction_mode:
+  - same_image_repeat
+  - same_image_different_schema
+  - multi_image_request
+```
+
+In L3.15, image live remains unsupported. Prepare only offline fixtures, manifest, expected ground truth, schema builders, validators, fake/offline runner coverage, and config readiness.
 
 ### J2. Required assets
 
@@ -813,7 +931,49 @@ Do not use:
 
 Synthetic placeholders are acceptable for offline validator tests.
 
-### J4. Fixture layout
+### J4. Image resize policy
+
+L3.15 prepares image resize metadata and offline preprocessing only.
+
+Default policy:
+
+- Preserve aspect ratio.
+- No crop.
+- No padding unless explicitly configured later.
+- Default max side: `1024` px.
+- Fallback max side: `512` px.
+- JPEG quality: `85`.
+- Store original dimensions and resized dimensions as safe metadata.
+- Do not store raw local image paths in artifacts.
+
+Image manifests must include:
+
+```yaml
+resize_policy:
+  mode: fit_max_side
+  crop: false
+  default_max_side: 1024
+  fallback_max_side: 512
+  jpeg_quality: 85
+```
+
+Reports must include these safe image fields when available:
+
+- `image_type`
+- `resize_mode`
+- `resize_default_max_side`
+- `resize_fallback_max_side`
+- `original_width`
+- `original_height`
+- `resized_width`
+- `resized_height`
+- `image_bytes_before`
+- `image_bytes_after`
+- `image_hash`
+
+Do not store raw image paths.
+
+### J5. Fixture layout
 
 ```text
 experiments/lmstudio/structured_matrix/datasets/image/
@@ -834,7 +994,7 @@ experiments/lmstudio/structured_matrix/datasets/image/
     └── mixed_text_image.expected.yaml
 ```
 
-### J5. Ground-truth shape
+### J6. Ground-truth shape
 
 ```yaml
 fixture_id: ui_screenshot_001
@@ -889,6 +1049,8 @@ Each template must include:
 - Retry impact.
 - Parallelism impact.
 - Cache/warmup impact.
+- Dataset/chunk sizing metrics.
+- Image resize metadata when image fixtures are in scope.
 - Resource summary.
 - Cleanup summary.
 - Privacy summary.
@@ -949,6 +1111,17 @@ Only after owner approval:
 ## 18. Owner inputs required before extended packs
 
 Before implementing optional or extended packs, the owner must provide or explicitly approve these inputs.
+
+### 18.0 Owner decisions for L3.15
+
+The owner decided these L3.15 scope constraints:
+
+- No separate `chunk_count` matrix axis.
+- No multiple images per request.
+- Image live is out of scope.
+- Cache/warmup must be represented as repeated-request scenarios, not as a plain label.
+- First priority is text quality suite readiness.
+- Throughput/parallelism is prepared after quality configs, but not live-run in L3.15.
 
 ### 18.1 Exact model list
 
@@ -1035,15 +1208,19 @@ L3.15 is closed only when all items below are true:
 10. Text quality config pack is created.
 11. Throughput/parallel config pack is created.
 12. Cache, parallel, and execution axes are parsed, planned, reported, and covered by tests.
-13. Image offline asset manifest exists.
-14. Image ground-truth contract exists.
-15. Report templates exist.
-16. All new commands are tested.
-17. No live inference was run during L3.15 implementation.
-18. No model load was run during L3.15 implementation.
-19. No model download was run during L3.15 implementation.
-20. No raw prompt/response artifacts are possible by default.
-21. All required checks pass.
+13. Cache/warmup scenarios expose repeated-request first-vs-subsequent report fields.
+14. Dataset/chunk sizing is reported as metrics, not as a top-level chunk-count axis.
+15. Image offline asset manifest exists.
+16. Image ground-truth contract exists.
+17. Image resize metadata policy exists and is represented in safe report fields.
+18. Multiple images per request remain out of scope for L3.15.
+19. Report templates exist.
+20. All new commands are tested.
+21. No live inference was run during L3.15 implementation.
+22. No model load was run during L3.15 implementation.
+23. No model download was run during L3.15 implementation.
+24. No raw prompt/response artifacts are possible by default.
+25. All required checks pass.
 
 Do not accept L3.15 as done if:
 
@@ -1055,7 +1232,13 @@ Do not accept L3.15 as done if:
 - `retry_policy` exists but managed retry is unsupported and not explicitly deferred.
 - Parallelism axes exist but reports do not include them.
 - `cache_mode` exists but is not represented in summaries.
+- Cache/warmup is treated as a label without repeated-request semantics.
+- `chunk_count` is added as a major matrix axis.
 - Image assets are not public-safe.
+- Image resize policy is missing.
+- Multiple images per request are implied as part of L3.15.
+- Image live is implied as ready.
+- Raw image paths are stored in artifacts.
 
 ## 20. Working conclusion
 
