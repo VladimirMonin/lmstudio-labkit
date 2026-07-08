@@ -1,0 +1,35 @@
+image_id: code_python_editor_001
+image_type: code_python_editor
+status: ready
+expected_output:
+  summary: Synthetic dark-theme Python code editor screenshot with a project tree,
+    utils.py tab, line numbers, and simple utility functions.
+  labels:
+  - code_python_editor
+  - code_screenshot
+  - python
+  - dark_theme
+  - project_tree
+  visible_text_policy: code_and_editor_labels_expected_without_private_project_names
+  required_objects:
+  - file_explorer
+  - utils_py_tab
+  - line_numbers
+  - python_code_block
+  - status_bar
+  visible_text_examples:
+  - utils.py
+  - normalize_title
+  - clamp
+  - format_seconds
+  - Python 3.11.8
+  - UTF-8
+  - LF
+ground_truth:
+  scene_kind: synthetic_code_editor
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true

@@ -47,7 +47,9 @@ def test_image_manifest_is_synthetic_public_safe_contract() -> None:
     assert manifest["resize_policy"]["default_max_side"] == 1024
     assert manifest["resize_policy"]["fallback_max_side"] == 512
     assert manifest["resize_policy"]["jpeg_quality"] == 85
-    assert len(manifest["fixtures"]) == 6
+    assert manifest["resize_policy"]["webp_quality"] == 85
+    assert len(manifest["fixtures"]) == 18
+    assert sum(item["file_name"].endswith(".webp") for item in manifest["fixtures"]) == 12
     assert all(item["status"] == "ready" for item in manifest["fixtures"])
     assert all(item["synthetic"] is True for item in manifest["fixtures"])
     assert "image_hash" in manifest["report_fields"]

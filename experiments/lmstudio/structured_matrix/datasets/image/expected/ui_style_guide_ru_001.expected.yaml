@@ -1,0 +1,37 @@
+image_id: ui_style_guide_ru_001
+image_type: ui_style_guide_ru
+status: ready
+expected_output:
+  summary: Synthetic Russian UI style guide slide with palette, typography, spacing,
+    components, principles, and do/don’t examples.
+  labels:
+  - ui_style_guide_ru
+  - style_guide
+  - ui_components
+  - palette
+  - russian_text
+  visible_text_policy: style_guide_sections_colors_and_component_names_expected
+  required_objects:
+  - palette_card
+  - typography_card
+  - spacing_card
+  - component_examples
+  - principles_card
+  - do_dont_blocks
+  visible_text_examples:
+  - Стиль и UI-принципы проекта
+  - '#2563EB'
+  - '#16A34A'
+  - '#F59E0B'
+  - '#EF4444'
+  - Primary
+  - Secondary
+  - Danger
+ground_truth:
+  scene_kind: synthetic_ui_style_guide
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true

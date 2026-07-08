@@ -1,0 +1,34 @@
+image_id: roadmap_timeline_2026_ru_001
+image_type: roadmap_timeline_2026_ru
+status: ready
+expected_output:
+  summary: Synthetic Russian 2026 roadmap timeline slide with phases, months, milestones,
+    progress summary, next milestone, and risk panel.
+  labels:
+  - roadmap_timeline_2026_ru
+  - roadmap
+  - timeline
+  - gantt_style
+  - russian_text
+  visible_text_policy: roadmap_phase_month_milestone_text_expected_without_private_product_names
+  required_objects:
+  - timeline_chart
+  - month_axis
+  - phase_list
+  - milestone_markers
+  - right_summary_panel
+  - legend
+  visible_text_examples:
+  - Дорожная карта проекта (2026)
+  - Янв 2026 — Дек 2026
+  - '8'
+  - 68% выполнено
+  - Март 2026
+ground_truth:
+  scene_kind: synthetic_roadmap_timeline
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true

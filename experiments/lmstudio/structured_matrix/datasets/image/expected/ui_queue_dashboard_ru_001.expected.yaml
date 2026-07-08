@@ -1,0 +1,40 @@
+image_id: ui_queue_dashboard_ru_001
+image_type: ui_queue_dashboard_ru
+status: ready
+expected_output:
+  summary: Synthetic Russian processing queue dashboard with three files, statuses,
+    progress values, total task count, and error count.
+  labels:
+  - ui_queue_dashboard_ru
+  - ui_screenshot
+  - queue_dashboard
+  - progress_table
+  - russian_text
+  visible_text_policy: russian_table_text_and_status_values_expected
+  required_objects:
+  - sidebar_navigation
+  - queue_table
+  - three_file_rows
+  - progress_bars
+  - summary_card
+  visible_text_examples:
+  - Очередь обработки
+  - lecture_01.mp3
+  - meeting_notes.wav
+  - demo_video.mp4
+  - Готово
+  - Обработка
+  - Ожидание
+  - 100%
+  - 67%
+  - 0%
+  - 3 задачи
+  - 'Ошибки: 0'
+ground_truth:
+  scene_kind: synthetic_ui_dashboard
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true

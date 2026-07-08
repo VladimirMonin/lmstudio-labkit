@@ -1,6 +1,7 @@
 manifest_id: l3_15_image_offline_assets
 asset_status: synthetic_public_safe
-fixture_generator: fixtures/generate_synthetic_fixtures.py
+fixture_generator: fixtures/generate_synthetic_fixtures.py + user-provided synthetic
+  vision fixture pack converted to WebP
 resize_policy:
   mode: fit_max_side
   crop: false
@@ -9,97 +10,290 @@ resize_policy:
   jpeg_quality: 85
   hash_algorithm: sha256
   path_policy: store_repo_relative_paths_only
+  webp_quality: 85
 fixtures:
-  - image_id: ui_screenshot
-    image_type: ui_screenshot
-    file_name: fixtures/ui_screenshot.png
-    expected_file: expected/ui_screenshot.expected.yaml
-    status: ready
-    synthetic: true
-    original_width: 320
-    original_height: 200
-    resized_width: 320
-    resized_height: 200
-    image_bytes_before: 1003
-    image_bytes_after: 1003
-    image_hash: sha256:db1792c88a05de0fbacfdbe0c31fe9f80523b2a4848d4d3096e91d6e165aa2f7
-  - image_id: code_screenshot
-    image_type: code_screenshot
-    file_name: fixtures/code_screenshot.png
-    expected_file: expected/code_screenshot.expected.yaml
-    status: ready
-    synthetic: true
-    original_width: 320
-    original_height: 200
-    resized_width: 320
-    resized_height: 200
-    image_bytes_before: 948
-    image_bytes_after: 948
-    image_hash: sha256:acf189c7b40a908deb26f1a72087d13f596965a312867155425aa0dfc1753d01
-  - image_id: document_table
-    image_type: document_table
-    file_name: fixtures/document_table.png
-    expected_file: expected/document_table.expected.yaml
-    status: ready
-    synthetic: true
-    original_width: 320
-    original_height: 200
-    resized_width: 320
-    resized_height: 200
-    image_bytes_before: 924
-    image_bytes_after: 924
-    image_hash: sha256:ce78b684dd7405c2e8bcec2d4aa09695f7d57b0e87c71ad7badf8041bdff47ba
-  - image_id: chart_graph
-    image_type: chart_graph
-    file_name: fixtures/chart_graph.png
-    expected_file: expected/chart_graph.expected.yaml
-    status: ready
-    synthetic: true
-    original_width: 320
-    original_height: 200
-    resized_width: 320
-    resized_height: 200
-    image_bytes_before: 1244
-    image_bytes_after: 1244
-    image_hash: sha256:e14a0580566464747d74eeeb3177344f51a45d24a7c9f44831ba62f7e6587d26
-  - image_id: people_scene
-    image_type: people_scene
-    file_name: fixtures/people_scene.png
-    expected_file: expected/people_scene.expected.yaml
-    status: ready
-    synthetic: true
-    original_width: 320
-    original_height: 200
-    resized_width: 320
-    resized_height: 200
-    image_bytes_before: 1374
-    image_bytes_after: 1374
-    image_hash: sha256:b2054d1380e8dfc48a309100b35f5f44f48cd2718366c1527b19481b9974339f
-  - image_id: mixed_text_image
-    image_type: mixed_text_image
-    file_name: fixtures/mixed_text_image.png
-    expected_file: expected/mixed_text_image.expected.yaml
-    status: ready
-    synthetic: true
-    original_width: 320
-    original_height: 200
-    resized_width: 320
-    resized_height: 200
-    image_bytes_before: 1035
-    image_bytes_after: 1035
-    image_hash: sha256:859449972913a33ec1c76bb3ad13b2cb870f96289a2d0af92b4cc106d7480092
+- image_id: ui_screenshot
+  image_type: ui_screenshot
+  file_name: fixtures/ui_screenshot.png
+  expected_file: expected/ui_screenshot.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 320
+  original_height: 200
+  resized_width: 320
+  resized_height: 200
+  image_bytes_before: 1003
+  image_bytes_after: 1003
+  image_hash: sha256:db1792c88a05de0fbacfdbe0c31fe9f80523b2a4848d4d3096e91d6e165aa2f7
+- image_id: code_screenshot
+  image_type: code_screenshot
+  file_name: fixtures/code_screenshot.png
+  expected_file: expected/code_screenshot.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 320
+  original_height: 200
+  resized_width: 320
+  resized_height: 200
+  image_bytes_before: 948
+  image_bytes_after: 948
+  image_hash: sha256:acf189c7b40a908deb26f1a72087d13f596965a312867155425aa0dfc1753d01
+- image_id: document_table
+  image_type: document_table
+  file_name: fixtures/document_table.png
+  expected_file: expected/document_table.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 320
+  original_height: 200
+  resized_width: 320
+  resized_height: 200
+  image_bytes_before: 924
+  image_bytes_after: 924
+  image_hash: sha256:ce78b684dd7405c2e8bcec2d4aa09695f7d57b0e87c71ad7badf8041bdff47ba
+- image_id: chart_graph
+  image_type: chart_graph
+  file_name: fixtures/chart_graph.png
+  expected_file: expected/chart_graph.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 320
+  original_height: 200
+  resized_width: 320
+  resized_height: 200
+  image_bytes_before: 1244
+  image_bytes_after: 1244
+  image_hash: sha256:e14a0580566464747d74eeeb3177344f51a45d24a7c9f44831ba62f7e6587d26
+- image_id: people_scene
+  image_type: people_scene
+  file_name: fixtures/people_scene.png
+  expected_file: expected/people_scene.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 320
+  original_height: 200
+  resized_width: 320
+  resized_height: 200
+  image_bytes_before: 1374
+  image_bytes_after: 1374
+  image_hash: sha256:b2054d1380e8dfc48a309100b35f5f44f48cd2718366c1527b19481b9974339f
+- image_id: mixed_text_image
+  image_type: mixed_text_image
+  file_name: fixtures/mixed_text_image.png
+  expected_file: expected/mixed_text_image.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 320
+  original_height: 200
+  resized_width: 320
+  resized_height: 200
+  image_bytes_before: 1035
+  image_bytes_after: 1035
+  image_hash: sha256:859449972913a33ec1c76bb3ad13b2cb870f96289a2d0af92b4cc106d7480092
+- image_id: ui_settings_ru_001
+  image_type: ui_settings_ru
+  file_name: fixtures/ui_settings_ru_001.webp
+  expected_file: expected/ui_settings_ru_001.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 1536
+  original_height: 1024
+  resized_width: 1536
+  resized_height: 1024
+  image_bytes_before: 1151252
+  image_bytes_after: 42374
+  image_hash: sha256:8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d
+  source_pack: vision_fixture_pack
+  source_format: png
+  stored_format: webp
+- image_id: ui_queue_dashboard_ru_001
+  image_type: ui_queue_dashboard_ru
+  file_name: fixtures/ui_queue_dashboard_ru_001.webp
+  expected_file: expected/ui_queue_dashboard_ru_001.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 1536
+  original_height: 1024
+  resized_width: 1536
+  resized_height: 1024
+  image_bytes_before: 1089964
+  image_bytes_after: 48488
+  image_hash: sha256:e432d04b696da1569f85a61b7d032954de22e5f52a7af5e154f0cffdb21301d0
+  source_pack: vision_fixture_pack
+  source_format: png
+  stored_format: webp
+- image_id: code_python_editor_001
+  image_type: code_python_editor
+  file_name: fixtures/code_python_editor_001.webp
+  expected_file: expected/code_python_editor_001.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 1536
+  original_height: 1024
+  resized_width: 1536
+  resized_height: 1024
+  image_bytes_before: 1444181
+  image_bytes_after: 79068
+  image_hash: sha256:e387c3707145554cd0148a4e6da22c6996db05498bcf35542160a5b2bd8449d9
+  source_pack: vision_fixture_pack
+  source_format: png
+  stored_format: webp
+- image_id: terminal_logs_001
+  image_type: terminal_logs
+  file_name: fixtures/terminal_logs_001.webp
+  expected_file: expected/terminal_logs_001.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 1448
+  original_height: 1086
+  resized_width: 1448
+  resized_height: 1086
+  image_bytes_before: 991379
+  image_bytes_after: 46750
+  image_hash: sha256:551c69c6034f17a6326682207c0a869b2e785573107fc3bf0417a3835d6ad638
+  source_pack: vision_fixture_pack
+  source_format: png
+  stored_format: webp
+- image_id: slide_json_schema_ru_001
+  image_type: slide_json_schema_ru
+  file_name: fixtures/slide_json_schema_ru_001.webp
+  expected_file: expected/slide_json_schema_ru_001.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 1536
+  original_height: 1024
+  resized_width: 1536
+  resized_height: 1024
+  image_bytes_before: 1379642
+  image_bytes_after: 120728
+  image_hash: sha256:7fe26d643566ab21c65b397c0967431a16ad917778fdc2a07b92afb9cca15873
+  source_pack: vision_fixture_pack
+  source_format: png
+  stored_format: webp
+- image_id: document_table_products_ru_001
+  image_type: document_table_products_ru
+  file_name: fixtures/document_table_products_ru_001.webp
+  expected_file: expected/document_table_products_ru_001.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 1448
+  original_height: 1086
+  resized_width: 1448
+  resized_height: 1086
+  image_bytes_before: 815194
+  image_bytes_after: 40826
+  image_hash: sha256:dbb6e061f7954f1a772806d8b67d66125169efd4b88d1a8b4eb91b42aeab5149
+  source_pack: vision_fixture_pack
+  source_format: png
+  stored_format: webp
+- image_id: chart_tasks_by_month_ru_001
+  image_type: chart_tasks_by_month_ru
+  file_name: fixtures/chart_tasks_by_month_ru_001.webp
+  expected_file: expected/chart_tasks_by_month_ru_001.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 1536
+  original_height: 1024
+  resized_width: 1536
+  resized_height: 1024
+  image_bytes_before: 1212743
+  image_bytes_after: 39198
+  image_hash: sha256:9c8c757383fc57dec329bcf05e3cb6701a463f7741812eedbc8d77f7e261ba3e
+  source_pack: vision_fixture_pack
+  source_format: png
+  stored_format: webp
+- image_id: people_classroom_selected_001
+  image_type: people_classroom_selected
+  file_name: fixtures/people_classroom_selected_001.webp
+  expected_file: expected/people_classroom_selected_001.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 1672
+  original_height: 941
+  resized_width: 1672
+  resized_height: 941
+  image_bytes_before: 1966314
+  image_bytes_after: 151742
+  image_hash: sha256:85ea141e624d567f8c6c878c907e01dd0c4d764c20b35c789d2dc6f63ef2ca0b
+  source_pack: vision_fixture_pack
+  source_format: png
+  stored_format: webp
+- image_id: people_classroom_alt_001
+  image_type: people_classroom_alt
+  file_name: fixtures/people_classroom_alt_001.webp
+  expected_file: expected/people_classroom_alt_001.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 1536
+  original_height: 1024
+  resized_width: 1536
+  resized_height: 1024
+  image_bytes_before: 2143958
+  image_bytes_after: 113784
+  image_hash: sha256:6792bc57a7acca4967d78cdbf0b7b804a5129796ecf0376e9f8b7e468d3419bb
+  source_pack: vision_fixture_pack
+  source_format: png
+  stored_format: webp
+- image_id: roadmap_timeline_2026_ru_001
+  image_type: roadmap_timeline_2026_ru
+  file_name: fixtures/roadmap_timeline_2026_ru_001.webp
+  expected_file: expected/roadmap_timeline_2026_ru_001.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 1536
+  original_height: 1024
+  resized_width: 1536
+  resized_height: 1024
+  image_bytes_before: 1357789
+  image_bytes_after: 109052
+  image_hash: sha256:eb88882e048feb793af2281ad6160ccf230edf0e4847e3c4cd22df13c14e5393
+  source_pack: vision_fixture_pack
+  source_format: png
+  stored_format: webp
+- image_id: ui_style_guide_ru_001
+  image_type: ui_style_guide_ru
+  file_name: fixtures/ui_style_guide_ru_001.webp
+  expected_file: expected/ui_style_guide_ru_001.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 1536
+  original_height: 1024
+  resized_width: 1536
+  resized_height: 1024
+  image_bytes_before: 1359369
+  image_bytes_after: 110528
+  image_hash: sha256:3c43c402cceafa87f2fb910ca5be79487bf0a07351247b0365e8b785e3bc56bd
+  source_pack: vision_fixture_pack
+  source_format: png
+  stored_format: webp
+- image_id: yoga_downward_dog_001
+  image_type: yoga_downward_dog
+  file_name: fixtures/yoga_downward_dog_001.webp
+  expected_file: expected/yoga_downward_dog_001.expected.yaml
+  status: ready
+  synthetic: true
+  original_width: 1448
+  original_height: 1086
+  resized_width: 1448
+  resized_height: 1086
+  image_bytes_before: 1796953
+  image_bytes_after: 64844
+  image_hash: sha256:d37aa2d87fa0eaf4e544bcaf93c25e967b92923f814fb169d8282dc9e3403c09
+  source_pack: vision_fixture_pack
+  source_format: png
+  stored_format: webp
 report_fields:
-  - image_type
-  - resize_mode
-  - resize_default_max_side
-  - resize_fallback_max_side
-  - original_width
-  - original_height
-  - resized_width
-  - resized_height
-  - image_bytes_before
-  - image_bytes_after
-  - image_hash
+- image_type
+- resize_mode
+- resize_default_max_side
+- resize_fallback_max_side
+- original_width
+- original_height
+- resized_width
+- resized_height
+- image_bytes_before
+- image_bytes_after
+- image_hash
 privacy:
   synthetic: true
   raw_public_safe: true
@@ -107,6 +301,7 @@ privacy:
   real_people_stored: false
   source_application_screenshots_stored: false
 non_claims:
-  - No image live inference is part of L3.15.
-  - No private/source screenshots are included.
-  - Synthetic fixtures are placeholders for future owner-provided assets.
+- No image live inference is part of this asset import.
+- No raw private paths, prompts, responses, or credentials are included.
+- People-scene fixtures are synthetic and must be used for non-identifying scene understanding
+  only.

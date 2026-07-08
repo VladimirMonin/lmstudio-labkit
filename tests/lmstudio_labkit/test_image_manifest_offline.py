@@ -10,13 +10,27 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 IMAGE_ROOT = ROOT / "experiments" / "lmstudio" / "structured_matrix" / "datasets" / "image"
 MANIFEST = IMAGE_ROOT / "manifest.yaml"
-EXPECTED_TYPES = {
+EXPECTED_BASE_TYPES = {
     "ui_screenshot",
     "code_screenshot",
     "document_table",
     "chart_graph",
     "people_scene",
     "mixed_text_image",
+}
+EXPECTED_WEBP_TYPES = {
+    "ui_settings_ru",
+    "ui_queue_dashboard_ru",
+    "code_python_editor",
+    "terminal_logs",
+    "slide_json_schema_ru",
+    "document_table_products_ru",
+    "chart_tasks_by_month_ru",
+    "people_classroom_selected",
+    "people_classroom_alt",
+    "roadmap_timeline_2026_ru",
+    "ui_style_guide_ru",
+    "yoga_downward_dog",
 }
 
 
@@ -53,25 +67,36 @@ def test_image_manifest_points_to_deterministic_synthetic_pngs() -> None:
     fixtures = manifest["fixtures"]
 
     assert manifest["asset_status"] == "synthetic_public_safe"
-    assert manifest["fixture_generator"] == "fixtures/generate_synthetic_fixtures.py"
-    assert (IMAGE_ROOT / manifest["fixture_generator"]).is_file()
-    assert {fixture["image_type"] for fixture in fixtures} == EXPECTED_TYPES
-    assert {fixture["image_id"] for fixture in fixtures} == EXPECTED_TYPES
+    assert str(manifest["fixture_generator"]).startswith("fixtures/generate_synthetic_fixtures.py")
+    assert (IMAGE_ROOT / "fixtures/generate_synthetic_fixtures.py").is_file()
+    assert {
+        fixture["image_type"] for fixture in fixtures
+    } == EXPECTED_BASE_TYPES | EXPECTED_WEBP_TYPES
+    assert {
+        fixture["image_type"] for fixture in fixtures if fixture["file_name"].endswith(".png")
+    } == EXPECTED_BASE_TYPES
+    assert {
+        fixture["image_type"] for fixture in fixtures if fixture["file_name"].endswith(".webp")
+    } == EXPECTED_WEBP_TYPES
 
     for fixture in fixtures:
         path = IMAGE_ROOT / fixture["file_name"]
         assert path.is_file(), fixture["image_id"]
-        assert path.suffix == ".png"
+        assert path.suffix in {".png", ".webp"}
         assert not Path(fixture["file_name"]).is_absolute()
         assert ".." not in Path(fixture["file_name"]).parts
         assert fixture["status"] == "ready"
         assert fixture["synthetic"] is True
-        assert png_size(path) == (fixture["original_width"], fixture["original_height"])
         assert (fixture["resized_width"], fixture["resized_height"]) == (
             fixture["original_width"],
             fixture["original_height"],
         )
-        assert fixture["image_bytes_before"] == path.stat().st_size
+        if path.suffix == ".png":
+            assert png_size(path) == (fixture["original_width"], fixture["original_height"])
+            assert fixture["image_bytes_before"] == path.stat().st_size
+        else:
+            assert fixture["stored_format"] == "webp"
+            assert fixture["source_format"] == "png"
         assert fixture["image_bytes_after"] == path.stat().st_size
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
         assert fixture["image_hash"] == f"sha256:{digest}"
@@ -88,6 +113,7 @@ def test_image_manifest_records_resize_and_privacy_metadata_without_raw_paths() 
         "jpeg_quality": 85,
         "hash_algorithm": "sha256",
         "path_policy": "store_repo_relative_paths_only",
+        "webp_quality": 85,
     }
     assert manifest["privacy"] == {
         "synthetic": True,

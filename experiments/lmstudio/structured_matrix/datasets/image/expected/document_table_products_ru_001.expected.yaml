@@ -1,0 +1,38 @@
+image_id: document_table_products_ru_001
+image_type: document_table_products_ru
+status: ready
+expected_output:
+  summary: Synthetic Russian document editor window with a product table containing
+    item ids, names, quantities, and prices.
+  labels:
+  - document_table_products_ru
+  - document_table
+  - spreadsheet_like_table
+  - russian_text
+  visible_text_policy: russian_document_table_values_expected
+  required_objects:
+  - document_window
+  - toolbar
+  - product_table
+  - table_header
+  - three_data_rows
+  visible_text_examples:
+  - Таблица товаров
+  - ID
+  - Товар
+  - Кол-во
+  - Цена
+  - Кабель
+  - Адаптер
+  - Блокнот
+  - '300'
+  - '750'
+  - '120'
+ground_truth:
+  scene_kind: synthetic_document_table
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true

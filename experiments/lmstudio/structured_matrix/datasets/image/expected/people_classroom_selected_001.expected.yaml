@@ -1,0 +1,35 @@
+image_id: people_classroom_selected_001
+image_type: people_classroom_selected
+status: ready
+expected_output:
+  summary: Synthetic classroom scene with an instructor explaining an application
+    architecture diagram to two students; no identity recognition is expected.
+  labels:
+  - people_classroom_selected
+  - people_scene
+  - classroom
+  - whiteboard
+  - architecture_diagram
+  visible_text_policy: scene_objects_and_non_identifying_people_description_expected
+  required_objects:
+  - three_people
+  - whiteboard
+  - architecture_diagram
+  - laptop
+  - books
+  - notebook
+  visible_text_examples:
+  - Архитектура приложения
+  - UI
+  - Сервисный слой
+  - Домен
+  - SQLite
+  - Event Bus
+ground_truth:
+  scene_kind: synthetic_people_scene
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true

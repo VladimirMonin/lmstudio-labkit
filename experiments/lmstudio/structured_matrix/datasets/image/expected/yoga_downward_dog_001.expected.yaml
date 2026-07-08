@@ -1,0 +1,29 @@
+image_id: yoga_downward_dog_001
+image_type: yoga_downward_dog
+status: ready
+expected_output:
+  summary: Synthetic yoga studio scene with one person in downward-facing dog pose
+    on a mat; describe pose and environment without identifying the person.
+  labels:
+  - yoga_downward_dog
+  - people_scene
+  - yoga_pose
+  - studio
+  - exercise
+  visible_text_policy: no_text_expected_scene_and_pose_description_only
+  required_objects:
+  - one_person
+  - downward_facing_dog_pose
+  - yoga_mat
+  - bright_studio
+  - plant
+  - shelf
+  visible_text_examples: []
+ground_truth:
+  scene_kind: synthetic_pose_scene
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true

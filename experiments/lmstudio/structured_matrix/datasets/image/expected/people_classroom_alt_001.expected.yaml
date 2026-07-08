@@ -1,0 +1,34 @@
+image_id: people_classroom_alt_001
+image_type: people_classroom_alt
+status: ready
+expected_output:
+  summary: Synthetic alternative classroom scene with an instructor, two students,
+    a whiteboard architecture diagram, laptop, and notes.
+  labels:
+  - people_classroom_alt
+  - people_scene
+  - classroom
+  - whiteboard
+  - architecture_diagram
+  visible_text_policy: scene_objects_and_non_identifying_people_description_expected
+  required_objects:
+  - three_people
+  - whiteboard
+  - architecture_diagram
+  - table
+  - laptop
+  - notebook
+  visible_text_examples:
+  - Архитектура системы
+  - Клиент
+  - API сервер
+  - База данных
+  - Кэш
+ground_truth:
+  scene_kind: synthetic_people_scene
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true

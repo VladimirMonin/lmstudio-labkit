@@ -1,0 +1,33 @@
+image_id: terminal_logs_001
+image_type: terminal_logs
+status: ready
+expected_output:
+  summary: Synthetic terminal window with model lifecycle log lines, including load
+    start, load done, retry scheduled, and cleanup done.
+  labels:
+  - terminal_logs
+  - terminal
+  - model_lifecycle
+  - cleanup
+  - logs
+  visible_text_policy: terminal_log_events_and_key_value_pairs_expected
+  required_objects:
+  - terminal_window
+  - info_log_lines
+  - warning_log_line
+  - cleanup_log_line
+  visible_text_examples:
+  - model.load.started
+  - model.load.done
+  - retry.scheduled
+  - schema_error
+  - cleanup.done
+  - final_loaded_instances=0
+ground_truth:
+  scene_kind: synthetic_terminal_logs
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true

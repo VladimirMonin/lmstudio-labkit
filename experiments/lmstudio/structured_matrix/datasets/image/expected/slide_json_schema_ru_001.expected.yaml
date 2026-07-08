@@ -1,0 +1,32 @@
+image_id: slide_json_schema_ru_001
+image_type: slide_json_schema_ru
+status: ready
+expected_output:
+  summary: Synthetic Russian educational slide explaining JSON Schema with bullet
+    points, process diagram, and schema example.
+  labels:
+  - slide_json_schema_ru
+  - presentation_slide
+  - json_schema
+  - process_diagram
+  - russian_text
+  visible_text_policy: russian_slide_text_and_diagram_order_expected
+  required_objects:
+  - slide_title
+  - left_bullet_list
+  - process_diagram
+  - schema_example_block
+  - advantage_callout
+  visible_text_examples:
+  - Что такое JSON Schema?
+  - Описывает структуру JSON
+  - Проверяет типы данных
+  - LLM → JSON → Validator → Result
+ground_truth:
+  scene_kind: synthetic_educational_slide
+  identity_expected: false
+  sensitive_attributes_expected: false
+  private_product_expected: false
+privacy:
+  synthetic: true
+  raw_public_safe: true
