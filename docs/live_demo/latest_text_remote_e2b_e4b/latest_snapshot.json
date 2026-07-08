@@ -13,6 +13,32 @@
   ],
   "fail_count": 0,
   "filtered_cell_count": 6,
+  "lifecycle": {
+    "cleanup_scopes": [
+      "per_session"
+    ],
+    "final_loaded_instances": [
+      0
+    ],
+    "load_scopes": [
+      "per_session"
+    ],
+    "session_cleanup_verified": [
+      "True"
+    ],
+    "session_ids": [
+      "session_68a46237f681c092",
+      "session_d1c0ca0634e46c27"
+    ],
+    "session_request_counts": [
+      3
+    ],
+    "session_request_indices": [
+      1,
+      2,
+      3
+    ]
+  },
   "live": true,
   "live_bridge": {
     "allow_model_load": true,
@@ -48,13 +74,23 @@
   "schema_version": "latest-text-remote-snapshot-v1",
   "skipped_cell_count": 0,
   "timing": {
-    "latency_ms_max": 4128.283,
-    "latency_ms_min": 2537.202,
-    "total_latency_ms_max": 4128.283,
-    "total_latency_ms_min": 2537.202
+    "latency_ms_max": 888.589,
+    "latency_ms_min": 692.711,
+    "total_latency_ms_max": 888.589,
+    "total_latency_ms_min": 692.711
   },
   "token_counts": {
     "completion_tokens": 357,
     "prompt_tokens": 264
+  },
+  "warmup": {
+    "cache_hit_reported": [
+      "unknown"
+    ],
+    "kv_reuse_proven": [
+      "False"
+    ],
+    "measured_request_count": 4,
+    "warmup_request_count": 2
   }
 }

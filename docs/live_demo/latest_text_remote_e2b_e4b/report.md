@@ -11,20 +11,22 @@
 
 ## Session lifecycle proof
 
-- session_count: `not exported`
-- load_scopes: `not exported`
-- cleanup_scopes: `not exported`
-- final_loaded_instances: `not exported`
-- session_cleanup_verified: `not exported`
+- session_count: `2`
+- load_scopes: `per_session`
+- cleanup_scopes: `per_session`
+- final_loaded_instances: `0`
+- session_cleanup_verified: `True`
+- session_request_indices: `1, 2, 3`
+- session_request_counts: `3`
 
-Expected L3.16.1 shape on newly exported runs: two model sessions, each loaded once, three requests, cleanup once, final loaded instances zero.
+Observed L3.16.1 shape: two model sessions, each loaded once, requests 1/2/3, cleanup once, final loaded instances zero.
 
 ## Warmup/measured split
 
-- warmup_request_count: `not exported`
-- measured_request_count: `not exported`
-- cache_hit_reported: `not exported`
-- kv_reuse_proven: `not exported`
+- warmup_request_count: `2`
+- measured_request_count: `4`
+- cache_hit_reported: `unknown`
+- kv_reuse_proven: `False`
 
 ## Validation summary
 
@@ -34,10 +36,10 @@ Expected L3.16.1 shape on newly exported runs: two model sessions, each loaded o
 
 ## Timing summary
 
-- latency_ms_min: `2537.202`
-- latency_ms_max: `4128.283`
-- total_latency_ms_min: `2537.202`
-- total_latency_ms_max: `4128.283`
+- latency_ms_min: `692.711`
+- latency_ms_max: `888.589`
+- total_latency_ms_min: `692.711`
+- total_latency_ms_max: `888.589`
 
 ## Privacy summary
 

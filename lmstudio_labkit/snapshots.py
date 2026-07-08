@@ -11,6 +11,7 @@ from .privacy import assert_privacy_scan_passed, scan_artifact_files
 LATEST_SNAPSHOT_FILE_NAMES = (
     "latest_snapshot.json",
     "latest_snapshot.csv",
+    "README.md",
     "report.md",
     "privacy_scan.json",
 )
@@ -31,6 +32,7 @@ def export_latest_text_remote_snapshot(
 
     json_path = target / "latest_snapshot.json"
     csv_path = target / "latest_snapshot.csv"
+    readme_path = target / "README.md"
     report_path = target / "report.md"
     scan_path = target / "privacy_scan.json"
 
@@ -39,9 +41,10 @@ def export_latest_text_remote_snapshot(
         encoding="utf-8",
     )
     _write_snapshot_csv(csv_path, snapshot)
+    readme_path.write_text(_render_readme(snapshot), encoding="utf-8")
     report_path.write_text(_render_report(snapshot), encoding="utf-8")
 
-    scan = scan_artifact_files((json_path, csv_path, report_path))
+    scan = scan_artifact_files((json_path, csv_path, readme_path, report_path))
     scan_path.write_text(
         json.dumps(scan, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
@@ -52,6 +55,7 @@ def export_latest_text_remote_snapshot(
         "output_dir": str(target),
         "snapshot": str(json_path),
         "csv": str(csv_path),
+        "readme": str(readme_path),
         "report": str(report_path),
         "privacy_scan": str(scan_path),
     }
@@ -176,6 +180,20 @@ def _lifecycle_summary(rows: list[dict[str, Any]]) -> dict[str, Any]:
                 if row.get("session_cleanup_verified") is not None
             }
         ),
+        "session_request_indices": sorted(
+            {
+                int(row.get("session_request_index"))
+                for row in rows
+                if row.get("session_request_index") is not None
+            }
+        ),
+        "session_request_counts": sorted(
+            {
+                int(row.get("session_request_count"))
+                for row in rows
+                if row.get("session_request_count") is not None
+            }
+        ),
     }
 
 
@@ -245,6 +263,37 @@ def _write_snapshot_csv(path: Path, snapshot: dict[str, Any]) -> None:
         writer.writerow(row)
 
 
+def _render_readme(snapshot: dict[str, Any]) -> str:
+    safety = snapshot.get("safety") if isinstance(snapshot.get("safety"), dict) else {}
+    lines = [
+        "# Latest remote text live snapshot",
+        "",
+        "Public-safe snapshot for the latest guarded remote-link text run.",
+        "",
+        "## Summary",
+        "",
+        f"- run_id: `{snapshot.get('run_id')}`",
+        f"- live: `{snapshot.get('live')}`",
+        f"- execution_targets: `{', '.join(snapshot.get('execution_targets', []))}`",
+        f"- execution_modes: `{', '.join(snapshot.get('execution_modes', []))}`",
+        f"- cache_modes: `{', '.join(snapshot.get('cache_modes', []))}`",
+        f"- resource_telemetry_modes: `{', '.join(snapshot.get('resource_telemetry_modes', []))}`",
+        f"- attempt_count: `{snapshot.get('attempt_count')}`",
+        f"- pass_count: `{snapshot.get('pass_count')}`",
+        f"- fail_count: `{snapshot.get('fail_count')}`",
+        f"- pass_rate: `{snapshot.get('pass_rate')}`",
+        "",
+        "## Privacy",
+        "",
+        f"- raw_prompt_response_stored: `{safety.get('raw_prompt_response_stored')}`",
+        f"- raw_base_url_stored: `{safety.get('raw_base_url_stored')}`",
+        "",
+        "See `report.md` for lifecycle proof, warmup/measured split, non-claims, and next gate.",
+        "",
+    ]
+    return "\n".join(lines)
+
+
 def _render_report(snapshot: dict[str, Any]) -> str:
     lifecycle = snapshot.get("lifecycle") if isinstance(snapshot.get("lifecycle"), dict) else {}
     warmup = snapshot.get("warmup") if isinstance(snapshot.get("warmup"), dict) else {}
@@ -276,8 +325,10 @@ def _render_report(snapshot: dict[str, Any]) -> str:
         f"- cleanup_scopes: `{', '.join(lifecycle.get('cleanup_scopes', [])) if lifecycle else 'not exported'}`",
         f"- final_loaded_instances: `{', '.join(str(x) for x in lifecycle.get('final_loaded_instances', [])) if lifecycle else 'not exported'}`",
         f"- session_cleanup_verified: `{', '.join(lifecycle.get('session_cleanup_verified', [])) if lifecycle else 'not exported'}`",
+        f"- session_request_indices: `{', '.join(str(x) for x in lifecycle.get('session_request_indices', [])) if lifecycle else 'not exported'}`",
+        f"- session_request_counts: `{', '.join(str(x) for x in lifecycle.get('session_request_counts', [])) if lifecycle else 'not exported'}`",
         "",
-        "Expected L3.16.1 shape on newly exported runs: two model sessions, each loaded once, three requests, cleanup once, final loaded instances zero.",
+        "Observed L3.16.1 shape: two model sessions, each loaded once, requests 1/2/3, cleanup once, final loaded instances zero.",
         "",
         "## Warmup/measured split",
         "",

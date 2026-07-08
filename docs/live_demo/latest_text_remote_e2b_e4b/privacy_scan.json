@@ -3,6 +3,7 @@
   "scanned_artifacts": [
     "latest_snapshot.json",
     "latest_snapshot.csv",
+    "README.md",
     "report.md"
   ],
   "status": "pass",
