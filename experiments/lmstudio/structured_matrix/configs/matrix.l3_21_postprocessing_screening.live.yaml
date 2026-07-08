@@ -1,0 +1,525 @@
+run_id: matrix_l3_21_postprocessing_screening_live
+models:
+- model_key: gemma4_e2b
+  model_id: google/gemma-4-e2b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - 8192
+- model_key: gemma4_e4b
+  model_id: google/gemma-4-e4b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - 8192
+tasks:
+- task_id: screen_punctuation_restore_simple
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: punctuation_restore
+  input_profile: raw_asr_ru_no_punctuation
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_same_language
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema:
+    type: object
+    required:
+    - language
+    - clean_text
+    - warnings
+    additionalProperties: false
+    properties:
+      language:
+        type: string
+      clean_text:
+        type: string
+        minLength: 1
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Сегодня проверяем Django и JSON schema.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_no_punctuation.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_same_language.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: 'off'
+  term_normalization_policy: 'off'
+- task_id: screen_punctuation_restore_blocks
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: blocks
+  volume: many
+  task_intent: punctuation_restore
+  input_profile: raw_asr_ru_no_punctuation
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_same_language
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: blocks
+  schema:
+    type: object
+    required:
+    - blocks
+    additionalProperties: false
+    properties:
+      blocks:
+        type: array
+        minItems: 2
+        maxItems: 2
+        items:
+          type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              enum:
+              - 0
+              - 1
+            text:
+              type: string
+              minLength: 1
+  expected_ids:
+  - 0
+  - 1
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: 'Блок 0: проверяем Django и Qwen.'
+    - id: 1
+      text: 'Блок 1: проверяем Django и Qwen.'
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - blocks[*].text
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_no_punctuation.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_same_language.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: 'off'
+  term_normalization_policy: 'off'
+- task_id: screen_paragraphing_simple
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: paragraphing
+  input_profile: raw_asr_ru_fillers
+  output_language_policy: preserve_input_language
+  prompt_variant: paragraphing_focused
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema:
+    type: object
+    required:
+    - language
+    - clean_text
+    - warnings
+    additionalProperties: false
+    properties:
+      language:
+        type: string
+      clean_text:
+        type: string
+        minLength: 1
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Сегодня проверяем Django и JSON schema.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_fillers.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/paragraphing_focused.md
+  paragraphing_policy: hard
+  paragraph_count_min: 2
+  punctuation_policy: 'off'
+  filler_cleanup_policy: 'off'
+  term_normalization_policy: 'off'
+- task_id: screen_paragraphing_blocks
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: blocks
+  volume: many
+  task_intent: paragraphing
+  input_profile: raw_asr_ru_fillers
+  output_language_policy: preserve_input_language
+  prompt_variant: paragraphing_focused
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: blocks
+  schema:
+    type: object
+    required:
+    - blocks
+    additionalProperties: false
+    properties:
+      blocks:
+        type: array
+        minItems: 2
+        maxItems: 2
+        items:
+          type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              enum:
+              - 0
+              - 1
+            text:
+              type: string
+              minLength: 1
+  expected_ids:
+  - 0
+  - 1
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: 'Блок 0: проверяем Django и Qwen.'
+    - id: 1
+      text: 'Блок 1: проверяем Django и Qwen.'
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - blocks[*].text
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_fillers.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/paragraphing_focused.md
+  paragraphing_policy: hard
+  paragraph_count_min: 2
+  punctuation_policy: 'off'
+  filler_cleanup_policy: 'off'
+  term_normalization_policy: 'off'
+- task_id: screen_term_normalization_simple
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: term_normalization
+  input_profile: raw_asr_ru_term_noise
+  output_language_policy: preserve_mixed_language
+  prompt_variant: term_glossary
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema:
+    type: object
+    required:
+    - language
+    - clean_text
+    - warnings
+    additionalProperties: false
+    properties:
+      language:
+        type: string
+      clean_text:
+        type: string
+        minLength: 1
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Сегодня проверяем Django и JSON schema.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_term_noise.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/term_glossary.md
+  term_normalization_policy: hard
+  punctuation_policy: 'off'
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: 'off'
+- task_id: screen_term_normalization_blocks
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: blocks
+  volume: many
+  task_intent: term_normalization
+  input_profile: raw_asr_ru_term_noise
+  output_language_policy: preserve_mixed_language
+  prompt_variant: term_glossary
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: blocks
+  schema:
+    type: object
+    required:
+    - blocks
+    additionalProperties: false
+    properties:
+      blocks:
+        type: array
+        minItems: 2
+        maxItems: 2
+        items:
+          type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              enum:
+              - 0
+              - 1
+            text:
+              type: string
+              minLength: 1
+  expected_ids:
+  - 0
+  - 1
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: 'Блок 0: проверяем Django и Qwen.'
+    - id: 1
+      text: 'Блок 1: проверяем Django и Qwen.'
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - blocks[*].text
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_term_noise.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/term_glossary.md
+  term_normalization_policy: hard
+  punctuation_policy: 'off'
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: 'off'
+- task_id: screen_transcript_cleanup_simple
+  family: postprocessing
+  modality: text
+  language: ru_en_mixed
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: transcript_cleanup
+  input_profile: ru_en_mixed_tech
+  output_language_policy: preserve_mixed_language
+  prompt_variant: strict_no_new_facts
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema:
+    type: object
+    required:
+    - language
+    - clean_text
+    - warnings
+    additionalProperties: false
+    properties:
+      language:
+        type: string
+      clean_text:
+        type: string
+        minLength: 1
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Сегодня проверяем Django и JSON schema.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/ru_en_mixed_tech.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts.md
+  punctuation_policy: diagnostic
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  paragraphing_policy: 'off'
+- task_id: screen_transcript_cleanup_blocks
+  family: postprocessing
+  modality: text
+  language: ru_en_mixed
+  structure_complexity: medium
+  response_schema_complexity: blocks
+  volume: many
+  task_intent: transcript_cleanup
+  input_profile: ru_en_mixed_tech
+  output_language_policy: preserve_mixed_language
+  prompt_variant: strict_no_new_facts
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: blocks
+  schema:
+    type: object
+    required:
+    - blocks
+    additionalProperties: false
+    properties:
+      blocks:
+        type: array
+        minItems: 2
+        maxItems: 2
+        items:
+          type: object
+          required:
+          - id
+          - text
+          additionalProperties: false
+          properties:
+            id:
+              enum:
+              - 0
+              - 1
+            text:
+              type: string
+              minLength: 1
+  expected_ids:
+  - 0
+  - 1
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: 'Блок 0: проверяем Django и Qwen.'
+    - id: 1
+      text: 'Блок 1: проверяем Django и Qwen.'
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - blocks[*].text
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/ru_en_mixed_tech.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts.md
+  punctuation_policy: diagnostic
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  paragraphing_policy: 'off'
+axes:
+  modality:
+  - text
+  language:
+  - ru_ru
+  - ru_en_mixed
+  task_intent:
+  - punctuation_restore
+  - term_normalization
+  - transcript_cleanup
+  - paragraphing
+  input_profile:
+  - raw_asr_ru_no_punctuation
+  - raw_asr_ru_fillers
+  - raw_asr_ru_term_noise
+  - ru_en_mixed_tech
+  output_language_policy:
+  - preserve_input_language
+  - preserve_mixed_language
+  prompt_variant:
+  - strict_same_language
+  - term_glossary
+  - paragraphing_focused
+  - strict_no_new_facts
+  response_schema_complexity:
+  - simple
+  - blocks
+  structure_complexity:
+  - simple
+  - medium
+  volume:
+  - single
+  - many
+  context_tier:
+  - 8192
+  schema_variant:
+  - hardened_const
+  retry_policy:
+  - 'off'
+  - retry1
+  execution_mode:
+  - cold_per_request
+  cache_mode:
+  - none
+  execution_target:
+  - live_small
+  resource_telemetry_mode:
+  - timing_only
+  lmstudio_parallel:
+  - 1
+  app_concurrency:
+  - 1
+  queue_pressure_mode:
+  - false
+  validation_policy:
+  - auto_schema_language_manual_quality
+safety:
+  live: true
+  allow_model_downloads: false
+  allow_model_loads: true
+  allow_remote_base_url: false
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_models: 2
+  max_context_tier: 8192
+  max_repeats: 1
+  max_runtime_minutes: 90
+  max_requests: 40
+structured_runtime:
+  strict_json_schema: true
+repeats: 1

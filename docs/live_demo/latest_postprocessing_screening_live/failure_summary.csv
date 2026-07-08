@@ -1,0 +1,4 @@
+error_category,attempt_count,pass_count,fail_count,pass_rate,count,affected_models,retry_attempted_count,recovered_count
+id_order_mismatch,,,,,10,gemma4_e2b;gemma4_e4b,,
+paragraphing_mismatch,,,,,6,gemma4_e2b;gemma4_e4b,,
+term_normalization_mismatch,,,,,6,gemma4_e2b;gemma4_e4b,,

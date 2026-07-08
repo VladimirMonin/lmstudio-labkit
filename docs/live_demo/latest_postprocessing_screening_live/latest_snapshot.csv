@@ -1,0 +1,2 @@
+run_id,live,base_url_kind,base_url_scheme,execution_targets,execution_modes,cache_modes,resource_telemetry_modes,attempt_count,pass_count,fail_count,hard_fail_count,warning_count,length_ratio_warning_count,pass_rate,raw_prompt_response_stored,raw_base_url_stored
+matrix_l3_21_postprocessing_screening_live,True,local,http,live_small,cold_per_request,none,timing_only,32,10,22,22,48,0,0.3125,False,False

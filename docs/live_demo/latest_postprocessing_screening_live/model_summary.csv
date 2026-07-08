@@ -1,0 +1,3 @@
+model_key,model_id,attempt_count,pass_count,fail_count,hard_fail_count,warning_count,length_ratio_warning_count,pass_rate,json_parse_pass_rate,schema_pass_rate,id_exact_pass_rate,language_pass_rate,retry_attempted_count,retry_recovered_count,retry_dependency_rate,finish_length_count,median_latency_ms,p95_latency_ms
+gemma4_e2b,google/gemma-4-e2b,16,6,10,10,24,0,0.375,1.0,1.0,0.75,1.0,5,0,0.0,0,969.894,1273.782
+gemma4_e4b,google/gemma-4-e4b,16,4,12,12,24,0,0.25,1.0,1.0,0.0,1.0,6,0,0.0,0,1364.353,1699.079
