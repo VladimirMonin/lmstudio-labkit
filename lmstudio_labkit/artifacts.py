@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import csv
 import json
+import math
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
+from statistics import median
 from typing import Any
 
 from .privacy import assert_privacy_scan_passed, scan_artifact_files
@@ -131,39 +133,226 @@ def _write_cell_summary(
         "model_key",
         "model_id",
         "task_id",
+        "modality",
+        "language",
+        "structure_complexity",
+        "volume",
+        "context_tier",
+        "schema_variant",
+        "retry_policy",
+        "repeat_index",
         "status",
+        "json_parse_status",
+        "json_schema_status",
+        "business_status",
+        "id_exact_status",
+        "language_status",
+        "image_ground_truth_status",
+        "finish_reason_length_status",
+        "missing_id_count",
+        "unexpected_id_count",
+        "duplicate_id_count",
+        "order_mismatch",
+        "first_mismatch_index",
+        "placeholder_hit_count",
+        "markdown_fence_count",
+        "finish_reason",
         "retry_count",
         "retry_recovered",
         "error_category",
+        "latency_ms",
+        "prompt_tokens",
+        "completion_tokens",
+        "response_char_count",
     ]
-    _write_csv(path, fieldnames, ({key: row.get(key) for key in fieldnames} for row in rows))
+    _write_csv(path, fieldnames, (_cell_summary_row(row) for row in rows))
 
 
 def _write_model_summary(
     path: Path,
     rows: list[dict[str, Any]] | tuple[dict[str, Any], ...],
 ) -> None:
-    grouped: dict[tuple[str, str], Counter[str]] = defaultdict(Counter)
+    grouped: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for row in rows:
-        grouped[(str(row.get("model_key", "")), str(row.get("model_id", "")))][
-            str(row.get("status", "unknown"))
-        ] += 1
+        grouped[(str(row.get("model_key", "")), str(row.get("model_id", "")))].append(row)
     summary_rows = (
-        {
-            "model_key": model_key,
-            "model_id": model_id,
-            "attempt_count": sum(counts.values()),
-            "pass_count": counts.get("pass", 0),
-            "fail_count": counts.get("fail", 0),
-            "pass_rate": _rate(counts.get("pass", 0), sum(counts.values())),
-        }
-        for (model_key, model_id), counts in sorted(grouped.items())
+        _model_summary_row(model_key, model_id, model_rows)
+        for (model_key, model_id), model_rows in sorted(grouped.items())
     )
     _write_csv(
         path,
-        ["model_key", "model_id", "attempt_count", "pass_count", "fail_count", "pass_rate"],
+        [
+            "model_key",
+            "model_id",
+            "attempt_count",
+            "pass_count",
+            "fail_count",
+            "pass_rate",
+            "json_parse_pass_rate",
+            "schema_pass_rate",
+            "id_exact_pass_rate",
+            "language_pass_rate",
+            "retry_attempted_count",
+            "retry_recovered_count",
+            "retry_dependency_rate",
+            "finish_length_count",
+            "median_latency_ms",
+            "p95_latency_ms",
+        ],
         summary_rows,
     )
+
+
+def _cell_summary_row(row: dict[str, Any]) -> dict[str, Any]:
+    axes = row.get("axes") if isinstance(row.get("axes"), dict) else {}
+    result = row.get("result") if isinstance(row.get("result"), dict) else {}
+    token_counts = (
+        result.get("token_counts") if isinstance(result.get("token_counts"), dict) else {}
+    )
+    validation_results = _validation_results_by_name(row)
+    id_metrics = _validation_metrics(validation_results, "id_exact")
+    placeholder_metrics = _validation_metrics(validation_results, "no_placeholder_text")
+    fence_metrics = _validation_metrics(validation_results, "markdown_fence_leak")
+    return {
+        "cell_id": row.get("cell_id"),
+        "model_key": row.get("model_key"),
+        "model_id": row.get("model_id"),
+        "task_id": row.get("task_id"),
+        "modality": axes.get("modality"),
+        "language": axes.get("language"),
+        "structure_complexity": axes.get("structure_complexity"),
+        "volume": axes.get("volume"),
+        "context_tier": axes.get("context_tier"),
+        "schema_variant": axes.get("schema_variant"),
+        "retry_policy": axes.get("retry_policy"),
+        "repeat_index": row.get("repeat_index"),
+        "status": row.get("status"),
+        "json_parse_status": _validation_status(validation_results, "json_parse"),
+        "json_schema_status": _validation_status(validation_results, "json_schema"),
+        "business_status": _business_status(validation_results),
+        "id_exact_status": _validation_status(validation_results, "id_exact"),
+        "language_status": _validation_status(validation_results, "language_compliance"),
+        "image_ground_truth_status": _validation_status(validation_results, "image_ground_truth"),
+        "finish_reason_length_status": _validation_status(
+            validation_results, "finish_reason_length"
+        ),
+        "missing_id_count": id_metrics.get("missing_count"),
+        "unexpected_id_count": id_metrics.get("unexpected_count"),
+        "duplicate_id_count": id_metrics.get("duplicate_count"),
+        "order_mismatch": id_metrics.get("order_mismatch"),
+        "first_mismatch_index": id_metrics.get("first_mismatch_index"),
+        "placeholder_hit_count": placeholder_metrics.get("hit_count"),
+        "markdown_fence_count": fence_metrics.get("fence_count"),
+        "finish_reason": result.get("finish_reason"),
+        "retry_count": row.get("retry_count"),
+        "retry_recovered": row.get("retry_recovered"),
+        "error_category": row.get("error_category") or result.get("error_category"),
+        "latency_ms": result.get("latency_ms"),
+        "prompt_tokens": token_counts.get("prompt"),
+        "completion_tokens": token_counts.get("completion"),
+        "response_char_count": result.get("response_char_count"),
+    }
+
+
+def _model_summary_row(model_key: str, model_id: str, rows: list[dict[str, Any]]) -> dict[str, Any]:
+    status_counts = Counter(str(row.get("status", "unknown")) for row in rows)
+    latencies = [
+        float(result["latency_ms"])
+        for row in rows
+        if isinstance((result := row.get("result")), dict) and result.get("latency_ms") is not None
+    ]
+    retry_attempted = sum(int(row.get("retry_count") or 0) > 0 for row in rows)
+    retry_recovered = sum(row.get("retry_recovered") is True for row in rows)
+    return {
+        "model_key": model_key,
+        "model_id": model_id,
+        "attempt_count": len(rows),
+        "pass_count": status_counts.get("pass", 0),
+        "fail_count": status_counts.get("fail", 0),
+        "pass_rate": _rate(status_counts.get("pass", 0), len(rows)),
+        "json_parse_pass_rate": _validation_pass_rate(rows, "json_parse"),
+        "schema_pass_rate": _validation_pass_rate(rows, "json_schema"),
+        "id_exact_pass_rate": _validation_pass_rate(rows, "id_exact"),
+        "language_pass_rate": _validation_pass_rate(rows, "language_compliance"),
+        "retry_attempted_count": retry_attempted,
+        "retry_recovered_count": retry_recovered,
+        "retry_dependency_rate": _rate(retry_recovered, retry_attempted),
+        "finish_length_count": _finish_length_count(rows),
+        "median_latency_ms": _rounded_float(median(latencies)) if latencies else None,
+        "p95_latency_ms": _rounded_float(_p95(latencies)) if latencies else None,
+    }
+
+
+def _validation_results_by_name(row: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    validation = row.get("validation") if isinstance(row.get("validation"), dict) else {}
+    results = validation.get("results") if isinstance(validation.get("results"), list) else []
+    return {
+        str(item.get("name")): item
+        for item in results
+        if isinstance(item, dict) and item.get("name") is not None
+    }
+
+
+def _validation_status(results: dict[str, dict[str, Any]], name: str) -> str | None:
+    item = results.get(name)
+    status = item.get("status") if isinstance(item, dict) else None
+    return str(status) if status is not None else None
+
+
+def _validation_metrics(results: dict[str, dict[str, Any]], name: str) -> dict[str, Any]:
+    item = results.get(name)
+    metrics = item.get("metrics") if isinstance(item, dict) else None
+    return metrics if isinstance(metrics, dict) else {}
+
+
+def _business_status(results: dict[str, dict[str, Any]]) -> str | None:
+    business_checks = (
+        "empty_text_for_non_empty_input",
+        "length_ratio",
+        "no_placeholder_text",
+        "no_reasoning_leak",
+    )
+    statuses = [_validation_status(results, name) for name in business_checks]
+    if "fail" in statuses:
+        return "fail"
+    if "pass" in statuses:
+        return "pass"
+    if "skip" in statuses:
+        return "skip"
+    return None
+
+
+def _validation_pass_rate(rows: list[dict[str, Any]], name: str) -> float | None:
+    counts: Counter[str] = Counter()
+    for row in rows:
+        status = _validation_status(_validation_results_by_name(row), name)
+        if status in {"pass", "fail"}:
+            counts[status] += 1
+    total = counts["pass"] + counts["fail"]
+    return _rate(counts["pass"], total)
+
+
+def _finish_length_count(rows: list[dict[str, Any]]) -> int:
+    count = 0
+    for row in rows:
+        result = row.get("result") if isinstance(row.get("result"), dict) else {}
+        if result.get("finish_reason") == "length":
+            count += 1
+            continue
+        validation_results = _validation_results_by_name(row)
+        if _validation_status(validation_results, "finish_reason_length") == "fail":
+            count += 1
+    return count
+
+
+def _p95(values: list[float]) -> float:
+    ordered = sorted(values)
+    index = max(0, math.ceil(len(ordered) * 0.95) - 1)
+    return ordered[index]
+
+
+def _rounded_float(value: float) -> float:
+    return round(value, 3)
 
 
 def _write_failure_summary(
