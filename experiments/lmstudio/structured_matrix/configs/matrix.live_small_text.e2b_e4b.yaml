@@ -1,0 +1,54 @@
+run_id: matrix_live_small_text_e2b_e4b
+models:
+  - model_key: e2b_text
+    model_id: live/e2b-text
+    endpoint_family: openai_compat
+    supported_modalities: [text]
+    supported_context_tiers: [8192]
+  - model_key: e4b_text
+    model_id: live/e4b-text
+    endpoint_family: openai_compat
+    supported_modalities: [text]
+    supported_context_tiers: [8192]
+tasks:
+  - task_id: live_small_text_blocks
+    family: blocks
+    modality: text
+    language: en_en
+    language_policy: strict_en
+    structure_complexity: medium
+    volume: single
+    prompt: Synthetic live-small text prompt. Return two short English JSON blocks.
+    schema_family: blocks
+    expected_ids: [0, 1]
+    expected_output:
+      blocks:
+        - id: 0
+          text: First synthetic block.
+        - id: 1
+          text: Second synthetic block.
+    fake_mode: valid
+    min_length_ratio: 0.1
+    max_length_ratio: 5.0
+axes:
+  modality: [text]
+  language: [en_en]
+  structure_complexity: [medium]
+  volume: [single]
+  context_tier: [8192]
+  schema_variant: [hardened_const]
+  retry_policy: [off]
+repeats: 1
+safety:
+  live: true
+  allow_model_downloads: false
+  allow_model_loads: true
+  allow_remote_base_url: false
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_requests: 2
+  max_runtime_minutes: 15
+  max_context_tier: 8192
+  max_models: 2
+  max_repeats: 1

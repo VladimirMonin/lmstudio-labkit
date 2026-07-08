@@ -563,9 +563,40 @@ def run_live_small_text_screening(
 
 
 def write_matrix_plan(config: BenchmarkConfig, output_root: str | Path) -> ArtifactSet:
-    plan = plan_matrix(config)
+    if config.safety.live:
+        _validate_live_plan_only_safety(config)
+        plan = _build_matrix_plan(config)
+    else:
+        plan = plan_matrix(config)
     run_dir = Path(output_root) / config.run_id
     return write_run_artifacts(run_dir, plan.planner_summary(live=False), [])
+
+
+def _validate_live_plan_only_safety(config: BenchmarkConfig) -> None:
+    safety = config.safety
+    requested_modalities = {
+        *(config.axes.get("modality", ())),
+        *(task.modality for task in config.tasks),
+    }
+    requested_volumes = {
+        *(config.axes.get("volume", ())),
+        *(task.volume for task in config.tasks),
+    }
+    if safety.allow_model_downloads:
+        raise ValueError("model downloads are not supported by live planning")
+    if safety.allow_raw_prompt_response_artifacts:
+        raise ValueError("raw prompt/response artifacts are not allowed")
+    if "image" in requested_modalities or safety.allow_image_live:
+        raise ValueError("image live execution is not implemented")
+    if "stress" in requested_volumes or safety.allow_stress:
+        raise ValueError("stress/overnight live planning requires a separate profile")
+    if len(config.models) > safety.max_models:
+        raise ValueError("model count exceeds safety.max_models")
+    if config.repeats > safety.max_repeats:
+        raise ValueError("repeats exceeds safety.max_repeats")
+    for context_tier in config.axes.get("context_tier", ("8192",)):
+        if _context_tier_int(context_tier) > safety.max_context_tier:
+            raise ValueError("context_tier exceeds safety.max_context_tier")
 
 
 def _model_from_dict(payload: dict[str, Any]) -> ModelSpec:

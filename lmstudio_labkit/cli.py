@@ -101,7 +101,7 @@ def _validate_run_profile(args: argparse.Namespace) -> None:
     validate_live_guardrails(
         LiveBridgeOptions(
             live=True,
-            allow_model_load=args.allow_model_loads,
+            allow_model_load=False,
             allow_remote=args.allow_remote_base_url,
             allow_stress=args.allow_stress,
             base_url=args.base_url,
@@ -110,7 +110,7 @@ def _validate_run_profile(args: argparse.Namespace) -> None:
         ),
         request_count=1,
     )
-    raise SystemExit("live bridge is configured, but live runs require a host-managed executor")
+    raise SystemExit("live profile is valid, but no host-managed executor was provided")
 
 
 def _validate_safe_run_id(run_id: str) -> None:
