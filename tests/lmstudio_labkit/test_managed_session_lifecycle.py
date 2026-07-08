@@ -163,8 +163,8 @@ def test_run_matrix_session_loaded_uses_one_lifecycle_for_repeated_cells(tmp_pat
     assert all(row["axes"]["execution_mode"] == "session_loaded" for row in rows)
     assert all(row["status"] == "pass" for row in rows)
     assert len({row["session_id"] for row in rows}) == 1
-    assert [row["request_index"] for row in rows] == [1, 2, 3]
-    assert [row["count"] for row in rows] == [3, 3, 3]
+    assert [row["session_request_index"] for row in rows] == [1, 2, 3]
+    assert [row["session_request_count"] for row in rows] == [3, 3, 3]
     assert [row["load_scope"] for row in rows] == ["per_session", "per_session", "per_session"]
     assert [row["cleanup_scope"] for row in rows] == ["per_session", "per_session", "per_session"]
     assert [row["loaded_before_session"] for row in rows] == [0, 0, 0]
@@ -238,8 +238,8 @@ def test_run_matrix_cold_per_request_loads_and_cleans_each_cell(tmp_path) -> Non
     assert [row["load_scope"] for row in rows] == ["per_request", "per_request", "per_request"]
     assert [row["cleanup_scope"] for row in rows] == ["per_request", "per_request", "per_request"]
     assert len({row["session_id"] for row in rows}) == 3
-    assert [row["request_index"] for row in rows] == [1, 1, 1]
-    assert [row["count"] for row in rows] == [1, 1, 1]
+    assert [row["session_request_index"] for row in rows] == [1, 1, 1]
+    assert [row["session_request_count"] for row in rows] == [1, 1, 1]
     assert [row["final_loaded_instances"] for row in rows] == [0, 0, 0]
 
 

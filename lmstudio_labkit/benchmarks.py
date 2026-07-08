@@ -675,8 +675,8 @@ def _lifecycle_telemetry_fields(result: RequestResult) -> dict[str, Any]:
     metadata = result.lifecycle_metadata
     return {
         "session_id": metadata.get("session_id"),
-        "request_index": metadata.get("request_index"),
-        "count": metadata.get("count"),
+        "session_request_index": metadata.get("session_request_index"),
+        "session_request_count": metadata.get("session_request_count"),
         "load_scope": metadata.get("load_scope"),
         "cleanup_scope": metadata.get("cleanup_scope"),
         "loaded_before_session": metadata.get("loaded_before_session"),
