@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from typing import Any
 from urllib.parse import urlparse
 
@@ -68,6 +68,56 @@ class ManagedLiveBridge:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class LiveBridgeTransport:
+    """Matrix transport adapter for an injected host-managed live bridge.
+
+    The transport owns no LM Studio lifecycle and performs no network I/O by
+    itself. Callers must inject either a simple executor callable or a bridge
+    object with an ``execute(RequestPlan)`` method.
+    """
+
+    executor: Callable[[RequestPlan], str] | None = None
+    bridge: Any | None = None
+    options: LiveBridgeOptions = field(default_factory=lambda: LiveBridgeOptions(live=True))
+
+    def __post_init__(self) -> None:
+        if self.executor is None and self.bridge is None:
+            raise LiveBridgeError("live transport requires an injected executor or bridge")
+
+    def execute(self, plan: RequestPlan, *, attempt_index: int = 1) -> tuple[str, RequestResult]:
+        validate_live_guardrails(self.options, request_count=1)
+        if plan.envelope.modality == "image":
+            raise NotImplementedError("image live execution is not implemented")
+        if plan.envelope.modality != "text":
+            raise LiveBridgeError("guarded live screening supports text modality only")
+        if not plan.options.live:
+            raise LiveBridgeError("guarded live screening requires plan.options.live=True")
+        if self.bridge is not None:
+            bridge_result = self.bridge.execute(plan)
+            if isinstance(bridge_result, tuple) and len(bridge_result) == 2:
+                raw_response, request_result = bridge_result
+                if isinstance(raw_response, str) and isinstance(request_result, RequestResult):
+                    return raw_response, request_result
+            if isinstance(bridge_result, str):
+                raw_response = bridge_result
+            else:
+                raise LiveBridgeError(
+                    "injected bridge must return raw text or (raw text, RequestResult)"
+                )
+        else:
+            raw_response = self.executor(plan)  # type: ignore[misc]
+        return raw_response, RequestResult.from_raw_response(
+            request_id=plan.envelope.request_id,
+            model_id=plan.options.model_id,
+            raw_response=raw_response,
+            status="ok",
+            latency_ms=0.0,
+            token_counts={},
+            finish_reason="stop",
+        )
+
+
 def validate_live_guardrails(options: LiveBridgeOptions, *, request_count: int) -> None:
     if not options.live:
         raise LiveBridgeError("live bridge requires explicit live=True")
@@ -117,6 +167,7 @@ __all__ = [
     "LabOnlyLiveFlags",
     "LiveBridgeError",
     "LiveBridgeOptions",
+    "LiveBridgeTransport",
     "ManagedLiveBridge",
     "managed_runner_bridge_factory",
     "safe_live_metadata",

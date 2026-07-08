@@ -4,8 +4,10 @@ from .artifacts import ArtifactSet, write_run_artifacts
 from .benchmarks import (
     BenchmarkConfig,
     BenchmarkSafetyConfig,
+    FakeTransport,
     MatrixCell,
     MatrixPlan,
+    MatrixTransport,
     ModelSpec,
     TaskSpec,
     plan_matrix,
@@ -13,6 +15,7 @@ from .benchmarks import (
     run_matrix,
 )
 from .datasets import TaskManifest, load_task_manifest, load_task_manifests, load_task_specs
+from .live_bridge import LiveBridgeTransport
 from .requests import (
     ChatMessage,
     ExecutionOptions,
@@ -39,10 +42,13 @@ __all__ = [
     "BenchmarkSafetyConfig",
     "ChatMessage",
     "ExecutionOptions",
+    "FakeTransport",
     "ImageInput",
     "LanguagePolicy",
+    "LiveBridgeTransport",
     "MatrixCell",
     "MatrixPlan",
+    "MatrixTransport",
     "ModelSpec",
     "RequestEnvelope",
     "RequestPlan",

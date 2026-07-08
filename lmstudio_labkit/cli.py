@@ -60,7 +60,7 @@ def main(argv: list[str] | None = None) -> int:
         config = BenchmarkConfig.from_file(args.config)
         _validate_safe_run_id(config.run_id)
         _reject_existing_run_dir(args.output_root, config.run_id, allow_plan_only=True)
-        artifacts = run_matrix(config, args.output_root, live=False)
+        artifacts = run_matrix(config, args.output_root)
         _print_json({"status": "ok", "mode": "run", "artifacts": artifacts.as_dict()})
         return 0
     if args.command == "summarize":
