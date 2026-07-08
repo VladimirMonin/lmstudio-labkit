@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import time
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from hashlib import sha256
 from pathlib import Path
 from typing import Any
@@ -10,6 +10,14 @@ from typing import Any
 import yaml
 
 from .artifacts import ArtifactSet, write_run_artifacts
+from .live_bridge import (
+    LAB_ONLY_LIVE_FLAGS,
+    LiveBridgeError,
+    LiveBridgeOptions,
+    ManagedLiveBridge,
+    safe_live_metadata,
+    validate_live_guardrails,
+)
 from .requests import (
     ChatMessage,
     ExecutionOptions,
@@ -41,6 +49,7 @@ class ModelSpec:
     model_id: str
     endpoint_family: str = "openai_compat"
     supported_modalities: tuple[str, ...] = ("text",)
+    supported_context_tiers: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,11 +57,15 @@ class TaskSpec:
     task_id: str
     family: str
     modality: str = "text"
+    language: str = "en_en"
+    structure_complexity: str = "simple"
+    volume: str = "single"
     prompt: str = ""
     image_hash: str | None = None
     schema: dict[str, Any] | None = None
     schema_family: str | None = None
     schema_variant: str | None = None
+    tags: tuple[str, ...] = ()
     expected_output: Any | None = None
     expected_ids: tuple[Any, ...] = ()
     image_ground_truth: dict[str, Any] | None = None
@@ -62,12 +75,29 @@ class TaskSpec:
 
 
 @dataclass(frozen=True, slots=True)
+class BenchmarkSafetyConfig:
+    live: bool = False
+    allow_model_downloads: bool = False
+    allow_model_loads: bool = False
+    allow_remote_base_url: bool = False
+    allow_raw_prompt_response_artifacts: bool = False
+    max_requests: int = 100
+    max_models: int = 5
+    max_context_tier: int = 8192
+    max_repeats: int = 3
+    max_runtime_minutes: int | None = None
+    allow_image_live: bool = False
+    allow_stress: bool = False
+
+
+@dataclass(frozen=True, slots=True)
 class BenchmarkConfig:
     run_id: str
     models: tuple[ModelSpec, ...]
     tasks: tuple[TaskSpec, ...]
     axes: dict[str, tuple[str, ...]]
     repeats: int = 1
+    safety: BenchmarkSafetyConfig = field(default_factory=BenchmarkSafetyConfig)
 
     @classmethod
     def from_file(cls, path: str | Path) -> BenchmarkConfig:
@@ -102,6 +132,7 @@ class BenchmarkConfig:
             tasks=tasks,
             axes=axes,
             repeats=repeats,
+            safety=_safety_from_dict(payload.get("safety", {})),
         )
 
     def safe_hash(self) -> str:
@@ -113,6 +144,7 @@ class BenchmarkConfig:
                     "tasks": [task.task_id for task in self.tasks],
                     "axes": self.axes,
                     "repeats": self.repeats,
+                    "safety": asdict(self.safety),
                 },
                 sort_keys=True,
                 default=list,
@@ -180,6 +212,9 @@ class MatrixPlan:
     cells: tuple[MatrixCell, ...]
     axes: dict[str, tuple[str, ...]]
     repeats: int
+    raw_cartesian_cell_count: int
+    skip_reasons: dict[str, int]
+    safety_budget: dict[str, Any]
 
     def planner_summary(self, *, live: bool = False) -> dict[str, Any]:
         return {
@@ -187,20 +222,30 @@ class MatrixPlan:
             "config_hash": self.config_hash,
             "axes": {key: list(value) for key, value in self.axes.items()},
             "cell_count": len(self.cells),
+            "raw_cartesian_cell_count": self.raw_cartesian_cell_count,
+            "filtered_cell_count": len(self.cells),
+            "skipped_cell_count": self.raw_cartesian_cell_count - len(self.cells),
+            "skip_reasons": dict(sorted(self.skip_reasons.items())),
             "repeats": self.repeats,
             "live": live,
             "privacy_mode": "safe-default",
+            "safety_budget": dict(sorted(self.safety_budget.items())),
             "schema_version": "structured-matrix-v1",
         }
 
 
 def plan_matrix(config: BenchmarkConfig) -> MatrixPlan:
+    _validate_static_safety(config)
+    return _build_matrix_plan(config)
+
+
+def _build_matrix_plan(config: BenchmarkConfig) -> MatrixPlan:
     cells: list[MatrixCell] = []
+    raw_cartesian_cell_count = 0
+    skip_reasons: dict[str, int] = {}
     for model in config.models:
         for task in config.tasks:
             for modality in config.axes.get("modality", (task.modality,)):
-                if modality not in model.supported_modalities:
-                    continue
                 for language in config.axes.get("language", ("en_en",)):
                     for complexity in config.axes.get("structure_complexity", ("simple",)):
                         for volume in config.axes.get("volume", ("single",)):
@@ -210,6 +255,7 @@ def plan_matrix(config: BenchmarkConfig) -> MatrixPlan:
                                 ):
                                     for retry_policy in config.axes.get("retry_policy", ("off",)):
                                         for repeat_index in range(config.repeats):
+                                            raw_cartesian_cell_count += 1
                                             axes = {
                                                 "modality": modality,
                                                 "language": language,
@@ -219,6 +265,16 @@ def plan_matrix(config: BenchmarkConfig) -> MatrixPlan:
                                                 "schema_variant": schema_variant,
                                                 "retry_policy": retry_policy,
                                             }
+                                            skip_reason = _compatibility_skip_reason(
+                                                model=model,
+                                                task=task,
+                                                axes=axes,
+                                            )
+                                            if skip_reason is not None:
+                                                skip_reasons[skip_reason] = (
+                                                    skip_reasons.get(skip_reason, 0) + 1
+                                                )
+                                                continue
                                             cell_id = _cell_id(
                                                 config.run_id,
                                                 model.model_key,
@@ -229,7 +285,44 @@ def plan_matrix(config: BenchmarkConfig) -> MatrixPlan:
                                             cells.append(
                                                 MatrixCell(cell_id, model, task, axes, repeat_index)
                                             )
-    return MatrixPlan(config.run_id, config.safe_hash(), tuple(cells), config.axes, config.repeats)
+    plan = MatrixPlan(
+        config.run_id,
+        config.safe_hash(),
+        tuple(cells),
+        config.axes,
+        config.repeats,
+        raw_cartesian_cell_count,
+        skip_reasons,
+        _safe_safety_budget(config.safety),
+    )
+    _validate_plan_safety(config, plan)
+    return plan
+
+
+def _compatibility_skip_reason(
+    *, model: ModelSpec, task: TaskSpec, axes: dict[str, str]
+) -> str | None:
+    if _is_experimental(task):
+        return None
+    modality = axes.get("modality", task.modality)
+    if modality not in model.supported_modalities:
+        return "unsupported_modality"
+    if modality != task.modality:
+        return "unsupported_modality"
+    if axes.get("language", task.language) != task.language:
+        return "language_mismatch"
+    if axes.get("structure_complexity", task.structure_complexity) != task.structure_complexity:
+        return "complexity_mismatch"
+    if axes.get("volume", task.volume) != task.volume:
+        return "volume_mismatch"
+    context_tier = axes.get("context_tier")
+    if model.supported_context_tiers and context_tier not in model.supported_context_tiers:
+        return "unsupported_context_tier"
+    return None
+
+
+def _is_experimental(task: TaskSpec) -> bool:
+    return "experimental" in {tag.casefold() for tag in task.tags}
 
 
 class FakeTransport:
@@ -296,11 +389,20 @@ def run_matrix(
     config: BenchmarkConfig, output_root: str | Path, *, live: bool = False
 ) -> ArtifactSet:
     if live:
-        raise ValueError("Live LM Studio execution is not implemented in the safe default runner")
+        raise ValueError(
+            "Benchmark safety requires live=false in the core runner; "
+            "Live LM Studio execution is not implemented"
+        )
     plan = plan_matrix(config)
     rows: list[dict[str, Any]] = []
     transport = FakeTransport()
+    deadline = (
+        time.monotonic() + config.safety.max_runtime_minutes * 60
+        if config.safety.max_runtime_minutes is not None
+        else None
+    )
     for cell in plan.cells:
+        _raise_if_runtime_budget_exceeded(deadline)
         request_plan = cell.to_request_plan()
         raw_response, result = transport.execute(request_plan, attempt_index=1)
         input_char_count = sum(
@@ -341,8 +443,71 @@ def run_matrix(
             "error_category": _first_error_category(validation),
         }
         rows.append(row)
+        _raise_if_runtime_budget_exceeded(deadline)
     run_dir = Path(output_root) / config.run_id
     return write_run_artifacts(run_dir, plan.planner_summary(live=False), rows)
+
+
+def run_live_small_text_screening(
+    config: BenchmarkConfig,
+    output_root: str | Path,
+    *,
+    executor: Any,
+    options: LiveBridgeOptions | None = None,
+) -> ArtifactSet:
+    """Run guarded text-only screening through an injected managed executor.
+
+    The public package does not own LM Studio lifecycle work. This seam accepts a
+    host-managed executor, validates the run shape, and writes only lab-only,
+    privacy-safe artifacts.
+    """
+
+    bridge_options = options or LiveBridgeOptions(live=True, profile="live-small")
+    _validate_live_screening_safety(config, bridge_options)
+    plan = _build_matrix_plan(config)
+    validate_live_guardrails(bridge_options, request_count=len(plan.cells))
+    bridge = ManagedLiveBridge(executor=executor, options=bridge_options)
+    rows: list[dict[str, Any]] = []
+    for cell in plan.cells:
+        if cell.axes.get("modality", cell.task.modality) != "text" or cell.task.modality != "text":
+            raise LiveBridgeError("guarded live screening supports text tasks only")
+        request_plan = _with_live_execution(cell.to_request_plan())
+        raw_response, result = bridge.execute(request_plan)
+        input_char_count = sum(
+            item.safe_metadata()["char_count"] for item in request_plan.envelope.text_inputs
+        )
+        validation = validate_response(
+            raw_response,
+            request_plan.envelope.response_contract,
+            finish_reason=result.finish_reason,
+            input_char_count=input_char_count,
+        )
+        rows.append(
+            {
+                "run_id": config.run_id,
+                "cell_id": cell.cell_id,
+                "repeat_index": cell.repeat_index,
+                "model_key": cell.model.model_key,
+                "model_id": cell.model.model_id,
+                "task_id": cell.task.task_id,
+                "axes": cell.axes,
+                "request": request_plan.envelope.safe_metadata(),
+                "result": result.safe_metadata(),
+                "validation": validation.to_dict(),
+                "retry_count": 0,
+                "retry_recovered": False,
+                "status": "pass"
+                if validation.status == "pass" and result.status == "ok"
+                else "fail",
+                "error_category": _first_error_category(validation),
+                "lab_only_flags": LAB_ONLY_LIVE_FLAGS.as_dict(),
+            }
+        )
+    planner_summary = plan.planner_summary(live=True)
+    planner_summary["live_bridge"] = safe_live_metadata(bridge_options)
+    planner_summary["lab_only_flags"] = LAB_ONLY_LIVE_FLAGS.as_dict()
+    run_dir = Path(output_root) / config.run_id
+    return write_run_artifacts(run_dir, planner_summary, rows)
 
 
 def write_matrix_plan(config: BenchmarkConfig, output_root: str | Path) -> ArtifactSet:
@@ -359,6 +524,9 @@ def _model_from_dict(payload: dict[str, Any]) -> ModelSpec:
         supported_modalities=tuple(
             str(item) for item in payload.get("supported_modalities", ["text"])
         ),
+        supported_context_tiers=tuple(
+            str(item) for item in payload.get("supported_context_tiers", [])
+        ),
     )
 
 
@@ -367,11 +535,15 @@ def _task_from_dict(payload: dict[str, Any]) -> TaskSpec:
         task_id=str(payload["task_id"]),
         family=str(payload.get("family", "simple_flat")),
         modality=str(payload.get("modality", "text")),
+        language=str(payload.get("language", "en_en")),
+        structure_complexity=str(payload.get("structure_complexity", "simple")),
+        volume=str(payload.get("volume", "single")),
         prompt=str(payload.get("prompt", "")),
         image_hash=payload.get("image_hash"),
         schema=payload.get("schema"),
         schema_family=payload.get("schema_family"),
         schema_variant=payload.get("schema_variant"),
+        tags=tuple(str(item) for item in payload.get("tags", [])),
         expected_output=payload.get("expected_output"),
         expected_ids=tuple(payload.get("expected_ids", [])),
         image_ground_truth=payload.get("image_ground_truth"),
@@ -379,6 +551,172 @@ def _task_from_dict(payload: dict[str, Any]) -> TaskSpec:
         min_length_ratio=payload.get("min_length_ratio"),
         max_length_ratio=payload.get("max_length_ratio"),
     )
+
+
+def _safety_from_dict(payload: Any) -> BenchmarkSafetyConfig:
+    if payload is None:
+        payload = {}
+    if not isinstance(payload, dict):
+        raise ValueError("safety must be a mapping")
+    return BenchmarkSafetyConfig(
+        live=_safety_bool(payload, "live", False),
+        allow_model_downloads=_safety_bool(payload, "allow_model_downloads", False),
+        allow_model_loads=_safety_bool(payload, "allow_model_loads", False),
+        allow_remote_base_url=_safety_bool(payload, "allow_remote_base_url", False),
+        allow_raw_prompt_response_artifacts=_safety_bool(
+            payload, "allow_raw_prompt_response_artifacts", False
+        ),
+        allow_image_live=_safety_bool(payload, "allow_image_live", False),
+        allow_stress=_safety_bool(payload, "allow_stress", False),
+        max_requests=_positive_int(payload, "max_requests", 100),
+        max_models=_positive_int(payload, "max_models", 5),
+        max_context_tier=_positive_int(payload, "max_context_tier", 8192),
+        max_repeats=_positive_int(payload, "max_repeats", 3),
+        max_runtime_minutes=_optional_positive_int(payload, "max_runtime_minutes", None),
+    )
+
+
+def _safety_bool(payload: dict[str, Any], key: str, default: bool) -> bool:
+    value = payload.get(key, default)
+    if not isinstance(value, bool):
+        raise ValueError(f"safety.{key} must be a boolean")
+    return value
+
+
+def _positive_int(payload: dict[str, Any], key: str, default: int) -> int:
+    value = payload.get(key, default)
+    if isinstance(value, bool):
+        raise ValueError(f"safety.{key} must be a positive integer")
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError) as error:
+        raise ValueError(f"safety.{key} must be a positive integer") from error
+    if parsed <= 0:
+        raise ValueError(f"safety.{key} must be a positive integer")
+    return parsed
+
+
+def _optional_positive_int(payload: dict[str, Any], key: str, default: int | None) -> int | None:
+    if key not in payload:
+        return default
+    value = payload.get(key)
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        raise ValueError(f"safety.{key} must be a positive integer or null")
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError) as error:
+        raise ValueError(f"safety.{key} must be a positive integer or null") from error
+    if parsed <= 0:
+        raise ValueError(f"safety.{key} must be a positive integer or null")
+    return parsed
+
+
+def _validate_static_safety(config: BenchmarkConfig) -> None:
+    safety = config.safety
+    if safety.live:
+        raise ValueError("Benchmark safety requires live=false in the core runner")
+    if safety.allow_model_downloads:
+        raise ValueError("model downloads are not allowed by the core runner")
+    if safety.allow_model_loads:
+        raise ValueError("model loads are not allowed by the core runner")
+    if safety.allow_remote_base_url:
+        raise ValueError("remote base URLs are not allowed by the core runner")
+    if safety.allow_raw_prompt_response_artifacts:
+        raise ValueError("raw prompt/response artifacts are not allowed by the core runner")
+    if safety.allow_image_live:
+        raise ValueError("image live execution is not allowed by the core runner")
+    if safety.allow_stress:
+        raise ValueError("stress execution is not allowed by the core runner")
+    if len(config.models) > safety.max_models:
+        raise ValueError("model count exceeds safety.max_models")
+    if config.repeats > safety.max_repeats:
+        raise ValueError("repeats exceeds safety.max_repeats")
+    for context_tier in config.axes.get("context_tier", ("8192",)):
+        if _context_tier_int(context_tier) > safety.max_context_tier:
+            raise ValueError("context_tier exceeds safety.max_context_tier")
+
+
+def _safe_safety_budget(safety: BenchmarkSafetyConfig) -> dict[str, Any]:
+    return {
+        "live": safety.live,
+        "allow_model_downloads": safety.allow_model_downloads,
+        "allow_model_loads": safety.allow_model_loads,
+        "allow_remote_base_url": safety.allow_remote_base_url,
+        "allow_raw_prompt_response_artifacts": safety.allow_raw_prompt_response_artifacts,
+        "allow_image_live": safety.allow_image_live,
+        "allow_stress": safety.allow_stress,
+        "max_requests": safety.max_requests,
+        "max_models": safety.max_models,
+        "max_context_tier": safety.max_context_tier,
+        "max_repeats": safety.max_repeats,
+        "max_runtime_minutes": safety.max_runtime_minutes,
+    }
+
+
+def _validate_plan_safety(config: BenchmarkConfig, plan: MatrixPlan) -> None:
+    if len(plan.cells) > config.safety.max_requests:
+        raise ValueError("planned request count exceeds safety.max_requests")
+
+
+def _validate_live_screening_safety(config: BenchmarkConfig, options: LiveBridgeOptions) -> None:
+    safety = config.safety
+    if not safety.live:
+        raise LiveBridgeError("guarded live screening requires safety.live=true")
+    if safety.allow_model_downloads:
+        raise LiveBridgeError("guarded live screening does not download models")
+    if safety.allow_model_loads:
+        raise LiveBridgeError("guarded live screening does not load models")
+    if safety.allow_raw_prompt_response_artifacts:
+        raise LiveBridgeError("raw prompt/response artifacts are not allowed")
+    if safety.allow_image_live:
+        raise LiveBridgeError("image live execution is not allowed")
+    if safety.allow_stress:
+        raise LiveBridgeError("stress execution is not allowed")
+    if len(config.models) > safety.max_models:
+        raise LiveBridgeError("model count exceeds safety.max_models")
+    if config.repeats > safety.max_repeats:
+        raise LiveBridgeError("repeats exceeds safety.max_repeats")
+    for context_tier in config.axes.get("context_tier", ("8192",)):
+        if _context_tier_int(context_tier) > safety.max_context_tier:
+            raise LiveBridgeError("context_tier exceeds safety.max_context_tier")
+    if options.max_requests > safety.max_requests:
+        raise LiveBridgeError("bridge max_requests exceeds safety.max_requests")
+    if safety.allow_remote_base_url and not options.allow_remote:
+        raise LiveBridgeError("remote base URL requires bridge allow_remote=True")
+    if any(task.modality != "text" for task in config.tasks):
+        raise LiveBridgeError("guarded live screening supports text tasks only")
+    if any(modality != "text" for modality in config.axes.get("modality", ("text",))):
+        raise LiveBridgeError("guarded live screening supports text tasks only")
+
+
+def _with_live_execution(plan: RequestPlan) -> RequestPlan:
+    return RequestPlan(
+        cell_id=plan.cell_id,
+        envelope=plan.envelope,
+        options=ExecutionOptions(
+            model_id=plan.options.model_id,
+            endpoint_family=plan.options.endpoint_family,
+            context_tier=plan.options.context_tier,
+            temperature=plan.options.temperature,
+            timeout_s=plan.options.timeout_s,
+            retry_policy=plan.options.retry_policy,
+            live=True,
+        ),
+    )
+
+
+def _raise_if_runtime_budget_exceeded(deadline: float | None) -> None:
+    if deadline is not None and time.monotonic() > deadline:
+        raise ValueError("run exceeded safety.max_runtime_minutes")
+
+
+def _context_tier_int(value: Any) -> int:
+    try:
+        return int(str(value))
+    except (TypeError, ValueError) as error:
+        raise ValueError("context_tier must be an integer safety tier") from error
 
 
 def _normalize_axis_value(value: Any) -> str:

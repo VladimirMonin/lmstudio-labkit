@@ -71,6 +71,7 @@ def validate_response(
             results.append(ValidationResult("id_exact", "skip"))
 
         results.append(validate_no_placeholder_text(parsed))
+        results.append(validate_no_reasoning_leak(parsed))
         if contract.language:
             results.append(validate_language(parsed, contract.language))
         else:
@@ -83,6 +84,7 @@ def validate_response(
     else:
         results.append(ValidationResult("json_parse", "skip"))
         results.append(validate_no_placeholder_text(raw_response))
+        results.append(validate_no_reasoning_leak(raw_response))
         if contract.language:
             results.append(validate_language(raw_response, contract.language))
         else:
@@ -141,6 +143,9 @@ def _schema_errors(value: Any, schema: dict[str, Any], path: str = "$") -> list[
             errors.append(f"{path}:minLength")
         if max_length is not None and len(value) > int(max_length):
             errors.append(f"{path}:maxLength")
+        pattern = schema.get("pattern")
+        if pattern is not None and re.search(str(pattern), value) is None:
+            errors.append(f"{path}:pattern")
 
     if isinstance(value, int | float) and not isinstance(value, bool):
         minimum = schema.get("minimum")
@@ -170,6 +175,12 @@ def _schema_errors(value: Any, schema: dict[str, Any], path: str = "$") -> list[
             errors.append(f"{path}:minItems")
         if max_items is not None and len(value) > int(max_items):
             errors.append(f"{path}:maxItems")
+        if schema.get("uniqueItems") is True:
+            serialized_items = [
+                json.dumps(item, ensure_ascii=False, sort_keys=True) for item in value
+            ]
+            if len(serialized_items) != len(set(serialized_items)):
+                errors.append(f"{path}:uniqueItems")
         prefix_items = schema.get("prefixItems")
         if isinstance(prefix_items, list):
             for index, child_schema in enumerate(prefix_items):
@@ -257,6 +268,39 @@ def validate_no_placeholder_text(value: Any) -> ValidationResult:
             "no_placeholder_text", "fail", "placeholder_text", {"hit_count": hit_count}
         )
     return ValidationResult("no_placeholder_text", "pass", metrics={"hit_count": 0})
+
+
+def validate_no_reasoning_leak(value: Any) -> ValidationResult:
+    text = _flatten_text(value).casefold()
+    marker_leak = "<think" in text or "chain of thought" in text
+    key_leak = _contains_reasoning_key(value)
+    if marker_leak or key_leak:
+        return ValidationResult(
+            "no_reasoning_leak",
+            "fail",
+            "reasoning_leak",
+            {"marker_leak": marker_leak, "key_leak": key_leak},
+        )
+    return ValidationResult(
+        "no_reasoning_leak",
+        "pass",
+        metrics={"marker_leak": False, "key_leak": False},
+    )
+
+
+def _contains_reasoning_key(value: Any) -> bool:
+    if isinstance(value, dict):
+        for key, child in value.items():
+            normalized = "".join(
+                character for character in str(key).casefold() if character.isalnum()
+            )
+            if normalized.startswith("reasoning") or normalized in {"chainofthought", "cot"}:
+                return True
+            if _contains_reasoning_key(child):
+                return True
+    if isinstance(value, list | tuple):
+        return any(_contains_reasoning_key(child) for child in value)
+    return False
 
 
 def validate_markdown_fence_leak(raw_response: str) -> ValidationResult:

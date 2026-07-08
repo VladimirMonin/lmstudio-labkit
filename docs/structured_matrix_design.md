@@ -4,7 +4,7 @@
 
 The structured matrix benchmark harness is a planned LabKit component for evaluating LM Studio models across configurable structured-output scenarios. It should support text, image, chat, structured, and non-structured request modes through the reusable request core while keeping artifacts publication-safe.
 
-This document describes the target design and the current L3.12 implementation status. Offline/fake planning and execution, hardened validators, schema builders, privacy scanning, richer reports, CLI profiles, and a guarded live bridge interface are implemented. Real live LM Studio execution remains opt-in and host-managed.
+This document describes the target design and the current L3.13 implementation status. Offline/fake planning and execution, hardened validators, schema builders, compatibility-filtered matrix planning, safety budgets, privacy scanning, richer reports, CLI profiles, and a guarded live bridge interface are implemented. Real live LM Studio execution remains opt-in and host-managed.
 
 ## Matrix axes
 
@@ -216,9 +216,14 @@ Run plan metadata:
 - config hash
 - selected axes
 - cell count
+- raw cartesian cell count
+- filtered cell count
+- skipped cell count
+- skip reasons
 - planned repeats
 - live/offline mode
 - privacy mode
+- safety budget
 - schema versions
 
 ### `cell_results.jsonl`
@@ -303,16 +308,19 @@ Publication-safety scan summary:
 
 ### `report.md`
 
-Human-readable report generated from the safe artifacts. It should include:
+Human-readable report generated from the safe artifacts. It includes the L3.13 readiness fields required for offline review:
 
 - run configuration summary
 - top-level pass/fail status
-- key findings
-- model and task comparisons
-- failure taxonomy
-- retry impact
-- resource notes
-- explicit limitations and non-claims
+- model outcome summary
+- language coverage
+- structure complexity coverage
+- `schema_variant` coverage
+- retry policy and retry-recovery summary
+- skipped cell count and public skip-reason taxonomy
+- safety budget values, including live/download/model-load/image-live/stress/raw-artifact limits
+- live-screening readiness status, clearly distinguishing offline default runs from host-managed guarded live screening
+- privacy-scan status and explicit limitations/non-claims
 
 ## Privacy requirements
 

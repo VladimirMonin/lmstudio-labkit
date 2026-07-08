@@ -3,11 +3,13 @@
 from .artifacts import ArtifactSet, write_run_artifacts
 from .benchmarks import (
     BenchmarkConfig,
+    BenchmarkSafetyConfig,
     MatrixCell,
     MatrixPlan,
     ModelSpec,
     TaskSpec,
     plan_matrix,
+    run_live_small_text_screening,
     run_matrix,
 )
 from .datasets import TaskManifest, load_task_manifest, load_task_manifests, load_task_specs
@@ -27,6 +29,7 @@ from .validation import ValidationResult, ValidationSummary, validate_response
 __all__ = [
     "ArtifactSet",
     "BenchmarkConfig",
+    "BenchmarkSafetyConfig",
     "ChatMessage",
     "ExecutionOptions",
     "ImageInput",
@@ -48,6 +51,7 @@ __all__ = [
     "load_task_manifests",
     "load_task_specs",
     "plan_matrix",
+    "run_live_small_text_screening",
     "run_matrix",
     "validate_response",
     "write_run_artifacts",

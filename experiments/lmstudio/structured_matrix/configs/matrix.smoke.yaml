@@ -7,6 +7,9 @@ tasks:
   - task_id: ru_blocks_valid
     family: blocks
     modality: text
+    language: ru_ru
+    structure_complexity: medium
+    volume: single
     prompt: Synthetic fixture prompt.
     schema_family: blocks
     expected_ids: [0, 1]
@@ -22,6 +25,9 @@ tasks:
   - task_id: ru_blocks_retry
     family: blocks
     modality: text
+    language: ru_ru
+    structure_complexity: medium
+    volume: single
     prompt: Synthetic retry fixture prompt.
     schema_family: blocks
     expected_ids: [0, 1]
@@ -47,6 +53,8 @@ safety:
   allow_model_loads: false
   allow_remote_base_url: false
   allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
   max_requests: 300
   max_runtime_minutes: 120
   max_context_tier: 8192

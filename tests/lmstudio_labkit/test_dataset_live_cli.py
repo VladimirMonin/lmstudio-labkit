@@ -46,7 +46,7 @@ def test_live_transport_mocked_success() -> None:
     plan = RequestPlan(
         cell_id="cell_1",
         envelope=RequestEnvelope.text("req_1", "synthetic prompt"),
-        options=ExecutionOptions(model_id="fake/text"),
+        options=ExecutionOptions(model_id="fake/text", live=True),
     )
     bridge = ManagedLiveBridge(
         executor=lambda request_plan: '{"id":"ok","text":"Synthetic"}',

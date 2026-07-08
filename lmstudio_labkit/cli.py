@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +14,7 @@ from .reports import compare_runs, summarize_run, write_summary_csv
 
 _SAFE_PROFILES = {"offline-plan", "offline-fake", "offline", "fake"}
 _LIVE_PROFILES = {"live-small", "live-screening", "overnight"}
+_SAFE_RUN_ID_RE = re.compile(r"^[A-Za-z0-9_.-]{1,120}$")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -48,12 +50,16 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if args.command in {"plan", "plan-matrix"}:
         config = BenchmarkConfig.from_file(args.config)
+        _validate_safe_run_id(config.run_id)
+        _reject_existing_run_dir(args.output_root, config.run_id)
         artifacts = write_matrix_plan(config, args.output_root)
         _print_json({"status": "ok", "mode": "plan", "artifacts": artifacts.as_dict()})
         return 0
     if args.command in {"run", "run-matrix"}:
         _validate_run_profile(args)
         config = BenchmarkConfig.from_file(args.config)
+        _validate_safe_run_id(config.run_id)
+        _reject_existing_run_dir(args.output_root, config.run_id, allow_plan_only=True)
         artifacts = run_matrix(config, args.output_root, live=False)
         _print_json({"status": "ok", "mode": "run", "artifacts": artifacts.as_dict()})
         return 0
@@ -105,6 +111,27 @@ def _validate_run_profile(args: argparse.Namespace) -> None:
         request_count=1,
     )
     raise SystemExit("live bridge is configured, but live runs require a host-managed executor")
+
+
+def _validate_safe_run_id(run_id: str) -> None:
+    if not _SAFE_RUN_ID_RE.fullmatch(run_id):
+        raise SystemExit("run_id must be a safe local identifier")
+
+
+def _reject_existing_run_dir(
+    output_root: str | Path, run_id: str, *, allow_plan_only: bool = False
+) -> None:
+    run_dir = Path(output_root) / run_id
+    if not run_dir.exists():
+        return
+    if allow_plan_only and _is_plan_only_run_dir(run_dir):
+        return
+    raise SystemExit(f"output run directory already exists: {run_dir}")
+
+
+def _is_plan_only_run_dir(run_dir: Path) -> bool:
+    cell_results = run_dir / "cell_results.jsonl"
+    return cell_results.exists() and cell_results.read_text(encoding="utf-8") == ""
 
 
 def _load_safety(config_path: str | Path) -> dict[str, Any]:

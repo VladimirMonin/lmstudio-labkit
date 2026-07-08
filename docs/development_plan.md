@@ -65,6 +65,31 @@ uv run lmstudio-benchmark run --config experiments/lmstudio/structured_matrix/co
 uv run lmstudio-benchmark summarize --run-dir /tmp/labkit-run/matrix_smoke
 ```
 
+## L3.13 — Axis compatibility, safety budgets, and report readiness
+
+Status: implemented as an offline/default-safe readiness slice. No live LM Studio calls, model downloads, model loads, image live execution, stress profiles, or remote endpoints are enabled by default.
+
+Implemented scope:
+
+- Matrix planning records raw cartesian cells, filtered cells, skipped cells, and public skip reasons such as `language_mismatch`, `complexity_mismatch`, `volume_mismatch`, `unsupported_modality`, and `unsupported_context_tier`.
+- Task and model metadata now drive compatibility filtering across model, language, complexity, volume, modality, context tier, `schema_variant`, and retry axes.
+- `BenchmarkSafetyConfig` records the default safety budget: `live=false`, no downloads, no model loads, no raw prompt/response artifacts, no image live execution, no stress runs, and bounded request/model/context/repeat/runtime limits.
+- Reports and summaries cover model outcomes, language, structure complexity, `schema_variant`, retry impact, skipped cells, safety budget, and guarded live-screening readiness.
+- Guarded small text live screening remains host-managed through an injected executor and writes lab-only flags; offline `run_matrix` remains the default execution path.
+
+L3.13 acceptance gate:
+
+```bash
+python scripts/audit_publication_safety.py
+uv run ruff check .
+uv run ruff format --check .
+uv run pytest -q tests/libs tests/tools tests/architecture tests/lmstudio_labkit
+uv build
+uv run lmstudio-benchmark plan-matrix --config experiments/lmstudio/structured_matrix/configs/matrix.smoke.yaml --output-root /tmp/labkit-l313-plan
+uv run lmstudio-benchmark run-matrix --config experiments/lmstudio/structured_matrix/configs/matrix.smoke.yaml --output-root /tmp/labkit-l313-run --profile offline-fake
+uv run lmstudio-benchmark summarize --run-dir /tmp/labkit-l313-run/matrix_smoke
+```
+
 ## Phase 1 — Public package facade
 
 Introduce a stable public facade package while preserving compatibility with the extracted layout.
@@ -207,4 +232,4 @@ Done when:
 
 ## Current next slice
 
-The next implementation slice should stay narrow: create the public facade design and request-core type skeleton behind offline tests, or explicitly choose a docs-only follow-up if the API boundary needs more review first.
+The next implementation slice should stay narrow: canonicalize public package namespaces and import boundaries, keep `tools.*` compatibility wrappers tested, and add an installed-wheel smoke outside the repository. Continue to keep default gates offline and live LM Studio execution host-managed/explicit.

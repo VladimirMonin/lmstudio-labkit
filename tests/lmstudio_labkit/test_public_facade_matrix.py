@@ -26,6 +26,7 @@ def sample_config() -> dict:
                 "task_id": "simple_flat_ru",
                 "family": "simple_flat",
                 "modality": "text",
+                "language": "ru_ru",
                 "prompt": "Extract the visible fields from this private-free fixture.",
                 "schema": {
                     "type": "object",
@@ -58,6 +59,7 @@ def sample_config() -> dict:
             "retry_policy": ["off", "retry1"],
         },
         "repeats": 2,
+        "safety": {"max_context_tier": 16384},
     }
 
 
@@ -151,3 +153,33 @@ def test_cli_plan_run_summarize_compare(tmp_path: Path, capsys) -> None:
     )
     printed = capsys.readouterr().out
     assert '"pass_rate": 0.0' in printed
+
+
+def test_cli_rejects_unsafe_run_id(tmp_path: Path) -> None:
+    config = sample_config()
+    config["run_id"] = "../escape"
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(yaml.safe_dump(config, allow_unicode=True), encoding="utf-8")
+
+    try:
+        cli_main(["plan", "--config", str(config_path), "--output-root", str(tmp_path / "runs")])
+    except SystemExit as exc:
+        assert "safe local identifier" in str(exc)
+    else:  # pragma: no cover
+        raise AssertionError("unsafe run_id should fail")
+
+
+def test_cli_run_rejects_existing_non_plan_output_dir(tmp_path: Path) -> None:
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(yaml.safe_dump(sample_config(), allow_unicode=True), encoding="utf-8")
+    output_root = tmp_path / "runs"
+    run_dir = output_root / "offline_matrix"
+    run_dir.mkdir(parents=True)
+    (run_dir / "cell_results.jsonl").write_text('{"status":"old"}\n', encoding="utf-8")
+
+    try:
+        cli_main(["run", "--config", str(config_path), "--output-root", str(output_root)])
+    except SystemExit as exc:
+        assert "output run directory already exists" in str(exc)
+    else:  # pragma: no cover
+        raise AssertionError("existing non-plan run directory should fail")

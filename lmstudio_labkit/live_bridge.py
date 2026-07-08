@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Any
 from urllib.parse import urlparse
 
@@ -19,8 +19,24 @@ class LiveBridgeOptions:
     allow_remote: bool = False
     allow_stress: bool = False
     base_url: str = "http://127.0.0.1:1234"
-    profile: str = "offline-fake"
+    profile: str = "live-small"
     max_requests: int = 1
+
+
+@dataclass(frozen=True, slots=True)
+class LabOnlyLiveFlags:
+    """Explicit non-production flags persisted with guarded live screening artifacts."""
+
+    production_default: bool = False
+    wvm_runtime_integration: bool = False
+    kv_reuse_proven: bool = False
+    final_user_facing_recommendation: bool = False
+
+    def as_dict(self) -> dict[str, bool]:
+        return asdict(self)
+
+
+LAB_ONLY_LIVE_FLAGS = LabOnlyLiveFlags()
 
 
 @dataclass(frozen=True, slots=True)
@@ -36,8 +52,10 @@ class ManagedLiveBridge:
 
     def execute(self, plan: RequestPlan) -> tuple[str, RequestResult]:
         validate_live_guardrails(self.options, request_count=1)
-        if plan.envelope.modality == "image":
-            raise NotImplementedError("image live bridge is intentionally not implemented yet")
+        if plan.envelope.modality != "text":
+            raise LiveBridgeError("guarded live screening supports text modality only")
+        if not plan.options.live:
+            raise LiveBridgeError("guarded live screening requires plan.options.live=True")
         raw_response = self.executor(plan)
         return raw_response, RequestResult.from_raw_response(
             request_id=plan.envelope.request_id,
@@ -53,8 +71,12 @@ class ManagedLiveBridge:
 def validate_live_guardrails(options: LiveBridgeOptions, *, request_count: int) -> None:
     if not options.live:
         raise LiveBridgeError("live bridge requires explicit live=True")
-    if options.profile in {"overnight", "stress"} and not options.allow_stress:
-        raise LiveBridgeError("stress/overnight profiles require allow_stress=True")
+    if options.profile not in {"live-small", "live-screening"}:
+        raise LiveBridgeError("live bridge supports only live-small/live-screening profiles")
+    if options.allow_model_load:
+        raise LiveBridgeError("guarded live screening does not load models")
+    if options.allow_stress:
+        raise LiveBridgeError("guarded live screening does not allow stress/overnight runs")
     if request_count > options.max_requests:
         raise LiveBridgeError("request_count exceeds max_requests")
     parsed = urlparse(options.base_url)
@@ -82,10 +104,13 @@ def safe_live_metadata(options: LiveBridgeOptions) -> dict[str, Any]:
         "base_url_scheme": parsed.scheme,
         "profile": options.profile,
         "max_requests": options.max_requests,
+        "lab_only_flags": LAB_ONLY_LIVE_FLAGS.as_dict(),
     }
 
 
 __all__ = [
+    "LAB_ONLY_LIVE_FLAGS",
+    "LabOnlyLiveFlags",
     "LiveBridgeError",
     "LiveBridgeOptions",
     "ManagedLiveBridge",

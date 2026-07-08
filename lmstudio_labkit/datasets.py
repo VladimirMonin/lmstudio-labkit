@@ -31,6 +31,7 @@ class TaskManifest:
     expected: dict[str, Any]
     privacy: dict[str, Any]
     fake_mode: str = "valid"
+    tags: tuple[str, ...] = ()
 
     @classmethod
     def from_dict(cls, payload: dict[str, Any]) -> TaskManifest:
@@ -47,6 +48,7 @@ class TaskManifest:
             expected=dict(payload.get("expected", {})),
             privacy=dict(payload.get("privacy", {})),
             fake_mode=str(payload.get("fake_mode", "valid")),
+            tags=tuple(str(item) for item in payload.get("tags", [])),
         )
 
     def to_task_spec(self) -> TaskSpec:
@@ -59,11 +61,15 @@ class TaskManifest:
             task_id=self.task_id,
             family=self.schema_family,
             modality=self.modality,
+            language=self.language,
+            structure_complexity=self.structure_complexity,
+            volume=self.volume,
             prompt=f"synthetic fixture {self.task_id}",
             image_hash=self.input_ref.get("content_hash") if self.modality == "image" else None,
             schema=schema,
             schema_family=self.schema_family,
             schema_variant=self.schema_variant,
+            tags=self.tags,
             expected_output=expected_output,
             expected_ids=expected_ids,
             image_ground_truth=self.expected.get("image_ground_truth"),

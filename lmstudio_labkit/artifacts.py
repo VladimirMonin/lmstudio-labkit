@@ -292,30 +292,134 @@ def _build_report(
     run_id = planner_summary.get("run_id", "unknown_run")
     passed = sum(1 for row in cell_results if row.get("status") == "pass")
     failed = sum(1 for row in cell_results if row.get("status") == "fail")
-    axis_counts = Counter()
+    model_counts: dict[str, Counter[str]] = defaultdict(Counter)
+    axis_counts: dict[str, Counter[str]] = defaultdict(Counter)
+    retry_counts: dict[str, Counter[str]] = defaultdict(Counter)
     for row in cell_results:
+        status = str(row.get("status", "unknown"))
+        model_counts[str(row.get("model_key", "unknown"))][status] += 1
         axes = row.get("axes") if isinstance(row.get("axes"), dict) else {}
         for axis_name, axis_value in axes.items():
-            axis_counts[f"{axis_name}={axis_value}"] += 1
-    axis_lines = [f"- {key}: `{count}`" for key, count in sorted(axis_counts.items())]
-    if not axis_lines:
-        axis_lines = ["- no completed cells"]
+            axis_counts[f"{axis_name}={axis_value}"][status] += 1
+        retry_policy = str(axes.get("retry_policy", "off"))
+        retry_counts[retry_policy][status] += 1
+        if int(row.get("retry_count") or 0) > 0:
+            retry_counts[retry_policy]["retry_attempted"] += 1
+        if row.get("retry_recovered") is True:
+            retry_counts[retry_policy]["recovered"] += 1
+
     lines = [
         f"# LabKit run {run_id}",
         "",
         f"- cell_count: `{planner_summary.get('cell_count', len(cell_results))}`",
+        f"- raw_cartesian_cell_count: `{planner_summary.get('raw_cartesian_cell_count', len(cell_results))}`",
+        f"- filtered_cell_count: `{planner_summary.get('filtered_cell_count', len(cell_results))}`",
+        f"- skipped_cell_count: `{planner_summary.get('skipped_cell_count', 0)}`",
         f"- result_count: `{len(cell_results)}`",
         f"- passed: `{passed}`",
         f"- failed: `{failed}`",
         f"- live: `{str(planner_summary.get('live', False)).lower()}`",
         f"- privacy_scan: `{privacy_scan['status']}`",
         "",
-        "## Axis coverage",
+        "## Model summary",
         "",
-        *axis_lines,
+        *_status_lines(model_counts, empty="- no completed model cells"),
+        "",
+        "## Required axis summaries",
+        "",
+        "### Language",
+        "",
+        *_axis_lines(axis_counts, "language"),
+        "",
+        "### Complexity",
+        "",
+        *_axis_lines(axis_counts, "structure_complexity"),
+        "",
+        "### Schema variant",
+        "",
+        *_axis_lines(axis_counts, "schema_variant"),
+        "",
+        "### Retry",
+        "",
+        *_retry_lines(retry_counts),
+        "",
+        "## Skipped cells",
+        "",
+        *_skip_reason_lines(planner_summary),
+        "",
+        "## Safety budget",
+        "",
+        *_safety_budget_lines(planner_summary),
+        "",
+        "## Live-screening readiness",
+        "",
+        f"- status: `{_live_screening_readiness(planner_summary)}`",
+        "- note: `live execution is host-managed and never runs from the default offline CLI path`",
         "",
     ]
     return "\n".join(lines)
+
+
+def _status_lines(grouped: dict[str, Counter[str]], *, empty: str) -> list[str]:
+    if not grouped:
+        return [empty]
+    lines = []
+    for key, counts in sorted(grouped.items()):
+        total = sum(value for name, value in counts.items() if name in {"pass", "fail", "unknown"})
+        pass_count = counts.get("pass", 0)
+        fail_count = counts.get("fail", 0)
+        pass_rate = _rate(pass_count, total)
+        lines.append(
+            f"- {key}: attempts `{total}`, pass `{pass_count}`, fail `{fail_count}`, pass_rate `{pass_rate}`"
+        )
+    return lines
+
+
+def _axis_lines(axis_counts: dict[str, Counter[str]], axis_name: str) -> list[str]:
+    filtered = {
+        key.split("=", 1)[1]: counts
+        for key, counts in axis_counts.items()
+        if key.startswith(f"{axis_name}=")
+    }
+    return _status_lines(filtered, empty=f"- no `{axis_name}` cells")
+
+
+def _retry_lines(retry_counts: dict[str, Counter[str]]) -> list[str]:
+    if not retry_counts:
+        return ["- no retry cells"]
+    lines = []
+    for policy, counts in sorted(retry_counts.items()):
+        total = counts.get("pass", 0) + counts.get("fail", 0) + counts.get("unknown", 0)
+        recovered = counts.get("recovered", 0)
+        attempted = counts.get("retry_attempted", 0)
+        lines.append(
+            f"- {policy}: attempts `{total}`, retry_attempted `{attempted}`, recovered `{recovered}`, pass `{counts.get('pass', 0)}`, fail `{counts.get('fail', 0)}`"
+        )
+    return lines
+
+
+def _skip_reason_lines(planner_summary: dict[str, Any]) -> list[str]:
+    reasons = planner_summary.get("skip_reasons")
+    if not isinstance(reasons, dict) or not reasons:
+        return ["- none"]
+    return [f"- {reason}: `{count}`" for reason, count in sorted(reasons.items())]
+
+
+def _safety_budget_lines(planner_summary: dict[str, Any]) -> list[str]:
+    budget = planner_summary.get("safety_budget")
+    if not isinstance(budget, dict) or not budget:
+        return ["- not recorded"]
+    return [f"- {key}: `{value}`" for key, value in sorted(budget.items())]
+
+
+def _live_screening_readiness(planner_summary: dict[str, Any]) -> str:
+    budget = planner_summary.get("safety_budget")
+    safety_live = isinstance(budget, dict) and budget.get("live") is True
+    if planner_summary.get("live") is True and planner_summary.get("live_bridge"):
+        return "guarded-live-screening-artifacts"
+    if safety_live:
+        return "host-managed-executor-required"
+    return "offline-default-live-screening-not-enabled"
 
 
 __all__ = ["ArtifactSet", "write_run_artifacts"]

@@ -21,6 +21,12 @@ def summarize_run(run_dir: str | Path) -> dict[str, Any]:
         "fail_count": failed,
         "pass_rate": round(passed / len(rows), 4) if rows else 0.0,
         "privacy_mode": planner.get("privacy_mode"),
+        "raw_cartesian_cell_count": planner.get("raw_cartesian_cell_count"),
+        "filtered_cell_count": planner.get("filtered_cell_count"),
+        "skipped_cell_count": planner.get("skipped_cell_count", 0),
+        "skip_reasons": planner.get("skip_reasons", {}),
+        "safety_budget": planner.get("safety_budget", {}),
+        "live_screening_readiness": _live_screening_readiness(planner),
         "per_model": _group_counts(rows, "model_key"),
         "per_axis": _axis_counts(rows),
         "per_language": _axis_counts(rows, axis="language"),
@@ -185,6 +191,16 @@ def _render_compare_markdown(comparison: dict[str, Any]) -> str:
             "",
         ]
     )
+
+
+def _live_screening_readiness(planner: dict[str, Any]) -> str:
+    budget = planner.get("safety_budget")
+    safety_live = isinstance(budget, dict) and budget.get("live") is True
+    if planner.get("live") is True and planner.get("live_bridge"):
+        return "guarded-live-screening-artifacts"
+    if safety_live:
+        return "host-managed-executor-required"
+    return "offline-default-live-screening-not-enabled"
 
 
 def _read_json(path: Path) -> dict[str, Any]:
