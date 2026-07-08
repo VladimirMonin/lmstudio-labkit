@@ -45,6 +45,7 @@ def validate_response(
     *,
     finish_reason: str | None = None,
     input_char_count: int | None = None,
+    input_text: str | None = None,
 ) -> ValidationSummary:
     parsed: Any | None = None
     results: list[ValidationResult] = []
@@ -87,8 +88,12 @@ def validate_response(
                 policy=contract.language_policy,
                 expected_hints=contract.expected_output,
                 image_ground_truth=contract.image_ground_truth,
+                include_paths=contract.language_include_paths,
+                ignore_paths=contract.language_ignore_paths,
             )
         )
+
+        results.extend(_postprocessing_validation_results(parsed, contract, input_text))
 
         if contract.image_ground_truth is not None:
             results.append(validate_image_ground_truth(parsed, contract.image_ground_truth))
@@ -105,8 +110,12 @@ def validate_response(
                 policy=contract.language_policy,
                 expected_hints=contract.expected_output,
                 image_ground_truth=contract.image_ground_truth,
+                include_paths=contract.language_include_paths,
+                ignore_paths=contract.language_ignore_paths,
             )
         )
+
+        results.extend(_postprocessing_validation_results(raw_response, contract, input_text))
 
     if input_char_count is not None:
         results.append(validate_empty_text_for_non_empty_input(raw_response, input_char_count))
@@ -565,6 +574,79 @@ def validate_image_ground_truth(value: Any, ground_truth: dict[str, Any]) -> Val
             "image_ground_truth", "fail", "image_ground_truth_mismatch", metrics
         )
     return ValidationResult("image_ground_truth", "pass", metrics=metrics)
+
+
+def _postprocessing_validation_results(
+    value: Any, contract: ResponseContract, input_text: str | None
+) -> list[ValidationResult]:
+    results: list[ValidationResult] = []
+    task_intent = contract.task_intent or "generic"
+    validation_policy = contract.validation_policy or "automatic"
+    output_text = _primary_user_facing_text(value, contract)
+
+    if contract.expected_terms:
+        results.append(validate_term_normalization(value, contract.expected_terms))
+    else:
+        results.append(ValidationResult("term_normalization_status", "skip"))
+
+    if input_text is not None and task_intent in {
+        "punctuation_restore",
+        "transcript_cleanup",
+        "mixed_postprocess",
+    }:
+        results.append(
+            validate_punctuation_metrics(
+                input_text, output_text, policy=contract.punctuation_policy
+            )
+        )
+    else:
+        results.append(ValidationResult("punctuation_metrics", "skip"))
+
+    if task_intent == "paragraphing" or contract.paragraph_count_min is not None:
+        results.append(
+            validate_paragraphing_metrics(
+                output_text,
+                paragraph_count_min=contract.paragraph_count_min or 1,
+                paragraph_count_max=contract.paragraph_count_max,
+                hard=task_intent == "paragraphing",
+            )
+        )
+    else:
+        results.append(ValidationResult("paragraphing_metrics", "skip"))
+
+    if input_text is not None and task_intent in {"filler_cleanup", "mixed_postprocess"}:
+        filler_terms = contract.filler_terms or DEFAULT_RU_FILLERS
+        results.append(
+            validate_filler_cleanup(input_text, output_text, filler_terms=filler_terms, hard=True)
+        )
+    else:
+        results.append(ValidationResult("filler_cleanup", "skip"))
+
+    manual_required = "manual" in validation_policy or task_intent in {
+        "summary",
+        "action_items",
+        "mixed_postprocess",
+    }
+    results.append(
+        ValidationResult(
+            "no_new_facts_manual_review",
+            "warning" if manual_required else "skip",
+            "manual_review_required" if manual_required else None,
+            {"manual_review_required": manual_required},
+        )
+    )
+    return results
+
+
+def _primary_user_facing_text(value: Any, contract: ResponseContract) -> str:
+    include_paths = contract.language_include_paths
+    if include_paths:
+        return " ".join(
+            _flatten_language_text(item)
+            for path in include_paths
+            for item in _values_by_path(value, _parse_id_path(path))
+        )
+    return _flatten_language_text(value)
 
 
 def validate_term_normalization(

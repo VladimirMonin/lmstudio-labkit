@@ -92,6 +92,15 @@ class ResponseContract:
     length_ratio_policy: LengthRatioPolicy | str | dict[str, Any] = "hard"
     expected_output: Any | None = None
     image_ground_truth: dict[str, Any] | None = None
+    language_include_paths: tuple[str, ...] = ()
+    language_ignore_paths: tuple[str, ...] = ()
+    task_intent: str | None = None
+    validation_policy: str | None = None
+    expected_terms: tuple[dict[str, Any], ...] = ()
+    punctuation_policy: str = "diagnostic"
+    paragraph_count_min: int | None = None
+    paragraph_count_max: int | None = None
+    filler_terms: tuple[str, ...] = ()
 
     def safe_metadata(self) -> dict[str, Any]:
         schema_hash = stable_hash(_stable_repr(self.schema)) if self.schema is not None else None
@@ -116,6 +125,18 @@ class ResponseContract:
             "image_ground_truth_hash": stable_hash(_stable_repr(self.image_ground_truth))
             if self.image_ground_truth is not None
             else None,
+            "language_include_paths": list(self.language_include_paths),
+            "language_ignore_paths": list(self.language_ignore_paths),
+            "task_intent": self.task_intent,
+            "validation_policy": self.validation_policy,
+            "expected_terms_hash": stable_hash(_stable_repr(self.expected_terms))
+            if self.expected_terms
+            else None,
+            "expected_terms_count": len(self.expected_terms),
+            "punctuation_policy": self.punctuation_policy,
+            "paragraph_count_min": self.paragraph_count_min,
+            "paragraph_count_max": self.paragraph_count_max,
+            "filler_terms_count": len(self.filler_terms),
         }
 
 

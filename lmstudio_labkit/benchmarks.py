@@ -99,6 +99,13 @@ class TaskSpec:
     validation_policy: str = "automatic"
     prompt_variant: str = "baseline"
     response_schema_complexity: str | None = None
+    language_include_paths: tuple[str, ...] = ()
+    language_ignore_paths: tuple[str, ...] = ()
+    expected_terms: tuple[dict[str, Any], ...] = ()
+    punctuation_policy: str = "diagnostic"
+    paragraph_count_min: int | None = None
+    paragraph_count_max: int | None = None
+    filler_terms: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -220,6 +227,15 @@ class MatrixCell:
             min_length_ratio=self.task.min_length_ratio,
             max_length_ratio=self.task.max_length_ratio,
             length_ratio_policy=self.task.length_ratio_policy,
+            language_include_paths=self.task.language_include_paths,
+            language_ignore_paths=self.task.language_ignore_paths,
+            task_intent=self.task.task_intent,
+            validation_policy=self.task.validation_policy,
+            expected_terms=self.task.expected_terms,
+            punctuation_policy=self.task.punctuation_policy,
+            paragraph_count_min=self.task.paragraph_count_min,
+            paragraph_count_max=self.task.paragraph_count_max,
+            filler_terms=self.task.filler_terms,
         )
         text_inputs = (TextInput(self.task.prompt),) if self.task.prompt else ()
         image_inputs = (
@@ -559,6 +575,7 @@ def run_matrix(
                 request_plan.envelope.response_contract,
                 finish_reason=result.finish_reason,
                 input_char_count=input_char_count,
+                input_text=_input_text_for_validation(request_plan),
             )
             retry_count = 0
             recovered = False
@@ -570,6 +587,7 @@ def run_matrix(
                     request_plan.envelope.response_contract,
                     finish_reason=result.finish_reason,
                     input_char_count=input_char_count,
+                    input_text=_input_text_for_validation(request_plan),
                 )
                 recovered = validation.status == "pass" and result.status == "ok"
             rows.append(
@@ -592,6 +610,10 @@ def run_matrix(
         planner_summary["live_bridge"] = safe_live_metadata(live_options)
         planner_summary["lab_only_flags"] = LAB_ONLY_LIVE_FLAGS.as_dict()
     return write_run_artifacts(run_dir, planner_summary, rows)
+
+
+def _input_text_for_validation(request_plan: RequestPlan) -> str:
+    return "\n".join(item.text for item in request_plan.envelope.text_inputs)
 
 
 def _live_request_plan_for_cell(cell: MatrixCell) -> RequestPlan:
@@ -686,6 +708,7 @@ def _row_from_execution(
             request_plan.envelope.response_contract,
             finish_reason=result.finish_reason,
             input_char_count=input_char_count,
+            input_text=_input_text_for_validation(request_plan),
         )
     cache_telemetry = _cache_telemetry_fields(cell, request_plan)
     timing_telemetry = _timing_telemetry_fields(result)
@@ -766,6 +789,7 @@ def run_live_small_text_screening(
             request_plan.envelope.response_contract,
             finish_reason=result.finish_reason,
             input_char_count=input_char_count,
+            input_text=_input_text_for_validation(request_plan),
         )
         cache_telemetry = _cache_telemetry_fields(cell, request_plan)
         timing_telemetry = _timing_telemetry_fields(result)
@@ -890,6 +914,17 @@ def _task_from_dict(payload: dict[str, Any]) -> TaskSpec:
         validation_policy=str(payload.get("validation_policy", "automatic")),
         prompt_variant=str(payload.get("prompt_variant", "baseline")),
         response_schema_complexity=payload.get("response_schema_complexity"),
+        language_include_paths=tuple(
+            str(item) for item in payload.get("language_include_paths", [])
+        ),
+        language_ignore_paths=tuple(str(item) for item in payload.get("language_ignore_paths", [])),
+        expected_terms=tuple(
+            item for item in payload.get("expected_terms", []) if isinstance(item, dict)
+        ),
+        punctuation_policy=str(payload.get("punctuation_policy", "diagnostic")),
+        paragraph_count_min=payload.get("paragraph_count_min"),
+        paragraph_count_max=payload.get("paragraph_count_max"),
+        filler_terms=tuple(str(item) for item in payload.get("filler_terms", [])),
     )
 
 
