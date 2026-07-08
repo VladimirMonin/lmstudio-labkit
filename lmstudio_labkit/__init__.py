@@ -10,6 +10,7 @@ from .benchmarks import (
     plan_matrix,
     run_matrix,
 )
+from .datasets import TaskManifest, load_task_manifest, load_task_manifests, load_task_specs
 from .requests import (
     ChatMessage,
     ExecutionOptions,
@@ -20,6 +21,7 @@ from .requests import (
     ResponseContract,
     TextInput,
 )
+from .schema_builders import build_blocks_schema, build_simple_flat_schema
 from .validation import ValidationResult, ValidationSummary, validate_response
 
 __all__ = [
@@ -35,10 +37,16 @@ __all__ = [
     "RequestPlan",
     "RequestResult",
     "ResponseContract",
+    "TaskManifest",
     "TaskSpec",
     "TextInput",
     "ValidationResult",
     "ValidationSummary",
+    "build_blocks_schema",
+    "build_simple_flat_schema",
+    "load_task_manifest",
+    "load_task_manifests",
+    "load_task_specs",
     "plan_matrix",
     "run_matrix",
     "validate_response",
