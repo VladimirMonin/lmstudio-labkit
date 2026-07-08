@@ -1,0 +1,229 @@
+{
+  "attempt_count": 80,
+  "cache_modes": [
+    "none"
+  ],
+  "cell_count": 80,
+  "config_hash": "6c6c7aa1a773ee70f23decc5cab55faa5e9b5bf0b7b00bf06269845bebcf1236",
+  "execution_modes": [
+    "cold_per_request"
+  ],
+  "execution_targets": [
+    "live_small"
+  ],
+  "fail_count": 0,
+  "failure_categories": {},
+  "filtered_cell_count": 80,
+  "hard_fail_count": 0,
+  "length_ratio_failures": {
+    "count": 0,
+    "max_actual_ratio": null,
+    "min_actual_ratio": null,
+    "model_ids": [],
+    "policy_max": [],
+    "policy_min": [],
+    "task_ids": []
+  },
+  "length_ratio_warning_count": 0,
+  "lifecycle": {
+    "cleanup_scopes": [
+      "per_request"
+    ],
+    "final_loaded_instances": [
+      0
+    ],
+    "load_scopes": [
+      "per_request"
+    ],
+    "session_cleanup_verified": [
+      "True"
+    ],
+    "session_ids": [
+      "session_03a06e6080065c6c",
+      "session_11b17d5e6325db54",
+      "session_13127f75592e009c",
+      "session_139acf6fbca506f6",
+      "session_15525652be47cae6",
+      "session_1adf667f9fa4f832",
+      "session_1ce3fbceabf41621",
+      "session_2240b6c0d55544cb",
+      "session_26b88c12e206256a",
+      "session_29359aa780f9d0f1",
+      "session_2b5321325cf60d38",
+      "session_2d0b74038a4346e3",
+      "session_2d189cbf39d93fe6",
+      "session_2fb272cd36ace084",
+      "session_30fb6a2b0cbb8728",
+      "session_31fd689ccbb498a8",
+      "session_33c8059377505e4c",
+      "session_390ec1a1ea71a7d6",
+      "session_395bfdbd872d4682",
+      "session_3f023beb63c0322a",
+      "session_4714efc0831a511d",
+      "session_475cb8df06cdeb94",
+      "session_4b73f9031a032202",
+      "session_53e7d1e2ec090e6a",
+      "session_5480c62e8cd8f7cc",
+      "session_55782f17120d310f",
+      "session_5c25e60a0311403b",
+      "session_5d9370933b0a9eea",
+      "session_5dba66ba9e2d443d",
+      "session_6751d3e6e76f1070",
+      "session_685f3be17994fcfe",
+      "session_69aad1d95ef88607",
+      "session_6d6c6c77f8e1a8ed",
+      "session_72cecc3579f34544",
+      "session_76bca2095baf2699",
+      "session_78095ffa9d3727bc",
+      "session_813919319c9a22d8",
+      "session_86c1d4152c8e2cbf",
+      "session_87b2c9bcde427133",
+      "session_89634985572cb628",
+      "session_991ca6da5253c27f",
+      "session_9aa0fc72d0435362",
+      "session_9ae9f84bb977708c",
+      "session_9d0dc38565f49873",
+      "session_9f6eb480ef15a79c",
+      "session_a35cd24752ea3425",
+      "session_a9171fd10b0f0315",
+      "session_ab9fefabf56e6fec",
+      "session_ad3ccc153e44f08c",
+      "session_af1120ade3e4b54c",
+      "session_b741cf569c3f78fa",
+      "session_b768f26e72d92af7",
+      "session_bbc983a4079af924",
+      "session_bbdf94bccf50d1ed",
+      "session_bdc0cd7ad4656c6b",
+      "session_c10162b8d412708a",
+      "session_c3e274ca4791dedb",
+      "session_c535b7f1445503c9",
+      "session_c777af062be40670",
+      "session_cf7e0e824e627b89",
+      "session_d4b42fb0f0cf8fc9",
+      "session_d65858341da478ab",
+      "session_dd8ed526e0f93780",
+      "session_de26d6696cf4bd6a",
+      "session_de5cb229326c1679",
+      "session_deeca560a9ce0b00",
+      "session_df49e9a22663b014",
+      "session_df925cd18427e9e5",
+      "session_e08596a898c23c6e",
+      "session_e299591f5c9134f5",
+      "session_e836c91223b9fb48",
+      "session_e879b8eca9349859",
+      "session_ec514c35c28a363b",
+      "session_ed298aad108d6960",
+      "session_f12e7d5747a03a47",
+      "session_f263aa230140e640",
+      "session_f39b565427f9a8eb",
+      "session_f46786512897cfd4",
+      "session_f8b23d183e32dd7c",
+      "session_fcde68eee8e7f8d0"
+    ],
+    "session_request_counts": [
+      1
+    ],
+    "session_request_indices": [
+      1
+    ]
+  },
+  "live": true,
+  "live_bridge": {
+    "allow_model_load": true,
+    "allow_remote": true,
+    "allow_stress": false,
+    "base_url_kind": "local",
+    "base_url_scheme": "http",
+    "live": true,
+    "max_requests": 90,
+    "profile": "live-screening"
+  },
+  "model_ids": [
+    "google/gemma-4-e2b",
+    "google/gemma-4-e4b"
+  ],
+  "model_status": {
+    "google/gemma-4-e2b": {
+      "pass": 40
+    },
+    "google/gemma-4-e4b": {
+      "pass": 40
+    }
+  },
+  "models": [
+    "gemma4_e2b",
+    "gemma4_e4b"
+  ],
+  "pass_count": 80,
+  "pass_rate": 1.0,
+  "per_complexity": {
+    "simple": {
+      "pass": 80,
+      "warning": 120
+    }
+  },
+  "per_language": {
+    "ru_en_mixed": {
+      "pass": 20,
+      "warning": 20
+    },
+    "ru_ru": {
+      "pass": 60,
+      "warning": 100
+    }
+  },
+  "per_volume": {
+    "single": {
+      "pass": 80,
+      "warning": 120
+    }
+  },
+  "resource_telemetry_modes": [
+    "timing_only"
+  ],
+  "retry_impact": {
+    "off": {
+      "pass": 40,
+      "warning": 60
+    },
+    "retry1": {
+      "pass": 40,
+      "warning": 60
+    }
+  },
+  "run_id": "matrix_l3_22_simple_postprocessing_product_like_e2b_e4b",
+  "safety": {
+    "public_safe": true,
+    "raw_base_url_stored": false,
+    "raw_prompt_response_stored": false,
+    "raw_prompt_stored": false,
+    "raw_response_stored": false
+  },
+  "schema_version": "latest-text-remote-snapshot-v1",
+  "skipped_cell_count": 5040,
+  "timing": {
+    "latency_ms_max": 962.51,
+    "latency_ms_min": 641.314,
+    "total_latency_ms_max": 962.51,
+    "total_latency_ms_min": 641.314
+  },
+  "token_counts": {
+    "completion_tokens": 3110,
+    "prompt_tokens": 22140
+  },
+  "warmup": {
+    "cache_hit_reported": [
+      "unknown"
+    ],
+    "kv_reuse_proven": [
+      "False"
+    ],
+    "measured_request_count": 80,
+    "warmup_request_count": 0
+  },
+  "warning_categories": {
+    "manual_review_required": 40,
+    "punctuation_metrics": 40
+  },
+  "warning_count": 120
+}

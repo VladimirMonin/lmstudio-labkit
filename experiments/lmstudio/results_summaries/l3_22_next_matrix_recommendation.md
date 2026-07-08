@@ -2,23 +2,29 @@
 
 ## Recommendation
 
-Proceed to a slightly larger **simple-only product-like run** only if needed, still without blocked branches.
+Proceed toward product integration only for the simple postprocessing path.
 
-Allowed next expansion:
+Default candidate:
 
-- more simple transcript and term fixtures;
-- more repeats;
-- E2B/E4B only;
-- retry off + retry1;
-- cold per request;
-- public-safe latest snapshots and local-only review packs.
+```text
+transcript_cleanup/simple + strict_no_new_facts
+```
+
+Optional controlled candidate:
+
+```text
+term_normalization/simple + term_glossary
+```
+
+## Next gate
+
+Add more realistic ASR-like fixtures and perform a local-only raw-output quality review. Keep public artifacts sanitized.
 
 Keep excluded:
 
-- blocks schema tasks until the id duplicate/missing behavior is fixed, not merely detected;
-- paragraphing until a paragraph-specific schema or diagnostic-first policy is chosen;
-- Qwen/12B/26B/image/parallel/throughput/session/warmup.
-
-## Current decision
-
-L3.22 is clean. It accepts the focused simple path but not the broader postprocessing matrix.
+- blocks schema tasks until duplicate/missing id behavior is fixed;
+- paragraphing hard gate until schema/policy redesign;
+- 12B/26B/Qwen model families;
+- image live;
+- throughput/parallel;
+- session/warmup.

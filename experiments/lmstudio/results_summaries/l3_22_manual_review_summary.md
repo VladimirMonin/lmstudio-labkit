@@ -5,32 +5,49 @@
 Local-only review pack exported:
 
 ```text
-/tmp/labkit-l322-review-pack-20260709004838
+/tmp/labkit-l322-review-pack
 ```
 
-The pack is not committed. This committed summary uses public-safe validation metadata only.
+It is not committed. This summary uses sanitized validation metadata only.
 
-## Review result
+## Outputs that look product-useful
 
-Sampled cases: 24.
+The validation metadata supports `transcript_cleanup/simple` as the strongest product-like candidate. It passed all rows across E2B/E4B, retry off/retry1, and five repeats per paired task.
 
-The sample covers:
+`term_normalization/simple` also passed all rows and is useful as a controlled glossary/noisy-term mode.
 
-- E2B transcript cleanup simple;
-- E2B term normalization simple;
-- E4B transcript cleanup simple;
-- both retry policies and repeated cells through the sampled rows.
+## Acceptable failures for small local models
 
-All sampled cases are pass-status metadata cases. No sampled failure case exists because the live run had `fail_count=0`.
+None occurred in this bounded main run:
 
-## Quality boundary
+- fail_count: 0
+- hard_fail_count: 0
 
-The review pack does not contain raw model outputs. Therefore this is a validation/contract review, not a prose-style review. It proves schema/language/term/filler/punctuation validator status and lifecycle cleanup, but it does not directly judge whether the text is aesthetically ideal.
+Diagnostic warnings remain expected for punctuation/filler/manual-review categories and should not be interpreted as hard product failures.
 
-## Product interpretation
+## Default candidate
 
-The simple product-like path is now the strongest candidate:
+Recommended product default candidate:
 
-- transcript cleanup simple: accepted for focused E2B/E4B screening;
-- term normalization simple: accepted for focused E2B/E4B screening;
-- blocks and paragraphing remain excluded from this decision.
+```text
+transcript_cleanup/simple + strict_no_new_facts
+```
+
+Recommended optional mode:
+
+```text
+term_normalization/simple + term_glossary
+```
+
+## E2B vs E4B
+
+No meaningful difference in this validation-only gate:
+
+- E2B: 40/40 pass
+- E4B: 40/40 pass
+
+E4B is not better enough to matter based on this run alone.
+
+## Boundary
+
+This does not judge raw prose aesthetics because raw outputs are not committed. A future local-only human quality review can inspect raw outputs without publishing them.
