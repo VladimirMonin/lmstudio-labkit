@@ -582,51 +582,98 @@ def _postprocessing_validation_results(
     results: list[ValidationResult] = []
     task_intent = contract.task_intent or "generic"
     validation_policy = contract.validation_policy or "automatic"
-    output_text = _primary_user_facing_text(value, contract)
+    source_text = contract.source_text if contract.source_text is not None else input_text
+    output_text = extract_user_text_for_validation(
+        value,
+        schema_family=contract.schema_family,
+        response_schema_complexity=contract.response_schema_complexity,
+        include_paths=contract.language_include_paths,
+    )
 
-    if contract.expected_terms:
-        results.append(validate_term_normalization(value, contract.expected_terms))
-    else:
-        results.append(ValidationResult("term_normalization_status", "skip"))
-
-    if input_text is not None and task_intent in {
-        "punctuation_restore",
+    term_policy = _effective_policy(
+        contract.term_normalization_policy,
+        default="hard" if task_intent == "term_normalization" else "diagnostic",
+    )
+    if contract.expected_terms and task_intent in {
+        "term_normalization",
         "transcript_cleanup",
         "mixed_postprocess",
     }:
         results.append(
-            validate_punctuation_metrics(
-                input_text, output_text, policy=contract.punctuation_policy
+            _apply_validation_policy(
+                validate_term_normalization(value, contract.expected_terms), term_policy
             )
+        )
+    else:
+        results.append(ValidationResult("term_normalization_status", "skip"))
+
+    punctuation_policy = _effective_policy(contract.punctuation_policy, default="diagnostic")
+    if (
+        source_text is not None
+        and punctuation_policy != "off"
+        and task_intent
+        in {
+            "punctuation_restore",
+            "transcript_cleanup",
+            "mixed_postprocess",
+        }
+    ):
+        results.append(
+            validate_punctuation_metrics(source_text, output_text, policy=punctuation_policy)
         )
     else:
         results.append(ValidationResult("punctuation_metrics", "skip"))
 
-    if task_intent == "paragraphing" or contract.paragraph_count_min is not None:
+    paragraph_policy = _effective_policy(
+        contract.paragraphing_policy,
+        default="hard"
+        if contract.paragraph_count_min is not None or contract.paragraph_count_max is not None
+        else "off",
+    )
+    if paragraph_policy != "off" and (
+        task_intent in {"paragraphing", "transcript_cleanup", "mixed_postprocess"}
+        or contract.paragraph_count_min is not None
+    ):
         results.append(
             validate_paragraphing_metrics(
                 output_text,
                 paragraph_count_min=contract.paragraph_count_min or 1,
                 paragraph_count_max=contract.paragraph_count_max,
-                hard=task_intent == "paragraphing",
+                hard=paragraph_policy == "hard",
             )
         )
     else:
         results.append(ValidationResult("paragraphing_metrics", "skip"))
 
-    if input_text is not None and task_intent in {"filler_cleanup", "mixed_postprocess"}:
+    filler_policy = _effective_policy(
+        contract.filler_cleanup_policy,
+        default="hard" if task_intent == "filler_cleanup" else "diagnostic",
+    )
+    if source_text is not None and task_intent in {
+        "filler_cleanup",
+        "transcript_cleanup",
+        "mixed_postprocess",
+    }:
         filler_terms = contract.filler_terms or DEFAULT_RU_FILLERS
         results.append(
-            validate_filler_cleanup(input_text, output_text, filler_terms=filler_terms, hard=True)
+            _apply_validation_policy(
+                validate_filler_cleanup(
+                    source_text,
+                    output_text,
+                    filler_terms=filler_terms,
+                    hard=filler_policy == "hard",
+                ),
+                filler_policy,
+            )
         )
     else:
         results.append(ValidationResult("filler_cleanup", "skip"))
 
-    manual_required = "manual" in validation_policy or task_intent in {
-        "summary",
-        "action_items",
-        "mixed_postprocess",
-    }
+    manual_policy = _effective_policy(contract.manual_review_policy, default="diagnostic")
+    manual_required = manual_policy != "off" and (
+        "manual" in validation_policy
+        or task_intent in {"summary", "action_items", "mixed_postprocess"}
+    )
     results.append(
         ValidationResult(
             "no_new_facts_manual_review",
@@ -638,15 +685,63 @@ def _postprocessing_validation_results(
     return results
 
 
-def _primary_user_facing_text(value: Any, contract: ResponseContract) -> str:
-    include_paths = contract.language_include_paths
-    if include_paths:
+def extract_user_text_for_validation(
+    value: Any,
+    *,
+    schema_family: str | None = None,
+    response_schema_complexity: str | None = None,
+    include_paths: tuple[str, ...] = (),
+) -> str:
+    paths = include_paths or _default_user_text_paths(schema_family, response_schema_complexity)
+    if paths:
         return " ".join(
             _flatten_language_text(item)
-            for path in include_paths
+            for path in paths
             for item in _values_by_path(value, _parse_id_path(path))
         )
     return _flatten_language_text(value)
+
+
+def _default_user_text_paths(
+    schema_family: str | None, response_schema_complexity: str | None
+) -> tuple[str, ...]:
+    normalized = response_schema_complexity or schema_family
+    if normalized == "simple":
+        return ("clean_text", "summary", "title", "tags[*]")
+    if normalized == "blocks" or schema_family == "blocks":
+        return ("blocks[*].text",)
+    if normalized == "complex":
+        return (
+            "document.title",
+            "document.sections[*].heading",
+            "document.sections[*].blocks[*].text",
+            "document.sections[*].blocks[*].terms[*].normalized",
+        )
+    return ()
+
+
+def _effective_policy(policy: str | None, *, default: str) -> str:
+    if policy in {"off", "diagnostic", "warning", "hard"}:
+        return str(policy)
+    return default
+
+
+def _apply_validation_policy(result: ValidationResult, policy: str) -> ValidationResult:
+    if policy == "off":
+        return ValidationResult(result.name, "skip", metrics={**result.metrics, "policy": policy})
+    metrics = {**result.metrics, "policy": policy}
+    if policy in {"diagnostic", "warning"} and result.status == "fail":
+        return ValidationResult(result.name, "warning", result.category, metrics)
+    return ValidationResult(result.name, result.status, result.category, metrics)
+
+
+def _primary_user_facing_text(value: Any, contract: ResponseContract) -> str:
+    return extract_user_text_for_validation(
+        value,
+        schema_family=contract.schema_family,
+        response_schema_complexity=contract.response_schema_complexity,
+        include_paths=contract.language_include_paths,
+    )
 
 
 def validate_term_normalization(

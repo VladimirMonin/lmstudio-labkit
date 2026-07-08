@@ -99,13 +99,24 @@ class TaskSpec:
     validation_policy: str = "automatic"
     prompt_variant: str = "baseline"
     response_schema_complexity: str | None = None
+    source_text: str | None = None
+    source_fixture: str | None = None
+    source_fixture_id: str | None = None
+    prompt_template: str | None = None
+    prompt_template_hash: str | None = None
+    fixture_text_hash: str | None = None
+    glossary_hash: str | None = None
     language_include_paths: tuple[str, ...] = ()
     language_ignore_paths: tuple[str, ...] = ()
     expected_terms: tuple[dict[str, Any], ...] = ()
-    punctuation_policy: str = "diagnostic"
+    punctuation_policy: str | None = "diagnostic"
+    paragraphing_policy: str | None = None
     paragraph_count_min: int | None = None
     paragraph_count_max: int | None = None
     filler_terms: tuple[str, ...] = ()
+    filler_cleanup_policy: str | None = None
+    term_normalization_policy: str | None = None
+    manual_review_policy: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -224,6 +235,7 @@ class MatrixCell:
             or self.task.output_language_policy,
             expected_output=self.task.expected_output,
             image_ground_truth=self.task.image_ground_truth,
+            source_text=self.task.source_text,
             min_length_ratio=self.task.min_length_ratio,
             max_length_ratio=self.task.max_length_ratio,
             length_ratio_policy=self.task.length_ratio_policy,
@@ -233,9 +245,15 @@ class MatrixCell:
             validation_policy=self.task.validation_policy,
             expected_terms=self.task.expected_terms,
             punctuation_policy=self.task.punctuation_policy,
+            paragraphing_policy=self.task.paragraphing_policy,
             paragraph_count_min=self.task.paragraph_count_min,
             paragraph_count_max=self.task.paragraph_count_max,
             filler_terms=self.task.filler_terms,
+            filler_cleanup_policy=self.task.filler_cleanup_policy,
+            term_normalization_policy=self.task.term_normalization_policy,
+            manual_review_policy=self.task.manual_review_policy,
+            schema_family=self.task.schema_family,
+            response_schema_complexity=self.task.response_schema_complexity,
         )
         text_inputs = (TextInput(self.task.prompt),) if self.task.prompt else ()
         image_inputs = (
@@ -256,6 +274,14 @@ class MatrixCell:
                 "fake_mode": self.task.fake_mode,
                 "cache_mode": self.axes.get("cache_mode", "none"),
                 "is_warmup_request": _is_warmup_first_request(self),
+                "source_fixture_id": self.task.source_fixture_id,
+                "source_fixture_hash": stable_hash(self.task.source_fixture)
+                if self.task.source_fixture
+                else None,
+                "fixture_text_hash": self.task.fixture_text_hash,
+                "prompt_template_hash": self.task.prompt_template_hash,
+                "glossary_hash": self.task.glossary_hash,
+                "manual_review_policy": self.task.manual_review_policy,
             },
         )
         options = ExecutionOptions(
@@ -880,51 +906,158 @@ def _model_from_dict(payload: dict[str, Any]) -> ModelSpec:
 
 
 def _task_from_dict(payload: dict[str, Any]) -> TaskSpec:
+    enriched = _enrich_task_payload(payload)
     return TaskSpec(
-        task_id=str(payload["task_id"]),
-        family=str(payload.get("family", "simple_flat")),
-        modality=str(payload.get("modality", "text")),
-        language=str(payload.get("language", "en_en")),
-        language_policy=payload.get("language_policy"),
-        structure_complexity=str(payload.get("structure_complexity", "simple")),
-        volume=str(payload.get("volume", "single")),
-        prompt=str(payload.get("prompt", "")),
-        image_hash=payload.get("image_hash"),
-        schema=payload.get("schema"),
-        schema_family=payload.get("schema_family"),
-        schema_variant=payload.get("schema_variant"),
-        tags=tuple(str(item) for item in payload.get("tags", [])),
-        expected_output=payload.get("expected_output"),
-        expected_ids=tuple(payload.get("expected_ids", [])),
-        id_paths=tuple(str(item) for item in payload.get("id_paths", [])),
-        id_field_names=tuple(str(item) for item in payload.get("id_field_names", ["id"])),
-        preserve_order=bool(payload.get("preserve_order", True)),
-        image_ground_truth=payload.get("image_ground_truth"),
-        fake_mode=str(payload.get("fake_mode", "valid")),
-        min_length_ratio=payload.get("min_length_ratio"),
-        max_length_ratio=payload.get("max_length_ratio"),
+        task_id=str(enriched["task_id"]),
+        family=str(enriched.get("family", "simple_flat")),
+        modality=str(enriched.get("modality", "text")),
+        language=str(enriched.get("language", "en_en")),
+        language_policy=enriched.get("language_policy"),
+        structure_complexity=str(enriched.get("structure_complexity", "simple")),
+        volume=str(enriched.get("volume", "single")),
+        prompt=str(enriched.get("prompt", "")),
+        image_hash=enriched.get("image_hash"),
+        schema=enriched.get("schema"),
+        schema_family=enriched.get("schema_family"),
+        schema_variant=enriched.get("schema_variant"),
+        tags=tuple(str(item) for item in enriched.get("tags", [])),
+        expected_output=enriched.get("expected_output"),
+        expected_ids=tuple(enriched.get("expected_ids", [])),
+        id_paths=tuple(str(item) for item in enriched.get("id_paths", [])),
+        id_field_names=tuple(str(item) for item in enriched.get("id_field_names", ["id"])),
+        preserve_order=bool(enriched.get("preserve_order", True)),
+        image_ground_truth=enriched.get("image_ground_truth"),
+        fake_mode=str(enriched.get("fake_mode", "valid")),
+        min_length_ratio=enriched.get("min_length_ratio"),
+        max_length_ratio=enriched.get("max_length_ratio"),
         length_ratio_policy=_length_ratio_policy_from_dict(
-            payload.get("length_ratio_policy", "hard")
+            enriched.get("length_ratio_policy", "hard")
         ),
-        task_intent=str(payload.get("task_intent", "generic")),
-        input_profile=str(payload.get("input_profile", "clean")),
+        task_intent=str(enriched.get("task_intent", "generic")),
+        input_profile=str(enriched.get("input_profile", "clean")),
         output_language_policy=str(
-            payload.get("output_language_policy", "preserve_input_language")
+            enriched.get("output_language_policy", "preserve_input_language")
         ),
-        validation_policy=str(payload.get("validation_policy", "automatic")),
-        prompt_variant=str(payload.get("prompt_variant", "baseline")),
-        response_schema_complexity=payload.get("response_schema_complexity"),
+        validation_policy=str(enriched.get("validation_policy", "automatic")),
+        prompt_variant=str(enriched.get("prompt_variant", "baseline")),
+        response_schema_complexity=enriched.get("response_schema_complexity"),
+        source_text=enriched.get("source_text"),
+        source_fixture=enriched.get("source_fixture"),
+        source_fixture_id=enriched.get("source_fixture_id"),
+        prompt_template=enriched.get("prompt_template"),
+        prompt_template_hash=enriched.get("prompt_template_hash"),
+        fixture_text_hash=enriched.get("fixture_text_hash"),
+        glossary_hash=enriched.get("glossary_hash"),
         language_include_paths=tuple(
-            str(item) for item in payload.get("language_include_paths", [])
+            str(item) for item in enriched.get("language_include_paths", [])
         ),
-        language_ignore_paths=tuple(str(item) for item in payload.get("language_ignore_paths", [])),
+        language_ignore_paths=tuple(
+            str(item) for item in enriched.get("language_ignore_paths", [])
+        ),
         expected_terms=tuple(
-            item for item in payload.get("expected_terms", []) if isinstance(item, dict)
+            item for item in enriched.get("expected_terms", []) if isinstance(item, dict)
         ),
-        punctuation_policy=str(payload.get("punctuation_policy", "diagnostic")),
-        paragraph_count_min=payload.get("paragraph_count_min"),
-        paragraph_count_max=payload.get("paragraph_count_max"),
-        filler_terms=tuple(str(item) for item in payload.get("filler_terms", [])),
+        punctuation_policy=str(enriched.get("punctuation_policy", "diagnostic")),
+        paragraphing_policy=enriched.get("paragraphing_policy"),
+        paragraph_count_min=enriched.get("paragraph_count_min"),
+        paragraph_count_max=enriched.get("paragraph_count_max"),
+        filler_terms=tuple(str(item) for item in enriched.get("filler_terms", [])),
+        filler_cleanup_policy=enriched.get("filler_cleanup_policy"),
+        term_normalization_policy=enriched.get("term_normalization_policy"),
+        manual_review_policy=enriched.get("manual_review_policy"),
+    )
+
+
+def _enrich_task_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    enriched = dict(payload)
+    fixture_payload = _load_source_fixture(enriched.get("source_fixture"))
+    template_text = _load_prompt_template(enriched.get("prompt_template"))
+    source_text = enriched.get("source_text") or fixture_payload.get("text")
+    metadata = (
+        fixture_payload.get("metadata") if isinstance(fixture_payload.get("metadata"), dict) else {}
+    )
+
+    if source_text is not None:
+        enriched["source_text"] = str(source_text)
+        enriched.setdefault("fixture_text_hash", stable_hash(str(source_text)))
+    if fixture_payload.get("fixture_id") is not None:
+        enriched.setdefault("source_fixture_id", str(fixture_payload["fixture_id"]))
+    if template_text is not None:
+        enriched.setdefault("prompt_template_hash", stable_hash(template_text))
+        enriched["prompt"] = render_postprocessing_prompt(
+            template_text=template_text,
+            source_text=str(source_text or ""),
+            task_intent=str(enriched.get("task_intent", "generic")),
+            response_schema_complexity=str(
+                enriched.get("response_schema_complexity")
+                or enriched.get("structure_complexity", "simple")
+            ),
+            expected_terms=tuple(
+                item
+                for item in enriched.get("expected_terms") or metadata.get("expected_terms", [])
+                if isinstance(item, dict)
+            ),
+        )
+    if "expected_terms" not in enriched and "expected_terms" in metadata:
+        enriched["expected_terms"] = metadata["expected_terms"]
+    if "filler_terms" not in enriched and "filler_terms" in metadata:
+        enriched["filler_terms"] = metadata["filler_terms"]
+    if enriched.get("expected_terms"):
+        enriched.setdefault("glossary_hash", stable_hash(_stable_json(enriched["expected_terms"])))
+    return enriched
+
+
+def _load_source_fixture(path_value: Any) -> dict[str, Any]:
+    if not path_value:
+        return {}
+    path = Path(str(path_value))
+    if not path.is_absolute():
+        path = _repo_root() / path
+    payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+    return payload if isinstance(payload, dict) else {}
+
+
+def _load_prompt_template(path_value: Any) -> str | None:
+    if not path_value:
+        return None
+    path = Path(str(path_value))
+    if not path.is_absolute():
+        path = _repo_root() / path
+    return path.read_text(encoding="utf-8")
+
+
+def _repo_root() -> Path:
+    return Path(__file__).resolve().parent.parent
+
+
+def _stable_json(value: Any) -> str:
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def render_postprocessing_prompt(
+    *,
+    template_text: str,
+    source_text: str,
+    task_intent: str,
+    response_schema_complexity: str,
+    expected_terms: tuple[dict[str, Any], ...] = (),
+) -> str:
+    glossary = ""
+    if expected_terms:
+        glossary_lines = []
+        for term in expected_terms:
+            variants = ", ".join(str(item) for item in term.get("source_variants", ()))
+            glossary_lines.append(f"- {variants} -> {term.get('normalized', '')}")
+        glossary = "\nGlossary:\n" + "\n".join(glossary_lines)
+    return (
+        "Return JSON only. Do not use Markdown. Follow the provided JSON schema. "
+        "Do not add new facts. Preserve the input language unless the task explicitly asks for translation. "
+        "Preserve English technical terms when they are technical names.\n"
+        f"Task intent: {task_intent}.\n"
+        f"Response schema complexity: {response_schema_complexity}.\n"
+        f"Instructions:\n{template_text.strip()}"
+        f"{glossary}\n"
+        f"Input transcript:\n{source_text.strip()}"
     )
 
 

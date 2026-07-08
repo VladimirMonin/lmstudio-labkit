@@ -25,7 +25,7 @@ tasks:
   output_language_policy: preserve_input_language
   prompt_variant: strict_same_language
   validation_policy: auto_schema_language_manual_quality
-  prompt: Synthetic fixture task screen_punctuation_restore_simple. Return JSON only.
+  prompt: Rendered from prompt_template and source_fixture at config load time.
   schema_family: simple
   schema:
     type: object
@@ -51,6 +51,18 @@ tasks:
     clean_text: Сегодня проверяем Django и JSON schema.
     warnings: []
   fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_no_punctuation.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_same_language.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: 'off'
+  term_normalization_policy: 'off'
 - task_id: screen_punctuation_restore_blocks
   family: postprocessing
   modality: text
@@ -63,7 +75,7 @@ tasks:
   output_language_policy: preserve_input_language
   prompt_variant: strict_same_language
   validation_policy: auto_schema_language_manual_quality
-  prompt: Synthetic fixture task screen_punctuation_restore_blocks. Return JSON only.
+  prompt: Rendered from prompt_template and source_fixture at config load time.
   schema_family: blocks
   schema:
     type: object
@@ -101,6 +113,15 @@ tasks:
     - id: 1
       text: 'Блок 1: проверяем Django и Qwen.'
   fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - blocks[*].text
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_no_punctuation.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_same_language.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: 'off'
+  term_normalization_policy: 'off'
 - task_id: screen_paragraphing_simple
   family: postprocessing
   modality: text
@@ -113,7 +134,7 @@ tasks:
   output_language_policy: preserve_input_language
   prompt_variant: paragraphing_focused
   validation_policy: auto_schema_language_manual_quality
-  prompt: Synthetic fixture task screen_paragraphing_simple. Return JSON only.
+  prompt: Rendered from prompt_template and source_fixture at config load time.
   schema_family: simple
   schema:
     type: object
@@ -139,6 +160,19 @@ tasks:
     clean_text: Сегодня проверяем Django и JSON schema.
     warnings: []
   fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_fillers.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/paragraphing_focused.md
+  paragraphing_policy: hard
+  paragraph_count_min: 2
+  punctuation_policy: 'off'
+  filler_cleanup_policy: 'off'
+  term_normalization_policy: 'off'
 - task_id: screen_paragraphing_blocks
   family: postprocessing
   modality: text
@@ -151,7 +185,7 @@ tasks:
   output_language_policy: preserve_input_language
   prompt_variant: paragraphing_focused
   validation_policy: auto_schema_language_manual_quality
-  prompt: Synthetic fixture task screen_paragraphing_blocks. Return JSON only.
+  prompt: Rendered from prompt_template and source_fixture at config load time.
   schema_family: blocks
   schema:
     type: object
@@ -189,6 +223,16 @@ tasks:
     - id: 1
       text: 'Блок 1: проверяем Django и Qwen.'
   fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - blocks[*].text
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_fillers.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/paragraphing_focused.md
+  paragraphing_policy: hard
+  paragraph_count_min: 2
+  punctuation_policy: 'off'
+  filler_cleanup_policy: 'off'
+  term_normalization_policy: 'off'
 - task_id: screen_term_normalization_simple
   family: postprocessing
   modality: text
@@ -201,7 +245,7 @@ tasks:
   output_language_policy: preserve_mixed_language
   prompt_variant: term_glossary
   validation_policy: auto_schema_language_manual_quality
-  prompt: Synthetic fixture task screen_term_normalization_simple. Return JSON only.
+  prompt: Rendered from prompt_template and source_fixture at config load time.
   schema_family: simple
   schema:
     type: object
@@ -227,6 +271,18 @@ tasks:
     clean_text: Сегодня проверяем Django и JSON schema.
     warnings: []
   fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_term_noise.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/term_glossary.md
+  term_normalization_policy: hard
+  punctuation_policy: 'off'
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: 'off'
 - task_id: screen_term_normalization_blocks
   family: postprocessing
   modality: text
@@ -239,7 +295,7 @@ tasks:
   output_language_policy: preserve_mixed_language
   prompt_variant: term_glossary
   validation_policy: auto_schema_language_manual_quality
-  prompt: Synthetic fixture task screen_term_normalization_blocks. Return JSON only.
+  prompt: Rendered from prompt_template and source_fixture at config load time.
   schema_family: blocks
   schema:
     type: object
@@ -277,6 +333,15 @@ tasks:
     - id: 1
       text: 'Блок 1: проверяем Django и Qwen.'
   fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - blocks[*].text
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/raw_asr_ru_term_noise.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/term_glossary.md
+  term_normalization_policy: hard
+  punctuation_policy: 'off'
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: 'off'
 - task_id: screen_transcript_cleanup_simple
   family: postprocessing
   modality: text
@@ -289,7 +354,7 @@ tasks:
   output_language_policy: preserve_mixed_language
   prompt_variant: strict_no_new_facts
   validation_policy: auto_schema_language_manual_quality
-  prompt: Synthetic fixture task screen_transcript_cleanup_simple. Return JSON only.
+  prompt: Rendered from prompt_template and source_fixture at config load time.
   schema_family: simple
   schema:
     type: object
@@ -315,6 +380,18 @@ tasks:
     clean_text: Сегодня проверяем Django и JSON schema.
     warnings: []
   fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/ru_en_mixed_tech.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts.md
+  punctuation_policy: diagnostic
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  paragraphing_policy: 'off'
 - task_id: screen_transcript_cleanup_blocks
   family: postprocessing
   modality: text
@@ -327,7 +404,7 @@ tasks:
   output_language_policy: preserve_mixed_language
   prompt_variant: strict_no_new_facts
   validation_policy: auto_schema_language_manual_quality
-  prompt: Synthetic fixture task screen_transcript_cleanup_blocks. Return JSON only.
+  prompt: Rendered from prompt_template and source_fixture at config load time.
   schema_family: blocks
   schema:
     type: object
@@ -365,6 +442,15 @@ tasks:
     - id: 1
       text: 'Блок 1: проверяем Django и Qwen.'
   fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - blocks[*].text
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/ru_en_mixed_tech.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts.md
+  punctuation_policy: diagnostic
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  paragraphing_policy: 'off'
 axes:
   modality:
   - text

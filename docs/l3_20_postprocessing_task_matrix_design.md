@@ -96,14 +96,41 @@ Do not require Russian output globally. Russian input expects Russian output; mi
 - `paragraphing_focused`
 - `translation_focused`
 
+## Prompt rendering
+
+Postprocessing tasks may specify:
+
+- `source_fixture`: public-safe synthetic transcript fixture.
+- `prompt_template`: reusable prompt template.
+- optional glossary metadata from fixture or task-level `expected_terms`.
+
+The runner renders the prompt in memory from template + fixture + task metadata. Raw rendered prompts and raw source text are not written to public artifacts. Safe metadata stores only hashes and counts:
+
+- `prompt_template_hash`;
+- `source_fixture_id`;
+- `fixture_text_hash`;
+- `glossary_hash`;
+- response `schema_hash`;
+- `source_text_hash` and `source_text_char_count`.
+
 ## Validation taxonomy
 
 - Language: value-path based, ignores JSON keys/metadata/ids and technical token lists.
 - Term normalization: checks expected normalized terms and forbidden ASR variants for public-safe synthetic fixtures.
 - Punctuation: diagnostic by default; hard only when configured.
-- Paragraphing: hard only for paragraphing tasks with min/max paragraphs.
-- Filler cleanup: hard only for filler cleanup or mixed postprocess.
+- Paragraphing: hard only when configured with paragraph limits.
+- Filler cleanup: hard for filler cleanup tasks by default; diagnostic for transcript cleanup unless configured otherwise.
 - No-new-facts: diagnostic/manual review only.
+
+## Schema-aware user text extraction
+
+Postprocessing validators read user-facing values by schema family:
+
+- `simple`: `clean_text`, `summary`, `title`, `tags[*]`.
+- `blocks`: `blocks[*].text`.
+- `complex`: `document.title`, `document.sections[*].heading`, `document.sections[*].blocks[*].text`, `document.sections[*].blocks[*].terms[*].normalized`.
+
+Task-level `language_include_paths` can override these defaults.
 
 ## Matrix profiles
 

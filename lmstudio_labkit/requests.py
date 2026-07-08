@@ -92,15 +92,22 @@ class ResponseContract:
     length_ratio_policy: LengthRatioPolicy | str | dict[str, Any] = "hard"
     expected_output: Any | None = None
     image_ground_truth: dict[str, Any] | None = None
+    source_text: str | None = None
     language_include_paths: tuple[str, ...] = ()
     language_ignore_paths: tuple[str, ...] = ()
     task_intent: str | None = None
     validation_policy: str | None = None
     expected_terms: tuple[dict[str, Any], ...] = ()
-    punctuation_policy: str = "diagnostic"
+    punctuation_policy: str | None = "diagnostic"
+    paragraphing_policy: str | None = None
     paragraph_count_min: int | None = None
     paragraph_count_max: int | None = None
     filler_terms: tuple[str, ...] = ()
+    filler_cleanup_policy: str | None = None
+    term_normalization_policy: str | None = None
+    manual_review_policy: str | None = None
+    schema_family: str | None = None
+    response_schema_complexity: str | None = None
 
     def safe_metadata(self) -> dict[str, Any]:
         schema_hash = stable_hash(_stable_repr(self.schema)) if self.schema is not None else None
@@ -125,6 +132,12 @@ class ResponseContract:
             "image_ground_truth_hash": stable_hash(_stable_repr(self.image_ground_truth))
             if self.image_ground_truth is not None
             else None,
+            "source_text_hash": stable_hash(self.source_text)
+            if self.source_text is not None
+            else None,
+            "source_text_char_count": len(self.source_text)
+            if self.source_text is not None
+            else None,
             "language_include_paths": list(self.language_include_paths),
             "language_ignore_paths": list(self.language_ignore_paths),
             "task_intent": self.task_intent,
@@ -134,9 +147,18 @@ class ResponseContract:
             else None,
             "expected_terms_count": len(self.expected_terms),
             "punctuation_policy": self.punctuation_policy,
+            "paragraphing_policy": self.paragraphing_policy,
             "paragraph_count_min": self.paragraph_count_min,
             "paragraph_count_max": self.paragraph_count_max,
+            "filler_terms_hash": stable_hash(_stable_repr(self.filler_terms))
+            if self.filler_terms
+            else None,
             "filler_terms_count": len(self.filler_terms),
+            "filler_cleanup_policy": self.filler_cleanup_policy,
+            "term_normalization_policy": self.term_normalization_policy,
+            "manual_review_policy": self.manual_review_policy,
+            "schema_family": self.schema_family,
+            "response_schema_complexity": self.response_schema_complexity,
         }
 
 

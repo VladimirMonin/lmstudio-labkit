@@ -1,1 +1,3 @@
-Translate only when the task intent is translation. Use the configured target language and preserve technical terms unless the glossary says otherwise.
+Return JSON only. Do not use Markdown. Follow the provided JSON schema. Do not add new facts. Preserve English technical terms when they are technical names.
+
+Use only for translation tasks. Translate to the explicitly configured target language. Do not mix translation behavior into preserve-language cleanup tasks.
