@@ -615,8 +615,18 @@ def _optional_positive_int(payload: dict[str, Any], key: str, default: int | Non
 
 def _validate_static_safety(config: BenchmarkConfig) -> None:
     safety = config.safety
-    if safety.live:
-        raise ValueError("Benchmark safety requires live=false in the core runner")
+    requested_modalities = {
+        *(config.axes.get("modality", ())),
+        *(task.modality for task in config.tasks),
+    }
+    requested_volumes = {
+        *(config.axes.get("volume", ())),
+        *(task.volume for task in config.tasks),
+    }
+    if "stress" in requested_volumes and not safety.allow_stress:
+        raise ValueError("volume=stress requires safety.allow_stress=true")
+    if safety.live and "image" in requested_modalities and not safety.allow_image_live:
+        raise ValueError("image live execution requires safety.allow_image_live=true")
     if safety.allow_model_downloads:
         raise ValueError("model downloads are not allowed by the core runner")
     if safety.allow_model_loads:
@@ -629,6 +639,8 @@ def _validate_static_safety(config: BenchmarkConfig) -> None:
         raise ValueError("image live execution is not allowed by the core runner")
     if safety.allow_stress:
         raise ValueError("stress execution is not allowed by the core runner")
+    if safety.live:
+        raise ValueError("Benchmark safety requires live=false in the core runner")
     if len(config.models) > safety.max_models:
         raise ValueError("model count exceeds safety.max_models")
     if config.repeats > safety.max_repeats:
