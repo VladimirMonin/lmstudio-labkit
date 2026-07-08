@@ -1,0 +1,220 @@
+{
+  "attempt_count": 48,
+  "cache_modes": [
+    "none"
+  ],
+  "cell_count": 48,
+  "config_hash": "47eb0ace6b27a995a36dd03144bed12a5dae2df5d4fd6818c1ca57ea83e3258e",
+  "execution_modes": [
+    "cold_per_request"
+  ],
+  "execution_targets": [
+    "remote_link"
+  ],
+  "fail_count": 8,
+  "failure_categories": {
+    "language_mismatch": 8
+  },
+  "filtered_cell_count": 48,
+  "hard_fail_count": 8,
+  "length_ratio_failures": {
+    "count": 0,
+    "max_actual_ratio": null,
+    "min_actual_ratio": null,
+    "model_ids": [],
+    "policy_max": [],
+    "policy_min": [],
+    "task_ids": []
+  },
+  "length_ratio_warning_count": 0,
+  "lifecycle": {
+    "cleanup_scopes": [
+      "per_request"
+    ],
+    "final_loaded_instances": [
+      0
+    ],
+    "load_scopes": [
+      "per_request"
+    ],
+    "session_cleanup_verified": [
+      "True"
+    ],
+    "session_ids": [
+      "session_1668de63497f3e97",
+      "session_181ec8e3fe03611a",
+      "session_187cab595b907cc3",
+      "session_1b3e7cadf3caa27f",
+      "session_1d5f0eaa527cdb58",
+      "session_1e80d541ebc4551a",
+      "session_266a953855b75a19",
+      "session_2e7e05dc7cfd7469",
+      "session_30e78b1aca53b00c",
+      "session_3122131ceb927590",
+      "session_3709a30f9119ef32",
+      "session_38ab061377775847",
+      "session_3e5dbb0792eafb1d",
+      "session_4d9b2253a42db8bd",
+      "session_4f2c279c2d569458",
+      "session_5908afb358511680",
+      "session_5a5a1abf7468c01b",
+      "session_63359b0d81448808",
+      "session_73a8218f1c77feed",
+      "session_750d96e75d4d19bb",
+      "session_7fce41ff11039a94",
+      "session_8cdb4892e5ea4915",
+      "session_8f814cc3a3deccc0",
+      "session_9096b709ae5fd5a7",
+      "session_919d9ea78227b2af",
+      "session_98cab3fb3463cdb6",
+      "session_99d71d65992749b9",
+      "session_a302fc5587ddbbda",
+      "session_b2897e81488dc49f",
+      "session_be1b114bdfff4777",
+      "session_c13da7ae48dd0581",
+      "session_c27cd93f6c45a431",
+      "session_c8057fbb9efa000f",
+      "session_c9213a7e061f8e7b",
+      "session_ce619212eeeca23a",
+      "session_ce64bcc8d2b43242",
+      "session_cf665598b12b5c81",
+      "session_d2c930bb093a2c6f",
+      "session_e6e6a9b5ebd4b0ec",
+      "session_e771c32a4ff6bb85",
+      "session_edc51213ec28bca8",
+      "session_f240313eecf773ce",
+      "session_f3bb6233495096c9",
+      "session_f957f56965a445de",
+      "session_f9ea38964c503949",
+      "session_fbd7c49d14ca93ab",
+      "session_fcf18ffb31b6514c",
+      "session_fd60961e38fddd93"
+    ],
+    "session_request_counts": [
+      1
+    ],
+    "session_request_indices": [
+      1
+    ]
+  },
+  "live": true,
+  "live_bridge": {
+    "allow_model_load": true,
+    "allow_remote": true,
+    "allow_stress": false,
+    "base_url_kind": "local",
+    "base_url_scheme": "http",
+    "live": true,
+    "max_requests": 48,
+    "profile": "live-screening"
+  },
+  "model_ids": [
+    "google/gemma-4-e2b",
+    "google/gemma-4-e4b"
+  ],
+  "model_status": {
+    "google/gemma-4-e2b": {
+      "fail": 4,
+      "pass": 20
+    },
+    "google/gemma-4-e4b": {
+      "fail": 4,
+      "pass": 20
+    }
+  },
+  "models": [
+    "gemma4_e2b",
+    "gemma4_e4b"
+  ],
+  "pass_count": 40,
+  "pass_rate": 0.8333,
+  "per_complexity": {
+    "complex": {
+      "pass": 16,
+      "warning": 0
+    },
+    "medium": {
+      "pass": 16,
+      "warning": 0
+    },
+    "simple": {
+      "fail": 8,
+      "hard_fail": 8,
+      "pass": 8,
+      "warning": 0
+    }
+  },
+  "per_language": {
+    "ru_en_mixed": {
+      "pass": 24,
+      "warning": 0
+    },
+    "ru_ru": {
+      "fail": 8,
+      "hard_fail": 8,
+      "pass": 16,
+      "warning": 0
+    }
+  },
+  "per_volume": {
+    "many": {
+      "pass": 16,
+      "warning": 0
+    },
+    "single": {
+      "fail": 8,
+      "hard_fail": 8,
+      "pass": 24,
+      "warning": 0
+    }
+  },
+  "resource_telemetry_modes": [
+    "timing_only"
+  ],
+  "retry_impact": {
+    "off": {
+      "fail": 4,
+      "hard_fail": 4,
+      "pass": 20,
+      "warning": 0
+    },
+    "retry1": {
+      "fail": 4,
+      "hard_fail": 4,
+      "pass": 20,
+      "warning": 0
+    }
+  },
+  "run_id": "matrix_l3_19_sustained_text_quality_e2b_e4b",
+  "safety": {
+    "public_safe": true,
+    "raw_base_url_stored": false,
+    "raw_prompt_response_stored": false,
+    "raw_prompt_stored": false,
+    "raw_response_stored": false
+  },
+  "schema_version": "latest-text-remote-snapshot-v1",
+  "skipped_cell_count": 528,
+  "timing": {
+    "latency_ms_max": 7058.219,
+    "latency_ms_min": 660.556,
+    "total_latency_ms_max": 7058.219,
+    "total_latency_ms_min": 660.556
+  },
+  "token_counts": {
+    "completion_tokens": 10592,
+    "prompt_tokens": 2440
+  },
+  "warmup": {
+    "cache_hit_reported": [
+      "unknown"
+    ],
+    "kv_reuse_proven": [
+      "False"
+    ],
+    "measured_request_count": 48,
+    "warmup_request_count": 0
+  },
+  "warning_categories": {},
+  "warning_count": 0
+}

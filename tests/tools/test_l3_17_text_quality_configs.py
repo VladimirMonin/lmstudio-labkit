@@ -15,6 +15,8 @@ WAVE2_CONFIG = CONFIG_ROOT / "matrix.l3_17_text_quality.12b.yaml"
 LEGACY_REMOTE_WAVE1_CONFIG = CONFIG_ROOT / "matrix.l3_17_text_quality_remote.e2b_e4b.yaml"
 LEGACY_REMOTE_WAVE2_CONFIG = CONFIG_ROOT / "matrix.l3_17_text_quality_remote.12b.yaml"
 SUITE = SUITE_ROOT / "l3_17_text_quality_gemma.yaml"
+L3_19_CONFIG = CONFIG_ROOT / "matrix.l3_19_sustained_text_quality.e2b_e4b.yaml"
+L3_19_SUITE = SUITE_ROOT / "l3_19_sustained_text_quality_e2b_e4b.yaml"
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -182,3 +184,60 @@ def test_l3_17_suite_runs_12b_only_after_e2b_e4b() -> None:
     }
     for entry in suite["configs"]:
         assert (SUITE.parent / entry["config"]).resolve().is_file()
+
+
+def test_l3_19_sustained_config_expands_only_accepted_e2b_e4b_family() -> None:
+    payload = _load_yaml(L3_19_CONFIG)
+
+    _assert_common_l3_17_config(
+        payload,
+        expected_run_id="matrix_l3_19_sustained_text_quality_e2b_e4b",
+        expected_models={"google/gemma-4-e2b", "google/gemma-4-e4b"},
+        expected_schema_families={"simple_flat", "blocks", "complex_sections"},
+    )
+    assert payload["repeats"] == 2
+    assert payload["axes"]["structure_complexity"] == ["simple", "medium", "complex"]
+    assert payload["axes"]["volume"] == ["single", "many"]
+    assert len(payload["tasks"]) == 6
+    assert _planned_cell_count(payload) == 48
+    assert {
+        task["task_id"] for task in payload["tasks"] if task["schema_family"] == "complex_sections"
+    } == {
+        "ru_ru_complex_single",
+        "ru_en_mixed_complex_single",
+    }
+    assert {model["model_id"] for model in payload["models"]}.isdisjoint(
+        {"google/gemma-4-12b-qat", "google/gemma-4-26b-a4b-it"}
+    )
+    assert payload["safety"] == {
+        "live": True,
+        "allow_model_downloads": False,
+        "allow_model_loads": True,
+        "allow_remote_base_url": True,
+        "allow_raw_prompt_response_artifacts": False,
+        "allow_image_live": False,
+        "allow_stress": False,
+        "max_requests": 48,
+        "max_models": 2,
+        "max_context_tier": 8192,
+        "max_repeats": 2,
+        "max_runtime_minutes": 45,
+    }
+
+
+def test_l3_19_suite_is_e2b_e4b_only() -> None:
+    suite = _load_yaml(L3_19_SUITE)
+
+    assert suite == {
+        "suite_id": "l3_19_sustained_text_quality_e2b_e4b",
+        "stop_on_failure": True,
+        "configs": [
+            {
+                "id": "e2b_e4b_sustained_text_quality",
+                "config": "../configs/matrix.l3_19_sustained_text_quality.e2b_e4b.yaml",
+                "required": True,
+            }
+        ],
+    }
+    for entry in suite["configs"]:
+        assert (L3_19_SUITE.parent / entry["config"]).resolve().is_file()

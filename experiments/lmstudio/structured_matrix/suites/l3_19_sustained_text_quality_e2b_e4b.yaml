@@ -1,0 +1,6 @@
+suite_id: l3_19_sustained_text_quality_e2b_e4b
+stop_on_failure: true
+configs:
+- id: e2b_e4b_sustained_text_quality
+  config: ../configs/matrix.l3_19_sustained_text_quality.e2b_e4b.yaml
+  required: true
