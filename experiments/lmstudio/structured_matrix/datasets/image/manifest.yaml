@@ -1,0 +1,18 @@
+task_id: image_ui_screenshot_001
+modality: image
+language: en_en
+structure_complexity: medium
+volume: single
+schema_family: image_medium
+schema_variant: baseline_loose
+prompt_template: image_labels_v1
+input_ref:
+  content_hash: sha256:3333333333333333333333333333333333333333333333333333333333333333
+  char_count: 0
+expected:
+  labels: [button, table]
+  image_ground_truth:
+    labels: [button, table]
+privacy:
+  synthetic: true
+  raw_public_safe: true

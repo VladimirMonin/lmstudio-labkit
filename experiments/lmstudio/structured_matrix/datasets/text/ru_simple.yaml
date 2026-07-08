@@ -1,0 +1,20 @@
+task_id: ru_simple_001
+modality: text
+language: ru_ru
+structure_complexity: simple
+volume: single
+schema_family: blocks
+schema_variant: hardened_const
+prompt_template: blocks_cleaning_v1
+input_ref:
+  content_hash: sha256:1111111111111111111111111111111111111111111111111111111111111111
+  char_count: 64
+expected:
+  ids: [0, 1]
+  output_shape: blocks
+  language: ru_ru
+  min_length_ratio: 0.1
+  max_length_ratio: 5.0
+privacy:
+  synthetic: true
+  raw_public_safe: true
