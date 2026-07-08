@@ -21,6 +21,7 @@ from .requests import (
     TextInput,
     stable_hash,
 )
+from .schema_builders import build_blocks_schema
 from .validation import validate_response
 
 DEFAULT_AXES = {
@@ -50,9 +51,14 @@ class TaskSpec:
     prompt: str = ""
     image_hash: str | None = None
     schema: dict[str, Any] | None = None
+    schema_family: str | None = None
+    schema_variant: str | None = None
     expected_output: Any | None = None
-    expected_ids: tuple[str, ...] = ()
+    expected_ids: tuple[Any, ...] = ()
     image_ground_truth: dict[str, Any] | None = None
+    fake_mode: str = "valid"
+    min_length_ratio: float | None = None
+    max_length_ratio: float | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -83,7 +89,10 @@ class BenchmarkConfig:
             raise ValueError("Benchmark config requires at least one task")
         axes_payload = dict(DEFAULT_AXES)
         axes_payload.update(payload.get("axes", {}))
-        axes = {key: tuple(str(item) for item in value) for key, value in axes_payload.items()}
+        axes = {
+            key: tuple(_normalize_axis_value(item) for item in value)
+            for key, value in axes_payload.items()
+        }
         repeats = int(payload.get("repeats", 1))
         if repeats <= 0:
             raise ValueError("repeats must be positive")
@@ -121,13 +130,19 @@ class MatrixCell:
 
     def to_request_plan(self) -> RequestPlan:
         modality = self.axes.get("modality", self.task.modality)
+        schema = self.task.schema
+        schema_variant = self.axes.get("schema_variant") or self.task.schema_variant
+        if schema is None and self.task.schema_family == "blocks":
+            schema = build_blocks_schema(self.task.expected_ids, schema_variant or "baseline_loose")
         contract = ResponseContract(
-            mode="json" if self.task.schema is not None else "text",
-            schema=self.task.schema,
+            mode="json" if schema is not None else "text",
+            schema=schema,
             expected_ids=self.task.expected_ids,
             language=self.axes.get("language"),
             expected_output=self.task.expected_output,
             image_ground_truth=self.task.image_ground_truth,
+            min_length_ratio=self.task.min_length_ratio,
+            max_length_ratio=self.task.max_length_ratio,
         )
         text_inputs = (TextInput(self.task.prompt),) if self.task.prompt else ()
         image_inputs = (
@@ -142,7 +157,11 @@ class MatrixCell:
             if self.task.prompt
             else (),
             response_contract=contract,
-            metadata={"task_id": self.task.task_id, "task_family": self.task.family},
+            metadata={
+                "task_id": self.task.task_id,
+                "task_family": self.task.family,
+                "fake_mode": self.task.fake_mode,
+            },
         )
         options = ExecutionOptions(
             model_id=self.model.model_id,
@@ -216,21 +235,19 @@ def plan_matrix(config: BenchmarkConfig) -> MatrixPlan:
 class FakeTransport:
     """Deterministic offline transport for tests and default CLI runs."""
 
-    def execute(self, plan: RequestPlan) -> tuple[str, RequestResult]:
+    def execute(self, plan: RequestPlan, *, attempt_index: int = 1) -> tuple[str, RequestResult]:
         started = time.monotonic()
         expected = plan.envelope.response_contract.expected_output
         if expected is None:
             expected = {"id": plan.cell_id, "text": "offline fake response"}
-        raw_response = (
-            json.dumps(expected, ensure_ascii=False, sort_keys=True)
-            if plan.envelope.response_contract.mode == "json"
-            else str(expected)
-        )
+        mode = _metadata_mode(plan.envelope.metadata.get("fake_mode"))
+        raw_response, finish_reason = self._response_for_mode(mode, expected, attempt_index)
         elapsed_ms = round((time.monotonic() - started) * 1000, 3)
         result = RequestResult.from_raw_response(
             request_id=plan.envelope.request_id,
             model_id=plan.options.model_id,
             raw_response=raw_response,
+            status="error" if mode == "transport_error" else "ok",
             latency_ms=elapsed_ms,
             token_counts={
                 "prompt": sum(
@@ -238,8 +255,41 @@ class FakeTransport:
                 ),
                 "completion": len(raw_response),
             },
+            error_category="transport_error" if mode == "transport_error" else None,
+            finish_reason=finish_reason,
         )
         return raw_response, result
+
+    def _response_for_mode(
+        self, mode: str, expected: Any, attempt_index: int
+    ) -> tuple[str, str | None]:
+        if mode == "retry_recovers" and attempt_index >= 2:
+            mode = "valid"
+        if mode == "valid":
+            return _json_or_text(expected), "stop"
+        if mode in {"retry_recovers", "retry_deterministic_fail", "schema_violation"}:
+            return _json_or_text(_mutate_expected(expected, "schema_violation")), "stop"
+        if mode == "invalid_json":
+            return "{invalid json", "stop"
+        if mode == "missing_id":
+            return _json_or_text(_mutate_expected(expected, "missing_id")), "stop"
+        if mode == "duplicate_id":
+            return _json_or_text(_mutate_expected(expected, "duplicate_id")), "stop"
+        if mode == "reordered_ids":
+            return _json_or_text(_mutate_expected(expected, "reordered_ids")), "stop"
+        if mode == "wrong_language":
+            return _json_or_text(_mutate_text(expected, "English only response")), "stop"
+        if mode == "placeholder_text":
+            return _json_or_text(_mutate_text(expected, "TODO placeholder")), "stop"
+        if mode == "markdown_wrapped_json":
+            return "```json\n" + _json_or_text(expected) + "\n```", "stop"
+        if mode == "finish_length":
+            return _json_or_text(expected)[: max(1, len(_json_or_text(expected)) // 2)], "length"
+        if mode == "image_ground_truth_miss":
+            return _json_or_text(_mutate_text(expected, "unrelated visual description")), "stop"
+        if mode == "transport_error":
+            return "", "error"
+        raise ValueError(f"Unsupported fake mode: {mode}")
 
 
 def run_matrix(
@@ -252,13 +302,28 @@ def run_matrix(
     transport = FakeTransport()
     for cell in plan.cells:
         request_plan = cell.to_request_plan()
-        raw_response, result = transport.execute(request_plan)
-        validation = validate_response(raw_response, request_plan.envelope.response_contract)
+        raw_response, result = transport.execute(request_plan, attempt_index=1)
+        input_char_count = sum(
+            item.safe_metadata()["char_count"] for item in request_plan.envelope.text_inputs
+        )
+        validation = validate_response(
+            raw_response,
+            request_plan.envelope.response_contract,
+            finish_reason=result.finish_reason,
+            input_char_count=input_char_count,
+        )
         retry_count = 0
+        recovered = False
         if validation.status == "fail" and cell.axes.get("retry_policy") == "retry1":
             retry_count = 1
-            raw_response, result = transport.execute(request_plan)
-            validation = validate_response(raw_response, request_plan.envelope.response_contract)
+            raw_response, result = transport.execute(request_plan, attempt_index=2)
+            validation = validate_response(
+                raw_response,
+                request_plan.envelope.response_contract,
+                finish_reason=result.finish_reason,
+                input_char_count=input_char_count,
+            )
+            recovered = validation.status == "pass" and result.status == "ok"
         row = {
             "run_id": config.run_id,
             "cell_id": cell.cell_id,
@@ -271,6 +336,7 @@ def run_matrix(
             "result": result.safe_metadata(),
             "validation": validation.to_dict(),
             "retry_count": retry_count,
+            "retry_recovered": recovered,
             "status": "pass" if validation.status == "pass" and result.status == "ok" else "fail",
             "error_category": _first_error_category(validation),
         }
@@ -304,10 +370,104 @@ def _task_from_dict(payload: dict[str, Any]) -> TaskSpec:
         prompt=str(payload.get("prompt", "")),
         image_hash=payload.get("image_hash"),
         schema=payload.get("schema"),
+        schema_family=payload.get("schema_family"),
+        schema_variant=payload.get("schema_variant"),
         expected_output=payload.get("expected_output"),
-        expected_ids=tuple(str(item) for item in payload.get("expected_ids", [])),
+        expected_ids=tuple(payload.get("expected_ids", [])),
         image_ground_truth=payload.get("image_ground_truth"),
+        fake_mode=str(payload.get("fake_mode", "valid")),
+        min_length_ratio=payload.get("min_length_ratio"),
+        max_length_ratio=payload.get("max_length_ratio"),
     )
+
+
+def _normalize_axis_value(value: Any) -> str:
+    if value is False:
+        return "off"
+    if value is True:
+        return "on"
+    return str(value)
+
+
+def _metadata_mode(value: Any) -> str:
+    if isinstance(value, dict):
+        return str(value.get("value", "valid"))
+    return str(value or "valid")
+
+
+def _json_or_text(value: Any) -> str:
+    return (
+        json.dumps(value, ensure_ascii=False, sort_keys=True)
+        if isinstance(value, dict | list)
+        else str(value)
+    )
+
+
+def _mutate_expected(value: Any, mode: str) -> Any:
+    import copy
+
+    mutated = copy.deepcopy(value)
+    blocks = _find_first_blocks(mutated)
+    if blocks is None:
+        if mode == "schema_violation" and isinstance(mutated, dict):
+            mutated["unexpected"] = True
+        return mutated
+    if mode == "missing_id" and blocks:
+        blocks.pop()
+    elif mode == "duplicate_id" and blocks:
+        blocks.append(copy.deepcopy(blocks[-1]))
+    elif mode == "reordered_ids" and len(blocks) > 1:
+        blocks[0], blocks[1] = blocks[1], blocks[0]
+    elif mode == "schema_violation" and blocks:
+        blocks[0]["unexpected"] = True
+    return mutated
+
+
+def _find_first_blocks(value: Any) -> list[Any] | None:
+    if isinstance(value, dict):
+        blocks = value.get("blocks")
+        if isinstance(blocks, list):
+            return blocks
+        for child in value.values():
+            found = _find_first_blocks(child)
+            if found is not None:
+                return found
+    if isinstance(value, list):
+        for child in value:
+            found = _find_first_blocks(child)
+            if found is not None:
+                return found
+    return None
+
+
+def _mutate_text(value: Any, replacement: str) -> Any:
+    import copy
+
+    mutated = copy.deepcopy(value)
+    if _replace_first_text(mutated, replacement):
+        return mutated
+    if isinstance(mutated, dict):
+        mutated["text"] = replacement
+        return mutated
+    return replacement
+
+
+def _replace_first_text(value: Any, replacement: str) -> bool:
+    if isinstance(value, dict):
+        if isinstance(value.get("text"), str):
+            value["text"] = replacement
+            return True
+        if isinstance(value.get("normalized_text"), str):
+            value["normalized_text"] = replacement
+            return True
+        for child in value.values():
+            if _replace_first_text(child, replacement):
+                return True
+    elif isinstance(value, list):
+        for child in value:
+            if _replace_first_text(child, replacement):
+                return True
+    return False
 
 
 def _cell_id(

@@ -1,0 +1,53 @@
+run_id: matrix_smoke
+models:
+  - model_key: fake_text
+    model_id: fake/text
+    supported_modalities: [text]
+tasks:
+  - task_id: ru_blocks_valid
+    family: blocks
+    modality: text
+    prompt: Synthetic fixture prompt.
+    schema_family: blocks
+    expected_ids: [0, 1]
+    expected_output:
+      blocks:
+        - id: 0
+          text: Русский блок ноль
+        - id: 1
+          text: Русский блок один
+    fake_mode: valid
+    min_length_ratio: 0.1
+    max_length_ratio: 5.0
+  - task_id: ru_blocks_retry
+    family: blocks
+    modality: text
+    prompt: Synthetic retry fixture prompt.
+    schema_family: blocks
+    expected_ids: [0, 1]
+    expected_output:
+      blocks:
+        - id: 0
+          text: Русский блок ноль
+        - id: 1
+          text: Русский блок один
+    fake_mode: retry_recovers
+axes:
+  modality: [text]
+  language: [ru_ru]
+  structure_complexity: [medium]
+  volume: [single]
+  context_tier: [8192]
+  schema_variant: [hardened_const]
+  retry_policy: [off, retry1]
+repeats: 1
+safety:
+  live: false
+  allow_model_downloads: false
+  allow_model_loads: false
+  allow_remote_base_url: false
+  allow_raw_prompt_response_artifacts: false
+  max_requests: 300
+  max_runtime_minutes: 120
+  max_context_tier: 8192
+  max_models: 10
