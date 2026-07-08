@@ -16,6 +16,13 @@ from .benchmarks import (
 )
 from .datasets import TaskManifest, load_task_manifest, load_task_manifests, load_task_specs
 from .live_bridge import LiveBridgeTransport
+from .managed_executor import (
+    ManagedExecutionResult,
+    ManagedExecutorError,
+    ManagedHostRunner,
+    ManagedLMStudioExecutor,
+    ManagedLMStudioTransport,
+)
 from .requests import (
     ChatMessage,
     ExecutionOptions,
@@ -46,6 +53,11 @@ __all__ = [
     "ImageInput",
     "LanguagePolicy",
     "LiveBridgeTransport",
+    "ManagedExecutionResult",
+    "ManagedExecutorError",
+    "ManagedHostRunner",
+    "ManagedLMStudioExecutor",
+    "ManagedLMStudioTransport",
     "MatrixCell",
     "MatrixPlan",
     "MatrixTransport",
