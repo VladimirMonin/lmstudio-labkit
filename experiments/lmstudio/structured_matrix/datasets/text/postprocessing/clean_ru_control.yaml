@@ -1,0 +1,5 @@
+fixture_id: clean_ru_control
+input_profile: clean_ru
+language: ru_ru
+text: Сегодня мы обсудим модели Django и миграции. Затем проверим схему JSON.
+metadata: {}

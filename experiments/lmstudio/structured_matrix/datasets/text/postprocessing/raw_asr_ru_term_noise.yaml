@@ -1,0 +1,36 @@
+fixture_id: raw_asr_ru_term_noise
+input_profile: raw_asr_ru_term_noise
+language: ru_ru
+text: сегодня мы используем джанго пай сайд шесть и эмбеддинг модель через эл эм студио
+metadata:
+  expected_terms:
+  - source_variants:
+    - джанго
+    - django
+    normalized: Django
+  - source_variants:
+    - кувен
+    - qwen
+    normalized: Qwen
+  - source_variants:
+    - эмбеддинг
+    - embedding
+    normalized: embedding
+  - source_variants:
+    - пайт сайд
+    - пай сайд
+    - pyside
+    normalized: PySide
+  - source_variants:
+    - пай сайд шесть
+    - pyside6
+    normalized: PySide6
+  - source_variants:
+    - эл эм студио
+    - lm studio
+    normalized: LM Studio
+  - source_variants:
+    - лемонски виза
+    - лемон скай виза
+    - lemon squeezy
+    normalized: Lemon Squeezy

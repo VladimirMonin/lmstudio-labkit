@@ -18,6 +18,7 @@ from .managed_executor import (
 )
 from .preflight import preflight_config
 from .reports import compare_runs, summarize_run, write_summary_csv
+from .review_pack import export_review_pack
 from .snapshots import export_latest_text_remote_snapshot
 from .suites import compare_suites, plan_suite, preflight_suite, run_suite, summarize_suite
 
@@ -93,6 +94,14 @@ def build_parser() -> argparse.ArgumentParser:
         "--output-dir",
         default="docs/live_demo/latest_text_remote_e2b_e4b",
     )
+
+    review_pack = sub.add_parser(
+        "export-review-pack",
+        help="Export a local-only manual review pack from sanitized run artifacts",
+    )
+    review_pack.add_argument("--run-dir", required=True)
+    review_pack.add_argument("--output-dir", required=True)
+    review_pack.add_argument("--limit", type=int, default=12)
 
     return parser
 
@@ -196,6 +205,12 @@ def main(argv: list[str] | None = None) -> int:
             {"status": result["status"], "mode": "export-latest-snapshot", "snapshot": result}
         )
         return 0 if result["status"] == "pass" else 2
+    if args.command == "export-review-pack":
+        result = export_review_pack(args.run_dir, args.output_dir, limit=args.limit)
+        _print_json(
+            {"status": result["status"], "mode": "export-review-pack", "review_pack": result}
+        )
+        return 0
     raise AssertionError(f"Unhandled command {args.command}")
 
 

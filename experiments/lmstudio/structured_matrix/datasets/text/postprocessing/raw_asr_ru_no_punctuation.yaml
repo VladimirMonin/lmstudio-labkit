@@ -1,0 +1,11 @@
+fixture_id: raw_asr_ru_no_punctuation
+input_profile: raw_asr_ru_no_punctuation
+language: ru_ru
+text: сегодня мы поговорим про django модели и миграции сначала создадим model потом
+  применим makemigrations и migrate
+metadata:
+  expected_terms:
+  - source_variants:
+    - джанго
+    - django
+    normalized: Django

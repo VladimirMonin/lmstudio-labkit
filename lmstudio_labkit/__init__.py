@@ -36,14 +36,19 @@ from .requests import (
     ResponseContract,
     TextInput,
 )
+from .review_pack import export_review_pack
 from .schema_builders import build_blocks_schema, build_simple_flat_schema
 from .snapshots import export_latest_text_remote_snapshot
 from .validation import (
     ValidationResult,
     ValidationSummary,
     collect_ids_by_path,
+    validate_filler_cleanup,
     validate_language,
+    validate_paragraphing_metrics,
+    validate_punctuation_metrics,
     validate_response,
+    validate_term_normalization,
 )
 
 __all__ = [
@@ -79,6 +84,7 @@ __all__ = [
     "build_blocks_schema",
     "build_simple_flat_schema",
     "collect_ids_by_path",
+    "export_review_pack",
     "export_latest_text_remote_snapshot",
     "load_task_manifest",
     "load_task_manifests",
@@ -86,6 +92,10 @@ __all__ = [
     "plan_matrix",
     "run_live_small_text_screening",
     "run_matrix",
+    "validate_filler_cleanup",
+    "validate_paragraphing_metrics",
+    "validate_punctuation_metrics",
+    "validate_term_normalization",
     "validate_language",
     "validate_response",
     "write_run_artifacts",

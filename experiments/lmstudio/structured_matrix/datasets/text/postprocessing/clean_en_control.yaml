@@ -1,0 +1,5 @@
+fixture_id: clean_en_control
+input_profile: clean_en
+language: en_en
+text: Today we will discuss Django models and migrations, then validate the JSON schema.
+metadata: {}

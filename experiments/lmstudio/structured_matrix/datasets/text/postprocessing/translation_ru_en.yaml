@@ -1,0 +1,6 @@
+fixture_id: translation_ru_en
+input_profile: clean_en
+language: en_en
+text: The team reviews Whisper postprocessing and action item extraction.
+metadata:
+  target_language: ru

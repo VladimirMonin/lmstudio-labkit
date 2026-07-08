@@ -1,0 +1,19 @@
+fixture_id: ru_en_mixed_tech
+input_profile: ru_en_mixed_tech
+language: ru_en_mixed
+text: сегодня в Django проекте мы добавим Qwen embedding model и проверим JSON schema
+  validation
+metadata:
+  expected_terms:
+  - source_variants:
+    - джанго
+    - django
+    normalized: Django
+  - source_variants:
+    - кувен
+    - qwen
+    normalized: Qwen
+  - source_variants:
+    - эмбеддинг
+    - embedding
+    normalized: embedding

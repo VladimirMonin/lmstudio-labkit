@@ -416,12 +416,16 @@ def validate_language(
     policy: str | None = None,
     expected_hints: Any | None = None,
     image_ground_truth: dict[str, Any] | None = None,
+    include_paths: tuple[str, ...] = (),
+    ignore_paths: tuple[str, ...] = (),
 ) -> ValidationResult:
     resolved_policy = _resolve_language_policy(language, policy)
     if resolved_policy is None or resolved_policy == "skip":
         return ValidationResult("language_compliance", "skip")
 
-    text = _flatten_language_text(value)
+    text = _flatten_language_text_by_policy(
+        value, include_paths=include_paths, ignore_paths=ignore_paths
+    )
     cyr = len(re.findall(r"[А-Яа-яЁё]", text))
     lat = len(re.findall(r"[A-Za-z]", text))
     total_letters = max(1, cyr + lat)
@@ -463,6 +467,8 @@ def _resolve_language_policy(language: str | None, policy: str | None) -> str | 
             "en_ru": "mixed_ru_en",
             "en_en": "strict_en",
         }.get(language or "", "skip")
+    if policy == "preserve_mixed_language":
+        return "mixed_ru_en"
     if policy == "translate_to_ru":
         return "allow_code_terms"
     if policy == "translate_to_en":
@@ -561,6 +567,129 @@ def validate_image_ground_truth(value: Any, ground_truth: dict[str, Any]) -> Val
     return ValidationResult("image_ground_truth", "pass", metrics=metrics)
 
 
+def validate_term_normalization(
+    value: Any,
+    expected_terms: tuple[dict[str, Any], ...],
+) -> ValidationResult:
+    text = _flatten_text(value).casefold()
+    expected_count = len(expected_terms)
+    normalized_seen = 0
+    forbidden_remaining = 0
+    for term in expected_terms:
+        normalized = str(term.get("normalized", "")).casefold()
+        variants = tuple(str(item).casefold() for item in term.get("source_variants", ()))
+        if normalized and normalized in text:
+            normalized_seen += 1
+        forbidden_remaining += sum(
+            1 for variant in variants if variant and variant in text and variant != normalized
+        )
+    recall = normalized_seen / expected_count if expected_count else 1.0
+    precision = (
+        1.0
+        if forbidden_remaining == 0
+        else normalized_seen / max(1, normalized_seen + forbidden_remaining)
+    )
+    status: ValidationStatus = (
+        "pass" if normalized_seen == expected_count and forbidden_remaining == 0 else "fail"
+    )
+    return ValidationResult(
+        "term_normalization_status",
+        status,
+        None if status == "pass" else "term_normalization_mismatch",
+        {
+            "expected_terms_seen": normalized_seen,
+            "expected_terms_normalized": normalized_seen,
+            "forbidden_term_variants_remaining": forbidden_remaining,
+            "term_recall": round(recall, 4),
+            "term_precision": round(precision, 4),
+        },
+    )
+
+
+def validate_punctuation_metrics(
+    before: str,
+    after: str,
+    *,
+    policy: str = "diagnostic",
+) -> ValidationResult:
+    before_count = _punctuation_count(before)
+    after_count = _punctuation_count(after)
+    sentence_count = len(re.findall(r"[.!?…]+", after))
+    density = after_count / max(1, len(after))
+    metrics = {
+        "punctuation_count_before": before_count,
+        "punctuation_count_after": after_count,
+        "sentence_count_before": len(re.findall(r"[.!?…]+", before)),
+        "sentence_count_after": sentence_count,
+        "punctuation_density_after": round(density, 4),
+        "policy": policy,
+    }
+    if policy == "hard" and after_count <= before_count:
+        return ValidationResult("punctuation_metrics", "fail", "punctuation_not_restored", metrics)
+    return ValidationResult(
+        "punctuation_metrics", "warning" if policy == "diagnostic" else "pass", metrics=metrics
+    )
+
+
+def validate_paragraphing_metrics(
+    text: str,
+    *,
+    paragraph_count_min: int = 1,
+    paragraph_count_max: int | None = None,
+    hard: bool = False,
+) -> ValidationResult:
+    paragraphs = text.split("\n\n") if text else []
+    non_empty = [item for item in paragraphs if item.strip()]
+    empty_count = len(paragraphs) - len(non_empty)
+    count = len(non_empty)
+    too_low = count < paragraph_count_min
+    too_high = paragraph_count_max is not None and count > paragraph_count_max
+    metrics = {
+        "paragraph_count": count,
+        "paragraph_count_min": paragraph_count_min,
+        "paragraph_count_max": paragraph_count_max,
+        "empty_paragraph_count": empty_count,
+    }
+    if hard and (too_low or too_high or empty_count > 0):
+        return ValidationResult("paragraphing_metrics", "fail", "paragraphing_mismatch", metrics)
+    return ValidationResult("paragraphing_metrics", "pass", metrics=metrics)
+
+
+DEFAULT_RU_FILLERS = ("ну", "как бы", "это самое", "короче", "типа", "в общем")
+
+
+def validate_filler_cleanup(
+    before: str,
+    after: str,
+    *,
+    filler_terms: tuple[str, ...] = DEFAULT_RU_FILLERS,
+    hard: bool = False,
+) -> ValidationResult:
+    before_count = _filler_count(before, filler_terms)
+    after_count = _filler_count(after, filler_terms)
+    reduction = (before_count - after_count) / before_count if before_count else 1.0
+    metrics = {
+        "filler_terms_before": before_count,
+        "filler_terms_after": after_count,
+        "filler_reduction_ratio": round(reduction, 4),
+    }
+    if hard and before_count > 0 and after_count >= before_count:
+        return ValidationResult("filler_cleanup", "fail", "filler_cleanup_mismatch", metrics)
+    return ValidationResult("filler_cleanup", "pass", metrics=metrics)
+
+
+def _punctuation_count(text: str) -> int:
+    return len(re.findall(r"[.!?,;:—–\-…]", text))
+
+
+def _filler_count(text: str, filler_terms: tuple[str, ...]) -> int:
+    lowered = text.casefold()
+    return sum(
+        len(re.findall(rf"(?<!\w){re.escape(term.casefold())}(?!\w)", lowered))
+        for term in filler_terms
+    )
+
+
 def _flatten_text(value: Any) -> str:
     if value is None:
         return ""
@@ -571,6 +700,28 @@ def _flatten_text(value: Any) -> str:
     if isinstance(value, list | tuple):
         return " ".join(_flatten_text(item) for item in value)
     return str(value)
+
+
+def _flatten_language_text_by_policy(
+    value: Any,
+    *,
+    include_paths: tuple[str, ...] = (),
+    ignore_paths: tuple[str, ...] = (),
+) -> str:
+    if include_paths:
+        return " ".join(
+            _flatten_language_text(item)
+            for path in include_paths
+            for item in _values_by_path(value, _parse_id_path(path))
+        )
+    if ignore_paths:
+        ignored = {
+            id(item)
+            for path in ignore_paths
+            for item in _values_by_path(value, _parse_id_path(path))
+        }
+        return _flatten_language_text(value, ignored_ids=ignored)
+    return _flatten_language_text(value)
 
 
 _LANGUAGE_METADATA_KEYS = {
@@ -590,7 +741,7 @@ _LANGUAGE_METADATA_KEYS = {
 }
 
 
-def _flatten_language_text(value: Any) -> str:
+def _flatten_language_text(value: Any, *, ignored_ids: set[int] | None = None) -> str:
     """Flatten only user-visible language-bearing payload values.
 
     Language validation should not be dominated by JSON bookkeeping values such
@@ -599,6 +750,8 @@ def _flatten_language_text(value: Any) -> str:
     appear inside user-visible text.
     """
 
+    if ignored_ids is not None and id(value) in ignored_ids:
+        return ""
     if value is None:
         return ""
     if isinstance(value, str):
@@ -608,8 +761,8 @@ def _flatten_language_text(value: Any) -> str:
         for key, child in value.items():
             if str(key) in _LANGUAGE_METADATA_KEYS:
                 continue
-            parts.append(_flatten_language_text(child))
+            parts.append(_flatten_language_text(child, ignored_ids=ignored_ids))
         return " ".join(parts)
     if isinstance(value, list | tuple):
-        return " ".join(_flatten_language_text(item) for item in value)
+        return " ".join(_flatten_language_text(item, ignored_ids=ignored_ids) for item in value)
     return ""

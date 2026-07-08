@@ -55,6 +55,7 @@ DEFAULT_AXES = {
     "input_profile": ["clean"],
     "output_language_policy": ["preserve_input_language"],
     "validation_policy": ["automatic"],
+    "prompt_variant": ["baseline"],
 }
 
 
@@ -96,6 +97,8 @@ class TaskSpec:
     input_profile: str = "clean"
     output_language_policy: str = "preserve_input_language"
     validation_policy: str = "automatic"
+    prompt_variant: str = "baseline"
+    response_schema_complexity: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -310,6 +313,11 @@ def _build_matrix_plan(config: BenchmarkConfig) -> MatrixPlan:
         ("input_profile", lambda task: (task.input_profile,)),
         ("output_language_policy", lambda task: (task.output_language_policy,)),
         ("validation_policy", lambda task: (task.validation_policy,)),
+        ("prompt_variant", lambda task: (task.prompt_variant,)),
+        (
+            "response_schema_complexity",
+            lambda task: (task.response_schema_complexity or task.structure_complexity,),
+        ),
         ("execution_target", lambda task: ("local_managed",)),
         ("resource_telemetry_mode", lambda task: ("full",)),
     )
@@ -389,6 +397,14 @@ def _compatibility_skip_reason(
         return "output_language_policy_mismatch"
     if axes.get("validation_policy", task.validation_policy) != task.validation_policy:
         return "validation_policy_mismatch"
+    if axes.get("prompt_variant", task.prompt_variant) != task.prompt_variant:
+        return "prompt_variant_mismatch"
+    expected_schema_complexity = task.response_schema_complexity or task.structure_complexity
+    if (
+        axes.get("response_schema_complexity", expected_schema_complexity)
+        != expected_schema_complexity
+    ):
+        return "response_schema_complexity_mismatch"
     context_tier = axes.get("context_tier")
     if model.supported_context_tiers and context_tier not in model.supported_context_tiers:
         return "unsupported_context_tier"
@@ -872,6 +888,8 @@ def _task_from_dict(payload: dict[str, Any]) -> TaskSpec:
             payload.get("output_language_policy", "preserve_input_language")
         ),
         validation_policy=str(payload.get("validation_policy", "automatic")),
+        prompt_variant=str(payload.get("prompt_variant", "baseline")),
+        response_schema_complexity=payload.get("response_schema_complexity"),
     )
 
 
@@ -1175,21 +1193,18 @@ def _mutate_text(value: Any, replacement: str) -> Any:
 
 
 def _replace_first_text(value: Any, replacement: str) -> bool:
+    replaced = False
     if isinstance(value, dict):
-        if isinstance(value.get("text"), str):
-            value["text"] = replacement
-            return True
-        if isinstance(value.get("normalized_text"), str):
-            value["normalized_text"] = replacement
-            return True
+        for key in ("text", "normalized_text", "clean_text", "summary", "title"):
+            if isinstance(value.get(key), str):
+                value[key] = replacement
+                replaced = True
         for child in value.values():
-            if _replace_first_text(child, replacement):
-                return True
+            replaced = _replace_first_text(child, replacement) or replaced
     elif isinstance(value, list):
         for child in value:
-            if _replace_first_text(child, replacement):
-                return True
-    return False
+            replaced = _replace_first_text(child, replacement) or replaced
+    return replaced
 
 
 def _cell_id(

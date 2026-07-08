@@ -1,0 +1,10 @@
+fixture_id: raw_asr_ru_fillers
+input_profile: raw_asr_ru_fillers
+language: ru_ru
+text: ну сегодня мы как бы поговорим про django ну и короче посмотрим как работают
+  миграции
+metadata:
+  filler_terms:
+  - ну
+  - как бы
+  - короче
