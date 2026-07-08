@@ -1,0 +1,181 @@
+{
+  "attempt_count": 32,
+  "cache_modes": [
+    "none"
+  ],
+  "cell_count": 32,
+  "config_hash": "cbf3cb93a065b744bc127726b9f93cd57f4d6a017f10ded609603e0eb570a5bc",
+  "execution_modes": [
+    "cold_per_request"
+  ],
+  "execution_targets": [
+    "live_small"
+  ],
+  "fail_count": 0,
+  "failure_categories": {},
+  "filtered_cell_count": 32,
+  "hard_fail_count": 0,
+  "length_ratio_failures": {
+    "count": 0,
+    "max_actual_ratio": null,
+    "min_actual_ratio": null,
+    "model_ids": [],
+    "policy_max": [],
+    "policy_min": [],
+    "task_ids": []
+  },
+  "length_ratio_warning_count": 0,
+  "lifecycle": {
+    "cleanup_scopes": [
+      "per_request"
+    ],
+    "final_loaded_instances": [
+      0
+    ],
+    "load_scopes": [
+      "per_request"
+    ],
+    "session_cleanup_verified": [
+      "True"
+    ],
+    "session_ids": [
+      "session_1513b885ecde22ba",
+      "session_1729ba02ac8f2198",
+      "session_181471ac17d4ef20",
+      "session_19917a7ee65dc3d4",
+      "session_1e7f8f7270c20139",
+      "session_26236148f292c3cd",
+      "session_2a2a5b3ec406d336",
+      "session_356e50e319b1c79a",
+      "session_3bffc1ce99b75ba9",
+      "session_41d9d87dcbd32247",
+      "session_43d970c9cb872e4b",
+      "session_4692c7a820c43eae",
+      "session_46b162aa593e14c9",
+      "session_4940fb78b3bfd80d",
+      "session_58a3d276a56c8710",
+      "session_5b46fca70ae2cfdf",
+      "session_74adc8a44ff3d569",
+      "session_7a5ba9a12b231f64",
+      "session_7e079110d0ff04ee",
+      "session_7e709e81b5a78271",
+      "session_7fdcd4a9c18dab4e",
+      "session_8dca3897cc81a8a7",
+      "session_92220a639ddfa15e",
+      "session_a24e6786ca8c5870",
+      "session_aa0402529590f4a8",
+      "session_ae6bcf49ad1aa46b",
+      "session_b5b6fdbc17166ca6",
+      "session_b713eea63e26137a",
+      "session_c20a2b9b4bedefa5",
+      "session_c3aee992a52f4fd8",
+      "session_e951390e2cc9d3d6",
+      "session_ff6e83aa7d513591"
+    ],
+    "session_request_counts": [
+      1
+    ],
+    "session_request_indices": [
+      1
+    ]
+  },
+  "live": true,
+  "live_bridge": {
+    "allow_model_load": true,
+    "allow_remote": false,
+    "allow_stress": false,
+    "base_url_kind": "local",
+    "base_url_scheme": "http",
+    "live": true,
+    "max_requests": 32,
+    "profile": "live-screening"
+  },
+  "model_ids": [
+    "google/gemma-4-e2b",
+    "google/gemma-4-e4b"
+  ],
+  "model_status": {
+    "google/gemma-4-e2b": {
+      "pass": 16
+    },
+    "google/gemma-4-e4b": {
+      "pass": 16
+    }
+  },
+  "models": [
+    "gemma4_e2b",
+    "gemma4_e4b"
+  ],
+  "pass_count": 32,
+  "pass_rate": 1.0,
+  "per_complexity": {
+    "simple": {
+      "pass": 32,
+      "warning": 48
+    }
+  },
+  "per_language": {
+    "ru_en_mixed": {
+      "pass": 16,
+      "warning": 24
+    },
+    "ru_ru": {
+      "pass": 16,
+      "warning": 24
+    }
+  },
+  "per_volume": {
+    "single": {
+      "pass": 32,
+      "warning": 48
+    }
+  },
+  "resource_telemetry_modes": [
+    "timing_only"
+  ],
+  "retry_impact": {
+    "off": {
+      "pass": 16,
+      "warning": 24
+    },
+    "retry1": {
+      "pass": 16,
+      "warning": 24
+    }
+  },
+  "run_id": "matrix_l3_22_focused_simple_postprocessing_live",
+  "safety": {
+    "public_safe": true,
+    "raw_base_url_stored": false,
+    "raw_prompt_response_stored": false,
+    "raw_prompt_stored": false,
+    "raw_response_stored": false
+  },
+  "schema_version": "latest-text-remote-snapshot-v1",
+  "skipped_cell_count": 1504,
+  "timing": {
+    "latency_ms_max": 984.493,
+    "latency_ms_min": 642.748,
+    "total_latency_ms_max": 984.493,
+    "total_latency_ms_min": 642.748
+  },
+  "token_counts": {
+    "completion_tokens": 1192,
+    "prompt_tokens": 8976
+  },
+  "warmup": {
+    "cache_hit_reported": [
+      "unknown"
+    ],
+    "kv_reuse_proven": [
+      "False"
+    ],
+    "measured_request_count": 32,
+    "warmup_request_count": 0
+  },
+  "warning_categories": {
+    "manual_review_required": 16,
+    "punctuation_metrics": 16
+  },
+  "warning_count": 48
+}
