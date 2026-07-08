@@ -9,6 +9,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from .privacy import assert_privacy_scan_passed, scan_artifact_files
+
 
 @dataclass(frozen=True, slots=True)
 class ArtifactSet:
@@ -22,6 +24,7 @@ class ArtifactSet:
     failure_summary: Path
     retry_summary: Path
     resource_summary: Path
+    axis_summary: Path
     privacy_scan: Path
     report: Path
 
@@ -54,6 +57,7 @@ class ArtifactSet:
             "failure_summary": str(self.failure_summary),
             "retry_summary": str(self.retry_summary),
             "resource_summary": str(self.resource_summary),
+            "axis_summary": str(self.axis_summary),
             "privacy_scan": str(self.privacy_scan),
             "report": str(self.report),
         }
@@ -78,6 +82,7 @@ def write_run_artifacts(
         failure_summary=root / "failure_summary.csv",
         retry_summary=root / "retry_summary.csv",
         resource_summary=root / "resource_summary.csv",
+        axis_summary=root / "axis_summary.csv",
         privacy_scan=root / "privacy_scan.json",
         report=root / "report.md",
     )
@@ -89,16 +94,14 @@ def write_run_artifacts(
     _write_failure_summary(artifact_set.failure_summary, cell_results)
     _write_retry_summary(artifact_set.retry_summary, cell_results)
     _write_resource_summary(artifact_set.resource_summary, cell_results)
+    _write_axis_summary(artifact_set.axis_summary, cell_results)
 
-    privacy_scan = {
-        "status": "pass",
-        "policy": planner_summary.get("privacy_mode", "safe-default"),
-        "scanned_artifacts": [path.name for path in artifact_set.files],
-        "violation_count": 0,
-        "violations": [],
-    }
+    draft_report = _build_report(planner_summary, cell_results, {"status": "pending"})
+    artifact_set.report.write_text(draft_report, encoding="utf-8")
+    scan_targets = tuple(path for path in artifact_set.files if path != artifact_set.privacy_scan)
+    privacy_scan = scan_artifact_files(scan_targets)
     _write_json(artifact_set.privacy_scan, privacy_scan)
-
+    assert_privacy_scan_passed(privacy_scan)
     artifact_set.report.write_text(
         _build_report(planner_summary, cell_results, privacy_scan), encoding="utf-8"
     )
@@ -130,6 +133,7 @@ def _write_cell_summary(
         "task_id",
         "status",
         "retry_count",
+        "retry_recovered",
         "error_category",
     ]
     _write_csv(path, fieldnames, ({key: row.get(key) for key in fieldnames} for row in rows))
@@ -148,14 +152,17 @@ def _write_model_summary(
         {
             "model_key": model_key,
             "model_id": model_id,
+            "attempt_count": sum(counts.values()),
             "pass_count": counts.get("pass", 0),
             "fail_count": counts.get("fail", 0),
-            "attempt_count": sum(counts.values()),
+            "pass_rate": _rate(counts.get("pass", 0), sum(counts.values())),
         }
         for (model_key, model_id), counts in sorted(grouped.items())
     )
     _write_csv(
-        path, ["model_key", "model_id", "attempt_count", "pass_count", "fail_count"], summary_rows
+        path,
+        ["model_key", "model_id", "attempt_count", "pass_count", "fail_count", "pass_rate"],
+        summary_rows,
     )
 
 
@@ -180,14 +187,33 @@ def _write_retry_summary(
     path: Path,
     rows: list[dict[str, Any]] | tuple[dict[str, Any], ...],
 ) -> None:
-    counts = Counter(str(row.get("retry_count", 0)) for row in rows)
+    by_policy: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for row in rows:
+        axes = row.get("axes") if isinstance(row.get("axes"), dict) else {}
+        by_policy[str(axes.get("retry_policy", row.get("retry_count", 0)))].append(row)
+    summary_rows = []
+    for policy, policy_rows in sorted(by_policy.items()):
+        recovered = sum(1 for row in policy_rows if row.get("retry_recovered") is True)
+        attempted = sum(1 for row in policy_rows if int(row.get("retry_count") or 0) > 0)
+        summary_rows.append(
+            {
+                "retry_policy": policy,
+                "attempt_count": len(policy_rows),
+                "retry_attempted_count": attempted,
+                "recovered_count": recovered,
+                "recovery_rate": _rate(recovered, attempted),
+            }
+        )
     _write_csv(
         path,
-        ["retry_count", "attempt_count"],
-        (
-            {"retry_count": retry_count, "attempt_count": count}
-            for retry_count, count in sorted(counts.items())
-        ),
+        [
+            "retry_policy",
+            "attempt_count",
+            "retry_attempted_count",
+            "recovered_count",
+            "recovery_rate",
+        ],
+        summary_rows,
     )
 
 
@@ -216,12 +242,46 @@ def _write_resource_summary(
     )
 
 
+def _write_axis_summary(
+    path: Path, rows: list[dict[str, Any]] | tuple[dict[str, Any], ...]
+) -> None:
+    grouped: dict[tuple[str, str], Counter[str]] = defaultdict(Counter)
+    for row in rows:
+        axes = row.get("axes") if isinstance(row.get("axes"), dict) else {}
+        for axis_name, axis_value in axes.items():
+            grouped[(str(axis_name), str(axis_value))][str(row.get("status", "unknown"))] += 1
+    summary_rows = []
+    for (axis_name, axis_value), counts in sorted(grouped.items()):
+        total = sum(counts.values())
+        summary_rows.append(
+            {
+                "axis": axis_name,
+                "value": axis_value,
+                "attempt_count": total,
+                "pass_count": counts.get("pass", 0),
+                "fail_count": counts.get("fail", 0),
+                "pass_rate": _rate(counts.get("pass", 0), total),
+            }
+        )
+    _write_csv(
+        path,
+        ["axis", "value", "attempt_count", "pass_count", "fail_count", "pass_rate"],
+        summary_rows,
+    )
+
+
 def _write_csv(path: Path, fieldnames: list[str], rows: Any) -> None:
     with path.open("w", encoding="utf-8", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=fieldnames)
         writer.writeheader()
         for row in rows:
             writer.writerow(row)
+
+
+def _rate(part: int, total: int) -> float | None:
+    if total <= 0:
+        return None
+    return round(part / total, 4)
 
 
 def _build_report(
@@ -232,6 +292,14 @@ def _build_report(
     run_id = planner_summary.get("run_id", "unknown_run")
     passed = sum(1 for row in cell_results if row.get("status") == "pass")
     failed = sum(1 for row in cell_results if row.get("status") == "fail")
+    axis_counts = Counter()
+    for row in cell_results:
+        axes = row.get("axes") if isinstance(row.get("axes"), dict) else {}
+        for axis_name, axis_value in axes.items():
+            axis_counts[f"{axis_name}={axis_value}"] += 1
+    axis_lines = [f"- {key}: `{count}`" for key, count in sorted(axis_counts.items())]
+    if not axis_lines:
+        axis_lines = ["- no completed cells"]
     lines = [
         f"# LabKit run {run_id}",
         "",
@@ -241,6 +309,10 @@ def _build_report(
         f"- failed: `{failed}`",
         f"- live: `{str(planner_summary.get('live', False)).lower()}`",
         f"- privacy_scan: `{privacy_scan['status']}`",
+        "",
+        "## Axis coverage",
+        "",
+        *axis_lines,
         "",
     ]
     return "\n".join(lines)
