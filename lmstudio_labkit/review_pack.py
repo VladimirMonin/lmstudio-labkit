@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import json
 import subprocess
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -91,12 +92,12 @@ def _validate_local_only_raw_output_dir(output_dir: Path) -> None:
     except ValueError:
         inside_repo = False
     if not inside_repo:
-        if resolved.is_relative_to(Path("/tmp")):
+        if resolved.is_relative_to(Path(tempfile.gettempdir()).resolve()):
             return
         if _is_gitignored_path(resolved, repo_root=repo_root):
             return
         raise ValueError(
-            "--include-raw-outputs-local-only requires an output dir under /tmp "
+            "--include-raw-outputs-local-only requires an output dir under the platform temp dir "
             "or an explicitly gitignored path"
         )
     raise ValueError("raw-output review packs must not be written inside the repository")

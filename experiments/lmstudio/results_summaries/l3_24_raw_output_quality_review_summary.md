@@ -56,7 +56,7 @@ uv run lmstudio-benchmark export-review-pack \
 Guard behavior:
 
 - raw-output pack must not be written inside the repository;
-- output under `/tmp` is allowed;
+- output under the platform temp directory (`tempfile.gettempdir()`) is allowed;
 - raw base URLs, credentials, tokens, and secrets are not exported;
 - README contains a local-only raw-output warning;
 - pack is not tracked by Git.
@@ -287,7 +287,7 @@ quality candidate: google/gemma-4-e4b
 lightweight fallback: google/gemma-4-e2b
 mode: transcript_cleanup/simple
 schema: simple
-prompt_variant: strict_no_new_facts
+prompt_variant: strict_no_new_facts_v2
 context_tier: 8192
 retry_policy: off
 fallback: original text

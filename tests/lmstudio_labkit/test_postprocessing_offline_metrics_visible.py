@@ -23,3 +23,5 @@ def test_offline_run_writes_postprocessing_metrics_to_cell_results(tmp_path: Pat
     assert "paragraphing_metrics" in names
     assert "filler_cleanup" in names
     assert "no_new_facts_manual_review" in names
+    assert "cleanup_noop_diagnostics" in names
+    assert "term_normalization_language_drift" in names

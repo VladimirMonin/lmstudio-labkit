@@ -185,6 +185,13 @@ def _write_cell_summary(
         "order_mismatch",
         "first_mismatch_index",
         "placeholder_hit_count",
+        "cleanup_noop_status",
+        "cleanup_noop_detected",
+        "source_noise_present",
+        "cleanup_noop_similarity",
+        "term_language_drift_status",
+        "term_language_drift_detected",
+        "term_language_cyrillic_delta",
         "markdown_fence_count",
         "finish_reason",
         "retry_count",
@@ -237,6 +244,8 @@ def _write_model_summary(
             "hard_fail_count",
             "warning_count",
             "length_ratio_warning_count",
+            "cleanup_noop_warning_count",
+            "term_language_drift_warning_count",
             "pass_rate",
             "json_parse_pass_rate",
             "schema_pass_rate",
@@ -264,6 +273,10 @@ def _cell_summary_row(row: dict[str, Any]) -> dict[str, Any]:
     placeholder_metrics = _validation_metrics(validation_results, "no_placeholder_text")
     fence_metrics = _validation_metrics(validation_results, "markdown_fence_leak")
     length_metrics = _validation_metrics(validation_results, "length_ratio")
+    cleanup_noop_metrics = _validation_metrics(validation_results, "cleanup_noop_diagnostics")
+    term_language_metrics = _validation_metrics(
+        validation_results, "term_normalization_language_drift"
+    )
     length_result = validation_results.get("length_ratio", {})
     return {
         "cell_id": row.get("cell_id"),
@@ -325,6 +338,15 @@ def _cell_summary_row(row: dict[str, Any]) -> dict[str, Any]:
         "order_mismatch": id_metrics.get("order_mismatch"),
         "first_mismatch_index": id_metrics.get("first_mismatch_index"),
         "placeholder_hit_count": placeholder_metrics.get("hit_count"),
+        "cleanup_noop_status": _validation_status(validation_results, "cleanup_noop_diagnostics"),
+        "cleanup_noop_detected": cleanup_noop_metrics.get("cleanup_noop"),
+        "source_noise_present": cleanup_noop_metrics.get("source_noise_present"),
+        "cleanup_noop_similarity": cleanup_noop_metrics.get("normalized_similarity"),
+        "term_language_drift_status": _validation_status(
+            validation_results, "term_normalization_language_drift"
+        ),
+        "term_language_drift_detected": term_language_metrics.get("language_drift_detected"),
+        "term_language_cyrillic_delta": term_language_metrics.get("cyrillic_ratio_delta"),
         "markdown_fence_count": fence_metrics.get("fence_count"),
         "finish_reason": result.get("finish_reason"),
         "retry_count": row.get("retry_count"),
@@ -372,6 +394,10 @@ def _model_summary_row(model_key: str, model_id: str, rows: list[dict[str, Any]]
         "hard_fail_count": _hard_fail_count(rows),
         "warning_count": _row_warning_count(rows),
         "length_ratio_warning_count": _length_ratio_warning_count(rows),
+        "cleanup_noop_warning_count": _validation_warning_count(rows, "cleanup_noop_diagnostics"),
+        "term_language_drift_warning_count": _validation_warning_count(
+            rows, "term_normalization_language_drift"
+        ),
         "pass_rate": _rate(status_counts.get("pass", 0), len(rows)),
         "json_parse_pass_rate": _validation_pass_rate(rows, "json_parse"),
         "schema_pass_rate": _validation_pass_rate(rows, "json_schema"),
@@ -401,6 +427,12 @@ def _length_ratio_warning_count(rows: list[dict[str, Any]]) -> int:
         if _validation_status(validation_results, "length_ratio") == "warning":
             count += 1
     return count
+
+
+def _validation_warning_count(rows: list[dict[str, Any]], name: str) -> int:
+    return sum(
+        1 for row in rows if _validation_status(_validation_results_by_name(row), name) == "warning"
+    )
 
 
 def _warning_category_summary(

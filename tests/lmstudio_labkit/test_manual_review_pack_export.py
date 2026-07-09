@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -77,3 +78,19 @@ def test_export_review_pack_rejects_raw_outputs_inside_repository(tmp_path: Path
         export_review_pack(run, out, include_raw_outputs_local_only=True)
 
     assert not out.exists()
+
+
+def test_export_review_pack_allows_platform_temp_dir(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    run = tmp_path / "run"
+    _write_minimal_run(run)
+    platform_temp = tmp_path / "platform-temp"
+    platform_temp.mkdir()
+    monkeypatch.setattr(tempfile, "tempdir", str(platform_temp))
+    out = platform_temp / "pack"
+
+    result = export_review_pack(run, out, include_raw_outputs_local_only=True)
+
+    assert result["status"] == "ok"
+    assert result["raw_outputs_included"] is True

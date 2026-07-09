@@ -95,7 +95,7 @@ simple_postprocessing:
   context_tier: 8192
   retry_policy: off
   schema: simple
-  prompt_variant: strict_no_new_facts
+  prompt_variant: strict_no_new_facts_v2
   store_raw_prompt: false
   store_raw_response: false
   log_validation_metadata: true
@@ -108,7 +108,7 @@ If product policy prioritizes resource use over visible cleanup quality, E2B may
 Mode-to-prompt mapping:
 
 ```text
-transcript_cleanup/simple -> strict_no_new_facts
+transcript_cleanup/simple -> strict_no_new_facts_v2
 term_normalization/simple -> term_glossary
 ```
 

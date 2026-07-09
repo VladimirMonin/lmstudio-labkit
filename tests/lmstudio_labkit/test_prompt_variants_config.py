@@ -11,6 +11,7 @@ def test_prompt_variant_files_exist() -> None:
         "baseline.md",
         "strict_same_language.md",
         "strict_no_new_facts.md",
+        "strict_no_new_facts_v2.md",
         "term_glossary.md",
         "paragraphing_focused.md",
         "translation_focused.md",

@@ -61,3 +61,50 @@ def test_term_normalization_hard_policy_fails_but_diagnostic_warns() -> None:
     assert hard.status == "fail"
     assert _result(diagnostic, "term_normalization_status").status == "warning"
     assert diagnostic.status == "pass"
+
+
+def test_transcript_cleanup_noop_warns_when_noise_is_present() -> None:
+    source = "ну сегодня мы как бы поговорим про django"
+    raw = json.dumps({"clean_text": source}, ensure_ascii=False)
+    contract = ResponseContract(
+        mode="json",
+        language="ru_ru",
+        language_policy="preserve_input_language",
+        response_schema_complexity="simple",
+        source_text=source,
+        task_intent="transcript_cleanup",
+        filler_cleanup_policy="diagnostic",
+        punctuation_policy="diagnostic",
+    )
+
+    summary = validate_response(raw, contract)
+    noop = _result(summary, "cleanup_noop_diagnostics")
+
+    assert noop.status == "warning"
+    assert noop.category == "cleanup_noop_when_noise_present"
+    assert noop.metrics["cleanup_noop"] is True
+    assert noop.metrics["source_noise_present"] is True
+
+
+def test_term_normalization_language_drift_is_reported_as_warning() -> None:
+    source = "сегодня используем джанго и пай сайд"
+    raw = json.dumps({"clean_text": "Today we use Django and PySide."}, ensure_ascii=False)
+    contract = ResponseContract(
+        mode="json",
+        language="ru_ru",
+        language_policy="skip",
+        response_schema_complexity="simple",
+        source_text=source,
+        task_intent="term_normalization",
+        expected_terms=(
+            {"source_variants": ["джанго"], "normalized": "Django"},
+            {"source_variants": ["пай сайд"], "normalized": "PySide"},
+        ),
+    )
+
+    summary = validate_response(raw, contract)
+    drift = _result(summary, "term_normalization_language_drift")
+
+    assert drift.status == "warning"
+    assert drift.category == "term_normalization_language_drift"
+    assert drift.metrics["language_drift_detected"] is True

@@ -78,6 +78,25 @@ def test_validation_metrics_are_flattened_into_cell_summary(tmp_path: Path) -> N
                     validation_result("no_placeholder_text", "fail", {"hit_count": 5}),
                     validation_result("no_reasoning_leak", "pass"),
                     validation_result("language_compliance", "pass"),
+                    validation_result(
+                        "cleanup_noop_diagnostics",
+                        "warning",
+                        {
+                            "cleanup_noop": True,
+                            "source_noise_present": True,
+                            "normalized_similarity": 1.0,
+                        },
+                    ),
+                    validation_result(
+                        "term_normalization_language_drift",
+                        "warning",
+                        {
+                            "language_drift_detected": True,
+                            "source_cyrillic_ratio": 0.8,
+                            "output_cyrillic_ratio": 0.0,
+                            "cyrillic_ratio_delta": -0.8,
+                        },
+                    ),
                     validation_result("image_ground_truth", "skip"),
                 ],
                 latency_ms=20.0,
@@ -97,6 +116,11 @@ def test_validation_metrics_are_flattened_into_cell_summary(tmp_path: Path) -> N
     assert row["order_mismatch"] == "True"
     assert row["first_mismatch_index"] == "4"
     assert row["placeholder_hit_count"] == "5"
+    assert row["cleanup_noop_status"] == "warning"
+    assert row["cleanup_noop_detected"] == "True"
+    assert row["source_noise_present"] == "True"
+    assert row["term_language_drift_status"] == "warning"
+    assert row["term_language_drift_detected"] == "True"
     assert row["latency_ms"] == "20.0"
     assert row["prompt_tokens"] == "12"
     assert row["completion_tokens"] == "34"
@@ -156,5 +180,7 @@ def test_validation_metrics_are_aggregated_into_model_summary(tmp_path: Path) ->
     assert row["retry_recovered_count"] == "1"
     assert row["retry_dependency_rate"] == "0.5"
     assert row["finish_length_count"] == "1"
+    assert row["cleanup_noop_warning_count"] == "0"
+    assert row["term_language_drift_warning_count"] == "0"
     assert row["median_latency_ms"] == "20.0"
     assert row["p95_latency_ms"] == "30.0"

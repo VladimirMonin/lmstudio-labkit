@@ -133,7 +133,7 @@ execution: cold_per_request
 
 Prompt contract:
 
-- `transcript_cleanup`: strict no-new-facts cleanup;
+- `transcript_cleanup`: `strict_no_new_facts_v2` conservative cleanup;
 - `term_normalization`: glossary-only normalization;
 - no external knowledge;
 - return JSON only;
@@ -239,8 +239,8 @@ Allowed after L3.24:
 Required before real user trials:
 
 - improve transcript-cleanup prompt so E2B/E4B perform visible conservative cleanup;
-- add no-op cleanup diagnostic;
-- strengthen term-normalization language-preservation validator;
+- measure `cleanup_noop_diagnostics` / `cleanup_noop_when_noise_present`;
+- measure `term_normalization_language_drift` as a warning-level drift diagnostic;
 - rerun local raw review on 10–20 realistic synthetic/private-safe snippets.
 
 ### Stage C — internal dogfood only

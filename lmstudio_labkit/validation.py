@@ -670,6 +670,16 @@ def _postprocessing_validation_results(
     else:
         results.append(ValidationResult("filler_cleanup", "skip"))
 
+    if source_text is not None and task_intent in {"transcript_cleanup", "mixed_postprocess"}:
+        results.append(validate_cleanup_noop_diagnostics(source_text, output_text))
+    else:
+        results.append(ValidationResult("cleanup_noop_diagnostics", "skip"))
+
+    if source_text is not None and task_intent == "term_normalization":
+        results.append(validate_term_normalization_language_drift(source_text, output_text))
+    else:
+        results.append(ValidationResult("term_normalization_language_drift", "skip"))
+
     manual_policy = _effective_policy(contract.manual_review_policy, default="diagnostic")
     manual_required = manual_policy != "off" and (
         "manual" in validation_policy
@@ -880,6 +890,55 @@ def validate_filler_cleanup(
     return ValidationResult("filler_cleanup", "pass", metrics=metrics)
 
 
+def validate_cleanup_noop_diagnostics(before: str, after: str) -> ValidationResult:
+    before_norm = _normalize_content_for_noop(before)
+    after_norm = _normalize_content_for_noop(after)
+    cleanup_noop = bool(before_norm) and before_norm == after_norm
+    source_noise_present = _source_has_cleanup_noise(before)
+    metrics = {
+        "cleanup_noop": cleanup_noop,
+        "source_noise_present": source_noise_present,
+        "source_char_count": len(before),
+        "output_char_count": len(after),
+        "normalized_similarity": 1.0 if cleanup_noop else 0.0,
+    }
+    if cleanup_noop and source_noise_present:
+        return ValidationResult(
+            "cleanup_noop_diagnostics",
+            "warning",
+            "cleanup_noop_when_noise_present",
+            metrics,
+        )
+    return ValidationResult("cleanup_noop_diagnostics", "pass", metrics=metrics)
+
+
+def validate_term_normalization_language_drift(before: str, after: str) -> ValidationResult:
+    before_mix = _letter_mix_metrics(before, prefix="source")
+    after_mix = _letter_mix_metrics(after, prefix="output")
+    source_cyr = float(before_mix["source_cyrillic_ratio"])
+    output_cyr = float(after_mix["output_cyrillic_ratio"])
+    source_lat = float(before_mix["source_latin_ratio"])
+    output_lat = float(after_mix["output_latin_ratio"])
+    cyr_delta = round(output_cyr - source_cyr, 4)
+    lat_delta = round(output_lat - source_lat, 4)
+    drift = source_cyr >= 0.5 and output_cyr < 0.25 and output_lat > source_lat + 0.25
+    metrics = {
+        **before_mix,
+        **after_mix,
+        "cyrillic_ratio_delta": cyr_delta,
+        "latin_ratio_delta": lat_delta,
+        "language_drift_detected": drift,
+    }
+    if drift:
+        return ValidationResult(
+            "term_normalization_language_drift",
+            "warning",
+            "term_normalization_language_drift",
+            metrics,
+        )
+    return ValidationResult("term_normalization_language_drift", "pass", metrics=metrics)
+
+
 def _punctuation_count(text: str) -> int:
     return len(re.findall(r"[.!?,;:—–\-…]", text))
 
@@ -890,6 +949,30 @@ def _filler_count(text: str, filler_terms: tuple[str, ...]) -> int:
         len(re.findall(rf"(?<!\w){re.escape(term.casefold())}(?!\w)", lowered))
         for term in filler_terms
     )
+
+
+def _normalize_content_for_noop(text: str) -> str:
+    return re.sub(r"\s+", " ", text.casefold()).strip()
+
+
+def _source_has_cleanup_noise(text: str) -> bool:
+    filler_count = _filler_count(text, DEFAULT_RU_FILLERS)
+    punctuation_count = _punctuation_count(text)
+    words = re.findall(r"\w+", text, flags=re.UNICODE)
+    low_punctuation_density = len(words) >= 8 and punctuation_count == 0
+    return filler_count > 0 or low_punctuation_density
+
+
+def _letter_mix_metrics(text: str, *, prefix: str) -> dict[str, int | float]:
+    cyr = len(re.findall(r"[А-Яа-яЁё]", text))
+    lat = len(re.findall(r"[A-Za-z]", text))
+    total = max(1, cyr + lat)
+    return {
+        f"{prefix}_cyrillic_chars": cyr,
+        f"{prefix}_latin_chars": lat,
+        f"{prefix}_cyrillic_ratio": round(cyr / total, 4),
+        f"{prefix}_latin_ratio": round(lat / total, 4),
+    }
 
 
 def _flatten_text(value: Any) -> str:
