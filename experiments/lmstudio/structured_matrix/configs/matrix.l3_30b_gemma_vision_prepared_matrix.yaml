@@ -1,0 +1,5369 @@
+run_id: matrix_l3_30b_gemma_vision_prepared_matrix
+models:
+- model_key: gemma4_e2b
+  model_id: google/gemma-4-e2b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_e4b
+  model_id: google/gemma-4-e4b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_12b_qat
+  model_id: google/gemma-4-12b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_26b_a4b_qat
+  model_id: google/gemma-4-26b-a4b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+tasks:
+- task_id: l330b_vision_simple_ru_ru_ui_settings_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_settings_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_settings_ru_001 and return simple JSON
+    only.
+  image_hash: sha256:8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic Russian model settings dialog with fields for model id,
+      context length, temperature, JSON Schema state, and save/cancel actions.
+    visible_text: &id001
+    - Настройки модели
+    - google/gemma-4-e4b
+    - '8192'
+    - '0.0'
+    - JSON-схема
+    - Сохранить
+    - Отмена
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_settings_ru_001
+    image_type: ui_settings_ru
+    fixture_path: fixtures/ui_settings_ru_001.webp
+    expected_file: expected/ui_settings_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_settings_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_ru_ru_ui_settings_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_settings_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_settings_ru_001 and return medium JSON
+    only.
+  image_hash: sha256:8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: ui_settings_ru
+    summary: Synthetic Russian model settings dialog with fields for model id, context
+      length, temperature, JSON Schema state, and save/cancel actions.
+    visible_text: *id001
+    objects:
+    - type: settings_window
+      label: settings_window
+    - type: left_navigation
+      label: left_navigation
+    - type: model_field
+      label: model_field
+    - type: context_field
+      label: context_field
+    - type: temperature_field
+      label: temperature_field
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_settings_ru_001
+    image_type: ui_settings_ru
+    fixture_path: fixtures/ui_settings_ru_001.webp
+    expected_file: expected/ui_settings_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_settings_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_ru_ru_ui_settings_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_settings_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_settings_ru_001 and return complex JSON
+    only.
+  image_hash: sha256:8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: ui_settings_ru
+      language: ru_ru
+      sections:
+      - id: 0
+        title: ui_settings_ru
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic Russian model settings dialog with fields for model id,
+            context length, temperature, JSON Schema state, and save/cancel actions.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_settings_ru_001
+    image_type: ui_settings_ru
+    fixture_path: fixtures/ui_settings_ru_001.webp
+    expected_file: expected/ui_settings_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_settings_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_en_en_ui_settings_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_settings_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_settings_ru_001 and return simple JSON
+    only.
+  image_hash: sha256:8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic Russian model settings dialog with fields for model id,
+      context length, temperature, JSON Schema state, and save/cancel actions.
+    visible_text: *id001
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_settings_ru_001
+    image_type: ui_settings_ru
+    fixture_path: fixtures/ui_settings_ru_001.webp
+    expected_file: expected/ui_settings_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_settings_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_en_en_ui_settings_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_settings_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_settings_ru_001 and return medium JSON
+    only.
+  image_hash: sha256:8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: ui_settings_ru
+    summary: Synthetic Russian model settings dialog with fields for model id, context
+      length, temperature, JSON Schema state, and save/cancel actions.
+    visible_text: *id001
+    objects:
+    - type: settings_window
+      label: settings_window
+    - type: left_navigation
+      label: left_navigation
+    - type: model_field
+      label: model_field
+    - type: context_field
+      label: context_field
+    - type: temperature_field
+      label: temperature_field
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_settings_ru_001
+    image_type: ui_settings_ru
+    fixture_path: fixtures/ui_settings_ru_001.webp
+    expected_file: expected/ui_settings_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_settings_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_en_en_ui_settings_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_settings_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_settings_ru_001 and return complex JSON
+    only.
+  image_hash: sha256:8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: ui_settings_ru
+      language: en_en
+      sections:
+      - id: 0
+        title: ui_settings_ru
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic Russian model settings dialog with fields for model id,
+            context length, temperature, JSON Schema state, and save/cancel actions.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_settings_ru_001
+    image_type: ui_settings_ru
+    fixture_path: fixtures/ui_settings_ru_001.webp
+    expected_file: expected/ui_settings_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_settings_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_ru_ru_ui_queue_dashboard_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_queue_dashboard_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_queue_dashboard_ru_001 and return simple
+    JSON only.
+  image_hash: sha256:e432d04b696da1569f85a61b7d032954de22e5f52a7af5e154f0cffdb21301d0
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic Russian processing queue dashboard with three files, statuses,
+      progress values, total task count, and error count.
+    visible_text: &id002
+    - Очередь обработки
+    - lecture_01.mp3
+    - meeting_notes.wav
+    - demo_video.mp4
+    - Готово
+    - Обработка
+    - Ожидание
+    - 100%
+    - 67%
+    - 0%
+    - 3 задачи
+    - 'Ошибки: 0'
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_queue_dashboard_ru_001
+    image_type: ui_queue_dashboard_ru
+    fixture_path: fixtures/ui_queue_dashboard_ru_001.webp
+    expected_file: expected/ui_queue_dashboard_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_queue_dashboard_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_ru_ru_ui_queue_dashboard_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_queue_dashboard_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_queue_dashboard_ru_001 and return medium
+    JSON only.
+  image_hash: sha256:e432d04b696da1569f85a61b7d032954de22e5f52a7af5e154f0cffdb21301d0
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: ui_queue_dashboard_ru
+    summary: Synthetic Russian processing queue dashboard with three files, statuses,
+      progress values, total task count, and error count.
+    visible_text: *id002
+    objects:
+    - type: sidebar_navigation
+      label: sidebar_navigation
+    - type: queue_table
+      label: queue_table
+    - type: three_file_rows
+      label: three_file_rows
+    - type: progress_bars
+      label: progress_bars
+    - type: summary_card
+      label: summary_card
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_queue_dashboard_ru_001
+    image_type: ui_queue_dashboard_ru
+    fixture_path: fixtures/ui_queue_dashboard_ru_001.webp
+    expected_file: expected/ui_queue_dashboard_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_queue_dashboard_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_ru_ru_ui_queue_dashboard_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_queue_dashboard_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_queue_dashboard_ru_001 and return complex
+    JSON only.
+  image_hash: sha256:e432d04b696da1569f85a61b7d032954de22e5f52a7af5e154f0cffdb21301d0
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: ui_queue_dashboard_ru
+      language: ru_ru
+      sections:
+      - id: 0
+        title: ui_queue_dashboard_ru
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic Russian processing queue dashboard with three files, statuses,
+            progress values, total task count, and error count.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_queue_dashboard_ru_001
+    image_type: ui_queue_dashboard_ru
+    fixture_path: fixtures/ui_queue_dashboard_ru_001.webp
+    expected_file: expected/ui_queue_dashboard_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_queue_dashboard_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_en_en_ui_queue_dashboard_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_queue_dashboard_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_queue_dashboard_ru_001 and return simple
+    JSON only.
+  image_hash: sha256:e432d04b696da1569f85a61b7d032954de22e5f52a7af5e154f0cffdb21301d0
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic Russian processing queue dashboard with three files, statuses,
+      progress values, total task count, and error count.
+    visible_text: *id002
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_queue_dashboard_ru_001
+    image_type: ui_queue_dashboard_ru
+    fixture_path: fixtures/ui_queue_dashboard_ru_001.webp
+    expected_file: expected/ui_queue_dashboard_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_queue_dashboard_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_en_en_ui_queue_dashboard_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_queue_dashboard_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_queue_dashboard_ru_001 and return medium
+    JSON only.
+  image_hash: sha256:e432d04b696da1569f85a61b7d032954de22e5f52a7af5e154f0cffdb21301d0
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: ui_queue_dashboard_ru
+    summary: Synthetic Russian processing queue dashboard with three files, statuses,
+      progress values, total task count, and error count.
+    visible_text: *id002
+    objects:
+    - type: sidebar_navigation
+      label: sidebar_navigation
+    - type: queue_table
+      label: queue_table
+    - type: three_file_rows
+      label: three_file_rows
+    - type: progress_bars
+      label: progress_bars
+    - type: summary_card
+      label: summary_card
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_queue_dashboard_ru_001
+    image_type: ui_queue_dashboard_ru
+    fixture_path: fixtures/ui_queue_dashboard_ru_001.webp
+    expected_file: expected/ui_queue_dashboard_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_queue_dashboard_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_en_en_ui_queue_dashboard_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_queue_dashboard_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_queue_dashboard_ru_001 and return complex
+    JSON only.
+  image_hash: sha256:e432d04b696da1569f85a61b7d032954de22e5f52a7af5e154f0cffdb21301d0
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: ui_queue_dashboard_ru
+      language: en_en
+      sections:
+      - id: 0
+        title: ui_queue_dashboard_ru
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic Russian processing queue dashboard with three files, statuses,
+            progress values, total task count, and error count.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_queue_dashboard_ru_001
+    image_type: ui_queue_dashboard_ru
+    fixture_path: fixtures/ui_queue_dashboard_ru_001.webp
+    expected_file: expected/ui_queue_dashboard_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_queue_dashboard_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_ru_ru_code_python_editor_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: code_python_editor_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image code_python_editor_001 and return simple JSON
+    only.
+  image_hash: sha256:e387c3707145554cd0148a4e6da22c6996db05498bcf35542160a5b2bd8449d9
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic dark-theme Python code editor screenshot with a project
+      tree, utils.py tab, line numbers, and simple utility functions.
+    visible_text: &id003
+    - utils.py
+    - normalize_title
+    - clamp
+    - format_seconds
+    - Python 3.11.8
+    - UTF-8
+    - LF
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: code_python_editor_001
+    image_type: code_python_editor
+    fixture_path: fixtures/code_python_editor_001.webp
+    expected_file: expected/code_python_editor_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/code_python_editor_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_ru_ru_code_python_editor_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: code_python_editor_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image code_python_editor_001 and return medium JSON
+    only.
+  image_hash: sha256:e387c3707145554cd0148a4e6da22c6996db05498bcf35542160a5b2bd8449d9
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: code_python_editor
+    summary: Synthetic dark-theme Python code editor screenshot with a project tree,
+      utils.py tab, line numbers, and simple utility functions.
+    visible_text: *id003
+    objects:
+    - type: file_explorer
+      label: file_explorer
+    - type: utils_py_tab
+      label: utils_py_tab
+    - type: line_numbers
+      label: line_numbers
+    - type: python_code_block
+      label: python_code_block
+    - type: status_bar
+      label: status_bar
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: code_python_editor_001
+    image_type: code_python_editor
+    fixture_path: fixtures/code_python_editor_001.webp
+    expected_file: expected/code_python_editor_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/code_python_editor_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_ru_ru_code_python_editor_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: code_python_editor_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image code_python_editor_001 and return complex
+    JSON only.
+  image_hash: sha256:e387c3707145554cd0148a4e6da22c6996db05498bcf35542160a5b2bd8449d9
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: code_python_editor
+      language: ru_ru
+      sections:
+      - id: 0
+        title: code_python_editor
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic dark-theme Python code editor screenshot with a project
+            tree, utils.py tab, line numbers, and simple utility functions.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: code_python_editor_001
+    image_type: code_python_editor
+    fixture_path: fixtures/code_python_editor_001.webp
+    expected_file: expected/code_python_editor_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/code_python_editor_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_en_en_code_python_editor_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: code_python_editor_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image code_python_editor_001 and return simple JSON
+    only.
+  image_hash: sha256:e387c3707145554cd0148a4e6da22c6996db05498bcf35542160a5b2bd8449d9
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic dark-theme Python code editor screenshot with a project
+      tree, utils.py tab, line numbers, and simple utility functions.
+    visible_text: *id003
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: code_python_editor_001
+    image_type: code_python_editor
+    fixture_path: fixtures/code_python_editor_001.webp
+    expected_file: expected/code_python_editor_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/code_python_editor_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_en_en_code_python_editor_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: code_python_editor_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image code_python_editor_001 and return medium JSON
+    only.
+  image_hash: sha256:e387c3707145554cd0148a4e6da22c6996db05498bcf35542160a5b2bd8449d9
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: code_python_editor
+    summary: Synthetic dark-theme Python code editor screenshot with a project tree,
+      utils.py tab, line numbers, and simple utility functions.
+    visible_text: *id003
+    objects:
+    - type: file_explorer
+      label: file_explorer
+    - type: utils_py_tab
+      label: utils_py_tab
+    - type: line_numbers
+      label: line_numbers
+    - type: python_code_block
+      label: python_code_block
+    - type: status_bar
+      label: status_bar
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: code_python_editor_001
+    image_type: code_python_editor
+    fixture_path: fixtures/code_python_editor_001.webp
+    expected_file: expected/code_python_editor_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/code_python_editor_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_en_en_code_python_editor_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: code_python_editor_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image code_python_editor_001 and return complex
+    JSON only.
+  image_hash: sha256:e387c3707145554cd0148a4e6da22c6996db05498bcf35542160a5b2bd8449d9
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: code_python_editor
+      language: en_en
+      sections:
+      - id: 0
+        title: code_python_editor
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic dark-theme Python code editor screenshot with a project
+            tree, utils.py tab, line numbers, and simple utility functions.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: code_python_editor_001
+    image_type: code_python_editor
+    fixture_path: fixtures/code_python_editor_001.webp
+    expected_file: expected/code_python_editor_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/code_python_editor_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_ru_ru_terminal_logs_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: terminal_logs_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image terminal_logs_001 and return simple JSON only.
+  image_hash: sha256:551c69c6034f17a6326682207c0a869b2e785573107fc3bf0417a3835d6ad638
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic terminal window with model lifecycle log lines, including
+      load start, load done, retry scheduled, and cleanup done.
+    visible_text: &id004
+    - model.load.started
+    - model.load.done
+    - retry.scheduled
+    - schema_error
+    - cleanup.done
+    - final_loaded_instances=0
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: terminal_logs_001
+    image_type: terminal_logs
+    fixture_path: fixtures/terminal_logs_001.webp
+    expected_file: expected/terminal_logs_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/terminal_logs_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_ru_ru_terminal_logs_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: terminal_logs_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image terminal_logs_001 and return medium JSON only.
+  image_hash: sha256:551c69c6034f17a6326682207c0a869b2e785573107fc3bf0417a3835d6ad638
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: terminal_logs
+    summary: Synthetic terminal window with model lifecycle log lines, including load
+      start, load done, retry scheduled, and cleanup done.
+    visible_text: *id004
+    objects:
+    - type: terminal_window
+      label: terminal_window
+    - type: info_log_lines
+      label: info_log_lines
+    - type: warning_log_line
+      label: warning_log_line
+    - type: cleanup_log_line
+      label: cleanup_log_line
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: terminal_logs_001
+    image_type: terminal_logs
+    fixture_path: fixtures/terminal_logs_001.webp
+    expected_file: expected/terminal_logs_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/terminal_logs_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_ru_ru_terminal_logs_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: terminal_logs_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image terminal_logs_001 and return complex JSON
+    only.
+  image_hash: sha256:551c69c6034f17a6326682207c0a869b2e785573107fc3bf0417a3835d6ad638
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: terminal_logs
+      language: ru_ru
+      sections:
+      - id: 0
+        title: terminal_logs
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic terminal window with model lifecycle log lines, including
+            load start, load done, retry scheduled, and cleanup done.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: terminal_logs_001
+    image_type: terminal_logs
+    fixture_path: fixtures/terminal_logs_001.webp
+    expected_file: expected/terminal_logs_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/terminal_logs_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_en_en_terminal_logs_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: terminal_logs_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image terminal_logs_001 and return simple JSON only.
+  image_hash: sha256:551c69c6034f17a6326682207c0a869b2e785573107fc3bf0417a3835d6ad638
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic terminal window with model lifecycle log lines, including
+      load start, load done, retry scheduled, and cleanup done.
+    visible_text: *id004
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: terminal_logs_001
+    image_type: terminal_logs
+    fixture_path: fixtures/terminal_logs_001.webp
+    expected_file: expected/terminal_logs_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/terminal_logs_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_en_en_terminal_logs_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: terminal_logs_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image terminal_logs_001 and return medium JSON only.
+  image_hash: sha256:551c69c6034f17a6326682207c0a869b2e785573107fc3bf0417a3835d6ad638
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: terminal_logs
+    summary: Synthetic terminal window with model lifecycle log lines, including load
+      start, load done, retry scheduled, and cleanup done.
+    visible_text: *id004
+    objects:
+    - type: terminal_window
+      label: terminal_window
+    - type: info_log_lines
+      label: info_log_lines
+    - type: warning_log_line
+      label: warning_log_line
+    - type: cleanup_log_line
+      label: cleanup_log_line
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: terminal_logs_001
+    image_type: terminal_logs
+    fixture_path: fixtures/terminal_logs_001.webp
+    expected_file: expected/terminal_logs_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/terminal_logs_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_en_en_terminal_logs_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: terminal_logs_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image terminal_logs_001 and return complex JSON
+    only.
+  image_hash: sha256:551c69c6034f17a6326682207c0a869b2e785573107fc3bf0417a3835d6ad638
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: terminal_logs
+      language: en_en
+      sections:
+      - id: 0
+        title: terminal_logs
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic terminal window with model lifecycle log lines, including
+            load start, load done, retry scheduled, and cleanup done.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: terminal_logs_001
+    image_type: terminal_logs
+    fixture_path: fixtures/terminal_logs_001.webp
+    expected_file: expected/terminal_logs_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/terminal_logs_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_ru_ru_slide_json_schema_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: slide_json_schema_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image slide_json_schema_ru_001 and return simple
+    JSON only.
+  image_hash: sha256:7fe26d643566ab21c65b397c0967431a16ad917778fdc2a07b92afb9cca15873
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic Russian educational slide explaining JSON Schema with bullet
+      points, process diagram, and schema example.
+    visible_text: &id005
+    - Что такое JSON Schema?
+    - Описывает структуру JSON
+    - Проверяет типы данных
+    - LLM → JSON → Validator → Result
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: slide_json_schema_ru_001
+    image_type: slide_json_schema_ru
+    fixture_path: fixtures/slide_json_schema_ru_001.webp
+    expected_file: expected/slide_json_schema_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/slide_json_schema_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_ru_ru_slide_json_schema_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: slide_json_schema_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image slide_json_schema_ru_001 and return medium
+    JSON only.
+  image_hash: sha256:7fe26d643566ab21c65b397c0967431a16ad917778fdc2a07b92afb9cca15873
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: slide_json_schema_ru
+    summary: Synthetic Russian educational slide explaining JSON Schema with bullet
+      points, process diagram, and schema example.
+    visible_text: *id005
+    objects:
+    - type: slide_title
+      label: slide_title
+    - type: left_bullet_list
+      label: left_bullet_list
+    - type: process_diagram
+      label: process_diagram
+    - type: schema_example_block
+      label: schema_example_block
+    - type: advantage_callout
+      label: advantage_callout
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: slide_json_schema_ru_001
+    image_type: slide_json_schema_ru
+    fixture_path: fixtures/slide_json_schema_ru_001.webp
+    expected_file: expected/slide_json_schema_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/slide_json_schema_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_ru_ru_slide_json_schema_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: slide_json_schema_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image slide_json_schema_ru_001 and return complex
+    JSON only.
+  image_hash: sha256:7fe26d643566ab21c65b397c0967431a16ad917778fdc2a07b92afb9cca15873
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: slide_json_schema_ru
+      language: ru_ru
+      sections:
+      - id: 0
+        title: slide_json_schema_ru
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic Russian educational slide explaining JSON Schema with bullet
+            points, process diagram, and schema example.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: slide_json_schema_ru_001
+    image_type: slide_json_schema_ru
+    fixture_path: fixtures/slide_json_schema_ru_001.webp
+    expected_file: expected/slide_json_schema_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/slide_json_schema_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_en_en_slide_json_schema_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: slide_json_schema_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image slide_json_schema_ru_001 and return simple
+    JSON only.
+  image_hash: sha256:7fe26d643566ab21c65b397c0967431a16ad917778fdc2a07b92afb9cca15873
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic Russian educational slide explaining JSON Schema with bullet
+      points, process diagram, and schema example.
+    visible_text: *id005
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: slide_json_schema_ru_001
+    image_type: slide_json_schema_ru
+    fixture_path: fixtures/slide_json_schema_ru_001.webp
+    expected_file: expected/slide_json_schema_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/slide_json_schema_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_en_en_slide_json_schema_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: slide_json_schema_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image slide_json_schema_ru_001 and return medium
+    JSON only.
+  image_hash: sha256:7fe26d643566ab21c65b397c0967431a16ad917778fdc2a07b92afb9cca15873
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: slide_json_schema_ru
+    summary: Synthetic Russian educational slide explaining JSON Schema with bullet
+      points, process diagram, and schema example.
+    visible_text: *id005
+    objects:
+    - type: slide_title
+      label: slide_title
+    - type: left_bullet_list
+      label: left_bullet_list
+    - type: process_diagram
+      label: process_diagram
+    - type: schema_example_block
+      label: schema_example_block
+    - type: advantage_callout
+      label: advantage_callout
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: slide_json_schema_ru_001
+    image_type: slide_json_schema_ru
+    fixture_path: fixtures/slide_json_schema_ru_001.webp
+    expected_file: expected/slide_json_schema_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/slide_json_schema_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_en_en_slide_json_schema_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: slide_json_schema_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image slide_json_schema_ru_001 and return complex
+    JSON only.
+  image_hash: sha256:7fe26d643566ab21c65b397c0967431a16ad917778fdc2a07b92afb9cca15873
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: slide_json_schema_ru
+      language: en_en
+      sections:
+      - id: 0
+        title: slide_json_schema_ru
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic Russian educational slide explaining JSON Schema with bullet
+            points, process diagram, and schema example.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: slide_json_schema_ru_001
+    image_type: slide_json_schema_ru
+    fixture_path: fixtures/slide_json_schema_ru_001.webp
+    expected_file: expected/slide_json_schema_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/slide_json_schema_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_ru_ru_document_table_products_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: document_table_products_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image document_table_products_ru_001 and return
+    simple JSON only.
+  image_hash: sha256:dbb6e061f7954f1a772806d8b67d66125169efd4b88d1a8b4eb91b42aeab5149
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic Russian document editor window with a product table containing
+      item ids, names, quantities, and prices.
+    visible_text: &id006
+    - Таблица товаров
+    - ID
+    - Товар
+    - Кол-во
+    - Цена
+    - Кабель
+    - Адаптер
+    - Блокнот
+    - '300'
+    - '750'
+    - '120'
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: document_table_products_ru_001
+    image_type: document_table_products_ru
+    fixture_path: fixtures/document_table_products_ru_001.webp
+    expected_file: expected/document_table_products_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/document_table_products_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_ru_ru_document_table_products_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: document_table_products_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image document_table_products_ru_001 and return
+    medium JSON only.
+  image_hash: sha256:dbb6e061f7954f1a772806d8b67d66125169efd4b88d1a8b4eb91b42aeab5149
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: document_table_products_ru
+    summary: Synthetic Russian document editor window with a product table containing
+      item ids, names, quantities, and prices.
+    visible_text: *id006
+    objects:
+    - type: document_window
+      label: document_window
+    - type: toolbar
+      label: toolbar
+    - type: product_table
+      label: product_table
+    - type: table_header
+      label: table_header
+    - type: three_data_rows
+      label: three_data_rows
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: document_table_products_ru_001
+    image_type: document_table_products_ru
+    fixture_path: fixtures/document_table_products_ru_001.webp
+    expected_file: expected/document_table_products_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/document_table_products_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_ru_ru_document_table_products_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: document_table_products_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image document_table_products_ru_001 and return
+    complex JSON only.
+  image_hash: sha256:dbb6e061f7954f1a772806d8b67d66125169efd4b88d1a8b4eb91b42aeab5149
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: document_table_products_ru
+      language: ru_ru
+      sections:
+      - id: 0
+        title: document_table_products_ru
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic Russian document editor window with a product table containing
+            item ids, names, quantities, and prices.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: document_table_products_ru_001
+    image_type: document_table_products_ru
+    fixture_path: fixtures/document_table_products_ru_001.webp
+    expected_file: expected/document_table_products_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/document_table_products_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_en_en_document_table_products_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: document_table_products_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image document_table_products_ru_001 and return
+    simple JSON only.
+  image_hash: sha256:dbb6e061f7954f1a772806d8b67d66125169efd4b88d1a8b4eb91b42aeab5149
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic Russian document editor window with a product table containing
+      item ids, names, quantities, and prices.
+    visible_text: *id006
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: document_table_products_ru_001
+    image_type: document_table_products_ru
+    fixture_path: fixtures/document_table_products_ru_001.webp
+    expected_file: expected/document_table_products_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/document_table_products_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_en_en_document_table_products_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: document_table_products_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image document_table_products_ru_001 and return
+    medium JSON only.
+  image_hash: sha256:dbb6e061f7954f1a772806d8b67d66125169efd4b88d1a8b4eb91b42aeab5149
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: document_table_products_ru
+    summary: Synthetic Russian document editor window with a product table containing
+      item ids, names, quantities, and prices.
+    visible_text: *id006
+    objects:
+    - type: document_window
+      label: document_window
+    - type: toolbar
+      label: toolbar
+    - type: product_table
+      label: product_table
+    - type: table_header
+      label: table_header
+    - type: three_data_rows
+      label: three_data_rows
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: document_table_products_ru_001
+    image_type: document_table_products_ru
+    fixture_path: fixtures/document_table_products_ru_001.webp
+    expected_file: expected/document_table_products_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/document_table_products_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_en_en_document_table_products_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: document_table_products_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image document_table_products_ru_001 and return
+    complex JSON only.
+  image_hash: sha256:dbb6e061f7954f1a772806d8b67d66125169efd4b88d1a8b4eb91b42aeab5149
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: document_table_products_ru
+      language: en_en
+      sections:
+      - id: 0
+        title: document_table_products_ru
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic Russian document editor window with a product table containing
+            item ids, names, quantities, and prices.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: document_table_products_ru_001
+    image_type: document_table_products_ru
+    fixture_path: fixtures/document_table_products_ru_001.webp
+    expected_file: expected/document_table_products_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/document_table_products_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_ru_ru_chart_tasks_by_month_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: chart_tasks_by_month_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image chart_tasks_by_month_ru_001 and return simple
+    JSON only.
+  image_hash: sha256:9c8c757383fc57dec329bcf05e3cb6701a463f7741812eedbc8d77f7e261ba3e
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic Russian bar chart showing completed tasks by month with
+      four bars, labels, legend, and summary metrics.
+    visible_text: &id007
+    - Задачи, выполненные по месяцам
+    - Январь
+    - Февраль
+    - Март
+    - Апрель
+    - '12'
+    - '18'
+    - '9'
+    - '21'
+    - 'Всего задач: 60'
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: chart_tasks_by_month_ru_001
+    image_type: chart_tasks_by_month_ru
+    fixture_path: fixtures/chart_tasks_by_month_ru_001.webp
+    expected_file: expected/chart_tasks_by_month_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/chart_tasks_by_month_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_ru_ru_chart_tasks_by_month_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: chart_tasks_by_month_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image chart_tasks_by_month_ru_001 and return medium
+    JSON only.
+  image_hash: sha256:9c8c757383fc57dec329bcf05e3cb6701a463f7741812eedbc8d77f7e261ba3e
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: chart_tasks_by_month_ru
+    summary: Synthetic Russian bar chart showing completed tasks by month with four
+      bars, labels, legend, and summary metrics.
+    visible_text: *id007
+    objects:
+    - type: chart_title
+      label: chart_title
+    - type: x_axis_month_labels
+      label: x_axis_month_labels
+    - type: four_bars
+      label: four_bars
+    - type: legend
+      label: legend
+    - type: summary_metrics
+      label: summary_metrics
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: chart_tasks_by_month_ru_001
+    image_type: chart_tasks_by_month_ru
+    fixture_path: fixtures/chart_tasks_by_month_ru_001.webp
+    expected_file: expected/chart_tasks_by_month_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/chart_tasks_by_month_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_ru_ru_chart_tasks_by_month_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: chart_tasks_by_month_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image chart_tasks_by_month_ru_001 and return complex
+    JSON only.
+  image_hash: sha256:9c8c757383fc57dec329bcf05e3cb6701a463f7741812eedbc8d77f7e261ba3e
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: chart_tasks_by_month_ru
+      language: ru_ru
+      sections:
+      - id: 0
+        title: chart_tasks_by_month_ru
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic Russian bar chart showing completed tasks by month with
+            four bars, labels, legend, and summary metrics.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: chart_tasks_by_month_ru_001
+    image_type: chart_tasks_by_month_ru
+    fixture_path: fixtures/chart_tasks_by_month_ru_001.webp
+    expected_file: expected/chart_tasks_by_month_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/chart_tasks_by_month_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_en_en_chart_tasks_by_month_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: chart_tasks_by_month_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image chart_tasks_by_month_ru_001 and return simple
+    JSON only.
+  image_hash: sha256:9c8c757383fc57dec329bcf05e3cb6701a463f7741812eedbc8d77f7e261ba3e
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic Russian bar chart showing completed tasks by month with
+      four bars, labels, legend, and summary metrics.
+    visible_text: *id007
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: chart_tasks_by_month_ru_001
+    image_type: chart_tasks_by_month_ru
+    fixture_path: fixtures/chart_tasks_by_month_ru_001.webp
+    expected_file: expected/chart_tasks_by_month_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/chart_tasks_by_month_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_en_en_chart_tasks_by_month_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: chart_tasks_by_month_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image chart_tasks_by_month_ru_001 and return medium
+    JSON only.
+  image_hash: sha256:9c8c757383fc57dec329bcf05e3cb6701a463f7741812eedbc8d77f7e261ba3e
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: chart_tasks_by_month_ru
+    summary: Synthetic Russian bar chart showing completed tasks by month with four
+      bars, labels, legend, and summary metrics.
+    visible_text: *id007
+    objects:
+    - type: chart_title
+      label: chart_title
+    - type: x_axis_month_labels
+      label: x_axis_month_labels
+    - type: four_bars
+      label: four_bars
+    - type: legend
+      label: legend
+    - type: summary_metrics
+      label: summary_metrics
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: chart_tasks_by_month_ru_001
+    image_type: chart_tasks_by_month_ru
+    fixture_path: fixtures/chart_tasks_by_month_ru_001.webp
+    expected_file: expected/chart_tasks_by_month_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/chart_tasks_by_month_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_en_en_chart_tasks_by_month_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: chart_tasks_by_month_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image chart_tasks_by_month_ru_001 and return complex
+    JSON only.
+  image_hash: sha256:9c8c757383fc57dec329bcf05e3cb6701a463f7741812eedbc8d77f7e261ba3e
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: chart_tasks_by_month_ru
+      language: en_en
+      sections:
+      - id: 0
+        title: chart_tasks_by_month_ru
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic Russian bar chart showing completed tasks by month with
+            four bars, labels, legend, and summary metrics.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: chart_tasks_by_month_ru_001
+    image_type: chart_tasks_by_month_ru
+    fixture_path: fixtures/chart_tasks_by_month_ru_001.webp
+    expected_file: expected/chart_tasks_by_month_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/chart_tasks_by_month_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_ru_ru_people_classroom_selected_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: people_classroom_selected_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image people_classroom_selected_001 and return simple
+    JSON only.
+  image_hash: sha256:85ea141e624d567f8c6c878c907e01dd0c4d764c20b35c789d2dc6f63ef2ca0b
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic classroom scene with an instructor explaining an application
+      architecture diagram to two students; no identity recognition is expected.
+    visible_text: &id008
+    - Архитектура приложения
+    - UI
+    - Сервисный слой
+    - Домен
+    - SQLite
+    - Event Bus
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: people_classroom_selected_001
+    image_type: people_classroom_selected
+    fixture_path: fixtures/people_classroom_selected_001.webp
+    expected_file: expected/people_classroom_selected_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/people_classroom_selected_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_ru_ru_people_classroom_selected_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: people_classroom_selected_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image people_classroom_selected_001 and return medium
+    JSON only.
+  image_hash: sha256:85ea141e624d567f8c6c878c907e01dd0c4d764c20b35c789d2dc6f63ef2ca0b
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: people_classroom_selected
+    summary: Synthetic classroom scene with an instructor explaining an application
+      architecture diagram to two students; no identity recognition is expected.
+    visible_text: *id008
+    objects:
+    - type: three_people
+      label: three_people
+    - type: whiteboard
+      label: whiteboard
+    - type: architecture_diagram
+      label: architecture_diagram
+    - type: laptop
+      label: laptop
+    - type: books
+      label: books
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: people_classroom_selected_001
+    image_type: people_classroom_selected
+    fixture_path: fixtures/people_classroom_selected_001.webp
+    expected_file: expected/people_classroom_selected_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/people_classroom_selected_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_ru_ru_people_classroom_selected_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: people_classroom_selected_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image people_classroom_selected_001 and return complex
+    JSON only.
+  image_hash: sha256:85ea141e624d567f8c6c878c907e01dd0c4d764c20b35c789d2dc6f63ef2ca0b
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: people_classroom_selected
+      language: ru_ru
+      sections:
+      - id: 0
+        title: people_classroom_selected
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic classroom scene with an instructor explaining an application
+            architecture diagram to two students; no identity recognition is expected.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: people_classroom_selected_001
+    image_type: people_classroom_selected
+    fixture_path: fixtures/people_classroom_selected_001.webp
+    expected_file: expected/people_classroom_selected_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/people_classroom_selected_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_en_en_people_classroom_selected_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: people_classroom_selected_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image people_classroom_selected_001 and return simple
+    JSON only.
+  image_hash: sha256:85ea141e624d567f8c6c878c907e01dd0c4d764c20b35c789d2dc6f63ef2ca0b
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic classroom scene with an instructor explaining an application
+      architecture diagram to two students; no identity recognition is expected.
+    visible_text: *id008
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: people_classroom_selected_001
+    image_type: people_classroom_selected
+    fixture_path: fixtures/people_classroom_selected_001.webp
+    expected_file: expected/people_classroom_selected_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/people_classroom_selected_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_en_en_people_classroom_selected_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: people_classroom_selected_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image people_classroom_selected_001 and return medium
+    JSON only.
+  image_hash: sha256:85ea141e624d567f8c6c878c907e01dd0c4d764c20b35c789d2dc6f63ef2ca0b
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: people_classroom_selected
+    summary: Synthetic classroom scene with an instructor explaining an application
+      architecture diagram to two students; no identity recognition is expected.
+    visible_text: *id008
+    objects:
+    - type: three_people
+      label: three_people
+    - type: whiteboard
+      label: whiteboard
+    - type: architecture_diagram
+      label: architecture_diagram
+    - type: laptop
+      label: laptop
+    - type: books
+      label: books
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: people_classroom_selected_001
+    image_type: people_classroom_selected
+    fixture_path: fixtures/people_classroom_selected_001.webp
+    expected_file: expected/people_classroom_selected_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/people_classroom_selected_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_en_en_people_classroom_selected_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: people_classroom_selected_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image people_classroom_selected_001 and return complex
+    JSON only.
+  image_hash: sha256:85ea141e624d567f8c6c878c907e01dd0c4d764c20b35c789d2dc6f63ef2ca0b
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: people_classroom_selected
+      language: en_en
+      sections:
+      - id: 0
+        title: people_classroom_selected
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic classroom scene with an instructor explaining an application
+            architecture diagram to two students; no identity recognition is expected.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: people_classroom_selected_001
+    image_type: people_classroom_selected
+    fixture_path: fixtures/people_classroom_selected_001.webp
+    expected_file: expected/people_classroom_selected_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/people_classroom_selected_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_ru_ru_roadmap_timeline_2026_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: roadmap_timeline_2026_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image roadmap_timeline_2026_ru_001 and return simple
+    JSON only.
+  image_hash: sha256:eb88882e048feb793af2281ad6160ccf230edf0e4847e3c4cd22df13c14e5393
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic Russian 2026 roadmap timeline slide with phases, months,
+      milestones, progress summary, next milestone, and risk panel.
+    visible_text: &id009
+    - Дорожная карта проекта (2026)
+    - Янв 2026 — Дек 2026
+    - '8'
+    - 68% выполнено
+    - Март 2026
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: roadmap_timeline_2026_ru_001
+    image_type: roadmap_timeline_2026_ru
+    fixture_path: fixtures/roadmap_timeline_2026_ru_001.webp
+    expected_file: expected/roadmap_timeline_2026_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/roadmap_timeline_2026_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_ru_ru_roadmap_timeline_2026_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: roadmap_timeline_2026_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image roadmap_timeline_2026_ru_001 and return medium
+    JSON only.
+  image_hash: sha256:eb88882e048feb793af2281ad6160ccf230edf0e4847e3c4cd22df13c14e5393
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: roadmap_timeline_2026_ru
+    summary: Synthetic Russian 2026 roadmap timeline slide with phases, months, milestones,
+      progress summary, next milestone, and risk panel.
+    visible_text: *id009
+    objects:
+    - type: timeline_chart
+      label: timeline_chart
+    - type: month_axis
+      label: month_axis
+    - type: phase_list
+      label: phase_list
+    - type: milestone_markers
+      label: milestone_markers
+    - type: right_summary_panel
+      label: right_summary_panel
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: roadmap_timeline_2026_ru_001
+    image_type: roadmap_timeline_2026_ru
+    fixture_path: fixtures/roadmap_timeline_2026_ru_001.webp
+    expected_file: expected/roadmap_timeline_2026_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/roadmap_timeline_2026_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_ru_ru_roadmap_timeline_2026_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: roadmap_timeline_2026_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image roadmap_timeline_2026_ru_001 and return complex
+    JSON only.
+  image_hash: sha256:eb88882e048feb793af2281ad6160ccf230edf0e4847e3c4cd22df13c14e5393
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: roadmap_timeline_2026_ru
+      language: ru_ru
+      sections:
+      - id: 0
+        title: roadmap_timeline_2026_ru
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic Russian 2026 roadmap timeline slide with phases, months,
+            milestones, progress summary, next milestone, and risk panel.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: roadmap_timeline_2026_ru_001
+    image_type: roadmap_timeline_2026_ru
+    fixture_path: fixtures/roadmap_timeline_2026_ru_001.webp
+    expected_file: expected/roadmap_timeline_2026_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/roadmap_timeline_2026_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_en_en_roadmap_timeline_2026_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: roadmap_timeline_2026_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image roadmap_timeline_2026_ru_001 and return simple
+    JSON only.
+  image_hash: sha256:eb88882e048feb793af2281ad6160ccf230edf0e4847e3c4cd22df13c14e5393
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic Russian 2026 roadmap timeline slide with phases, months,
+      milestones, progress summary, next milestone, and risk panel.
+    visible_text: *id009
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: roadmap_timeline_2026_ru_001
+    image_type: roadmap_timeline_2026_ru
+    fixture_path: fixtures/roadmap_timeline_2026_ru_001.webp
+    expected_file: expected/roadmap_timeline_2026_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/roadmap_timeline_2026_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_en_en_roadmap_timeline_2026_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: roadmap_timeline_2026_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image roadmap_timeline_2026_ru_001 and return medium
+    JSON only.
+  image_hash: sha256:eb88882e048feb793af2281ad6160ccf230edf0e4847e3c4cd22df13c14e5393
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: roadmap_timeline_2026_ru
+    summary: Synthetic Russian 2026 roadmap timeline slide with phases, months, milestones,
+      progress summary, next milestone, and risk panel.
+    visible_text: *id009
+    objects:
+    - type: timeline_chart
+      label: timeline_chart
+    - type: month_axis
+      label: month_axis
+    - type: phase_list
+      label: phase_list
+    - type: milestone_markers
+      label: milestone_markers
+    - type: right_summary_panel
+      label: right_summary_panel
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: roadmap_timeline_2026_ru_001
+    image_type: roadmap_timeline_2026_ru
+    fixture_path: fixtures/roadmap_timeline_2026_ru_001.webp
+    expected_file: expected/roadmap_timeline_2026_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/roadmap_timeline_2026_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_en_en_roadmap_timeline_2026_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: roadmap_timeline_2026_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image roadmap_timeline_2026_ru_001 and return complex
+    JSON only.
+  image_hash: sha256:eb88882e048feb793af2281ad6160ccf230edf0e4847e3c4cd22df13c14e5393
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: roadmap_timeline_2026_ru
+      language: en_en
+      sections:
+      - id: 0
+        title: roadmap_timeline_2026_ru
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic Russian 2026 roadmap timeline slide with phases, months,
+            milestones, progress summary, next milestone, and risk panel.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: roadmap_timeline_2026_ru_001
+    image_type: roadmap_timeline_2026_ru
+    fixture_path: fixtures/roadmap_timeline_2026_ru_001.webp
+    expected_file: expected/roadmap_timeline_2026_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/roadmap_timeline_2026_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_ru_ru_ui_style_guide_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_style_guide_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_style_guide_ru_001 and return simple JSON
+    only.
+  image_hash: sha256:3c43c402cceafa87f2fb910ca5be79487bf0a07351247b0365e8b785e3bc56bd
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic Russian UI style guide slide with palette, typography,
+      spacing, components, principles, and do/don’t examples.
+    visible_text: &id010
+    - Стиль и UI-принципы проекта
+    - '#2563EB'
+    - '#16A34A'
+    - '#F59E0B'
+    - '#EF4444'
+    - Primary
+    - Secondary
+    - Danger
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_style_guide_ru_001
+    image_type: ui_style_guide_ru
+    fixture_path: fixtures/ui_style_guide_ru_001.webp
+    expected_file: expected/ui_style_guide_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_style_guide_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_ru_ru_ui_style_guide_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_style_guide_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_style_guide_ru_001 and return medium JSON
+    only.
+  image_hash: sha256:3c43c402cceafa87f2fb910ca5be79487bf0a07351247b0365e8b785e3bc56bd
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: ui_style_guide_ru
+    summary: Synthetic Russian UI style guide slide with palette, typography, spacing,
+      components, principles, and do/don’t examples.
+    visible_text: *id010
+    objects:
+    - type: palette_card
+      label: palette_card
+    - type: typography_card
+      label: typography_card
+    - type: spacing_card
+      label: spacing_card
+    - type: component_examples
+      label: component_examples
+    - type: principles_card
+      label: principles_card
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_style_guide_ru_001
+    image_type: ui_style_guide_ru
+    fixture_path: fixtures/ui_style_guide_ru_001.webp
+    expected_file: expected/ui_style_guide_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_style_guide_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_ru_ru_ui_style_guide_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_style_guide_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_style_guide_ru_001 and return complex JSON
+    only.
+  image_hash: sha256:3c43c402cceafa87f2fb910ca5be79487bf0a07351247b0365e8b785e3bc56bd
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: ui_style_guide_ru
+      language: ru_ru
+      sections:
+      - id: 0
+        title: ui_style_guide_ru
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic Russian UI style guide slide with palette, typography, spacing,
+            components, principles, and do/don’t examples.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_style_guide_ru_001
+    image_type: ui_style_guide_ru
+    fixture_path: fixtures/ui_style_guide_ru_001.webp
+    expected_file: expected/ui_style_guide_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_style_guide_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+- task_id: l330b_vision_simple_en_en_ui_style_guide_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_style_guide_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_style_guide_ru_001 and return simple JSON
+    only.
+  image_hash: sha256:3c43c402cceafa87f2fb910ca5be79487bf0a07351247b0365e8b785e3bc56bd
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: Synthetic Russian UI style guide slide with palette, typography,
+      spacing, components, principles, and do/don’t examples.
+    visible_text: *id010
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_style_guide_ru_001
+    image_type: ui_style_guide_ru
+    fixture_path: fixtures/ui_style_guide_ru_001.webp
+    expected_file: expected/ui_style_guide_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_style_guide_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_simple.md
+  tags: []
+- task_id: l330b_vision_medium_en_en_ui_style_guide_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: medium
+  response_schema_complexity: medium
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_style_guide_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_medium
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_style_guide_ru_001 and return medium JSON
+    only.
+  image_hash: sha256:3c43c402cceafa87f2fb910ca5be79487bf0a07351247b0365e8b785e3bc56bd
+  schema_family: image_medium
+  schema:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    image_type: ui_style_guide_ru
+    summary: Synthetic Russian UI style guide slide with palette, typography, spacing,
+      components, principles, and do/don’t examples.
+    visible_text: *id010
+    objects:
+    - type: palette_card
+      label: palette_card
+    - type: typography_card
+      label: typography_card
+    - type: spacing_card
+      label: spacing_card
+    - type: component_examples
+      label: component_examples
+    - type: principles_card
+      label: principles_card
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_style_guide_ru_001
+    image_type: ui_style_guide_ru
+    fixture_path: fixtures/ui_style_guide_ru_001.webp
+    expected_file: expected/ui_style_guide_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_local_raw_review
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_style_guide_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_medium.md
+  tags: []
+- task_id: l330b_vision_complex_en_en_ui_style_guide_ru_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: vision_image_understanding
+  input_profile: ui_style_guide_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_json_complex
+  validation_policy: capability_preflight_then_schema_manual
+  prompt: Analyze the public-safe image ui_style_guide_ru_001 and return complex JSON
+    only.
+  image_hash: sha256:3c43c402cceafa87f2fb910ca5be79487bf0a07351247b0365e8b785e3bc56bd
+  schema_family: image_complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      image_type: ui_style_guide_ru
+      language: en_en
+      sections:
+      - id: 0
+        title: ui_style_guide_ru
+        elements:
+        - id: 0
+          type: summary
+          text: Synthetic Russian UI style guide slide with palette, typography, spacing,
+            components, principles, and do/don’t examples.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    image_id: ui_style_guide_ru_001
+    image_type: ui_style_guide_ru
+    fixture_path: fixtures/ui_style_guide_ru_001.webp
+    expected_file: expected/ui_style_guide_ru_001.expected.yaml
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_prepared_only_complex
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/image/expected/ui_style_guide_ru_001.expected.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/vision_json_complex.md
+  tags:
+  - prepared_only_complex
+axes:
+  context_tier:
+  - '8192'
+  retry_policy:
+  - 'off'
+  execution_mode:
+  - cold_per_request
+  cache_mode:
+  - none
+  lmstudio_parallel:
+  - '1'
+  app_concurrency:
+  - '1'
+  queue_pressure_mode:
+  - 'off'
+  modality:
+  - image
+  resize_profile:
+  - max_side_1024
+  - max_side_512
+  image_interaction_mode:
+  - single_image
+repeats: 1
+safety:
+  live: false
+  allow_model_downloads: false
+  allow_model_loads: false
+  allow_remote_base_url: false
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_models: 4
+  max_context_tier: 8192
+  max_repeats: 1
+  max_requests: 160
+structured_runtime:
+  strict_json_schema: true
+notes:
+- Prepared-only full Gemma vision matrix over 10 synthetic public-safe assets.
+- Current Gemma registry entries are text-only; expected preflight planned cells are
+  0 until image capability is proven.
+- Full cartesian image matrix would be 4 models x 10 assets x 2 resize profiles x
+  2 output languages x 3 JSON levels = 480; split into budget profiles before any
+  live run.
+- Complex schema is prepared-only and must not be the first live image run.
+- Qwen, throughput, parallel, session/warmup, image live, and model downloads are
+  forbidden in this committed config.

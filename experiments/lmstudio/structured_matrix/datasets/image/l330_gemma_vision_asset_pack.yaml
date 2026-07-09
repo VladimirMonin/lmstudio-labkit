@@ -1,0 +1,481 @@
+manifest_id: l3_30_gemma_vision_asset_pack
+asset_status: synthetic_public_safe
+source_manifest: experiments/lmstudio/structured_matrix/datasets/image/manifest.yaml
+selected_fixture_count: 10
+selection_policy: representative_webp_assets_with_expected_yaml_descriptions
+resize_policy:
+  mode: fit_max_side
+  crop: false
+  primary_profile: max_side_1024
+  fallback_profile: max_side_512
+  original_size_default: false
+  stored_format: webp
+  hash_algorithm: sha256
+coverage:
+  covered_types:
+  - chart_tasks_by_month_ru
+  - code_python_editor
+  - document_table_products_ru
+  - people_classroom_selected
+  - roadmap_timeline_2026_ru
+  - slide_json_schema_ru
+  - terminal_logs
+  - ui_queue_dashboard_ru
+  - ui_settings_ru
+  - ui_style_guide_ru
+  ui_screenshot:
+  - ui_settings_ru_001
+  - ui_queue_dashboard_ru_001
+  code_screenshot:
+  - code_python_editor_001
+  document_table:
+  - document_table_products_ru_001
+  chart_graph:
+  - chart_tasks_by_month_ru_001
+  people_scene:
+  - people_classroom_selected_001
+  mixed_dashboard:
+  - ui_queue_dashboard_ru_001
+  slide:
+  - slide_json_schema_ru_001
+  - ui_style_guide_ru_001
+  screencast_frame: []
+  technical_diagram:
+  - people_classroom_selected_001
+  - slide_json_schema_ru_001
+  dense_text_screen:
+  - terminal_logs_001
+  - code_python_editor_001
+  coverage_gaps:
+  - No dedicated screencast_frame asset in selected pack.
+schema_levels:
+  simple:
+    description: Description, visible text snippets, warnings.
+    live_status: candidate_after_capability_gate
+  medium:
+    description: Image type, summary, visible text, typed objects, warnings.
+    live_status: candidate_after_simple_canary
+  complex:
+    description: Nested document/extracted_data structure for tables/charts/ui/code
+      entities.
+    live_status: prepared_only_not_first_live_run
+assets:
+- image_id: ui_settings_ru_001
+  image_type: ui_settings_ru
+  file_name: fixtures/ui_settings_ru_001.webp
+  expected_file: expected/ui_settings_ru_001.expected.yaml
+  status: ready
+  synthetic: true
+  stored_format: webp
+  original_width: 1536
+  original_height: 1024
+  image_hash: sha256:8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d
+  description: Synthetic Russian model settings dialog with fields for model id, context
+    length, temperature, JSON Schema state, and save/cancel actions.
+  labels:
+  - ui_settings_ru
+  - ui_screenshot
+  - settings_dialog
+  - model_configuration
+  - russian_text
+  visible_text_policy: russian_ui_text_and_model_values_expected
+  visible_text_examples:
+  - Настройки модели
+  - google/gemma-4-e4b
+  - '8192'
+  - '0.0'
+  - JSON-схема
+  - Сохранить
+  - Отмена
+  required_objects:
+  - settings_window
+  - left_navigation
+  - model_field
+  - context_field
+  - temperature_field
+  - save_button
+  - cancel_button
+  ground_truth:
+    scene_kind: synthetic_ui_settings
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  privacy:
+    synthetic: true
+    raw_public_safe: true
+- image_id: ui_queue_dashboard_ru_001
+  image_type: ui_queue_dashboard_ru
+  file_name: fixtures/ui_queue_dashboard_ru_001.webp
+  expected_file: expected/ui_queue_dashboard_ru_001.expected.yaml
+  status: ready
+  synthetic: true
+  stored_format: webp
+  original_width: 1536
+  original_height: 1024
+  image_hash: sha256:e432d04b696da1569f85a61b7d032954de22e5f52a7af5e154f0cffdb21301d0
+  description: Synthetic Russian processing queue dashboard with three files, statuses,
+    progress values, total task count, and error count.
+  labels:
+  - ui_queue_dashboard_ru
+  - ui_screenshot
+  - queue_dashboard
+  - progress_table
+  - russian_text
+  visible_text_policy: russian_table_text_and_status_values_expected
+  visible_text_examples:
+  - Очередь обработки
+  - lecture_01.mp3
+  - meeting_notes.wav
+  - demo_video.mp4
+  - Готово
+  - Обработка
+  - Ожидание
+  - 100%
+  - 67%
+  - 0%
+  - 3 задачи
+  - 'Ошибки: 0'
+  required_objects:
+  - sidebar_navigation
+  - queue_table
+  - three_file_rows
+  - progress_bars
+  - summary_card
+  ground_truth:
+    scene_kind: synthetic_ui_dashboard
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  privacy:
+    synthetic: true
+    raw_public_safe: true
+- image_id: code_python_editor_001
+  image_type: code_python_editor
+  file_name: fixtures/code_python_editor_001.webp
+  expected_file: expected/code_python_editor_001.expected.yaml
+  status: ready
+  synthetic: true
+  stored_format: webp
+  original_width: 1536
+  original_height: 1024
+  image_hash: sha256:e387c3707145554cd0148a4e6da22c6996db05498bcf35542160a5b2bd8449d9
+  description: Synthetic dark-theme Python code editor screenshot with a project tree,
+    utils.py tab, line numbers, and simple utility functions.
+  labels:
+  - code_python_editor
+  - code_screenshot
+  - python
+  - dark_theme
+  - project_tree
+  visible_text_policy: code_and_editor_labels_expected_without_private_project_names
+  visible_text_examples:
+  - utils.py
+  - normalize_title
+  - clamp
+  - format_seconds
+  - Python 3.11.8
+  - UTF-8
+  - LF
+  required_objects:
+  - file_explorer
+  - utils_py_tab
+  - line_numbers
+  - python_code_block
+  - status_bar
+  ground_truth:
+    scene_kind: synthetic_code_editor
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  privacy:
+    synthetic: true
+    raw_public_safe: true
+- image_id: terminal_logs_001
+  image_type: terminal_logs
+  file_name: fixtures/terminal_logs_001.webp
+  expected_file: expected/terminal_logs_001.expected.yaml
+  status: ready
+  synthetic: true
+  stored_format: webp
+  original_width: 1448
+  original_height: 1086
+  image_hash: sha256:551c69c6034f17a6326682207c0a869b2e785573107fc3bf0417a3835d6ad638
+  description: Synthetic terminal window with model lifecycle log lines, including
+    load start, load done, retry scheduled, and cleanup done.
+  labels:
+  - terminal_logs
+  - terminal
+  - model_lifecycle
+  - cleanup
+  - logs
+  visible_text_policy: terminal_log_events_and_key_value_pairs_expected
+  visible_text_examples:
+  - model.load.started
+  - model.load.done
+  - retry.scheduled
+  - schema_error
+  - cleanup.done
+  - final_loaded_instances=0
+  required_objects:
+  - terminal_window
+  - info_log_lines
+  - warning_log_line
+  - cleanup_log_line
+  ground_truth:
+    scene_kind: synthetic_terminal_logs
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  privacy:
+    synthetic: true
+    raw_public_safe: true
+- image_id: slide_json_schema_ru_001
+  image_type: slide_json_schema_ru
+  file_name: fixtures/slide_json_schema_ru_001.webp
+  expected_file: expected/slide_json_schema_ru_001.expected.yaml
+  status: ready
+  synthetic: true
+  stored_format: webp
+  original_width: 1536
+  original_height: 1024
+  image_hash: sha256:7fe26d643566ab21c65b397c0967431a16ad917778fdc2a07b92afb9cca15873
+  description: Synthetic Russian educational slide explaining JSON Schema with bullet
+    points, process diagram, and schema example.
+  labels:
+  - slide_json_schema_ru
+  - presentation_slide
+  - json_schema
+  - process_diagram
+  - russian_text
+  visible_text_policy: russian_slide_text_and_diagram_order_expected
+  visible_text_examples:
+  - Что такое JSON Schema?
+  - Описывает структуру JSON
+  - Проверяет типы данных
+  - LLM → JSON → Validator → Result
+  required_objects:
+  - slide_title
+  - left_bullet_list
+  - process_diagram
+  - schema_example_block
+  - advantage_callout
+  ground_truth:
+    scene_kind: synthetic_educational_slide
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  privacy:
+    synthetic: true
+    raw_public_safe: true
+- image_id: document_table_products_ru_001
+  image_type: document_table_products_ru
+  file_name: fixtures/document_table_products_ru_001.webp
+  expected_file: expected/document_table_products_ru_001.expected.yaml
+  status: ready
+  synthetic: true
+  stored_format: webp
+  original_width: 1448
+  original_height: 1086
+  image_hash: sha256:dbb6e061f7954f1a772806d8b67d66125169efd4b88d1a8b4eb91b42aeab5149
+  description: Synthetic Russian document editor window with a product table containing
+    item ids, names, quantities, and prices.
+  labels:
+  - document_table_products_ru
+  - document_table
+  - spreadsheet_like_table
+  - russian_text
+  visible_text_policy: russian_document_table_values_expected
+  visible_text_examples:
+  - Таблица товаров
+  - ID
+  - Товар
+  - Кол-во
+  - Цена
+  - Кабель
+  - Адаптер
+  - Блокнот
+  - '300'
+  - '750'
+  - '120'
+  required_objects:
+  - document_window
+  - toolbar
+  - product_table
+  - table_header
+  - three_data_rows
+  ground_truth:
+    scene_kind: synthetic_document_table
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  privacy:
+    synthetic: true
+    raw_public_safe: true
+- image_id: chart_tasks_by_month_ru_001
+  image_type: chart_tasks_by_month_ru
+  file_name: fixtures/chart_tasks_by_month_ru_001.webp
+  expected_file: expected/chart_tasks_by_month_ru_001.expected.yaml
+  status: ready
+  synthetic: true
+  stored_format: webp
+  original_width: 1536
+  original_height: 1024
+  image_hash: sha256:9c8c757383fc57dec329bcf05e3cb6701a463f7741812eedbc8d77f7e261ba3e
+  description: Synthetic Russian bar chart showing completed tasks by month with four
+    bars, labels, legend, and summary metrics.
+  labels:
+  - chart_tasks_by_month_ru
+  - chart_graph
+  - bar_chart
+  - monthly_metrics
+  - russian_text
+  visible_text_policy: chart_labels_values_and_summary_expected
+  visible_text_examples:
+  - Задачи, выполненные по месяцам
+  - Январь
+  - Февраль
+  - Март
+  - Апрель
+  - '12'
+  - '18'
+  - '9'
+  - '21'
+  - 'Всего задач: 60'
+  required_objects:
+  - chart_title
+  - x_axis_month_labels
+  - four_bars
+  - legend
+  - summary_metrics
+  ground_truth:
+    scene_kind: synthetic_chart
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  privacy:
+    synthetic: true
+    raw_public_safe: true
+- image_id: people_classroom_selected_001
+  image_type: people_classroom_selected
+  file_name: fixtures/people_classroom_selected_001.webp
+  expected_file: expected/people_classroom_selected_001.expected.yaml
+  status: ready
+  synthetic: true
+  stored_format: webp
+  original_width: 1672
+  original_height: 941
+  image_hash: sha256:85ea141e624d567f8c6c878c907e01dd0c4d764c20b35c789d2dc6f63ef2ca0b
+  description: Synthetic classroom scene with an instructor explaining an application
+    architecture diagram to two students; no identity recognition is expected.
+  labels:
+  - people_classroom_selected
+  - people_scene
+  - classroom
+  - whiteboard
+  - architecture_diagram
+  visible_text_policy: scene_objects_and_non_identifying_people_description_expected
+  visible_text_examples:
+  - Архитектура приложения
+  - UI
+  - Сервисный слой
+  - Домен
+  - SQLite
+  - Event Bus
+  required_objects:
+  - three_people
+  - whiteboard
+  - architecture_diagram
+  - laptop
+  - books
+  - notebook
+  ground_truth:
+    scene_kind: synthetic_people_scene
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  privacy:
+    synthetic: true
+    raw_public_safe: true
+- image_id: roadmap_timeline_2026_ru_001
+  image_type: roadmap_timeline_2026_ru
+  file_name: fixtures/roadmap_timeline_2026_ru_001.webp
+  expected_file: expected/roadmap_timeline_2026_ru_001.expected.yaml
+  status: ready
+  synthetic: true
+  stored_format: webp
+  original_width: 1536
+  original_height: 1024
+  image_hash: sha256:eb88882e048feb793af2281ad6160ccf230edf0e4847e3c4cd22df13c14e5393
+  description: Synthetic Russian 2026 roadmap timeline slide with phases, months,
+    milestones, progress summary, next milestone, and risk panel.
+  labels:
+  - roadmap_timeline_2026_ru
+  - roadmap
+  - timeline
+  - gantt_style
+  - russian_text
+  visible_text_policy: roadmap_phase_month_milestone_text_expected_without_private_product_names
+  visible_text_examples:
+  - Дорожная карта проекта (2026)
+  - Янв 2026 — Дек 2026
+  - '8'
+  - 68% выполнено
+  - Март 2026
+  required_objects:
+  - timeline_chart
+  - month_axis
+  - phase_list
+  - milestone_markers
+  - right_summary_panel
+  - legend
+  ground_truth:
+    scene_kind: synthetic_roadmap_timeline
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  privacy:
+    synthetic: true
+    raw_public_safe: true
+- image_id: ui_style_guide_ru_001
+  image_type: ui_style_guide_ru
+  file_name: fixtures/ui_style_guide_ru_001.webp
+  expected_file: expected/ui_style_guide_ru_001.expected.yaml
+  status: ready
+  synthetic: true
+  stored_format: webp
+  original_width: 1536
+  original_height: 1024
+  image_hash: sha256:3c43c402cceafa87f2fb910ca5be79487bf0a07351247b0365e8b785e3bc56bd
+  description: Synthetic Russian UI style guide slide with palette, typography, spacing,
+    components, principles, and do/don’t examples.
+  labels:
+  - ui_style_guide_ru
+  - style_guide
+  - ui_components
+  - palette
+  - russian_text
+  visible_text_policy: style_guide_sections_colors_and_component_names_expected
+  visible_text_examples:
+  - Стиль и UI-принципы проекта
+  - '#2563EB'
+  - '#16A34A'
+  - '#F59E0B'
+  - '#EF4444'
+  - Primary
+  - Secondary
+  - Danger
+  required_objects:
+  - palette_card
+  - typography_card
+  - spacing_card
+  - component_examples
+  - principles_card
+  - do_dont_blocks
+  ground_truth:
+    scene_kind: synthetic_ui_style_guide
+    identity_expected: false
+    sensitive_attributes_expected: false
+    private_product_expected: false
+  privacy:
+    synthetic: true
+    raw_public_safe: true

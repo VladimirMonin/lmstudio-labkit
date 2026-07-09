@@ -1,0 +1,124 @@
+run_id: matrix_l3_30a_gemma_vision_capability_gate
+models:
+- model_key: gemma4_e2b
+  model_id: google/gemma-4-e2b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_e4b
+  model_id: google/gemma-4-e4b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_12b_qat
+  model_id: google/gemma-4-12b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_26b_a4b_qat
+  model_id: google/gemma-4-26b-a4b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+tasks:
+- task_id: l330a_vision_capability_gate_public_safe
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_capability_probe
+  input_profile: l330_asset_pack_capability_probe
+  output_language_policy: ru_ru
+  prompt_variant: vision_json_simple
+  validation_policy: capability_preflight_then_manual
+  prompt: Describe the public-safe image only if the model/runtime supports image
+    input.
+  image_hash: sha256:l330_gemma_vision_asset_pack_manifest
+  schema_family: image_simple
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: public-safe image description
+    visible_text: []
+    warnings: []
+  image_ground_truth:
+    asset_pack: l3_30_gemma_vision_asset_pack
+    identity_expected: false
+    sensitive_attributes_expected: false
+  fake_mode: valid
+  manual_review_policy: vision_capability_only
+  tags: []
+axes:
+  context_tier:
+  - '8192'
+  retry_policy:
+  - 'off'
+  execution_mode:
+  - cold_per_request
+  cache_mode:
+  - none
+  lmstudio_parallel:
+  - '1'
+  app_concurrency:
+  - '1'
+  queue_pressure_mode:
+  - 'off'
+  modality:
+  - image
+  resize_profile:
+  - max_side_1024
+  - max_side_512
+  image_interaction_mode:
+  - single_image
+repeats: 1
+safety:
+  live: false
+  allow_model_downloads: false
+  allow_model_loads: false
+  allow_remote_base_url: false
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_models: 4
+  max_context_tier: 8192
+  max_repeats: 1
+  max_requests: 1
+structured_runtime:
+  strict_json_schema: true
+notes:
+- Prepared-only Gemma vision capability gate. No image live run is allowed from this
+  config as committed.
+- Current Gemma registry entries are text-only; expected preflight planned cells are
+  0 with unsupported_modality skips.
+- If metadata/runtime later proves image capability, update model modality in a new
+  explicit live canary slice.
