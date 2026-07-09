@@ -1,0 +1,21 @@
+input_profile,model_key,task_id,meaning_preserved,asr_noise_reduced,no_new_facts,term_handling,naturalness,style_overediting,overall_acceptability,review_note
+l326_short_noisy_dictation,gemma4_e2b,l326_transcript_cleanup_simple_01_short_noisy_dictation,2,2,2,2,2,2,2,good cleanup; filler removed
+l326_technical_django_qwen_embedding,gemma4_e2b,l326_transcript_cleanup_simple_02_technical_django_qwen_embedding,1,1,1,0,1,1,1,corrupted Qwen/embedding terms into phonetic Russian
+l326_python_lesson_fragment,gemma4_e2b,l326_transcript_cleanup_simple_03_python_lesson_fragment,2,1,2,2,1,2,1,"meaning ok, weak punctuation/capitalization"
+l326_bug_explanation,gemma4_e2b,l326_transcript_cleanup_simple_04_bug_explanation,2,2,2,2,2,2,2,minor punctuation issue only
+l326_mixed_ru_en_technical_terms,gemma4_e2b,l326_transcript_cleanup_simple_05_mixed_ru_en_technical_terms,2,0,2,0,1,0,0,translated mixed RU/EN sentence to English; policy failure
+l326_repeats_self_corrections,gemma4_e2b,l326_transcript_cleanup_simple_06_repeats_self_corrections,2,0,2,2,1,2,1,kept self-correction noise instead of final corrected sequence
+l326_no_punctuation,gemma4_e2b,l326_transcript_cleanup_simple_07_no_punctuation,2,1,2,2,1,2,1,meaning ok; punctuation restoration incomplete
+l326_long_sentence,gemma4_e2b,l326_transcript_cleanup_simple_08_long_sentence,2,2,2,2,2,2,2,clean and conservative
+l326_product_model_names,gemma4_e2b,l326_transcript_cleanup_simple_09_product_model_names,0,1,0,0,1,0,0,lost E4B/E2B distinction; changed model facts
+l326_conversational_style,gemma4_e2b,l326_transcript_cleanup_simple_10_conversational_style,2,2,2,2,2,2,2,clean expected prose
+l326_short_noisy_dictation,gemma4_e4b,l326_transcript_cleanup_simple_01_short_noisy_dictation,2,0,2,2,1,2,1,"kept obvious fillers, weak cleanup"
+l326_technical_django_qwen_embedding,gemma4_e4b,l326_transcript_cleanup_simple_02_technical_django_qwen_embedding,1,2,2,1,2,2,1,better prose but changed Qwen to Kwen
+l326_python_lesson_fragment,gemma4_e4b,l326_transcript_cleanup_simple_03_python_lesson_fragment,2,2,2,2,2,2,2,clean expected prose
+l326_bug_explanation,gemma4_e4b,l326_transcript_cleanup_simple_04_bug_explanation,2,2,2,2,2,2,2,clean prose; wording change acceptable
+l326_mixed_ru_en_technical_terms,gemma4_e4b,l326_transcript_cleanup_simple_05_mixed_ru_en_technical_terms,2,2,2,2,2,2,2,preserved mixed technical terms; capitalization slightly heavy
+l326_repeats_self_corrections,gemma4_e4b,l326_transcript_cleanup_simple_06_repeats_self_corrections,2,0,2,2,1,2,1,punctuated but kept self-correction noise
+l326_no_punctuation,gemma4_e4b,l326_transcript_cleanup_simple_07_no_punctuation,2,2,2,2,2,2,2,good punctuation and term preservation
+l326_long_sentence,gemma4_e4b,l326_transcript_cleanup_simple_08_long_sentence,2,2,2,2,2,2,2,clean and conservative
+l326_product_model_names,gemma4_e4b,l326_transcript_cleanup_simple_09_product_model_names,2,2,2,2,2,2,2,preserved product/model names
+l326_conversational_style,gemma4_e4b,l326_transcript_cleanup_simple_10_conversational_style,2,2,2,2,2,2,2,clean expected prose

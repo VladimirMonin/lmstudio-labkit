@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import itertools
 import json
+import subprocess
+import tempfile
 import time
 from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field
@@ -544,11 +546,13 @@ def run_matrix(
     live_options: LiveBridgeOptions | None = None,
 ) -> ArtifactSet:
     live_requested = live_options is not None
+    run_dir = Path(output_root) / config.run_id
     if live and not live_requested:
         raise ValueError(
             "Benchmark safety requires live=false; Live LM Studio execution is not implemented unless live_options and injected transport are provided"
         )
     if live_requested:
+        _validate_raw_artifact_safety(config, run_dir)
         if transport is None:
             raise LiveBridgeError("live transport requires an injected executor or bridge")
         assert live_options is not None
@@ -566,6 +570,7 @@ def run_matrix(
         transport_to_use = transport or FakeTransport()
 
     rows: list[dict[str, Any]] = []
+    raw_rows: list[dict[str, Any]] = []
     deadline = (
         time.monotonic() + config.safety.max_runtime_minutes * 60
         if config.safety.max_runtime_minutes is not None
@@ -579,18 +584,26 @@ def run_matrix(
             for cell, request_plan, (raw_response, result) in zip(
                 batch, request_plans, session_results, strict=True
             ):
-                rows.append(
-                    _row_from_execution(
-                        config=config,
-                        cell=cell,
-                        request_plan=request_plan,
-                        raw_response=raw_response,
-                        result=result,
-                        retry_count=0,
-                        recovered=False,
-                        live_requested=live_requested,
-                    )
+                row = _row_from_execution(
+                    config=config,
+                    cell=cell,
+                    request_plan=request_plan,
+                    raw_response=raw_response,
+                    result=result,
+                    retry_count=0,
+                    recovered=False,
+                    live_requested=live_requested,
                 )
+                rows.append(row)
+                if config.safety.allow_raw_prompt_response_artifacts:
+                    raw_rows.append(
+                        _raw_case_from_execution(
+                            cell=cell,
+                            request_plan=request_plan,
+                            raw_response=raw_response,
+                            row=row,
+                        )
+                    )
                 _raise_if_runtime_budget_exceeded(deadline)
             continue
         for cell in batch:
@@ -622,26 +635,112 @@ def run_matrix(
                     input_text=_input_text_for_validation(request_plan),
                 )
                 recovered = validation.status == "pass" and result.status == "ok"
-            rows.append(
-                _row_from_execution(
-                    config=config,
-                    cell=cell,
-                    request_plan=request_plan,
-                    raw_response=raw_response,
-                    result=result,
-                    retry_count=retry_count,
-                    recovered=recovered,
-                    live_requested=live_requested,
-                    validation=validation,
-                )
+            row = _row_from_execution(
+                config=config,
+                cell=cell,
+                request_plan=request_plan,
+                raw_response=raw_response,
+                result=result,
+                retry_count=retry_count,
+                recovered=recovered,
+                live_requested=live_requested,
+                validation=validation,
             )
+            rows.append(row)
+            if config.safety.allow_raw_prompt_response_artifacts:
+                raw_rows.append(
+                    _raw_case_from_execution(
+                        cell=cell,
+                        request_plan=request_plan,
+                        raw_response=raw_response,
+                        row=row,
+                    )
+                )
             _raise_if_runtime_budget_exceeded(deadline)
-    run_dir = Path(output_root) / config.run_id
     planner_summary = plan.planner_summary(live=live_requested)
     if live_requested:
         planner_summary["live_bridge"] = safe_live_metadata(live_options)
         planner_summary["lab_only_flags"] = LAB_ONLY_LIVE_FLAGS.as_dict()
-    return write_run_artifacts(run_dir, planner_summary, rows)
+    artifacts = write_run_artifacts(run_dir, planner_summary, rows)
+    if config.safety.allow_raw_prompt_response_artifacts:
+        _write_raw_cases(run_dir / "raw_cases.jsonl", raw_rows)
+    return artifacts
+
+
+def _validate_raw_artifact_safety(config: BenchmarkConfig, run_dir: Path) -> None:
+    if not config.safety.allow_raw_prompt_response_artifacts:
+        return
+    if not _is_explicit_local_raw_review_config(config):
+        raise LiveBridgeError(
+            "raw prompt/response artifacts require live local_raw_prose_quality review policy"
+        )
+    resolved = run_dir.resolve()
+    repo_root = _repo_root().resolve()
+    if resolved.is_relative_to(repo_root):
+        raise LiveBridgeError(
+            "raw prompt/response artifacts must not be written inside the repository"
+        )
+    system_temp_dir = Path(tempfile.gettempdir()).resolve()
+    if resolved.is_relative_to(system_temp_dir):
+        return
+    if _is_gitignored_path(resolved, repo_root=repo_root):
+        return
+    raise LiveBridgeError(
+        "raw prompt/response artifacts require an output dir under the platform temp dir "
+        "or an explicitly gitignored path"
+    )
+
+
+def _is_explicit_local_raw_review_config(config: BenchmarkConfig) -> bool:
+    return bool(
+        config.safety.live
+        and config.tasks
+        and all(task.manual_review_policy == "local_raw_prose_quality" for task in config.tasks)
+    )
+
+
+def _is_gitignored_path(path: Path, *, repo_root: Path) -> bool:
+    try:
+        completed = subprocess.run(
+            ["git", "check-ignore", "-q", str(path)],
+            cwd=repo_root,
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except OSError:
+        return False
+    return completed.returncode == 0
+
+
+def _raw_case_from_execution(
+    *,
+    cell: MatrixCell,
+    request_plan: RequestPlan,
+    raw_response: str,
+    row: dict[str, Any],
+) -> dict[str, Any]:
+    return {
+        "cell_id": cell.cell_id,
+        "model_key": cell.model.model_key,
+        "model_id": cell.model.model_id,
+        "task_id": cell.task.task_id,
+        "repeat_index": cell.repeat_index,
+        "axes": cell.axes,
+        "source_fixture_id": cell.task.source_fixture_id,
+        "source_text": cell.task.source_text,
+        "raw_response": raw_response,
+        "validation": row.get("validation"),
+        "result": row.get("result"),
+        "request_metadata": request_plan.envelope.safe_metadata(),
+    }
+
+
+def _write_raw_cases(path: Path, rows: Sequence[dict[str, Any]]) -> None:
+    with path.open("w", encoding="utf-8") as stream:
+        for row in rows:
+            stream.write(json.dumps(row, ensure_ascii=False, sort_keys=True))
+            stream.write("\n")
 
 
 def _input_text_for_validation(request_plan: RequestPlan) -> str:
@@ -882,8 +981,12 @@ def _validate_live_plan_only_safety(config: BenchmarkConfig) -> None:
     }
     if safety.allow_model_downloads:
         raise ValueError("model downloads are not supported by live planning")
-    if safety.allow_raw_prompt_response_artifacts:
-        raise ValueError("raw prompt/response artifacts are not allowed")
+    if safety.allow_raw_prompt_response_artifacts and not _is_explicit_local_raw_review_config(
+        config
+    ):
+        raise ValueError(
+            "raw prompt/response artifacts require live local_raw_prose_quality review policy"
+        )
     if "image" in requested_modalities or safety.allow_image_live:
         raise ValueError("image live execution is not implemented")
     if "stress" in requested_volumes or safety.allow_stress:
@@ -1220,8 +1323,6 @@ def _validate_live_transport_safety(config: BenchmarkConfig, options: LiveBridge
         raise LiveBridgeError("live transport does not download models")
     if safety.allow_model_loads and not options.allow_model_load:
         raise LiveBridgeError("model loads require bridge allow_model_load=True")
-    if safety.allow_raw_prompt_response_artifacts:
-        raise LiveBridgeError("raw prompt/response artifacts are not allowed")
     if safety.allow_image_live:
         raise LiveBridgeError("image live execution is not implemented")
     if "stress" in set(config.axes.get("volume", ())) and not safety.allow_stress:

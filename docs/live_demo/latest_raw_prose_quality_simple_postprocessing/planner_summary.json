@@ -1,0 +1,144 @@
+{
+  "axes": {
+    "app_concurrency": [
+      "1"
+    ],
+    "cache_mode": [
+      "none"
+    ],
+    "context_tier": [
+      "8192"
+    ],
+    "execution_mode": [
+      "cold_per_request"
+    ],
+    "execution_target": [
+      "live_small"
+    ],
+    "image_interaction_mode": [
+      "single_question"
+    ],
+    "image_type": [
+      "none"
+    ],
+    "input_profile": [
+      "l326_short_noisy_dictation",
+      "l326_technical_django_qwen_embedding",
+      "l326_python_lesson_fragment",
+      "l326_bug_explanation",
+      "l326_mixed_ru_en_technical_terms",
+      "l326_repeats_self_corrections",
+      "l326_no_punctuation",
+      "l326_long_sentence",
+      "l326_product_model_names",
+      "l326_conversational_style"
+    ],
+    "language": [
+      "ru_ru",
+      "ru_en_mixed"
+    ],
+    "lmstudio_parallel": [
+      "1"
+    ],
+    "modality": [
+      "text"
+    ],
+    "output_language": [
+      "none"
+    ],
+    "output_language_policy": [
+      "preserve_input_language",
+      "preserve_mixed_language"
+    ],
+    "prompt_variant": [
+      "strict_no_new_facts_v2"
+    ],
+    "queue_pressure_mode": [
+      "off"
+    ],
+    "resource_telemetry_mode": [
+      "timing_only"
+    ],
+    "response_schema_complexity": [
+      "simple"
+    ],
+    "retry_policy": [
+      "off"
+    ],
+    "schema_variant": [
+      "hardened_const"
+    ],
+    "structure_complexity": [
+      "simple"
+    ],
+    "task_intent": [
+      "transcript_cleanup"
+    ],
+    "temperature": [
+      "0"
+    ],
+    "text_interaction_mode": [
+      "single_question"
+    ],
+    "validation_policy": [
+      "auto_schema_language_manual_quality"
+    ],
+    "volume": [
+      "single"
+    ]
+  },
+  "cell_count": 60,
+  "config_hash": "925aa262eb22147755db4752f762eb330655b7d04f5191b6e224ad06c8b17517",
+  "filtered_cell_count": 60,
+  "lab_only_flags": {
+    "final_user_facing_recommendation": false,
+    "kv_reuse_proven": false,
+    "production_default": false,
+    "wvm_runtime_integration": false
+  },
+  "live": true,
+  "live_bridge": {
+    "allow_model_load": true,
+    "allow_remote": true,
+    "allow_stress": false,
+    "base_url_kind": "local",
+    "base_url_scheme": "http",
+    "lab_only_flags": {
+      "final_user_facing_recommendation": false,
+      "kv_reuse_proven": false,
+      "production_default": false,
+      "wvm_runtime_integration": false
+    },
+    "live": true,
+    "max_requests": 60,
+    "profile": "live-screening"
+  },
+  "privacy_mode": "safe-default",
+  "raw_cartesian_cell_count": 2400,
+  "repeats": 3,
+  "run_id": "matrix_l3_27_raw_prose_quality_simple_postprocessing_e2b_e4b",
+  "safety_budget": {
+    "allow_image_live": false,
+    "allow_model_downloads": false,
+    "allow_model_loads": true,
+    "allow_raw_prompt_response_artifacts": true,
+    "allow_remote_base_url": true,
+    "allow_stress": false,
+    "live": true,
+    "max_context_tier": 8192,
+    "max_models": 2,
+    "max_repeats": 3,
+    "max_requests": 60,
+    "max_runtime_minutes": 180
+  },
+  "schema_version": "structured-matrix-v1",
+  "skip_reasons": {
+    "input_profile_mismatch": 1080,
+    "language_mismatch": 1200,
+    "output_language_policy_mismatch": 60
+  },
+  "skipped_cell_count": 2340,
+  "structured_runtime": {
+    "strict_json_schema": true
+  }
+}

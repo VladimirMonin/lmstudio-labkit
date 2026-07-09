@@ -1,0 +1,17 @@
+{
+  "policy": "artifact-privacy-v1",
+  "scanned_artifacts": [
+    "planner_summary.json",
+    "cell_results.jsonl",
+    "cell_summary.csv",
+    "model_summary.csv",
+    "failure_summary.csv",
+    "retry_summary.csv",
+    "resource_summary.csv",
+    "axis_summary.csv",
+    "report.md"
+  ],
+  "status": "pass",
+  "violation_count": 0,
+  "violations": []
+}

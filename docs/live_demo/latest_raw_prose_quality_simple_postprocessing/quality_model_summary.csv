@@ -1,0 +1,3 @@
+model_key,reviewed_unique_cases,reviewed_attempts,meaning_preserved_avg,meaning_preserved_min,asr_noise_reduced_avg,asr_noise_reduced_min,no_new_facts_avg,no_new_facts_min,term_handling_avg,term_handling_min,naturalness_avg,naturalness_min,style_overediting_avg,style_overediting_min,overall_acceptability_avg,overall_acceptability_min,critical_issue_count
+gemma4_e2b,10,30,1.7,0,1.2,0,1.7,0,1.4,0,1.4,1,1.5,0,1.2,0,3
+gemma4_e4b,10,30,1.9,1,1.6,0,2.0,2,1.9,1,1.8,1,2.0,2,1.7,1,0

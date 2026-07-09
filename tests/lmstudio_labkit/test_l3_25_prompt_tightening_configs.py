@@ -116,3 +116,46 @@ def test_l3_26_extended_product_benchmark_is_prepared_only() -> None:
     assert config.safety.max_requests == 120
     assert config.safety.allow_image_live is False
     assert config.safety.allow_stress is False
+
+
+def test_l3_27_raw_prose_quality_main_is_bounded_and_raw_local_only() -> None:
+    config = BenchmarkConfig.from_file(
+        CONFIG_DIR / "matrix.l3_27_raw_prose_quality_simple_postprocessing.e2b_e4b.yaml"
+    )
+    plan = _build_matrix_plan(config)
+
+    assert len(plan.cells) == 60
+    assert config.repeats == 3
+    assert len(config.tasks) == 10
+    assert {cell.model.model_id for cell in plan.cells} == {
+        "google/gemma-4-e2b",
+        "google/gemma-4-e4b",
+    }
+    assert {cell.task.task_intent for cell in plan.cells} == {"transcript_cleanup"}
+    assert {cell.task.response_schema_complexity for cell in plan.cells} == {"simple"}
+    assert {cell.task.prompt_variant for cell in plan.cells} == {"strict_no_new_facts_v2"}
+    assert {cell.task.manual_review_policy for cell in plan.cells} == {"local_raw_prose_quality"}
+    assert all(cell.axes["retry_policy"] == "off" for cell in plan.cells)
+    assert all(cell.axes["execution_mode"] == "cold_per_request" for cell in plan.cells)
+    assert all(cell.axes["cache_mode"] == "none" for cell in plan.cells)
+    assert all(cell.axes["lmstudio_parallel"] == "1" for cell in plan.cells)
+    assert all(cell.axes["app_concurrency"] == "1" for cell in plan.cells)
+    assert config.safety.max_requests == 60
+    assert config.safety.allow_raw_prompt_response_artifacts is True
+    assert config.safety.allow_image_live is False
+    assert config.safety.allow_stress is False
+
+
+def test_l3_27_raw_prose_quality_canary_is_tiny() -> None:
+    config = BenchmarkConfig.from_file(
+        CONFIG_DIR / "matrix.l3_27_raw_prose_quality_canary.e2b_e4b.yaml"
+    )
+    plan = _build_matrix_plan(config)
+
+    assert len(plan.cells) == 6
+    assert config.repeats == 1
+    assert len(config.tasks) == 3
+    assert config.safety.max_requests == 6
+    assert config.safety.allow_raw_prompt_response_artifacts is True
+    assert {cell.task.task_intent for cell in plan.cells} == {"transcript_cleanup"}
+    assert {cell.task.prompt_variant for cell in plan.cells} == {"strict_no_new_facts_v2"}

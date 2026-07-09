@@ -1,0 +1,50 @@
+{
+  "attempt_count": 60,
+  "fail_count": 0,
+  "model_quality_summary": [
+    {
+      "asr_noise_reduced_avg": 1.2,
+      "asr_noise_reduced_min": 0,
+      "critical_issue_count": 3,
+      "meaning_preserved_avg": 1.7,
+      "meaning_preserved_min": 0,
+      "model_key": "gemma4_e2b",
+      "naturalness_avg": 1.4,
+      "naturalness_min": 1,
+      "no_new_facts_avg": 1.7,
+      "no_new_facts_min": 0,
+      "overall_acceptability_avg": 1.2,
+      "overall_acceptability_min": 0,
+      "reviewed_attempts": 30,
+      "reviewed_unique_cases": 10,
+      "style_overediting_avg": 1.5,
+      "style_overediting_min": 0,
+      "term_handling_avg": 1.4,
+      "term_handling_min": 0
+    },
+    {
+      "asr_noise_reduced_avg": 1.6,
+      "asr_noise_reduced_min": 0,
+      "critical_issue_count": 0,
+      "meaning_preserved_avg": 1.9,
+      "meaning_preserved_min": 1,
+      "model_key": "gemma4_e4b",
+      "naturalness_avg": 1.8,
+      "naturalness_min": 1,
+      "no_new_facts_avg": 2.0,
+      "no_new_facts_min": 2,
+      "overall_acceptability_avg": 1.7,
+      "overall_acceptability_min": 1,
+      "reviewed_attempts": 30,
+      "reviewed_unique_cases": 10,
+      "style_overediting_avg": 2.0,
+      "style_overediting_min": 2,
+      "term_handling_avg": 1.9,
+      "term_handling_min": 1
+    }
+  ],
+  "pass_count": 60,
+  "raw_case_count_local_only": 60,
+  "raw_committed": false,
+  "run_id": "matrix_l3_27_raw_prose_quality_simple_postprocessing_e2b_e4b"
+}

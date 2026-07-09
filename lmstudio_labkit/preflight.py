@@ -99,12 +99,24 @@ def preflight_lmstudio_readonly(base_url: str) -> dict[str, Any]:
 
 def _validate_privacy_defaults(config: BenchmarkConfig) -> None:
     safety = config.safety
-    if safety.allow_raw_prompt_response_artifacts:
-        raise ValueError("raw prompt/response artifacts must be disabled")
+    if safety.allow_raw_prompt_response_artifacts and not _is_explicit_local_raw_review_config(
+        config
+    ):
+        raise ValueError(
+            "raw prompt/response artifacts require live local_raw_prose_quality review policy"
+        )
     if safety.allow_model_downloads:
         raise ValueError("model downloads must be disabled")
     if safety.allow_image_live:
         raise ValueError("image live must be disabled")
+
+
+def _is_explicit_local_raw_review_config(config: BenchmarkConfig) -> bool:
+    return bool(
+        config.safety.live
+        and config.tasks
+        and all(task.manual_review_policy == "local_raw_prose_quality" for task in config.tasks)
+    )
 
 
 def _tcp_probe(host: str, port: int) -> bool:

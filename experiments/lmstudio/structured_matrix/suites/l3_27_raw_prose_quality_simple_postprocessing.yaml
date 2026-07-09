@@ -1,0 +1,13 @@
+suite_id: l3_27_raw_prose_quality_simple_postprocessing
+stop_on_failure: true
+configs:
+- id: canary_raw_6
+  config: ../configs/matrix.l3_27_raw_prose_quality_canary.e2b_e4b.yaml
+  required: true
+- id: main_raw_60
+  config: ../configs/matrix.l3_27_raw_prose_quality_simple_postprocessing.e2b_e4b.yaml
+  required: true
+notes:
+- Run canary first. Run main_60 only if canary hard gates pass.
+- Raw prose artifacts are local-only and must remain outside the repository.
+- Scope is E2B/E4B transcript_cleanup/simple with strict_no_new_facts_v2 only.
