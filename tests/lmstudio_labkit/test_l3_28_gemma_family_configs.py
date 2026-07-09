@@ -222,6 +222,42 @@ def test_l3_28_vision_capability_config_does_not_plan_image_live_by_default() ->
     assert config.safety.max_requests == 1
 
 
+def test_l3_28d_1_structured_repair_e2b_e4b_is_bounded() -> None:
+    config = _load_config("matrix.l3_28d_1_structured_json_repair_e2b_e4b.yaml")
+    plan = _build_matrix_plan(config)
+
+    assert len(plan.cells) == 8
+    assert _model_ids(config) == {"google/gemma-4-e2b", "google/gemma-4-e4b"}
+    assert "google/gemma-4-26b-a4b-qat" not in _model_ids(config)
+    assert {cell.task.response_schema_complexity for cell in plan.cells} == {"simple", "blocks"}
+    assert {cell.axes["schema_variant"] for cell in plan.cells} == {"hardened_const"}
+    assert config.safety.max_requests == 8
+    assert config.safety.allow_raw_prompt_response_artifacts is False
+    for task in config.tasks:
+        if task.response_schema_complexity == "simple":
+            assert task.language_include_paths == ("items[*]",)
+            assert "Return exactly this JSON shape" in task.prompt
+        if task.response_schema_complexity == "blocks":
+            assert task.language_include_paths == ("blocks[*].text",)
+            assert "Preserve every id exactly" in task.prompt
+
+
+def test_l3_28d_1_structured_repair_12b_excludes_26b_and_uses_retry_axis() -> None:
+    config = _load_config("matrix.l3_28d_1_structured_json_repair_12b.yaml")
+    plan = _build_matrix_plan(config)
+
+    assert len(plan.cells) == 8
+    assert _model_ids(config) == {"google/gemma-4-12b-qat"}
+    assert "google/gemma-4-26b-a4b-qat" not in _model_ids(config)
+    assert {cell.axes["retry_policy"] for cell in plan.cells} == {"off", "retry1"}
+    assert {cell.task.response_schema_complexity for cell in plan.cells} == {"simple", "blocks"}
+    assert config.safety.max_requests == 8
+    payload = _load_config_payload("matrix.l3_28d_1_structured_json_repair_12b.yaml")
+    notes = "\n".join(payload["notes"])
+    assert "Run only after E2B/E4B repair canary passes" in notes
+    assert "No 26B structured JSON generation" in notes
+
+
 def test_l3_28_decision_record_has_admission_summary_columns() -> None:
     text = DECISION_RECORD_PATH.read_text(encoding="utf-8")
 

@@ -1,0 +1,4 @@
+model_id,attempt_count,pass_count,fail_count,pass_rate,json_parse_pass_rate,schema_pass_rate,id_exact_pass_rate,language_pass_rate,finish_length_count
+google/gemma-4-e2b,4,4,0,1.0,1.0,1.0,1.0,1.0,0
+google/gemma-4-e4b,4,4,0,1.0,1.0,1.0,1.0,1.0,0
+google/gemma-4-12b-qat,8,8,0,1.0,1.0,1.0,1.0,1.0,0

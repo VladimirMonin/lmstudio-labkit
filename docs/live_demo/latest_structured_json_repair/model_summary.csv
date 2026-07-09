@@ -1,0 +1,4 @@
+model_key,model_id,attempt_count,pass_count,fail_count,hard_fail_count,warning_count,length_ratio_warning_count,cleanup_noop_warning_count,term_language_drift_warning_count,pass_rate,json_parse_pass_rate,schema_pass_rate,id_exact_pass_rate,language_pass_rate,retry_attempted_count,retry_recovered_count,retry_dependency_rate,finish_length_count,median_latency_ms,p95_latency_ms
+gemma4_e2b,google/gemma-4-e2b,4,4,0,0,0,0,0,0,1.0,1.0,1.0,1.0,1.0,0,0,,0,445.788,563.557
+gemma4_e4b,google/gemma-4-e4b,4,4,0,0,0,0,0,0,1.0,1.0,1.0,1.0,1.0,0,0,,0,534.128,1239.436
+gemma4_12b_qat,google/gemma-4-12b-qat,8,8,0,0,0,0,0,0,1.0,1.0,1.0,1.0,1.0,0,0,,0,1052.954,1100.787

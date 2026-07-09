@@ -1,0 +1,66 @@
+{
+  "admission": {
+    "gemma_26b": "blocked_not_run_for_structured_json",
+    "structured_json_blocks": "admit_e2b_e4b_12b_repaired_canary",
+    "structured_json_simple": "admit_e2b_e4b_12b_repaired_canary"
+  },
+  "attempt_count": 16,
+  "fail_count": 0,
+  "failure_categories": {},
+  "hard_fail_count": 0,
+  "lifecycle": {
+    "final_loaded_instances": [
+      0
+    ]
+  },
+  "live": true,
+  "model_ids": [
+    "google/gemma-4-e2b",
+    "google/gemma-4-e4b",
+    "google/gemma-4-12b-qat"
+  ],
+  "model_status": {
+    "google/gemma-4-12b-qat": {
+      "attempt_count": 8,
+      "fail_count": 0,
+      "finish_length_count": 0,
+      "id_exact_pass_rate": 1.0,
+      "json_parse_pass_rate": 1.0,
+      "language_pass_rate": 1.0,
+      "pass_count": 8,
+      "pass_rate": 1.0,
+      "schema_pass_rate": 1.0
+    },
+    "google/gemma-4-e2b": {
+      "attempt_count": 4,
+      "fail_count": 0,
+      "finish_length_count": 0,
+      "id_exact_pass_rate": 1.0,
+      "json_parse_pass_rate": 1.0,
+      "language_pass_rate": 1.0,
+      "pass_count": 4,
+      "pass_rate": 1.0,
+      "schema_pass_rate": 1.0
+    },
+    "google/gemma-4-e4b": {
+      "attempt_count": 4,
+      "fail_count": 0,
+      "finish_length_count": 0,
+      "id_exact_pass_rate": 1.0,
+      "json_parse_pass_rate": 1.0,
+      "language_pass_rate": 1.0,
+      "pass_count": 4,
+      "pass_rate": 1.0,
+      "schema_pass_rate": 1.0
+    }
+  },
+  "pass_count": 16,
+  "run_id": "l3_28d_1_structured_json_repair",
+  "safety": {
+    "public_safe": true,
+    "raw_prompt_response_stored": false,
+    "raw_prompt_stored": false,
+    "raw_response_stored": false
+  },
+  "schema_version": "latest-structured-json-repair-v1"
+}

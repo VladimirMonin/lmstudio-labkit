@@ -1,0 +1,279 @@
+run_id: matrix_l3_28d_1_structured_json_repair_12b
+models:
+- model_key: gemma4_12b_qat
+  model_id: google/gemma-4-12b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+tasks:
+- task_id: l328d1_repair_simple_ru_ru
+  family: structured_json
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: schema_only
+  input_profile: repair_schema_simple_ru_ru
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_repair_exact_shape
+  validation_policy: auto_schema_business
+  prompt: 'Return JSON only. Do not use markdown. Do not add explanations.
+
+    Return exactly this JSON shape:
+
+    {"language":"ru_ru","items":["первый","второй"]}
+
+    Rules:
+
+    - Use the language value exactly: ru_ru.
+
+    - Use exactly the two provided items.
+
+    - Return only fields: language, items.'
+  schema_family: simple
+  schema:
+    type: object
+    required:
+    - language
+    - items
+    additionalProperties: false
+    properties:
+      language:
+        type: string
+      items:
+        type: array
+        items:
+          type: string
+        minItems: 2
+  expected_output:
+    language: ru_ru
+    items:
+    - первый
+    - второй
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+  language_include_paths:
+  - items[*]
+- task_id: l328d1_repair_simple_ru_en_mixed
+  family: structured_json
+  modality: text
+  language: ru_en_mixed
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: schema_only
+  input_profile: repair_schema_simple_ru_en_mixed
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_repair_exact_shape
+  validation_policy: auto_schema_business
+  prompt: 'Return JSON only. Do not use markdown. Do not add explanations.
+
+    Return exactly this JSON shape:
+
+    {"language":"ru_en_mixed","items":["Django модель","JSON schema","Qwen термин"]}
+
+    Rules:
+
+    - Use the language value exactly: ru_en_mixed.
+
+    - Preserve the Russian and English technical terms exactly.
+
+    - Return only fields: language, items.'
+  schema_family: simple
+  schema:
+    type: object
+    required:
+    - language
+    - items
+    additionalProperties: false
+    properties:
+      language:
+        type: string
+      items:
+        type: array
+        items:
+          type: string
+        minItems: 2
+  expected_output:
+    language: ru_en_mixed
+    items:
+    - Django модель
+    - JSON schema
+    - Qwen термин
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+  language_include_paths:
+  - items[*]
+- task_id: l328d1_repair_blocks_ru_ru
+  family: structured_json
+  modality: text
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: blocks
+  volume: single
+  task_intent: id_preservation
+  input_profile: repair_blocks_ru_ru
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_repair_exact_blocks
+  validation_policy: auto_schema_business
+  prompt: 'Return JSON only. Do not use markdown. Do not add explanations.
+
+    Return exactly this JSON shape:
+
+    {"blocks":[{"id":0,"text":"первый блок"},{"id":1,"text":"второй блок"},{"id":2,"text":"третий
+    блок"}]}
+
+    Rules:
+
+    - Return exactly the same number of blocks.
+
+    - Preserve every id exactly.
+
+    - Preserve order exactly.
+
+    - Do not merge, split, delete, duplicate, or reorder blocks.
+
+    - Return only field: blocks.'
+  schema_family: blocks
+  schema_variant: hardened_const
+  expected_ids:
+  - 0
+  - 1
+  - 2
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: первый блок
+    - id: 1
+      text: второй блок
+    - id: 2
+      text: третий блок
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+  language_include_paths:
+  - blocks[*].text
+- task_id: l328d1_repair_blocks_ru_en_mixed
+  family: structured_json
+  modality: text
+  language: ru_en_mixed
+  structure_complexity: medium
+  response_schema_complexity: blocks
+  volume: single
+  task_intent: id_preservation
+  input_profile: repair_blocks_ru_en_mixed
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_repair_exact_blocks
+  validation_policy: auto_schema_business
+  prompt: 'Return JSON only. Do not use markdown. Do not add explanations.
+
+    Return exactly this JSON shape:
+
+    {"blocks":[{"id":0,"text":"Проверяем Django модель"},{"id":1,"text":"Валидируем
+    JSON schema"},{"id":2,"text":"Сохраняем Qwen термин"}]}
+
+    Rules:
+
+    - Return exactly the same number of blocks.
+
+    - Preserve every id exactly.
+
+    - Preserve order exactly.
+
+    - Preserve the Russian and English technical terms exactly.
+
+    - Do not merge, split, delete, duplicate, or reorder blocks.
+
+    - Return only field: blocks.'
+  schema_family: blocks
+  schema_variant: hardened_const
+  expected_ids:
+  - 0
+  - 1
+  - 2
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: Проверяем Django модель
+    - id: 1
+      text: Валидируем JSON schema
+    - id: 2
+      text: Сохраняем Qwen термин
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+  language_include_paths:
+  - blocks[*].text
+axes:
+  context_tier:
+  - '8192'
+  retry_policy:
+  - 'off'
+  - retry1
+  execution_mode:
+  - cold_per_request
+  cache_mode:
+  - none
+  lmstudio_parallel:
+  - '1'
+  app_concurrency:
+  - '1'
+  queue_pressure_mode:
+  - 'off'
+  schema_variant:
+  - hardened_const
+  modality:
+  - text
+  language:
+  - ru_ru
+  - ru_en_mixed
+  structure_complexity:
+  - simple
+  - medium
+  volume:
+  - single
+  task_intent:
+  - schema_only
+  - id_preservation
+  input_profile:
+  - repair_schema_simple_ru_ru
+  - repair_schema_simple_ru_en_mixed
+  - repair_blocks_ru_ru
+  - repair_blocks_ru_en_mixed
+  output_language_policy:
+  - preserve_input_language
+  validation_policy:
+  - auto_schema_business
+  prompt_variant:
+  - structured_json_repair_exact_shape
+  - structured_json_repair_exact_blocks
+  response_schema_complexity:
+  - simple
+  - blocks
+repeats: 1
+safety:
+  live: true
+  allow_model_downloads: false
+  allow_model_loads: true
+  allow_remote_base_url: true
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_models: 1
+  max_context_tier: 8192
+  max_repeats: 1
+  max_requests: 8
+structured_runtime:
+  strict_json_schema: true
+notes:
+- L3.28d.1 repair rerun for 12B only.
+- Run only after E2B/E4B repair canary passes.
+- No 26B structured JSON generation in L3.28d.1.
+- Operator runner should use increased request timeout for 12B if needed, capped at
+  1024 output tokens when token control is implemented.
