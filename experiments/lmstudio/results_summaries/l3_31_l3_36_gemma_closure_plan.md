@@ -2,6 +2,12 @@
 
 Status: planning/specification artifact. This document defines the phased closure plan for Gemma as a benchmarked model line.
 
+Launch-ready companion artifact:
+
+```text
+experiments/lmstudio/results_summaries/l3_31_l3_36_gemma_closure_launch_plan.md
+```
+
 No live inference was run for this plan.
 
 ## Strategic goal
