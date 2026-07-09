@@ -1,0 +1,1087 @@
+run_id: matrix_l3_30e_gemma_vision_task_intent_routes_prepared
+models:
+- model_key: gemma4_e2b
+  model_id: google/gemma-4-e2b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_e4b
+  model_id: google/gemma-4-e4b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_12b_qat
+  model_id: google/gemma-4-12b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_26b_a4b_qat
+  model_id: google/gemma-4-26b-a4b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+tasks:
+- task_id: l330e_ui_understanding_simple_task_intent_ru_ru_ui_settings_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: ui_understanding
+  input_profile: ui_settings_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_ui_understanding_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: ui_understanding. Analyze the public-safe image and answer
+    in ru_ru. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d
+  schema_family: simple_task_intent
+  schema: &id001
+    type: object
+    required:
+    - task_intent
+    - image_type
+    - summary
+    - visible_text
+    - extracted_items
+    - warnings
+    additionalProperties: false
+    properties:
+      task_intent:
+        type: string
+      image_type:
+        type: string
+      summary:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      extracted_items:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - text
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            text:
+              type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_settings_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: ru_ru
+    task_intent: ui_understanding
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: ui_settings_ru_001
+    image_type: ui_screenshot
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_settings_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_ui_understanding_simple_task_intent_en_en_ui_settings_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: ui_understanding
+  input_profile: ui_settings_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_ui_understanding_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: ui_understanding. Analyze the public-safe image and answer
+    in en_en. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_settings_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: en_en
+    task_intent: ui_understanding
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: ui_settings_ru_001
+    image_type: ui_screenshot
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_settings_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_ui_understanding_simple_task_intent_ru_ru_ui_queue_dashboard_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: ui_understanding
+  input_profile: ui_queue_dashboard_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_ui_understanding_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: ui_understanding. Analyze the public-safe image and answer
+    in ru_ru. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:e432d04b696da1569f85a61b7d032954de22e5f52a7af5e154f0cffdb21301d0
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_queue_dashboard_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: ru_ru
+    task_intent: ui_understanding
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: ui_queue_dashboard_ru_001
+    image_type: mixed_dashboard
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_queue_dashboard_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_ui_understanding_simple_task_intent_en_en_ui_queue_dashboard_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: ui_understanding
+  input_profile: ui_queue_dashboard_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_ui_understanding_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: ui_understanding. Analyze the public-safe image and answer
+    in en_en. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:e432d04b696da1569f85a61b7d032954de22e5f52a7af5e154f0cffdb21301d0
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_queue_dashboard_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: en_en
+    task_intent: ui_understanding
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: ui_queue_dashboard_ru_001
+    image_type: mixed_dashboard
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_queue_dashboard_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_code_understanding_simple_task_intent_ru_ru_code_python_editor_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: code_understanding
+  input_profile: code_python_editor_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_code_understanding_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: code_understanding. Analyze the public-safe image and answer
+    in ru_ru. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:e387c3707145554cd0148a4e6da22c6996db05498bcf35542160a5b2bd8449d9
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/code_python_editor_001.expected.yaml
+    content_language: en_en
+    output_language: ru_ru
+    task_intent: code_understanding
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: code_python_editor_001
+    image_type: code_screenshot
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/code_python_editor_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_code_understanding_simple_task_intent_en_en_code_python_editor_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: code_understanding
+  input_profile: code_python_editor_001
+  output_language_policy: en_en
+  prompt_variant: vision_code_understanding_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: code_understanding. Analyze the public-safe image and answer
+    in en_en. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:e387c3707145554cd0148a4e6da22c6996db05498bcf35542160a5b2bd8449d9
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/code_python_editor_001.expected.yaml
+    content_language: en_en
+    output_language: en_en
+    task_intent: code_understanding
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: code_python_editor_001
+    image_type: code_screenshot
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/code_python_editor_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_ocr_visible_text_simple_task_intent_ru_ru_terminal_logs_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: ocr_visible_text
+  input_profile: terminal_logs_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_ocr_visible_text_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: ocr_visible_text. Analyze the public-safe image and answer
+    in ru_ru. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:551c69c6034f17a6326682207c0a869b2e785573107fc3bf0417a3835d6ad638
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/terminal_logs_001.expected.yaml
+    content_language: en_en
+    output_language: ru_ru
+    task_intent: ocr_visible_text
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: terminal_logs_001
+    image_type: dense_text_screen
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/terminal_logs_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_ocr_visible_text_simple_task_intent_en_en_terminal_logs_001
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: ocr_visible_text
+  input_profile: terminal_logs_001
+  output_language_policy: en_en
+  prompt_variant: vision_ocr_visible_text_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: ocr_visible_text. Analyze the public-safe image and answer
+    in en_en. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:551c69c6034f17a6326682207c0a869b2e785573107fc3bf0417a3835d6ad638
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/terminal_logs_001.expected.yaml
+    content_language: en_en
+    output_language: en_en
+    task_intent: ocr_visible_text
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: terminal_logs_001
+    image_type: dense_text_screen
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/terminal_logs_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_slide_extraction_simple_task_intent_ru_ru_slide_json_schema_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: slide_extraction
+  input_profile: slide_json_schema_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_slide_extraction_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: slide_extraction. Analyze the public-safe image and answer
+    in ru_ru. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:7fe26d643566ab21c65b397c0967431a16ad917778fdc2a07b92afb9cca15873
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/slide_json_schema_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: ru_ru
+    task_intent: slide_extraction
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: slide_json_schema_ru_001
+    image_type: slide
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/slide_json_schema_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_slide_extraction_simple_task_intent_en_en_slide_json_schema_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: slide_extraction
+  input_profile: slide_json_schema_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_slide_extraction_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: slide_extraction. Analyze the public-safe image and answer
+    in en_en. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:7fe26d643566ab21c65b397c0967431a16ad917778fdc2a07b92afb9cca15873
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/slide_json_schema_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: en_en
+    task_intent: slide_extraction
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: slide_json_schema_ru_001
+    image_type: slide
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/slide_json_schema_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_table_extraction_simple_task_intent_ru_ru_document_table_products_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: table_extraction
+  input_profile: document_table_products_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_table_extraction_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: table_extraction. Analyze the public-safe image and answer
+    in ru_ru. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:dbb6e061f7954f1a772806d8b67d66125169efd4b88d1a8b4eb91b42aeab5149
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/document_table_products_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: ru_ru
+    task_intent: table_extraction
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: document_table_products_ru_001
+    image_type: document_table
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/document_table_products_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_table_extraction_simple_task_intent_en_en_document_table_products_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: table_extraction
+  input_profile: document_table_products_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_table_extraction_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: table_extraction. Analyze the public-safe image and answer
+    in en_en. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:dbb6e061f7954f1a772806d8b67d66125169efd4b88d1a8b4eb91b42aeab5149
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/document_table_products_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: en_en
+    task_intent: table_extraction
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: document_table_products_ru_001
+    image_type: document_table
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/document_table_products_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_chart_extraction_simple_task_intent_ru_ru_chart_tasks_by_month_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: chart_extraction
+  input_profile: chart_tasks_by_month_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_chart_extraction_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: chart_extraction. Analyze the public-safe image and answer
+    in ru_ru. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:9c8c757383fc57dec329bcf05e3cb6701a463f7741812eedbc8d77f7e261ba3e
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/chart_tasks_by_month_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: ru_ru
+    task_intent: chart_extraction
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: chart_tasks_by_month_ru_001
+    image_type: chart_graph
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/chart_tasks_by_month_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_chart_extraction_simple_task_intent_en_en_chart_tasks_by_month_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: chart_extraction
+  input_profile: chart_tasks_by_month_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_chart_extraction_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: chart_extraction. Analyze the public-safe image and answer
+    in en_en. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:9c8c757383fc57dec329bcf05e3cb6701a463f7741812eedbc8d77f7e261ba3e
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/chart_tasks_by_month_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: en_en
+    task_intent: chart_extraction
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: chart_tasks_by_month_ru_001
+    image_type: chart_graph
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/chart_tasks_by_month_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_scene_understanding_simple_task_intent_ru_ru_people_classroom_selected_001
+  family: vision
+  modality: image
+  language: ru_en_mixed
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: scene_understanding
+  input_profile: people_classroom_selected_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_scene_understanding_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: scene_understanding. Analyze the public-safe image and answer
+    in ru_ru. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:85ea141e624d567f8c6c878c907e01dd0c4d764c20b35c789d2dc6f63ef2ca0b
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/people_classroom_selected_001.expected.yaml
+    content_language: ru_en_mixed
+    output_language: ru_ru
+    task_intent: scene_understanding
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: people_classroom_selected_001
+    image_type: people_scene
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/people_classroom_selected_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_scene_understanding_simple_task_intent_en_en_people_classroom_selected_001
+  family: vision
+  modality: image
+  language: ru_en_mixed
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: scene_understanding
+  input_profile: people_classroom_selected_001
+  output_language_policy: en_en
+  prompt_variant: vision_scene_understanding_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: scene_understanding. Analyze the public-safe image and answer
+    in en_en. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:85ea141e624d567f8c6c878c907e01dd0c4d764c20b35c789d2dc6f63ef2ca0b
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/people_classroom_selected_001.expected.yaml
+    content_language: ru_en_mixed
+    output_language: en_en
+    task_intent: scene_understanding
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: people_classroom_selected_001
+    image_type: people_scene
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/people_classroom_selected_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_slide_extraction_simple_task_intent_ru_ru_roadmap_timeline_2026_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: slide_extraction
+  input_profile: roadmap_timeline_2026_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_slide_extraction_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: slide_extraction. Analyze the public-safe image and answer
+    in ru_ru. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:eb88882e048feb793af2281ad6160ccf230edf0e4847e3c4cd22df13c14e5393
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/roadmap_timeline_2026_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: ru_ru
+    task_intent: slide_extraction
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: roadmap_timeline_2026_ru_001
+    image_type: technical_diagram
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/roadmap_timeline_2026_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_slide_extraction_simple_task_intent_en_en_roadmap_timeline_2026_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: slide_extraction
+  input_profile: roadmap_timeline_2026_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_slide_extraction_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: slide_extraction. Analyze the public-safe image and answer
+    in en_en. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:eb88882e048feb793af2281ad6160ccf230edf0e4847e3c4cd22df13c14e5393
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/roadmap_timeline_2026_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: en_en
+    task_intent: slide_extraction
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: roadmap_timeline_2026_ru_001
+    image_type: technical_diagram
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/roadmap_timeline_2026_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_image_description_simple_task_intent_ru_ru_ui_style_guide_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: image_description
+  input_profile: ui_style_guide_ru_001
+  output_language_policy: ru_ru
+  prompt_variant: vision_image_description_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: image_description. Analyze the public-safe image and answer
+    in ru_ru. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:3c43c402cceafa87f2fb910ca5be79487bf0a07351247b0365e8b785e3bc56bd
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_style_guide_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: ru_ru
+    task_intent: image_description
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: ui_style_guide_ru_001
+    image_type: slide
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_style_guide_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+- task_id: l330e_image_description_simple_task_intent_en_en_ui_style_guide_ru_001
+  family: vision
+  modality: image
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple_task_intent
+  volume: single
+  task_intent: image_description
+  input_profile: ui_style_guide_ru_001
+  output_language_policy: en_en
+  prompt_variant: vision_image_description_simple_task_intent
+  validation_policy: vision_capability_then_task_intent_schema_validators
+  prompt: 'Task intent: image_description. Analyze the public-safe image and answer
+    in en_en. Return JSON only. Keep visible_text in the original visible text language;
+    do not translate OCR text. Use the requested output language only for summary/description/extracted
+    explanatory fields.'
+  image_hash: sha256:3c43c402cceafa87f2fb910ca5be79487bf0a07351247b0365e8b785e3bc56bd
+  schema_family: simple_task_intent
+  schema: *id001
+  expected_output:
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_style_guide_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: en_en
+    task_intent: image_description
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  image_ground_truth:
+    image_id: ui_style_guide_ru_001
+    image_type: slide
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_style_guide_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
+    visible_text_policy: preserve_original_visible_text
+    description_language: output_language
+    summary_language: output_language
+  fake_mode: valid
+  manual_review_policy: vision_local_review
+  tags:
+  - l3_30e
+  - task_intent_route
+  - prepared_only
+  visible_text_policy: preserve_original_visible_text
+  description_language: output_language
+  summary_language: output_language
+axes:
+  context_tier:
+  - '8192'
+  retry_policy:
+  - 'off'
+  execution_mode:
+  - cold_per_request
+  cache_mode:
+  - none
+  lmstudio_parallel:
+  - '1'
+  app_concurrency:
+  - '1'
+  queue_pressure_mode:
+  - 'off'
+  modality:
+  - image
+  resize_profile:
+  - max_side_1024
+  - max_side_512
+  task_intent:
+  - chart_extraction
+  - code_understanding
+  - image_description
+  - ocr_visible_text
+  - scene_understanding
+  - slide_extraction
+  - table_extraction
+  - ui_understanding
+  response_schema_complexity:
+  - simple_task_intent
+  output_language_policy:
+  - ru_ru
+  - en_en
+repeats: 1
+safety:
+  live: false
+  allow_model_downloads: false
+  allow_model_loads: false
+  allow_remote_base_url: false
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_models: 4
+  max_context_tier: 8192
+  max_repeats: 1
+  max_requests: 160
+structured_runtime:
+  strict_json_schema: true
+notes:
+- L3.30e prepared-only task-intent route set. Do not run live as committed.
+- Separate content_language from output_language_policy; preserve visible_text original
+  language.
+- Image live requires capability proof and a separate tiny/simple live config.
+- No complex schema, no full cartesian, no Qwen VL, no raw prompt/response artifacts.

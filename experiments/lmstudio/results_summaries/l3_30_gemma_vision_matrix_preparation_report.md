@@ -53,6 +53,27 @@ Eligible Gemma models x 4 assets (`ui_screenshot`, `document_table`, `chart_grap
 
 Eligible Gemma models x 10 images x compatible task intents x `simple_description`/`medium_objects_text` x RU/EN output x 1024/512, capped/split before live; hard cap 120.
 
+## L3.30e task-intent route set
+
+Prepared-only config: `experiments/lmstudio/structured_matrix/configs/matrix.l3_30e_gemma_vision_task_intent_routes.prepared.yaml`.
+
+Purpose: exercise the task-intent axis without confusing it with JSON complexity. It keeps the schema simple while varying what the model is asked to do.
+
+Shape as committed:
+
+- 10 public-safe assets from `gemma_vision_l3_30_asset_pack`;
+- 8 task intents: `image_description`, `ocr_visible_text`, `ui_understanding`, `table_extraction`, `chart_extraction`, `code_understanding`, `scene_understanding`, `slide_extraction`;
+- `content_language` is taken from each asset;
+- `output_language_policy` is split into `ru_ru` and `en_en`;
+- `visible_text_policy=preserve_original_visible_text`;
+- `description_language=output_language`;
+- `summary_language=output_language`;
+- resize profiles: `max_side_1024`, `max_side_512`;
+- schema: `simple_task_intent` only;
+- future upper bound: 160 cells if every Gemma model becomes image-eligible.
+
+It is not a live image benchmark. As committed: `live=false`, `allow_image_live=false`, `allow_model_loads=false`, and `allow_raw_prompt_response_artifacts=false`.
+
 ## Blocked conditions
 
 - image live before capability proof;

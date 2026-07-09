@@ -30,7 +30,19 @@ NEW_CONFIGS = [
     "matrix.l3_30c_gemma_vision_canary.prepared.yaml",
     "matrix.l3_30d_gemma_vision_screening.prepared.yaml",
     "matrix.l3_30c_gemma_vision_tiny_capability_live.yaml",
+    "matrix.l3_30e_gemma_vision_task_intent_routes.prepared.yaml",
 ]
+
+TASK_INTENTS = {
+    "image_description",
+    "ocr_visible_text",
+    "ui_understanding",
+    "table_extraction",
+    "chart_extraction",
+    "code_understanding",
+    "scene_understanding",
+    "slide_extraction",
+}
 
 
 def _config(name: str) -> BenchmarkConfig:
@@ -57,6 +69,7 @@ def test_l3_30_suite_order_and_config_names_match_contract() -> None:
         "capability_preflight",
         "canary_prepared",
         "screening_prepared",
+        "task_intent_routes_prepared",
     ]
     assert [Path(entry["config"]).name for entry in suite["configs"]] == NEW_CONFIGS
     assert "No image live artifacts yet" in "\n".join(suite["notes"])
@@ -144,6 +157,32 @@ def test_l3_30_tiny_capability_live_template_is_not_live_as_committed() -> None:
         _assert_visible_text_policy(task)
 
 
+def test_l3_30_task_intent_routes_are_prepared_only_and_simple_schema() -> None:
+    config = _config("matrix.l3_30e_gemma_vision_task_intent_routes.prepared.yaml")
+    plan = _build_matrix_plan(config)
+
+    assert _model_ids(config) == GEMMA_MODELS
+    assert len(config.tasks) == 20
+    assert {task.task_intent for task in config.tasks} == TASK_INTENTS
+    assert {task.response_schema_complexity for task in config.tasks} == {"simple_task_intent"}
+    assert {task.output_language_policy for task in config.tasks} == {"ru_ru", "en_en"}
+    assert {task.language for task in config.tasks} == {"ru_ru", "en_en", "ru_en_mixed"}
+    assert set(config.axes["resize_profile"]) == {"max_side_1024", "max_side_512"}
+    assert set(config.axes["task_intent"]) == TASK_INTENTS
+    assert config.safety.live is False
+    assert config.safety.allow_image_live is False
+    assert config.safety.allow_model_loads is False
+    assert config.safety.allow_raw_prompt_response_artifacts is False
+    assert config.safety.max_requests == 160
+    assert len(plan.cells) == 0
+    assert plan.skip_reasons == {"unsupported_modality": 1280}
+    for task in config.tasks:
+        assert task.schema_family == "simple_task_intent"
+        assert task.expected_output is not None
+        assert task.expected_output["task_intent"] == task.task_intent
+        _assert_visible_text_policy(task)
+
+
 def test_l3_30_report_declares_prepared_only_and_readiness_for_later_experiments() -> None:
     text = REPORT_PATH.read_text(encoding="utf-8")
 
@@ -154,3 +193,6 @@ def test_l3_30_report_declares_prepared_only_and_readiness_for_later_experiments
     assert "visible_text_policy" in text
     assert "Run L3.29 Gemma text/structured bounded matrix first" in text
     assert "Do not run full 480-cell image cartesian" in text
+    assert "L3.30e task-intent route set" in text
+    assert "schema: `simple_task_intent` only" in text
+    assert "future upper bound: 160 cells" in text

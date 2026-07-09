@@ -18,15 +18,22 @@ configs:
   required: false
   prepared_only: true
   requires_explicit_live_approval: true
+- id: task_intent_routes_prepared
+  config: experiments/lmstudio/structured_matrix/configs/matrix.l3_30e_gemma_vision_task_intent_routes.prepared.yaml
+  required: false
+  prepared_only: true
 suite_order:
 - asset_manifest_validation
 - capability_preflight
 - canary_prepared
 - screening_prepared
+- task_intent_routes_prepared
 notes:
 - Prepared-only. No image live artifacts yet. No raw private images/prompts/responses
   committed.
 - Do not run prepared image matrix live. Complex image schema is prepared-only.
+- L3.30e task-intent route set is prepared-only and separates content_language
+  from output_language_policy.
 - Future image live requires a separate tiny capability config with proven eligible
   image-capable models.
 - visible_text_policy=preserve_original_visible_text; description_language/summary_language
