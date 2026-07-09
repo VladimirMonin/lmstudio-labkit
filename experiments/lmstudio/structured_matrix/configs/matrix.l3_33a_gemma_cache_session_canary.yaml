@@ -126,7 +126,6 @@ axes:
   retry_policy:
   - 'off'
   execution_mode:
-  - cold_per_request
   - session_loaded
   cache_mode:
   - none
@@ -165,12 +164,14 @@ axes:
   response_schema_complexity:
   - simple
   - blocks
+  request_timeout_s:
+  - '600'
 repeats: 3
 safety:
-  live: false
+  live: true
   allow_model_downloads: false
-  allow_model_loads: false
-  allow_remote_base_url: false
+  allow_model_loads: true
+  allow_remote_base_url: true
   allow_raw_prompt_response_artifacts: false
   allow_image_live: false
   allow_stress: false
@@ -182,7 +183,7 @@ structured_runtime:
   strict_json_schema: true
 notes:
 - L3.33a cache/session/warmup canary preparation for E4B and 12B only.
-- 'Expected prepared rows: 2 models x 2 lanes x 2 execution modes x 2 cache modes x 3 repeats = 48.'
+- 'Expected live rows: 2 models x 2 lanes x 1 execution mode x 2 cache modes x 3 repeats = 24.'
 - Session-loaded warmup live semantics are load once -> request 1 warmup -> requests 2-3 measured -> cleanup once.
 - Do not claim physical KV reuse unless runtime telemetry reports it; timing-only inference remains a signal, not proof.
-- No Qwen, image, higher context, parallel, stress, raw prompt/response artifacts, model download, or live execution in this prepared snapshot.
+- No Qwen, image, higher context, parallel, stress, raw prompt/response artifacts, or model download in this live canary.

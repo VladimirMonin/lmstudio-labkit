@@ -213,12 +213,14 @@ axes:
   - structured_json_complex_exact_shape
   response_schema_complexity:
   - complex
+  request_timeout_s:
+  - '600'
 repeats: 1
 safety:
-  live: false
+  live: true
   allow_model_downloads: false
-  allow_model_loads: false
-  allow_remote_base_url: false
+  allow_model_loads: true
+  allow_remote_base_url: true
   allow_raw_prompt_response_artifacts: false
   allow_image_live: false
   allow_stress: false
@@ -229,7 +231,7 @@ safety:
 structured_runtime:
   strict_json_schema: true
 notes:
-- L3.32a complex JSON canary for E2B/E4B. Prepared/executable; live remains off until
-  explicitly approved after L3.31a.
+- L3.32a complex JSON canary for E2B/E4B. Owner-approved live canary after
+  L3.31a acceptance or explicit deferral.
 - 'Expected attempts: 2 models x 1 schema x 2 languages = 4.'
 - No 12B/26B, no higher context, no image, no cache/session/warmup.

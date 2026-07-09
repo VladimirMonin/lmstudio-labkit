@@ -224,6 +224,8 @@ axes:
   response_schema_complexity:
   - simple
   - blocks
+  request_timeout_s:
+  - '600'
 repeats: 1
 safety:
   live: true

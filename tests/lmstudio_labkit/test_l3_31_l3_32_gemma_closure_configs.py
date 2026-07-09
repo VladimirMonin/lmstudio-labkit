@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import yaml
 from lmstudio_labkit.benchmarks import _build_matrix_plan
 from lmstudio_labkit.validation import validate_response
 
@@ -47,6 +48,8 @@ def test_l3_31_context_configs_have_expected_plan_sizes_and_gates() -> None:
     assert canary.safety.live is True
     assert canary.safety.allow_model_loads is True
     assert canary.safety.max_requests == 9
+    assert _all_axes(canary, "request_timeout_s") == {"600"}
+    assert _build_matrix_plan(canary).cells[0].to_request_plan().options.timeout_s == 600.0
     assert canary.safety.allow_raw_prompt_response_artifacts is False
     assert canary.safety.allow_image_live is False
     assert canary.safety.allow_stress is False
@@ -95,8 +98,10 @@ def test_l3_32_complex_json_is_staged_and_26b_is_tiny_only() -> None:
     assert _model_ids(canary) == {"google/gemma-4-e2b", "google/gemma-4-e4b"}
     assert _all_axes(canary, "response_schema_complexity") == {"complex"}
     assert _all_axes(canary, "context_tier") == {"8192"}
-    assert canary.safety.live is False
-    assert canary.safety.allow_model_loads is False
+    assert canary.safety.live is True
+    assert canary.safety.allow_model_loads is True
+    assert canary.safety.allow_remote_base_url is True
+    assert _all_axes(canary, "request_timeout_s") == {"600"}
 
     assert _model_ids(model_12b) == {"google/gemma-4-12b-qat"}
     assert _all_axes(model_12b, "retry_policy") == {"off", "retry1"}
@@ -147,7 +152,9 @@ def test_l3_32_complex_tasks_have_offline_schema_fixture_validation() -> None:
         config = _config(name)
         complex_cells = [
             cell
-            for cell in plan_matrix(config).cells
+            for cell in (
+                _build_matrix_plan(config) if config.safety.live else plan_matrix(config)
+            ).cells
             if cell.task.response_schema_complexity == "complex"
         ]
         assert complex_cells, name
@@ -202,24 +209,25 @@ def test_l3_33_cache_session_configs_have_expected_plan_sizes_and_gates() -> Non
     canary = _config("matrix.l3_33a_gemma_cache_session_canary.yaml")
     prefix_reuse = _config("matrix.l3_33b_gemma_prompt_prefix_reuse.yaml")
 
-    assert _planned_count("matrix.l3_33a_gemma_cache_session_canary.yaml") == 48
+    assert _planned_count("matrix.l3_33a_gemma_cache_session_canary.yaml") == 24
     assert _planned_count("matrix.l3_33b_gemma_prompt_prefix_reuse.yaml") == 12
 
     assert _model_ids(canary) == {"google/gemma-4-e4b", "google/gemma-4-12b-qat"}
     assert _model_ids(prefix_reuse) == {"google/gemma-4-e4b", "google/gemma-4-12b-qat"}
 
     assert _all_axes(canary, "context_tier") == {"8192"}
-    assert _all_axes(canary, "execution_mode") == {"cold_per_request", "session_loaded"}
+    assert _all_axes(canary, "execution_mode") == {"session_loaded"}
     assert _all_axes(canary, "cache_mode") == {"none", "warmup_first"}
     assert canary.repeats == 3
-    assert canary.safety.live is False
-    assert canary.safety.allow_model_loads is False
+    assert canary.safety.live is True
+    assert canary.safety.allow_model_loads is True
+    assert canary.safety.allow_remote_base_url is True
+    assert _all_axes(canary, "request_timeout_s") == {"600"}
     assert canary.safety.allow_model_downloads is False
     assert canary.safety.allow_raw_prompt_response_artifacts is False
     assert canary.safety.allow_image_live is False
     assert canary.safety.allow_stress is False
     assert canary.safety.max_requests == 48
-
     assert _all_axes(prefix_reuse, "execution_mode") == {"cold_per_request"}
     assert _all_axes(prefix_reuse, "cache_mode") == {"prompt_prefix_reuse"}
     assert prefix_reuse.repeats == 2
@@ -239,11 +247,23 @@ def test_l3_33_configs_are_gemma_text_only_and_exclude_broad_modes() -> None:
         assert _all_axes(config, "lmstudio_parallel") == {"1"}
         assert _all_axes(config, "app_concurrency") == {"1"}
         assert _all_axes(config, "queue_pressure_mode") == {"off"}
-        assert config.safety.allow_remote_base_url is False
+        if name == "matrix.l3_33a_gemma_cache_session_canary.yaml":
+            assert config.safety.allow_remote_base_url is True
+        else:
+            assert config.safety.allow_remote_base_url is False
 
 
 def test_l3_33_cache_telemetry_fields_are_reserved_in_artifacts(tmp_path: Path) -> None:
-    config = _config("matrix.l3_33a_gemma_cache_session_canary.yaml")
+    payload = yaml.safe_load(
+        (CONFIG_DIR / "matrix.l3_33a_gemma_cache_session_canary.yaml").read_text(encoding="utf-8")
+    )
+    payload["safety"] = {
+        **payload["safety"],
+        "live": False,
+        "allow_model_loads": False,
+        "allow_remote_base_url": False,
+    }
+    config = BenchmarkConfig.from_dict(payload)
     artifacts = run_matrix(config, tmp_path)
     records = [
         json.loads(line)

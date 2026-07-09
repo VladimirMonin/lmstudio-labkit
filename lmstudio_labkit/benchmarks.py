@@ -296,6 +296,7 @@ class MatrixCell:
             model_id=self.model.model_id,
             endpoint_family=self.model.endpoint_family,
             context_tier=self.axes.get("context_tier", "8192"),
+            timeout_s=_positive_float_axis(self.axes.get("request_timeout_s"), 30.0),
             retry_policy="retry1" if self.axes.get("retry_policy") == "retry1" else "off",
             live=False,
         )
@@ -370,6 +371,7 @@ def _build_matrix_plan(config: BenchmarkConfig) -> MatrixPlan:
         ),
         ("execution_target", lambda task: ("local_managed",)),
         ("resource_telemetry_mode", lambda task: ("full",)),
+        ("request_timeout_s", lambda task: ("30",)),
     )
     for model in config.models:
         for task in config.tasks:
@@ -1405,6 +1407,14 @@ def _normalize_axis_value(value: Any) -> str:
     if value is True:
         return "on"
     return str(value)
+
+
+def _positive_float_axis(value: Any, default: float) -> float:
+    try:
+        parsed = float(str(value))
+    except (TypeError, ValueError):
+        return default
+    return parsed if parsed > 0 else default
 
 
 def _metadata_mode(value: Any) -> str:
