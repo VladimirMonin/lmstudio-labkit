@@ -1,6 +1,8 @@
 # L3.29 Gemma Family Bounded Matrix Decision Record
 
-Status: prepared; live inference not run in this slice.
+Status: live 8192 slice completed; see `l3_29_gemma_family_bounded_matrix_live_results_report.md`.
+
+Note: the original bounded matrix remains 149 planned attempts, but the current managed executor only accepts `context_tier=8192`. The committed live report therefore records the executable 113-attempt 8192 slice and classifies higher-context coverage as runner-blocked, not model failure.
 
 ## Context
 
@@ -52,14 +54,26 @@ Do not run 26B automatically if earlier phases fail infrastructure.
 - latency summary;
 - model admission table for L3.30.
 
+## Live 8192 result summary
+
+| lane | executed attempts | pass | fail | hard fail | status |
+|---|---:|---:|---:|---:|---|
+| A transcript cleanup screening | 36 | 36 | 0 | 0 | pass |
+| B structured JSON screening | 72 | 72 | 0 | 0 | pass |
+| C 26B transcript cleanup controlled | 5 | 5 | 0 | 0 | pass |
+
+Total executed: 113/113 pass.
+
+Higher-context L3.29 coverage remains blocked by the current managed executor's `context_tier=8192` restriction.
+
 ## Model admission table for L3.30
 
 | model | transcript cleanup | structured simple | structured blocks | context 16k | 26B control | next status |
 |---|---|---|---|---|---|---|
-| google/gemma-4-e2b | pending | pending | pending | pending | n/a | pending L3.29 |
-| google/gemma-4-e4b | pending | pending | pending | pending | n/a | pending L3.29 |
-| google/gemma-4-12b-qat | pending | pending | pending | pending | n/a | pending L3.29 |
-| google/gemma-4-26b-a4b-qat | pending controlled only | blocked | blocked | blocked in L3.29 | pending controlled | pending L3.29 |
+| google/gemma-4-e2b | pass at 8192 | pass at 8192 | pass at 8192 | runner-blocked | n/a | admitted for 8192 text/structured lane |
+| google/gemma-4-e4b | pass at 8192 | pass at 8192 | pass at 8192 | runner-blocked | n/a | admitted for 8192 text/structured lane |
+| google/gemma-4-12b-qat | pass at 8192 | pass at 8192 | pass at 8192 | runner-blocked | n/a | admitted for 8192 text/structured lane |
+| google/gemma-4-26b-a4b-qat | pass at 8192 controlled only | blocked | blocked | runner-blocked | pass at 8192 | controlled cleanup only |
 
 ## Stop conditions
 
