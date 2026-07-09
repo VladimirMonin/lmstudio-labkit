@@ -1,0 +1,8 @@
+fixture_id: l326_20_mixed_technical_control
+input_profile: l326_mixed_technical_control
+language: ru_en_mixed
+text: Сегодня мы проверяем clean transcript cleanup для Django API и JSON schema validation.
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Сегодня мы проверяем clean transcript cleanup для Django API
+    и JSON schema validation.

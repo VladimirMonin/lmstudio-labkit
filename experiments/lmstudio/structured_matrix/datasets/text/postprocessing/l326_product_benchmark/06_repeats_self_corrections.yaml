@@ -1,0 +1,8 @@
+fixture_id: l326_06_repeats_self_corrections
+input_profile: l326_repeats_self_corrections
+language: ru_ru
+text: мы сейчас добавим миграцию нет сначала модель потом миграцию потом применим
+  migrate
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Мы сейчас добавим модель, потом миграцию, затем применим migrate.

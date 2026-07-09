@@ -1,0 +1,9 @@
+fixture_id: l326_16_bad_capitalization
+input_profile: l326_bad_capitalization
+language: ru_ru
+text: django проект использует redis celery и postgresql но локально можно оставить
+  sqlite для smoke теста
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Django проект использует Redis, Celery и PostgreSQL, но локально
+    можно оставить SQLite для smoke-теста.

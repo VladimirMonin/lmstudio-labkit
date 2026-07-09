@@ -1,0 +1,9 @@
+fixture_id: l326_07_no_punctuation
+input_profile: l326_no_punctuation
+language: ru_ru
+text: сегодня разберем celery задачи очереди redis и как отлаживать воркеры в локальной
+  среде
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Сегодня разберём Celery задачи, очереди Redis и то, как отлаживать
+    воркеры в локальной среде.

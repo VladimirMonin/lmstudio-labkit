@@ -1,0 +1,9 @@
+fixture_id: l326_09_product_model_names
+input_profile: l326_product_model_names
+language: ru_ru
+text: в lm studio выбираем gemma четыре e четыре b а e два b оставляем как легкий
+  fallback для быстрых задач
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: В LM Studio выбираем Gemma 4 E4B, а E2B оставляем как лёгкий
+    fallback для быстрых задач.

@@ -1,0 +1,9 @@
+fixture_id: l326_01_short_noisy_dictation
+input_profile: l326_short_noisy_dictation
+language: ru_ru
+text: ну сегодня мы как бы быстро посмотрим как почистить транскрипт и убрать вот
+  эти лишние паузы
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Сегодня мы быстро посмотрим, как почистить транскрипт и убрать
+    лишние паузы.

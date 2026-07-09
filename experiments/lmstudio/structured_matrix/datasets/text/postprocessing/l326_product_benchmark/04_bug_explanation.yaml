@@ -1,0 +1,9 @@
+fixture_id: l326_04_bug_explanation
+input_profile: l326_bug_explanation
+language: ru_ru
+text: ошибка возникает потому что конфиг грузится два раза и второй запуск перетирает
+  путь к модели
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Ошибка возникает потому, что конфиг грузится два раза, и второй
+    запуск перетирает путь к модели.

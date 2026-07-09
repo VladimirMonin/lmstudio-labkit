@@ -1,0 +1,9 @@
+fixture_id: l326_10_conversational_style
+input_profile: l326_conversational_style
+language: ru_ru
+text: я думаю что это можно включить как скрытый режим но пользователю пока не показывать
+  переключатель моделей
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Я думаю, что это можно включить как скрытый режим, но пользователю
+    пока не показывать переключатель моделей.

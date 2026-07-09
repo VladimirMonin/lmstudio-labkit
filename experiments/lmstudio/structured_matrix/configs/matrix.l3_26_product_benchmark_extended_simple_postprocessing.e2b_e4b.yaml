@@ -1,4 +1,4 @@
-run_id: matrix_l3_26_product_benchmark_simple_postprocessing_e2b_e4b
+run_id: matrix_l3_26_product_benchmark_extended_simple_postprocessing_e2b_e4b
 models:
 - model_key: gemma4_e2b
   model_id: google/gemma-4-e2b
@@ -409,12 +409,391 @@ tasks:
   near_identity_policy: warning
   language_drift_policy: warning
   term_language_preservation_policy: warning
+- task_id: l326_transcript_cleanup_simple_11_lecture_explanation
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: transcript_cleanup
+  input_profile: l326_lecture_explanation
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_no_new_facts_v2
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema: *id001
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Когда мы говорим про транзакции, важно понимать, что commit фиксирует
+      изменения, а rollback откатывает их назад.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/l326_product_benchmark/11_lecture_explanation.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  near_identity_policy: warning
+  language_drift_policy: warning
+  term_language_preservation_policy: warning
+- task_id: l326_transcript_cleanup_simple_12_meeting_fragment
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: transcript_cleanup
+  input_profile: l326_meeting_fragment
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_no_new_facts_v2
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema: *id001
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Давайте договоримся, что до пятницы проверяем прототип, а в понедельник
+      решаем, можно ли отдавать его в тест.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/l326_product_benchmark/12_meeting_fragment.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  near_identity_policy: warning
+  language_drift_policy: warning
+  term_language_preservation_policy: warning
+- task_id: l326_transcript_cleanup_simple_13_action_oriented_fragment
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: transcript_cleanup
+  input_profile: l326_action_oriented_fragment
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_no_new_facts_v2
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema: *id001
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Сначала проверь логи, потом сравни конфиги и только после этого меняй
+      код в адаптере.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/l326_product_benchmark/13_action_oriented_fragment.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  near_identity_policy: warning
+  language_drift_policy: warning
+  term_language_preservation_policy: warning
+- task_id: l326_transcript_cleanup_simple_14_rambling_fragment
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: transcript_cleanup
+  input_profile: l326_rambling_fragment
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_no_new_facts_v2
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema: *id001
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: В общем, проблема тут не совсем в модели, скорее в том, что мы слишком
+      рано включили широкий режим.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/l326_product_benchmark/14_rambling_fragment.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  near_identity_policy: warning
+  language_drift_policy: warning
+  term_language_preservation_policy: warning
+- task_id: l326_transcript_cleanup_simple_15_filler_words
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: transcript_cleanup
+  input_profile: l326_filler_words
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_no_new_facts_v2
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema: *id001
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Мы запускаем тест и смотрим, чтобы он не падал на JSON-схеме.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/l326_product_benchmark/15_filler_words.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  near_identity_policy: warning
+  language_drift_policy: warning
+  term_language_preservation_policy: warning
+- task_id: l326_transcript_cleanup_simple_16_bad_capitalization
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: transcript_cleanup
+  input_profile: l326_bad_capitalization
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_no_new_facts_v2
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema: *id001
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Django проект использует Redis, Celery и PostgreSQL, но локально можно
+      оставить SQLite для smoke-теста.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/l326_product_benchmark/16_bad_capitalization.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  near_identity_policy: warning
+  language_drift_policy: warning
+  term_language_preservation_policy: warning
+- task_id: l326_transcript_cleanup_simple_17_asr_term_noise
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: transcript_cleanup
+  input_profile: l326_asr_term_noise
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_no_new_facts_v2
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema: *id001
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: В PySide6 окне надо показать статус LM Studio и результат постпроцессинга.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/l326_product_benchmark/17_asr_term_noise.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  near_identity_policy: warning
+  language_drift_policy: warning
+  term_language_preservation_policy: warning
+- task_id: l326_transcript_cleanup_simple_18_clean_russian_control
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: transcript_cleanup
+  input_profile: l326_clean_russian_control
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_no_new_facts_v2
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema: *id001
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Сегодня мы проверяем аккуратную русскую фразу, в которой уже есть
+      пунктуация и понятная структура.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/l326_product_benchmark/18_clean_russian_control.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  near_identity_policy: warning
+  language_drift_policy: warning
+  term_language_preservation_policy: warning
+- task_id: l326_transcript_cleanup_simple_19_clean_english_control
+  family: postprocessing
+  modality: text
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: transcript_cleanup
+  input_profile: l326_clean_english_control
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_no_new_facts_v2
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema: *id001
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Today we check a clean English control sentence with punctuation and
+      clear structure.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/l326_product_benchmark/19_clean_english_control.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  near_identity_policy: warning
+  language_drift_policy: warning
+  term_language_preservation_policy: warning
+- task_id: l326_transcript_cleanup_simple_20_mixed_technical_control
+  family: postprocessing
+  modality: text
+  language: ru_en_mixed
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: transcript_cleanup
+  input_profile: l326_mixed_technical_control
+  output_language_policy: preserve_mixed_language
+  prompt_variant: strict_no_new_facts_v2
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema: *id001
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Сегодня мы проверяем clean transcript cleanup для Django API и JSON
+      schema validation.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sampled
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/l326_product_benchmark/20_mixed_technical_control.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  near_identity_policy: warning
+  language_drift_policy: warning
+  term_language_preservation_policy: warning
 axes:
   modality:
   - text
   language:
   - ru_ru
   - ru_en_mixed
+  - en_en
   task_intent:
   - transcript_cleanup
   input_profile:
@@ -428,6 +807,16 @@ axes:
   - l326_long_sentence
   - l326_product_model_names
   - l326_conversational_style
+  - l326_lecture_explanation
+  - l326_meeting_fragment
+  - l326_action_oriented_fragment
+  - l326_rambling_fragment
+  - l326_filler_words
+  - l326_bad_capitalization
+  - l326_asr_term_noise
+  - l326_clean_russian_control
+  - l326_clean_english_control
+  - l326_mixed_technical_control
   output_language_policy:
   - preserve_input_language
   - preserve_mixed_language
@@ -474,8 +863,8 @@ safety:
   max_repeats: 3
   allow_image_live: false
   allow_stress: false
-  max_runtime_minutes: 180
-  max_requests: 60
+  max_runtime_minutes: 360
+  max_requests: 120
 structured_runtime:
   strict_json_schema: true
 repeats: 3

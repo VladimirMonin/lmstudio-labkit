@@ -1,0 +1,9 @@
+fixture_id: l326_02_technical_django_qwen_embedding
+input_profile: l326_technical_django_qwen_embedding
+language: ru_ru
+text: сегодня в джанго проекте подключаем кувен эмбеддинг модель и проверяем json
+  schema validation
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Сегодня в Django проекте подключаем Qwen embedding model и
+    проверяем JSON schema validation.

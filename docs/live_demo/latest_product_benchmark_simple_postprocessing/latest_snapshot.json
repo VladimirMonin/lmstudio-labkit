@@ -1,0 +1,204 @@
+{
+  "attempt_count": 60,
+  "cache_modes": [
+    "none"
+  ],
+  "cell_count": 60,
+  "config_hash": "0f430fe70b36741044bac509962cc516d876eadb86fbf6dd2abab03cf5931653",
+  "execution_modes": [
+    "cold_per_request"
+  ],
+  "execution_targets": [
+    "live_small"
+  ],
+  "fail_count": 0,
+  "failure_categories": {},
+  "filtered_cell_count": 60,
+  "hard_fail_count": 0,
+  "length_ratio_failures": {
+    "count": 0,
+    "max_actual_ratio": null,
+    "min_actual_ratio": null,
+    "model_ids": [],
+    "policy_max": [],
+    "policy_min": [],
+    "task_ids": []
+  },
+  "length_ratio_warning_count": 0,
+  "lifecycle": {
+    "cleanup_scopes": [
+      "per_request"
+    ],
+    "final_loaded_instances": [
+      0
+    ],
+    "load_scopes": [
+      "per_request"
+    ],
+    "session_cleanup_verified": [
+      "True"
+    ],
+    "session_ids": [
+      "session_01953428b266da81",
+      "session_09bbc139c1467421",
+      "session_0e0bf9a088674705",
+      "session_0f63bfdd9fe185cf",
+      "session_1d84219db43f2152",
+      "session_1d9534bcc5b4da68",
+      "session_1f49f64d03e1187f",
+      "session_1fca11dd50bd1f0a",
+      "session_20f66f01ad21261f",
+      "session_2ad509bd2afc0a66",
+      "session_2ddc870a7d3d201e",
+      "session_2f0340939d2ec5b3",
+      "session_3113df4f52d1fe78",
+      "session_3d61c7166ba02e55",
+      "session_4b1cd30e9ec477cb",
+      "session_4c7045ef8a46896f",
+      "session_4e065458c5d34364",
+      "session_4ec81ab91c58e648",
+      "session_4f95fa4861b763fd",
+      "session_51f248632b81ef82",
+      "session_5aac7ecbe7ef1975",
+      "session_609fea75fa6f18e5",
+      "session_6abe1b8a8a9069e6",
+      "session_6e06e224141742ce",
+      "session_6e8cefe8630adeca",
+      "session_73655d879e8bb669",
+      "session_7f5d154879adbfef",
+      "session_82110859bac3c31c",
+      "session_835e3b3855e5e128",
+      "session_85bce5b934f2d0fb",
+      "session_8807d6a6efa86c9b",
+      "session_8a2f7cf1d66b05e1",
+      "session_8a4c70d1fe92bfe2",
+      "session_8ebd840d9bb1e392",
+      "session_933e9fd46453519d",
+      "session_938939d6966f2b35",
+      "session_9463bd5f764180fe",
+      "session_988513678eecd173",
+      "session_9e111b45b40bbd26",
+      "session_a00f940414af50da",
+      "session_ad198a67db4ee5a8",
+      "session_af3aa7d95dcaf408",
+      "session_bad77526a21af986",
+      "session_bcf31ccb9687b657",
+      "session_cee22f033354144c",
+      "session_d3a1fce9b16f2ec2",
+      "session_d5803077ee392188",
+      "session_d5a23a30b0f1acba",
+      "session_d62eebf35851d1ab",
+      "session_d804d17a49c20afa",
+      "session_da515580dc2ffe67",
+      "session_dba066f0a4b166e4",
+      "session_dc556fd45a4aeb2f",
+      "session_e39ec81c27c031e8",
+      "session_e4fcfa576a28fe9b",
+      "session_eb657333bde8f3d9",
+      "session_ecb935be09c85c33",
+      "session_edcf9be993e7b978",
+      "session_f615ef4462e38e72",
+      "session_fa1c85e7743ab481"
+    ],
+    "session_request_counts": [
+      1
+    ],
+    "session_request_indices": [
+      1
+    ]
+  },
+  "live": true,
+  "live_bridge": {
+    "allow_model_load": true,
+    "allow_remote": true,
+    "allow_stress": false,
+    "base_url_kind": "local",
+    "base_url_scheme": "http",
+    "live": true,
+    "max_requests": 60,
+    "profile": "live-screening"
+  },
+  "model_ids": [
+    "google/gemma-4-e2b",
+    "google/gemma-4-e4b"
+  ],
+  "model_status": {
+    "google/gemma-4-e2b": {
+      "pass": 30
+    },
+    "google/gemma-4-e4b": {
+      "pass": 30
+    }
+  },
+  "models": [
+    "gemma4_e2b",
+    "gemma4_e4b"
+  ],
+  "pass_count": 60,
+  "pass_rate": 1.0,
+  "per_complexity": {
+    "simple": {
+      "pass": 60,
+      "warning": 120
+    }
+  },
+  "per_language": {
+    "ru_en_mixed": {
+      "pass": 6,
+      "warning": 12
+    },
+    "ru_ru": {
+      "pass": 54,
+      "warning": 108
+    }
+  },
+  "per_volume": {
+    "single": {
+      "pass": 60,
+      "warning": 120
+    }
+  },
+  "resource_telemetry_modes": [
+    "timing_only"
+  ],
+  "retry_impact": {
+    "off": {
+      "pass": 60,
+      "warning": 120
+    }
+  },
+  "run_id": "matrix_l3_26_product_benchmark_simple_postprocessing_e2b_e4b",
+  "safety": {
+    "public_safe": true,
+    "raw_base_url_stored": false,
+    "raw_prompt_response_stored": false,
+    "raw_prompt_stored": false,
+    "raw_response_stored": false
+  },
+  "schema_version": "latest-text-remote-snapshot-v1",
+  "skipped_cell_count": 2340,
+  "timing": {
+    "latency_ms_max": 4375.895,
+    "latency_ms_min": 2603.034,
+    "total_latency_ms_max": 4375.895,
+    "total_latency_ms_min": 2603.034
+  },
+  "token_counts": {
+    "completion_tokens": 2706,
+    "prompt_tokens": 21702
+  },
+  "warmup": {
+    "cache_hit_reported": [
+      "unknown"
+    ],
+    "kv_reuse_proven": [
+      "False"
+    ],
+    "measured_request_count": 60,
+    "warmup_request_count": 0
+  },
+  "warning_categories": {
+    "punctuation_metrics": 60
+  },
+  "warning_count": 120
+}

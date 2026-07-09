@@ -1,0 +1,7 @@
+fixture_id: l326_17_asr_term_noise
+input_profile: l326_asr_term_noise
+language: ru_ru
+text: в пай сайд шесть окне надо показать статус эл эм студио и результат пост процессинга
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: В PySide6 окне надо показать статус LM Studio и результат постпроцессинга.

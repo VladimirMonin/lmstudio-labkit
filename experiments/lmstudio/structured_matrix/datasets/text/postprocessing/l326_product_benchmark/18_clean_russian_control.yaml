@@ -1,0 +1,9 @@
+fixture_id: l326_18_clean_russian_control
+input_profile: l326_clean_russian_control
+language: ru_ru
+text: Сегодня мы проверяем аккуратную русскую фразу, в которой уже есть пунктуация
+  и понятная структура.
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Сегодня мы проверяем аккуратную русскую фразу, в которой уже
+    есть пунктуация и понятная структура.

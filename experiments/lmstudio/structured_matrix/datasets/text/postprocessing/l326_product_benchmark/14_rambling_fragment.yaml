@@ -1,0 +1,9 @@
+fixture_id: l326_14_rambling_fragment
+input_profile: l326_rambling_fragment
+language: ru_ru
+text: ну в общем тут проблема не совсем в модели скорее в том что мы слишком рано
+  включили широкий режим
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: В общем, проблема тут не совсем в модели, скорее в том, что
+    мы слишком рано включили широкий режим.

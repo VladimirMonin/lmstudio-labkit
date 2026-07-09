@@ -1,0 +1,9 @@
+fixture_id: l326_11_lecture_explanation
+input_profile: l326_lecture_explanation
+language: ru_ru
+text: когда мы говорим про транзакции важно понимать что commit фиксирует изменения
+  а rollback откатывает их назад
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Когда мы говорим про транзакции, важно понимать, что commit
+    фиксирует изменения, а rollback откатывает их назад.

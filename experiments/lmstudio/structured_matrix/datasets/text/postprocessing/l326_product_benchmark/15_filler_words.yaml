@@ -1,0 +1,8 @@
+fixture_id: l326_15_filler_words
+input_profile: l326_filler_words
+language: ru_ru
+text: значит мы как бы запускаем тест ну и смотрим чтобы оно короче не падало на json
+  схеме
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Мы запускаем тест и смотрим, чтобы он не падал на JSON-схеме.

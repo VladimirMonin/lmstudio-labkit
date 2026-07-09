@@ -1,0 +1,9 @@
+fixture_id: l326_12_meeting_fragment
+input_profile: l326_meeting_fragment
+language: ru_ru
+text: давайте договоримся что до пятницы проверяем прототип а в понедельник решаем
+  можно ли отдавать его в тест
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Давайте договоримся, что до пятницы проверяем прототип, а в
+    понедельник решаем, можно ли отдавать его в тест.

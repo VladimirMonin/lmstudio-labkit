@@ -1,0 +1,8 @@
+fixture_id: l326_13_action_oriented_fragment
+input_profile: l326_action_oriented_fragment
+language: ru_ru
+text: сначала проверь логи потом сравни конфиги и только после этого меняй код в адаптере
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Сначала проверь логи, потом сравни конфиги и только после этого
+    меняй код в адаптере.

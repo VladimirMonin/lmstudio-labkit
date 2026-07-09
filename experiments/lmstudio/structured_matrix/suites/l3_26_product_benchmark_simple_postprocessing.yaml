@@ -1,8 +1,16 @@
 suite_id: l3_26_product_benchmark_simple_postprocessing
 stop_on_failure: false
 configs:
-- id: main
+- id: canary
+  config: ../configs/matrix.l3_26_product_benchmark_canary.e2b_e4b.yaml
+  required: true
+- id: main_60
   config: ../configs/matrix.l3_26_product_benchmark_simple_postprocessing.e2b_e4b.yaml
   required: true
+- id: extended_120_prepared_only
+  config: ../configs/matrix.l3_26_product_benchmark_extended_simple_postprocessing.e2b_e4b.yaml
+  required: false
+  run_policy: manual_after_60_healthy
 notes:
-- Prepared only; do not run in L3.25 without explicit owner approval after canary.
+- Run canary first (6 attempts). Run main_60 next if canary infrastructure passes.
+  Do not run extended_120 without explicit owner approval.

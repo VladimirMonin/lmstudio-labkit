@@ -1,0 +1,9 @@
+fixture_id: l326_03_python_lesson_fragment
+input_profile: l326_python_lesson_fragment
+language: ru_ru
+text: сначала создаем список потом проходим циклом for и считаем сумму элементов без
+  лишних библиотек
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Сначала создаём список, потом проходим циклом for и считаем
+    сумму элементов без лишних библиотек.

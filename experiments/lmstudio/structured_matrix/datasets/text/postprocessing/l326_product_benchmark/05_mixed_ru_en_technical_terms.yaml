@@ -1,0 +1,9 @@
+fixture_id: l326_05_mixed_ru_en_technical_terms
+input_profile: l326_mixed_ru_en_technical_terms
+language: ru_en_mixed
+text: в api handler мы получаем request body потом валидируем payload через pydantic
+  model и возвращаем json response
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: В API handler мы получаем request body, потом валидируем payload
+    через Pydantic model и возвращаем JSON response.

@@ -86,7 +86,8 @@ def test_l3_26_product_benchmark_is_prepared_but_bounded() -> None:
     plan = _build_matrix_plan(config)
 
     assert len(plan.cells) == 60
-    assert config.repeats == 5
+    assert config.repeats == 3
+    assert len(config.tasks) == 10
     assert {cell.model.model_id for cell in plan.cells} == {
         "google/gemma-4-e2b",
         "google/gemma-4-e4b",
@@ -95,6 +96,23 @@ def test_l3_26_product_benchmark_is_prepared_but_bounded() -> None:
     assert {cell.task.response_schema_complexity for cell in plan.cells} == {"simple"}
     assert {cell.task.prompt_variant for cell in plan.cells} == {"strict_no_new_facts_v2"}
     assert all(cell.axes["retry_policy"] == "off" for cell in plan.cells)
+    assert all(cell.axes["execution_mode"] == "cold_per_request" for cell in plan.cells)
+    assert all(cell.axes["cache_mode"] == "none" for cell in plan.cells)
     assert config.safety.max_requests == 60
+    assert config.safety.allow_image_live is False
+    assert config.safety.allow_stress is False
+
+
+def test_l3_26_extended_product_benchmark_is_prepared_only() -> None:
+    config = BenchmarkConfig.from_file(
+        CONFIG_DIR / "matrix.l3_26_product_benchmark_extended_simple_postprocessing.e2b_e4b.yaml"
+    )
+    plan = _build_matrix_plan(config)
+
+    assert len(plan.cells) == 120
+    assert config.repeats == 3
+    assert len(config.tasks) == 20
+    assert {cell.task.task_intent for cell in plan.cells} == {"transcript_cleanup"}
+    assert config.safety.max_requests == 120
     assert config.safety.allow_image_live is False
     assert config.safety.allow_stress is False

@@ -1,0 +1,8 @@
+fixture_id: l326_19_clean_english_control
+input_profile: l326_clean_english_control
+language: en_en
+text: Today we check a clean English control sentence with punctuation and clear structure.
+metadata:
+  public_safe_synthetic: true
+  expected_clean_text: Today we check a clean English control sentence with punctuation
+    and clear structure.

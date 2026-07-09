@@ -1,0 +1,3 @@
+model_key,attempt_count,pass_count,fail_count,near_identity_warning_count,near_identity_rate,median_latency_ms,p95_latency_ms
+gemma4_e2b,30,30,0,0,0.0,2801.683,3031.507
+gemma4_e4b,30,30,0,0,0.0,3806.866,4373.885
