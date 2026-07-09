@@ -100,6 +100,7 @@ def test_term_normalization_language_drift_is_reported_as_warning() -> None:
             {"source_variants": ["джанго"], "normalized": "Django"},
             {"source_variants": ["пай сайд"], "normalized": "PySide"},
         ),
+        language_drift_policy="warning",
     )
 
     summary = validate_response(raw, contract)
@@ -108,3 +109,25 @@ def test_term_normalization_language_drift_is_reported_as_warning() -> None:
     assert drift.status == "warning"
     assert drift.category == "term_normalization_language_drift"
     assert drift.metrics["language_drift_detected"] is True
+    assert drift.metrics["policy"] == "warning"
+
+
+def test_term_normalization_language_drift_hard_policy_fails() -> None:
+    source = "сегодня используем джанго и пай сайд"
+    raw = json.dumps({"clean_text": "Today we use Django and PySide."}, ensure_ascii=False)
+    contract = ResponseContract(
+        mode="json",
+        language="ru_ru",
+        language_policy="skip",
+        response_schema_complexity="simple",
+        source_text=source,
+        task_intent="term_normalization",
+        language_drift_policy="hard",
+    )
+
+    summary = validate_response(raw, contract)
+    drift = _result(summary, "term_normalization_language_drift")
+
+    assert drift.status == "fail"
+    assert drift.category == "term_normalization_language_drift"
+    assert summary.status == "fail"

@@ -1,0 +1,162 @@
+{
+  "attempt_count": 6,
+  "cache_modes": [
+    "none"
+  ],
+  "cell_count": 6,
+  "config_hash": "3799386eac8a1d2aa361f17bbd988d11c624f3d8a2a4f77158e788fbcb40f2b4",
+  "execution_modes": [
+    "cold_per_request"
+  ],
+  "execution_targets": [
+    "live_small"
+  ],
+  "fail_count": 1,
+  "failure_categories": {
+    "markdown_fence": 1
+  },
+  "filtered_cell_count": 6,
+  "hard_fail_count": 1,
+  "length_ratio_failures": {
+    "count": 0,
+    "max_actual_ratio": null,
+    "min_actual_ratio": null,
+    "model_ids": [],
+    "policy_max": [],
+    "policy_min": [],
+    "task_ids": []
+  },
+  "length_ratio_warning_count": 0,
+  "lifecycle": {
+    "cleanup_scopes": [
+      "per_request"
+    ],
+    "final_loaded_instances": [
+      0
+    ],
+    "load_scopes": [
+      "per_request"
+    ],
+    "session_cleanup_verified": [
+      "True"
+    ],
+    "session_ids": [
+      "session_071ee1bb878f115e",
+      "session_401524225d0daa2a",
+      "session_43332d3f36059e9a",
+      "session_c1b0c218b16ca041",
+      "session_c77d78bb65a13dce",
+      "session_cd5efc6ed7ded49f"
+    ],
+    "session_request_counts": [
+      1
+    ],
+    "session_request_indices": [
+      1
+    ]
+  },
+  "live": true,
+  "live_bridge": {
+    "allow_model_load": true,
+    "allow_remote": true,
+    "allow_stress": false,
+    "base_url_kind": "local",
+    "base_url_scheme": "http",
+    "live": true,
+    "max_requests": 8,
+    "profile": "live-screening"
+  },
+  "model_ids": [
+    "google/gemma-4-e2b",
+    "google/gemma-4-e4b"
+  ],
+  "model_status": {
+    "google/gemma-4-e2b": {
+      "fail": 1,
+      "pass": 2
+    },
+    "google/gemma-4-e4b": {
+      "pass": 3
+    }
+  },
+  "models": [
+    "gemma4_e2b",
+    "gemma4_e4b"
+  ],
+  "pass_count": 5,
+  "pass_rate": 0.8333,
+  "per_complexity": {
+    "simple": {
+      "fail": 1,
+      "hard_fail": 1,
+      "pass": 5,
+      "warning": 8
+    }
+  },
+  "per_language": {
+    "ru_en_mixed": {
+      "pass": 2,
+      "warning": 2
+    },
+    "ru_ru": {
+      "fail": 1,
+      "hard_fail": 1,
+      "pass": 3,
+      "warning": 6
+    }
+  },
+  "per_volume": {
+    "single": {
+      "fail": 1,
+      "hard_fail": 1,
+      "pass": 5,
+      "warning": 8
+    }
+  },
+  "resource_telemetry_modes": [
+    "timing_only"
+  ],
+  "retry_impact": {
+    "off": {
+      "fail": 1,
+      "hard_fail": 1,
+      "pass": 5,
+      "warning": 8
+    }
+  },
+  "run_id": "matrix_l3_25_prompt_tightening_canary_e2b_e4b",
+  "safety": {
+    "public_safe": true,
+    "raw_base_url_stored": false,
+    "raw_prompt_response_stored": false,
+    "raw_prompt_stored": false,
+    "raw_response_stored": false
+  },
+  "schema_version": "latest-text-remote-snapshot-v1",
+  "skipped_cell_count": 282,
+  "timing": {
+    "latency_ms_max": 1950.327,
+    "latency_ms_min": 760.636,
+    "total_latency_ms_max": 1950.327,
+    "total_latency_ms_min": 760.636
+  },
+  "token_counts": {
+    "completion_tokens": 317,
+    "prompt_tokens": 2538
+  },
+  "warmup": {
+    "cache_hit_reported": [
+      "unknown"
+    ],
+    "kv_reuse_proven": [
+      "False"
+    ],
+    "measured_request_count": 6,
+    "warmup_request_count": 0
+  },
+  "warning_categories": {
+    "manual_review_required": 4,
+    "punctuation_metrics": 2
+  },
+  "warning_count": 8
+}

@@ -85,6 +85,13 @@ def test_validation_metrics_are_flattened_into_cell_summary(tmp_path: Path) -> N
                             "cleanup_noop": True,
                             "source_noise_present": True,
                             "normalized_similarity": 1.0,
+                            "identity_similarity": 1.0,
+                            "changed_char_ratio": 0.0,
+                            "punctuation_delta": 0,
+                            "capitalization_delta": 0,
+                            "whitespace_normalization_delta": 0,
+                            "asr_noise_reduction_delta": 0,
+                            "near_identity_warning": True,
                         },
                     ),
                     validation_result(
@@ -119,6 +126,14 @@ def test_validation_metrics_are_flattened_into_cell_summary(tmp_path: Path) -> N
     assert row["cleanup_noop_status"] == "warning"
     assert row["cleanup_noop_detected"] == "True"
     assert row["source_noise_present"] == "True"
+    assert row["cleanup_noop_similarity"] == "1.0"
+    assert row["identity_similarity"] == "1.0"
+    assert row["changed_char_ratio"] == "0.0"
+    assert row["punctuation_delta"] == "0"
+    assert row["capitalization_delta"] == "0"
+    assert row["whitespace_normalization_delta"] == "0"
+    assert row["asr_noise_reduction_delta"] == "0"
+    assert row["near_identity_warning"] == "True"
     assert row["term_language_drift_status"] == "warning"
     assert row["term_language_drift_detected"] == "True"
     assert row["latency_ms"] == "20.0"

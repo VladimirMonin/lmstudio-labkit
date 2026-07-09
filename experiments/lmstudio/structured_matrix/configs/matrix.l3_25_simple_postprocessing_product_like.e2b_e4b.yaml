@@ -63,6 +63,7 @@ tasks:
   paragraphing_policy: 'off'
   filler_cleanup_policy: diagnostic
   term_normalization_policy: diagnostic
+  near_identity_policy: warning
 - task_id: l322_transcript_cleanup_simple_ru_fillers
   family: postprocessing
   modality: text
@@ -113,6 +114,7 @@ tasks:
   filler_cleanup_policy: diagnostic
   term_normalization_policy: diagnostic
   paragraphing_policy: 'off'
+  near_identity_policy: warning
 - task_id: l322_term_normalization_simple_ru_noise
   family: postprocessing
   modality: text
@@ -163,6 +165,8 @@ tasks:
   punctuation_policy: 'off'
   paragraphing_policy: 'off'
   filler_cleanup_policy: 'off'
+  language_drift_policy: hard
+  term_language_preservation_policy: warning
 - task_id: l322_term_normalization_simple_mixed
   family: postprocessing
   modality: text
@@ -214,6 +218,8 @@ tasks:
   punctuation_policy: 'off'
   paragraphing_policy: 'off'
   filler_cleanup_policy: 'off'
+  language_drift_policy: hard
+  term_language_preservation_policy: warning
 axes:
   modality:
   - text

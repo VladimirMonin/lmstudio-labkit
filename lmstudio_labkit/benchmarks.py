@@ -116,6 +116,9 @@ class TaskSpec:
     filler_terms: tuple[str, ...] = ()
     filler_cleanup_policy: str | None = None
     term_normalization_policy: str | None = None
+    near_identity_policy: str | None = None
+    language_drift_policy: str | None = None
+    term_language_preservation_policy: str | None = None
     manual_review_policy: str | None = None
 
 
@@ -251,6 +254,9 @@ class MatrixCell:
             filler_terms=self.task.filler_terms,
             filler_cleanup_policy=self.task.filler_cleanup_policy,
             term_normalization_policy=self.task.term_normalization_policy,
+            near_identity_policy=self.task.near_identity_policy,
+            language_drift_policy=self.task.language_drift_policy,
+            term_language_preservation_policy=self.task.term_language_preservation_policy,
             manual_review_policy=self.task.manual_review_policy,
             schema_family=self.task.schema_family,
             response_schema_complexity=self.task.response_schema_complexity,
@@ -964,6 +970,9 @@ def _task_from_dict(payload: dict[str, Any]) -> TaskSpec:
         filler_terms=tuple(str(item) for item in enriched.get("filler_terms", [])),
         filler_cleanup_policy=enriched.get("filler_cleanup_policy"),
         term_normalization_policy=enriched.get("term_normalization_policy"),
+        near_identity_policy=enriched.get("near_identity_policy"),
+        language_drift_policy=enriched.get("language_drift_policy"),
+        term_language_preservation_policy=enriched.get("term_language_preservation_policy"),
         manual_review_policy=enriched.get("manual_review_policy"),
     )
 

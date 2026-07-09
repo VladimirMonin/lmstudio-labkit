@@ -1,4 +1,4 @@
-run_id: matrix_l3_25_focused_simple_postprocessing_offline
+run_id: matrix_l3_25_prompt_tightening_canary_e2b_e4b
 models:
 - model_key: gemma4_e2b
   model_id: google/gemma-4-e2b
@@ -13,58 +13,7 @@ models:
   supported_context_tiers:
   - 8192
 tasks:
-- task_id: screen_transcript_cleanup_simple
-  family: postprocessing
-  modality: text
-  language: ru_en_mixed
-  structure_complexity: simple
-  response_schema_complexity: simple
-  volume: single
-  task_intent: transcript_cleanup
-  input_profile: ru_en_mixed_tech
-  output_language_policy: preserve_mixed_language
-  prompt_variant: strict_no_new_facts_v2
-  validation_policy: auto_schema_language_manual_quality
-  prompt: Rendered from prompt_template and source_fixture at config load time.
-  schema_family: simple
-  schema:
-    type: object
-    required:
-    - language
-    - clean_text
-    - warnings
-    additionalProperties: false
-    properties:
-      language:
-        type: string
-      clean_text:
-        type: string
-        minLength: 1
-      warnings:
-        type: array
-        items:
-          type: string
-  expected_ids: []
-  id_paths: []
-  expected_output:
-    language: same_as_input
-    clean_text: Сегодня проверяем Django и JSON schema.
-    warnings: []
-  fake_mode: valid
-  manual_review_policy: sampled
-  language_include_paths:
-  - clean_text
-  - summary
-  - title
-  - tags[*]
-  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/ru_en_mixed_tech.yaml
-  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
-  punctuation_policy: diagnostic
-  filler_cleanup_policy: diagnostic
-  term_normalization_policy: diagnostic
-  paragraphing_policy: 'off'
-  near_identity_policy: warning
-- task_id: screen_transcript_cleanup_ru_fillers_simple
+- task_id: l325_canary_transcript_cleanup_simple_ru_fillers
   family: postprocessing
   modality: text
   language: ru_ru
@@ -115,7 +64,7 @@ tasks:
   term_normalization_policy: diagnostic
   paragraphing_policy: 'off'
   near_identity_policy: warning
-- task_id: screen_term_normalization_simple
+- task_id: l325_canary_term_normalization_simple_ru_noise
   family: postprocessing
   modality: text
   language: ru_ru
@@ -167,7 +116,7 @@ tasks:
   filler_cleanup_policy: 'off'
   language_drift_policy: hard
   term_language_preservation_policy: warning
-- task_id: screen_term_normalization_mixed_simple
+- task_id: l325_canary_term_normalization_simple_mixed
   family: postprocessing
   modality: text
   language: ru_en_mixed
@@ -230,9 +179,9 @@ axes:
   - transcript_cleanup
   - term_normalization
   input_profile:
-  - ru_en_mixed_tech
   - raw_asr_ru_fillers
   - raw_asr_ru_term_noise
+  - ru_en_mixed_tech
   output_language_policy:
   - preserve_input_language
   - preserve_mixed_language
@@ -251,36 +200,37 @@ axes:
   - hardened_const
   retry_policy:
   - 'off'
-  - retry1
   execution_mode:
-  - offline_fake
+  - cold_per_request
   cache_mode:
   - none
   execution_target:
-  - offline_fake
+  - live_small
   resource_telemetry_mode:
-  - none
+  - timing_only
   lmstudio_parallel:
   - 1
   app_concurrency:
   - 1
   queue_pressure_mode:
   - false
+  temperature:
+  - 0
   validation_policy:
   - auto_schema_language_manual_quality
 safety:
-  live: false
+  live: true
   allow_model_downloads: false
-  allow_model_loads: false
-  allow_remote_base_url: false
+  allow_model_loads: true
+  allow_remote_base_url: true
   allow_raw_prompt_response_artifacts: false
   allow_image_live: false
   allow_stress: false
   max_models: 2
   max_context_tier: 8192
-  max_repeats: 2
-  max_runtime_minutes: 20
-  max_requests: 32
+  max_repeats: 1
+  max_runtime_minutes: 60
+  max_requests: 8
 structured_runtime:
   strict_json_schema: true
-repeats: 2
+repeats: 1

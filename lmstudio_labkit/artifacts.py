@@ -189,6 +189,13 @@ def _write_cell_summary(
         "cleanup_noop_detected",
         "source_noise_present",
         "cleanup_noop_similarity",
+        "identity_similarity",
+        "changed_char_ratio",
+        "punctuation_delta",
+        "capitalization_delta",
+        "whitespace_normalization_delta",
+        "asr_noise_reduction_delta",
+        "near_identity_warning",
         "term_language_drift_status",
         "term_language_drift_detected",
         "term_language_cyrillic_delta",
@@ -342,6 +349,15 @@ def _cell_summary_row(row: dict[str, Any]) -> dict[str, Any]:
         "cleanup_noop_detected": cleanup_noop_metrics.get("cleanup_noop"),
         "source_noise_present": cleanup_noop_metrics.get("source_noise_present"),
         "cleanup_noop_similarity": cleanup_noop_metrics.get("normalized_similarity"),
+        "identity_similarity": cleanup_noop_metrics.get("identity_similarity"),
+        "changed_char_ratio": cleanup_noop_metrics.get("changed_char_ratio"),
+        "punctuation_delta": cleanup_noop_metrics.get("punctuation_delta"),
+        "capitalization_delta": cleanup_noop_metrics.get("capitalization_delta"),
+        "whitespace_normalization_delta": cleanup_noop_metrics.get(
+            "whitespace_normalization_delta"
+        ),
+        "asr_noise_reduction_delta": cleanup_noop_metrics.get("asr_noise_reduction_delta"),
+        "near_identity_warning": cleanup_noop_metrics.get("near_identity_warning"),
         "term_language_drift_status": _validation_status(
             validation_results, "term_normalization_language_drift"
         ),

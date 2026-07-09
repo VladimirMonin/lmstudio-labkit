@@ -1,0 +1,8 @@
+suite_id: l3_26_product_benchmark_simple_postprocessing
+stop_on_failure: false
+configs:
+- id: main
+  config: ../configs/matrix.l3_26_product_benchmark_simple_postprocessing.e2b_e4b.yaml
+  required: true
+notes:
+- Prepared only; do not run in L3.25 without explicit owner approval after canary.

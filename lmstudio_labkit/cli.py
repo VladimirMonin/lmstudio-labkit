@@ -105,7 +105,7 @@ def build_parser() -> argparse.ArgumentParser:
     review_pack.add_argument(
         "--include-raw-outputs-local-only",
         action="store_true",
-        help="Include local-only raw outputs when run_dir contains raw_cases.jsonl; output dir must be /tmp or gitignored",
+        help="Include local-only raw outputs when run_dir contains raw_cases.jsonl; output dir must be under the platform temp dir or explicitly gitignored",
     )
 
     return parser

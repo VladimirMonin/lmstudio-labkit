@@ -20,6 +20,7 @@ LanguagePolicy = Literal[
     "skip",
 ]
 LengthRatioPolicy = Literal["off", "warning", "hard"]
+ValidationPolicyMode = Literal["off", "warning", "hard", "diagnostic"]
 
 
 def stable_hash(value: str | bytes) -> str:
@@ -105,6 +106,9 @@ class ResponseContract:
     filler_terms: tuple[str, ...] = ()
     filler_cleanup_policy: str | None = None
     term_normalization_policy: str | None = None
+    near_identity_policy: str | None = None
+    language_drift_policy: str | None = None
+    term_language_preservation_policy: str | None = None
     manual_review_policy: str | None = None
     schema_family: str | None = None
     response_schema_complexity: str | None = None
@@ -156,6 +160,9 @@ class ResponseContract:
             "filler_terms_count": len(self.filler_terms),
             "filler_cleanup_policy": self.filler_cleanup_policy,
             "term_normalization_policy": self.term_normalization_policy,
+            "near_identity_policy": self.near_identity_policy,
+            "language_drift_policy": self.language_drift_policy,
+            "term_language_preservation_policy": self.term_language_preservation_policy,
             "manual_review_policy": self.manual_review_policy,
             "schema_family": self.schema_family,
             "response_schema_complexity": self.response_schema_complexity,

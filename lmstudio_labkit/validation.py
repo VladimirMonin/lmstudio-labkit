@@ -4,6 +4,7 @@ import json
 import re
 from collections import Counter
 from dataclasses import dataclass, field
+from difflib import SequenceMatcher
 from typing import Any, Literal
 
 from .requests import ResponseContract
@@ -670,13 +671,24 @@ def _postprocessing_validation_results(
     else:
         results.append(ValidationResult("filler_cleanup", "skip"))
 
+    near_identity_policy = _effective_policy(contract.near_identity_policy, default="warning")
     if source_text is not None and task_intent in {"transcript_cleanup", "mixed_postprocess"}:
-        results.append(validate_cleanup_noop_diagnostics(source_text, output_text))
+        results.append(
+            validate_cleanup_noop_diagnostics(source_text, output_text, policy=near_identity_policy)
+        )
     else:
         results.append(ValidationResult("cleanup_noop_diagnostics", "skip"))
 
+    language_drift_policy = _effective_policy(
+        contract.language_drift_policy or contract.term_language_preservation_policy,
+        default="warning",
+    )
     if source_text is not None and task_intent == "term_normalization":
-        results.append(validate_term_normalization_language_drift(source_text, output_text))
+        results.append(
+            validate_term_normalization_language_drift(
+                source_text, output_text, policy=language_drift_policy
+            )
+        )
     else:
         results.append(ValidationResult("term_normalization_language_drift", "skip"))
 
@@ -890,29 +902,74 @@ def validate_filler_cleanup(
     return ValidationResult("filler_cleanup", "pass", metrics=metrics)
 
 
-def validate_cleanup_noop_diagnostics(before: str, after: str) -> ValidationResult:
-    before_norm = _normalize_content_for_noop(before)
-    after_norm = _normalize_content_for_noop(after)
-    cleanup_noop = bool(before_norm) and before_norm == after_norm
-    source_noise_present = _source_has_cleanup_noise(before)
-    metrics = {
-        "cleanup_noop": cleanup_noop,
-        "source_noise_present": source_noise_present,
-        "source_char_count": len(before),
-        "output_char_count": len(after),
-        "normalized_similarity": 1.0 if cleanup_noop else 0.0,
-    }
-    if cleanup_noop and source_noise_present:
+def validate_cleanup_noop_diagnostics(
+    before: str, after: str, *, policy: str = "warning"
+) -> ValidationResult:
+    metrics = near_identity_metrics(before, after)
+    near_identity_warning = bool(metrics["near_identity_warning"])
+    if policy == "off":
+        return ValidationResult("cleanup_noop_diagnostics", "skip", metrics=metrics)
+    if near_identity_warning:
+        status: ValidationStatus = "fail" if policy == "hard" else "warning"
         return ValidationResult(
             "cleanup_noop_diagnostics",
-            "warning",
+            status,
             "cleanup_noop_when_noise_present",
             metrics,
         )
     return ValidationResult("cleanup_noop_diagnostics", "pass", metrics=metrics)
 
 
-def validate_term_normalization_language_drift(before: str, after: str) -> ValidationResult:
+def near_identity_metrics(before: str, after: str) -> dict[str, Any]:
+    before_norm = _normalize_content_for_noop(before)
+    after_norm = _normalize_content_for_noop(after)
+    identity_similarity = (
+        round(SequenceMatcher(None, before_norm, after_norm).ratio(), 4)
+        if before_norm or after_norm
+        else 1.0
+    )
+    changed_char_ratio = round(1.0 - identity_similarity, 4)
+    punctuation_delta = _punctuation_count(after) - _punctuation_count(before)
+    capitalization_delta = _capitalized_word_count(after) - _capitalized_word_count(before)
+    whitespace_normalization_delta = _whitespace_noise_count(before) - _whitespace_noise_count(
+        after
+    )
+    filler_before = _filler_count(before, DEFAULT_RU_FILLERS)
+    filler_after = _filler_count(after, DEFAULT_RU_FILLERS)
+    filler_delta = filler_before - filler_after
+    source_noise_present = _source_has_cleanup_noise(before)
+    asr_noise_reduction_delta = (
+        max(0, punctuation_delta) + max(0, whitespace_normalization_delta) + max(0, filler_delta)
+    )
+    cleanup_noop = bool(before_norm) and before_norm == after_norm
+    near_identity_warning = (
+        source_noise_present
+        and identity_similarity >= 0.96
+        and punctuation_delta <= 0
+        and capitalization_delta <= 0
+        and whitespace_normalization_delta <= 0
+        and filler_delta <= 0
+    )
+    return {
+        "cleanup_noop": cleanup_noop,
+        "source_noise_present": source_noise_present,
+        "source_char_count": len(before),
+        "output_char_count": len(after),
+        "normalized_similarity": identity_similarity,
+        "identity_similarity": identity_similarity,
+        "changed_char_ratio": changed_char_ratio,
+        "punctuation_delta": punctuation_delta,
+        "capitalization_delta": capitalization_delta,
+        "whitespace_normalization_delta": whitespace_normalization_delta,
+        "asr_noise_reduction_delta": asr_noise_reduction_delta,
+        "filler_delta": filler_delta,
+        "near_identity_warning": near_identity_warning,
+    }
+
+
+def validate_term_normalization_language_drift(
+    before: str, after: str, *, policy: str = "warning"
+) -> ValidationResult:
     before_mix = _letter_mix_metrics(before, prefix="source")
     after_mix = _letter_mix_metrics(after, prefix="output")
     source_cyr = float(before_mix["source_cyrillic_ratio"])
@@ -929,10 +986,14 @@ def validate_term_normalization_language_drift(before: str, after: str) -> Valid
         "latin_ratio_delta": lat_delta,
         "language_drift_detected": drift,
     }
+    metrics["policy"] = policy
+    if policy == "off":
+        return ValidationResult("term_normalization_language_drift", "skip", metrics=metrics)
     if drift:
+        status: ValidationStatus = "fail" if policy == "hard" else "warning"
         return ValidationResult(
             "term_normalization_language_drift",
-            "warning",
+            status,
             "term_normalization_language_drift",
             metrics,
         )
@@ -941,6 +1002,16 @@ def validate_term_normalization_language_drift(before: str, after: str) -> Valid
 
 def _punctuation_count(text: str) -> int:
     return len(re.findall(r"[.!?,;:—–\-…]", text))
+
+
+def _capitalized_word_count(text: str) -> int:
+    return len(re.findall(r"(?<!\w)[A-ZА-ЯЁ][A-Za-zА-Яа-яЁё]+", text))
+
+
+def _whitespace_noise_count(text: str) -> int:
+    repeated_space = len(re.findall(r"[ \t]{2,}", text))
+    leading_space = sum(1 for line in text.splitlines() if line[:1].isspace())
+    return repeated_space + leading_space
 
 
 def _filler_count(text: str, filler_terms: tuple[str, ...]) -> int:

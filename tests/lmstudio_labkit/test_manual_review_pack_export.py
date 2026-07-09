@@ -7,6 +7,8 @@ from pathlib import Path
 import pytest
 from lmstudio_labkit.review_pack import export_review_pack
 
+from lmstudio_labkit import review_pack
+
 
 def _write_minimal_run(run: Path) -> None:
     run.mkdir()
@@ -91,6 +93,23 @@ def test_export_review_pack_allows_platform_temp_dir(
     out = platform_temp / "pack"
 
     result = export_review_pack(run, out, include_raw_outputs_local_only=True)
+
+    assert result["status"] == "ok"
+    assert result["raw_outputs_included"] is True
+
+
+def test_export_review_pack_allows_gitignored_external_path(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    run = tmp_path / "run"
+    _write_minimal_run(run)
+    external_out = tmp_path / "gitignored-external" / "pack"
+    platform_temp = tmp_path / "platform-temp"
+    platform_temp.mkdir()
+    monkeypatch.setattr(tempfile, "tempdir", str(platform_temp))
+    monkeypatch.setattr(review_pack, "_is_gitignored_path", lambda *_args, **_kwargs: True)
+
+    result = export_review_pack(run, external_out, include_raw_outputs_local_only=True)
 
     assert result["status"] == "ok"
     assert result["raw_outputs_included"] is True
