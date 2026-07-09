@@ -1,0 +1,136 @@
+vision_schema_complexity:
+- simple_description
+- medium_objects_text
+- complex_layout_extraction
+schemas:
+  simple_description:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  medium_objects_text:
+    type: object
+    required:
+    - image_type
+    - summary
+    - visible_text
+    - objects
+    - warnings
+    additionalProperties: false
+    properties:
+      image_type:
+        type: string
+      summary:
+        type: string
+      visible_text:
+        type: array
+        items:
+          type: string
+      objects:
+        type: array
+        items:
+          type: object
+          required:
+          - type
+          - label
+          additionalProperties: false
+          properties:
+            type:
+              type: string
+            label:
+              type:
+              - string
+              - 'null'
+      warnings:
+        type: array
+        items:
+          type: string
+  complex_layout_extraction:
+    prepared_only: true
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - image_type
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          image_type:
+            type: string
+          language:
+            type: string
+          sections:
+            type: array
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+          charts:
+            type: array
+          ui_controls:
+            type: array
+          code_entities:
+            type: array
+      warnings:
+        type: array
+        items:
+          type: string

@@ -1,0 +1,69 @@
+task_intents:
+  image_description: Describe the image.
+  ocr_visible_text: Extract visible text.
+  ui_understanding: Understand interface controls and state.
+  table_extraction: Extract table rows/columns/cells.
+  chart_extraction: Extract chart type, labels, values, extrema.
+  code_understanding: Explain visible code on a screenshot.
+  scene_understanding: Describe scene/actions without identity recognition.
+  slide_extraction: Extract slide title and bullets.
+image_type_compatibility:
+  ui_screenshot:
+  - ui_settings_ru_001
+  code_screenshot:
+  - code_python_editor_001
+  document_table:
+  - document_table_products_ru_001
+  chart_graph:
+  - chart_tasks_by_month_ru_001
+  people_scene:
+  - people_classroom_selected_001
+  mixed_dashboard:
+  - ui_queue_dashboard_ru_001
+  slide:
+  - slide_json_schema_ru_001
+  - ui_style_guide_ru_001
+  screencast_frame: []
+  technical_diagram:
+  - roadmap_timeline_2026_ru_001
+  dense_text_screen:
+  - terminal_logs_001
+allowed_task_intents_by_image_type:
+  ui_screenshot:
+  - image_description
+  - ocr_visible_text
+  - ui_understanding
+  code_screenshot:
+  - image_description
+  - ocr_visible_text
+  - code_understanding
+  document_table:
+  - image_description
+  - ocr_visible_text
+  - table_extraction
+  chart_graph:
+  - image_description
+  - ocr_visible_text
+  - chart_extraction
+  people_scene:
+  - image_description
+  - scene_understanding
+  mixed_dashboard:
+  - image_description
+  - ocr_visible_text
+  - ui_understanding
+  - table_extraction
+  slide:
+  - image_description
+  - ocr_visible_text
+  - slide_extraction
+  screencast_frame:
+  - image_description
+  - ui_understanding
+  technical_diagram:
+  - image_description
+  - ocr_visible_text
+  - slide_extraction
+  dense_text_screen:
+  - image_description
+  - ocr_visible_text

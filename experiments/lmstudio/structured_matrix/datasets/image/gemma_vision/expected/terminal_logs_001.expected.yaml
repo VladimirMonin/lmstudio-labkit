@@ -1,0 +1,41 @@
+image_id: terminal_logs_001
+image_type: dense_text_screen
+public_safe: true
+content_language: en_en
+expected_visible_text:
+- model.load.started
+- model.load.done
+- retry.scheduled
+- schema_error
+- cleanup.done
+- final_loaded_instances=0
+expected_objects:
+- type: window
+  label: terminal window
+- type: text_line
+  label: info log lines
+- type: text_line
+  label: warning log line
+- type: text_line
+  label: cleanup log line
+forbidden_claims:
+- identifies_real_person
+- invents_credentials
+- reads_hidden_text
+- claims_sensitive_attributes
+quality_notes:
+- Synthetic terminal window with model lifecycle log lines, including load start,
+  load done, retry scheduled, and cleanup done.
+- 'Visible text policy: terminal_log_events_and_key_value_pairs_expected'
+task_expectations:
+  simple_description:
+    required_fields:
+    - description
+    - visible_text
+    - warnings
+  medium_objects_text:
+    required_objects_min: 2
+    visible_text_recall_min: 0.6
+  complex_layout_extraction:
+    layout_elements_min: 2
+    prepared_only: true

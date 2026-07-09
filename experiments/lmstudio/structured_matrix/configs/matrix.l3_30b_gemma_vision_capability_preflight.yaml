@@ -1,4 +1,4 @@
-run_id: matrix_l3_30a_gemma_vision_capability_gate
+run_id: matrix_l3_30b_gemma_vision_capability_preflight
 models:
 - model_key: gemma4_e2b
   model_id: google/gemma-4-e2b
@@ -32,22 +32,22 @@ models:
   - '8192'
   - '16384'
 tasks:
-- task_id: l330a_vision_capability_gate_public_safe
+- task_id: l330_image_description_simple_description_ru_ru_ui_settings_ru_001
   family: vision
   modality: image
-  language: en_en
+  language: ru_ru
   structure_complexity: simple
-  response_schema_complexity: simple
+  response_schema_complexity: simple_description
   volume: single
-  task_intent: vision_capability_probe
-  input_profile: l330_asset_pack_capability_probe
+  task_intent: image_description
+  input_profile: ui_settings_ru_001
   output_language_policy: ru_ru
-  prompt_variant: vision_json_simple
-  validation_policy: capability_preflight_then_manual
-  prompt: Describe the public-safe image only if the model/runtime supports image
-    input.
-  image_hash: sha256:l330_gemma_vision_asset_pack_manifest
-  schema_family: image_simple
+  prompt_variant: vision_image_description_simple_description
+  validation_policy: vision_capability_then_schema_validators
+  prompt: 'Task intent: image_description. Analyze the public-safe image and answer
+    in ru_ru. Preserve visible text exactly. Return JSON only.'
+  image_hash: sha256:8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d
+  schema_family: simple_description
   schema:
     type: object
     required:
@@ -68,15 +68,20 @@ tasks:
         items:
           type: string
   expected_output:
-    description: public-safe image description
-    visible_text: []
-    warnings: []
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_settings_ru_001.expected.yaml
+    content_language: ru_ru
+    output_language: ru_ru
   image_ground_truth:
-    asset_pack: l3_30_gemma_vision_asset_pack
-    identity_expected: false
-    sensitive_attributes_expected: false
+    image_id: ui_settings_ru_001
+    image_type: ui_screenshot
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_settings_ru_001.expected.yaml
+    forbidden_claims:
+    - identifies_real_person
+    - invents_credentials
+    - reads_hidden_text
+    - claims_sensitive_attributes
   fake_mode: valid
-  manual_review_policy: vision_capability_only
+  manual_review_policy: vision_local_review
   tags: []
 axes:
   context_tier:
@@ -97,9 +102,6 @@ axes:
   - image
   resize_profile:
   - max_side_1024
-  - max_side_512
-  image_interaction_mode:
-  - single_image
 repeats: 1
 safety:
   live: false
@@ -116,9 +118,5 @@ safety:
 structured_runtime:
   strict_json_schema: true
 notes:
-- Prepared-only Gemma vision capability gate. No image live run is allowed from this
-  config as committed.
-- Current Gemma registry entries are text-only; expected preflight planned cells are
-  0 with unsupported_modality skips.
-- If metadata/runtime later proves image capability, update model modality in a new
-  explicit live canary slice.
+- Capability-gated image preflight. Current Gemma registry is text-only; planned cells
+  should be zero until image support is proven.

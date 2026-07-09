@@ -1,0 +1,344 @@
+manifest_id: gemma_vision_l3_30_asset_pack
+asset_count: 10
+status: prepared_only_public_safe
+required_image_types:
+- ui_screenshot
+- code_screenshot
+- document_table
+- chart_graph
+- people_scene
+- mixed_dashboard
+- slide
+- screencast_frame
+- technical_diagram
+- dense_text_screen
+coverage:
+  ui_screenshot:
+    coverage_status: covered
+    image_ids:
+    - ui_settings_ru_001
+  code_screenshot:
+    coverage_status: covered
+    image_ids:
+    - code_python_editor_001
+  document_table:
+    coverage_status: covered
+    image_ids:
+    - document_table_products_ru_001
+  chart_graph:
+    coverage_status: covered
+    image_ids:
+    - chart_tasks_by_month_ru_001
+  people_scene:
+    coverage_status: covered
+    image_ids:
+    - people_classroom_selected_001
+  mixed_dashboard:
+    coverage_status: covered
+    image_ids:
+    - ui_queue_dashboard_ru_001
+  slide:
+    coverage_status: covered
+    image_ids:
+    - slide_json_schema_ru_001
+    - ui_style_guide_ru_001
+  screencast_frame:
+    coverage_status: missing
+    image_ids: []
+  technical_diagram:
+    coverage_status: covered
+    image_ids:
+    - roadmap_timeline_2026_ru_001
+  dense_text_screen:
+    coverage_status: covered
+    image_ids:
+    - terminal_logs_001
+content_languages:
+- ru_ru
+- en_en
+- ru_en_mixed
+output_languages:
+- ru_ru
+- en_en
+task_intents:
+- image_description
+- ocr_visible_text
+- ui_understanding
+- code_understanding
+- table_extraction
+- chart_extraction
+- scene_understanding
+- slide_extraction
+resize_profiles:
+  max_side_1024:
+    resize_mode: fit_max_side
+    crop: false
+    max_side: 1024
+  max_side_512:
+    resize_mode: fit_max_side
+    crop: false
+    max_side: 512
+forbidden_in_committed_metadata:
+- private local paths
+- raw source archive paths
+- credentials
+- tokens
+- real person identity
+- private product/user names unless explicitly public-safe
+assets:
+- image_id: ui_settings_ru_001
+  fixture_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/fixtures/ui_settings_ru_001.webp
+  expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_settings_ru_001.expected.yaml
+  image_type: ui_screenshot
+  public_safe: true
+  content_language: ru_ru
+  contains_real_person: false
+  contains_private_data: false
+  contains_credentials: false
+  source:
+    owner_provided: true
+    sanitized: true
+    license_or_origin: owner_public_safe
+  resize_policy:
+    mode: fit_max_side
+    crop: false
+    primary_max_side: 1024
+    fallback_max_side: 512
+    jpeg_quality: 85
+  original_width: 1536
+  original_height: 1024
+  image_hash: sha256:8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d
+  allowed_task_intents:
+  - image_description
+  - ocr_visible_text
+  - ui_understanding
+- image_id: ui_queue_dashboard_ru_001
+  fixture_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/fixtures/ui_queue_dashboard_ru_001.webp
+  expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_queue_dashboard_ru_001.expected.yaml
+  image_type: mixed_dashboard
+  public_safe: true
+  content_language: ru_ru
+  contains_real_person: false
+  contains_private_data: false
+  contains_credentials: false
+  source:
+    owner_provided: true
+    sanitized: true
+    license_or_origin: owner_public_safe
+  resize_policy:
+    mode: fit_max_side
+    crop: false
+    primary_max_side: 1024
+    fallback_max_side: 512
+    jpeg_quality: 85
+  original_width: 1536
+  original_height: 1024
+  image_hash: sha256:e432d04b696da1569f85a61b7d032954de22e5f52a7af5e154f0cffdb21301d0
+  allowed_task_intents:
+  - image_description
+  - ocr_visible_text
+  - ui_understanding
+  - table_extraction
+- image_id: code_python_editor_001
+  fixture_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/fixtures/code_python_editor_001.webp
+  expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/code_python_editor_001.expected.yaml
+  image_type: code_screenshot
+  public_safe: true
+  content_language: en_en
+  contains_real_person: false
+  contains_private_data: false
+  contains_credentials: false
+  source:
+    owner_provided: true
+    sanitized: true
+    license_or_origin: owner_public_safe
+  resize_policy:
+    mode: fit_max_side
+    crop: false
+    primary_max_side: 1024
+    fallback_max_side: 512
+    jpeg_quality: 85
+  original_width: 1536
+  original_height: 1024
+  image_hash: sha256:e387c3707145554cd0148a4e6da22c6996db05498bcf35542160a5b2bd8449d9
+  allowed_task_intents:
+  - image_description
+  - ocr_visible_text
+  - code_understanding
+- image_id: terminal_logs_001
+  fixture_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/fixtures/terminal_logs_001.webp
+  expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/terminal_logs_001.expected.yaml
+  image_type: dense_text_screen
+  public_safe: true
+  content_language: en_en
+  contains_real_person: false
+  contains_private_data: false
+  contains_credentials: false
+  source:
+    owner_provided: true
+    sanitized: true
+    license_or_origin: owner_public_safe
+  resize_policy:
+    mode: fit_max_side
+    crop: false
+    primary_max_side: 1024
+    fallback_max_side: 512
+    jpeg_quality: 85
+  original_width: 1448
+  original_height: 1086
+  image_hash: sha256:551c69c6034f17a6326682207c0a869b2e785573107fc3bf0417a3835d6ad638
+  allowed_task_intents:
+  - image_description
+  - ocr_visible_text
+- image_id: slide_json_schema_ru_001
+  fixture_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/fixtures/slide_json_schema_ru_001.webp
+  expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/slide_json_schema_ru_001.expected.yaml
+  image_type: slide
+  public_safe: true
+  content_language: ru_ru
+  contains_real_person: false
+  contains_private_data: false
+  contains_credentials: false
+  source:
+    owner_provided: true
+    sanitized: true
+    license_or_origin: owner_public_safe
+  resize_policy:
+    mode: fit_max_side
+    crop: false
+    primary_max_side: 1024
+    fallback_max_side: 512
+    jpeg_quality: 85
+  original_width: 1536
+  original_height: 1024
+  image_hash: sha256:7fe26d643566ab21c65b397c0967431a16ad917778fdc2a07b92afb9cca15873
+  allowed_task_intents: &id001
+  - image_description
+  - ocr_visible_text
+  - slide_extraction
+- image_id: document_table_products_ru_001
+  fixture_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/fixtures/document_table_products_ru_001.webp
+  expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/document_table_products_ru_001.expected.yaml
+  image_type: document_table
+  public_safe: true
+  content_language: ru_ru
+  contains_real_person: false
+  contains_private_data: false
+  contains_credentials: false
+  source:
+    owner_provided: true
+    sanitized: true
+    license_or_origin: owner_public_safe
+  resize_policy:
+    mode: fit_max_side
+    crop: false
+    primary_max_side: 1024
+    fallback_max_side: 512
+    jpeg_quality: 85
+  original_width: 1448
+  original_height: 1086
+  image_hash: sha256:dbb6e061f7954f1a772806d8b67d66125169efd4b88d1a8b4eb91b42aeab5149
+  allowed_task_intents:
+  - image_description
+  - ocr_visible_text
+  - table_extraction
+- image_id: chart_tasks_by_month_ru_001
+  fixture_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/fixtures/chart_tasks_by_month_ru_001.webp
+  expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/chart_tasks_by_month_ru_001.expected.yaml
+  image_type: chart_graph
+  public_safe: true
+  content_language: ru_ru
+  contains_real_person: false
+  contains_private_data: false
+  contains_credentials: false
+  source:
+    owner_provided: true
+    sanitized: true
+    license_or_origin: owner_public_safe
+  resize_policy:
+    mode: fit_max_side
+    crop: false
+    primary_max_side: 1024
+    fallback_max_side: 512
+    jpeg_quality: 85
+  original_width: 1536
+  original_height: 1024
+  image_hash: sha256:9c8c757383fc57dec329bcf05e3cb6701a463f7741812eedbc8d77f7e261ba3e
+  allowed_task_intents:
+  - image_description
+  - ocr_visible_text
+  - chart_extraction
+- image_id: people_classroom_selected_001
+  fixture_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/fixtures/people_classroom_selected_001.webp
+  expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/people_classroom_selected_001.expected.yaml
+  image_type: people_scene
+  public_safe: true
+  content_language: ru_en_mixed
+  contains_real_person: false
+  contains_private_data: false
+  contains_credentials: false
+  source:
+    owner_provided: true
+    sanitized: true
+    license_or_origin: owner_public_safe
+  resize_policy:
+    mode: fit_max_side
+    crop: false
+    primary_max_side: 1024
+    fallback_max_side: 512
+    jpeg_quality: 85
+  original_width: 1672
+  original_height: 941
+  image_hash: sha256:85ea141e624d567f8c6c878c907e01dd0c4d764c20b35c789d2dc6f63ef2ca0b
+  allowed_task_intents:
+  - image_description
+  - scene_understanding
+- image_id: roadmap_timeline_2026_ru_001
+  fixture_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/fixtures/roadmap_timeline_2026_ru_001.webp
+  expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/roadmap_timeline_2026_ru_001.expected.yaml
+  image_type: technical_diagram
+  public_safe: true
+  content_language: ru_ru
+  contains_real_person: false
+  contains_private_data: false
+  contains_credentials: false
+  source:
+    owner_provided: true
+    sanitized: true
+    license_or_origin: owner_public_safe
+  resize_policy:
+    mode: fit_max_side
+    crop: false
+    primary_max_side: 1024
+    fallback_max_side: 512
+    jpeg_quality: 85
+  original_width: 1536
+  original_height: 1024
+  image_hash: sha256:eb88882e048feb793af2281ad6160ccf230edf0e4847e3c4cd22df13c14e5393
+  allowed_task_intents:
+  - image_description
+  - ocr_visible_text
+  - slide_extraction
+- image_id: ui_style_guide_ru_001
+  fixture_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/fixtures/ui_style_guide_ru_001.webp
+  expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_style_guide_ru_001.expected.yaml
+  image_type: slide
+  public_safe: true
+  content_language: ru_ru
+  contains_real_person: false
+  contains_private_data: false
+  contains_credentials: false
+  source:
+    owner_provided: true
+    sanitized: true
+    license_or_origin: owner_public_safe
+  resize_policy:
+    mode: fit_max_side
+    crop: false
+    primary_max_side: 1024
+    fallback_max_side: 512
+    jpeg_quality: 85
+  original_width: 1536
+  original_height: 1024
+  image_hash: sha256:3c43c402cceafa87f2fb910ca5be79487bf0a07351247b0365e8b785e3bc56bd
+  allowed_task_intents: *id001

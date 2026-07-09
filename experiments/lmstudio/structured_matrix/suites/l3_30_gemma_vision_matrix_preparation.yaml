@@ -1,33 +1,23 @@
 suite_id: l3_30_gemma_vision_matrix_preparation
-asset_pack: experiments/lmstudio/structured_matrix/datasets/image/l330_gemma_vision_asset_pack.yaml
-description: Prepared-only Gemma vision matrix assets, capability gate, and future
-  image JSON contracts. No live image inference.
+asset_manifest: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/manifest.yaml
 configs:
-- id: vision_capability_gate
-  config: experiments/lmstudio/structured_matrix/configs/matrix.l3_30a_gemma_vision_capability_gate.yaml
+- id: asset_manifest_validation
+  config: experiments/lmstudio/structured_matrix/configs/matrix.l3_30a_gemma_vision_asset_manifest.offline.yaml
   required: true
-  expected_planned_requests_current_registry: 0
-- id: vision_prepared_matrix
-  config: experiments/lmstudio/structured_matrix/configs/matrix.l3_30b_gemma_vision_prepared_matrix.yaml
+- id: capability_preflight
+  config: experiments/lmstudio/structured_matrix/configs/matrix.l3_30b_gemma_vision_capability_preflight.yaml
+  required: true
+- id: canary_prepared
+  config: experiments/lmstudio/structured_matrix/configs/matrix.l3_30c_gemma_vision_canary.prepared.yaml
   required: false
-  expected_planned_requests_current_registry: 0
-future_budget_profiles:
-  tiny_capability_live_after_metadata_proof: 4 models x 1-2 assets x 1 resize x simple
-    JSON only
-  small_live_after_tiny_pass: E2B/E4B first, 4-8 image attempts, max_side_1024 primary,
-    max_side_512 fallback
-  full_prepared_cartesian_not_live: 4 x 10 x 2 resize x 2 output languages x 3 JSON
-    levels = 480, must be split before live
-stop_conditions:
-- cleanup final zero cannot be proven
-- privacy scan fails
-- model download required
-- image live attempted before capability proof
-- complex schema appears in first live image run
-- Qwen appears
-- throughput/parallel/session/warmup appears
-- raw prompt/response would be committed
+- id: screening_prepared
+  config: experiments/lmstudio/structured_matrix/configs/matrix.l3_30d_gemma_vision_screening.prepared.yaml
+  required: false
+suite_order:
+- asset_manifest_validation
+- capability_preflight
+- canary_prepared
+- screening_prepared
 notes:
-- Do not run image live from this prepared-only suite.
-- A model with no image route gets no_image_route_available, not a quality failure.
-- 'Resize policy: max_side_1024 primary, max_side_512 fallback, crop=false.'
+- Prepared-only. No image live artifacts yet. No raw private images/prompts/responses
+  committed.

@@ -1,0 +1,102 @@
+run_id: matrix_l3_30a_gemma_vision_asset_manifest_offline
+models:
+- model_key: gemma4_e2b
+  model_id: google/gemma-4-e2b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+tasks:
+- task_id: l330a_asset_manifest_validation
+  family: manifest
+  modality: text
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: asset_manifest_validation
+  input_profile: gemma_vision_manifest
+  output_language_policy: en_en
+  prompt_variant: manifest_offline_validation
+  validation_policy: offline_manifest_contract
+  prompt: Validate the prepared-only Gemma vision asset manifest contract.
+  schema:
+    type: object
+    required:
+    - description
+    - visible_text
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+      visible_text:
+        type: array
+        items:
+          type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: manifest valid
+    visible_text: []
+    warnings: []
+  fake_mode: valid
+  tags:
+  - prepared_only
+axes:
+  context_tier:
+  - '8192'
+  retry_policy:
+  - 'off'
+  execution_mode:
+  - cold_per_request
+  cache_mode:
+  - none
+  lmstudio_parallel:
+  - '1'
+  app_concurrency:
+  - '1'
+  queue_pressure_mode:
+  - 'off'
+  modality:
+  - text
+  language:
+  - en_en
+  structure_complexity:
+  - simple
+  volume:
+  - single
+  task_intent:
+  - asset_manifest_validation
+  input_profile:
+  - gemma_vision_manifest
+  output_language_policy:
+  - en_en
+  validation_policy:
+  - offline_manifest_contract
+  prompt_variant:
+  - manifest_offline_validation
+  response_schema_complexity:
+  - simple
+repeats: 1
+safety:
+  live: false
+  allow_model_downloads: false
+  allow_model_loads: false
+  allow_remote_base_url: false
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_models: 4
+  max_context_tier: 8192
+  max_repeats: 1
+  max_requests: 1
+structured_runtime:
+  strict_json_schema: true
+notes:
+- Offline manifest-validation placeholder. No image live.

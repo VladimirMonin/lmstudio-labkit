@@ -1,0 +1,46 @@
+validator_contracts:
+  visible_text_recall:
+    prepared: true
+    uses: expected_visible_text
+  visible_text_precision:
+    prepared: true
+    uses: expected_visible_text
+  object_label_recall:
+    prepared: true
+    uses: expected_objects
+  table_cell_accuracy:
+    prepared: true
+    uses: expected_table
+  chart_value_accuracy:
+    prepared: true
+    uses: expected_chart
+  code_identifier_recall:
+    prepared: true
+    uses: expected_code.visible_identifiers
+  ui_control_recall:
+    prepared: true
+    uses: expected_ui.controls
+  person_count_accuracy:
+    prepared: true
+    uses: expected_scene.person_count
+  forbidden_claims_check:
+    prepared: true
+    uses: forbidden_claims
+  language_compliance:
+    prepared: true
+    uses: output_language plus visible text preservation
+  json_schema:
+    prepared: true
+    uses: vision_schema_complexity
+severity:
+  simple_description:
+    visible_text_recall: warning
+    forbidden_claims: hard
+    json_schema: hard
+  medium_objects_text:
+    visible_text_recall: warning
+    object_label_recall: warning
+    forbidden_claims: hard
+    json_schema: hard
+  complex_layout_extraction:
+    prepared_only: true

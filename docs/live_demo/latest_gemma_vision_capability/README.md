@@ -1,4 +1,4 @@
-# latest_gemma_vision_canary
+# latest_gemma_vision_capability
 
 Prepared-only placeholder for L3.30 Gemma vision matrix.
 

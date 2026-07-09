@@ -1,0 +1,60 @@
+image_id: code_python_editor_001
+image_type: code_screenshot
+public_safe: true
+content_language: en_en
+expected_visible_text:
+- utils.py
+- normalize_title
+- clamp
+- format_seconds
+- Python 3.11.8
+- UTF-8
+- LF
+expected_objects:
+- type: object
+  label: file explorer
+- type: tab
+  label: utils py tab
+- type: text_line
+  label: line numbers
+- type: code_block
+  label: python code block
+- type: bar
+  label: status bar
+forbidden_claims:
+- identifies_real_person
+- invents_credentials
+- reads_hidden_text
+- claims_sensitive_attributes
+quality_notes:
+- Synthetic dark-theme Python code editor screenshot with a project tree, utils.py
+  tab, line numbers, and simple utility functions.
+- 'Visible text policy: code_and_editor_labels_expected_without_private_project_names'
+task_expectations:
+  simple_description:
+    required_fields:
+    - description
+    - visible_text
+    - warnings
+  medium_objects_text:
+    required_objects_min: 2
+    visible_text_recall_min: 0.6
+  complex_layout_extraction:
+    layout_elements_min: 2
+    prepared_only: true
+expected_code:
+  language: python
+  visible_identifiers:
+  - normalize_title
+  - clamp
+  - format_seconds
+  expected_summary_points:
+  - Python utility functions are visible
+  - The editor shows utils.py
+  - The screenshot includes a project tree and status bar
+expected_ui:
+  controls:
+  - type: tab
+    label: utils py tab
+  screen_purpose: Synthetic dark-theme Python code editor screenshot with a project
+    tree, utils.py tab, line numbers, and simple utility functions.

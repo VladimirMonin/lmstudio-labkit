@@ -1,0 +1,41 @@
+image_id: slide_json_schema_ru_001
+image_type: slide
+public_safe: true
+content_language: ru_ru
+expected_visible_text:
+- Что такое JSON Schema?
+- Описывает структуру JSON
+- Проверяет типы данных
+- LLM → JSON → Validator → Result
+expected_objects:
+- type: slide
+  label: slide title
+- type: object
+  label: left bullet list
+- type: diagram
+  label: process diagram
+- type: object
+  label: schema example block
+- type: object
+  label: advantage callout
+forbidden_claims:
+- identifies_real_person
+- invents_credentials
+- reads_hidden_text
+- claims_sensitive_attributes
+quality_notes:
+- Synthetic Russian educational slide explaining JSON Schema with bullet points, process
+  diagram, and schema example.
+- 'Visible text policy: russian_slide_text_and_diagram_order_expected'
+task_expectations:
+  simple_description:
+    required_fields:
+    - description
+    - visible_text
+    - warnings
+  medium_objects_text:
+    required_objects_min: 2
+    visible_text_recall_min: 0.6
+  complex_layout_extraction:
+    layout_elements_min: 2
+    prepared_only: true

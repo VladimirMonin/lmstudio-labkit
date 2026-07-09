@@ -1,0 +1,63 @@
+image_id: chart_tasks_by_month_ru_001
+image_type: chart_graph
+public_safe: true
+content_language: ru_ru
+expected_visible_text:
+- Задачи, выполненные по месяцам
+- Январь
+- Февраль
+- Март
+- Апрель
+- '12'
+- '18'
+- '9'
+- '21'
+- 'Всего задач: 60'
+expected_objects:
+- type: chart
+  label: chart title
+- type: object
+  label: x axis month labels
+- type: bar
+  label: four bars
+- type: object
+  label: legend
+- type: object
+  label: summary metrics
+forbidden_claims:
+- identifies_real_person
+- invents_credentials
+- reads_hidden_text
+- claims_sensitive_attributes
+quality_notes:
+- Synthetic Russian bar chart showing completed tasks by month with four bars, labels,
+  legend, and summary metrics.
+- 'Visible text policy: chart_labels_values_and_summary_expected'
+task_expectations:
+  simple_description:
+    required_fields:
+    - description
+    - visible_text
+    - warnings
+  medium_objects_text:
+    required_objects_min: 2
+    visible_text_recall_min: 0.6
+  complex_layout_extraction:
+    layout_elements_min: 2
+    prepared_only: true
+expected_chart:
+  chart_type: bar
+  labels:
+  - Январь
+  - Февраль
+  - Март
+  - Апрель
+  values:
+    Январь: 12
+    Февраль: 18
+    Март: 9
+    Апрель: 21
+  tolerance: 0.1
+  max_value:
+    label: Апрель
+    value: 21
