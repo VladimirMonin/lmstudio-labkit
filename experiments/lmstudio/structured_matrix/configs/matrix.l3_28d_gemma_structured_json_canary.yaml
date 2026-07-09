@@ -57,8 +57,8 @@ tasks:
   expected_output:
     language: ru_ru
     items:
-    - alpha
-    - beta
+    - первый
+    - второй
   fake_mode: valid
   manual_review_policy: sanitized_metrics_only
 - task_id: l328d_structured_simple_ru_en_mixed
@@ -93,8 +93,9 @@ tasks:
   expected_output:
     language: ru_en_mixed
     items:
-    - alpha
-    - beta
+    - Django
+    - Qwen
+    - JSON schema
   fake_mode: valid
   manual_review_policy: sanitized_metrics_only
 - task_id: l328d_structured_blocks_ru_ru
@@ -121,11 +122,11 @@ tasks:
   expected_output:
     blocks:
     - id: 0
-      text: alpha
+      text: первый блок
     - id: 1
-      text: beta
+      text: второй блок
     - id: 2
-      text: gamma
+      text: третий блок
   fake_mode: valid
   manual_review_policy: sanitized_metrics_only
 - task_id: l328d_structured_blocks_ru_en_mixed
@@ -152,11 +153,11 @@ tasks:
   expected_output:
     blocks:
     - id: 0
-      text: alpha
+      text: Django endpoint
     - id: 1
-      text: beta
+      text: Qwen adapter
     - id: 2
-      text: gamma
+      text: JSON schema validation
   fake_mode: valid
   manual_review_policy: sanitized_metrics_only
 axes:
@@ -221,6 +222,8 @@ structured_runtime:
   strict_json_schema: true
 notes:
 - Prepared-only Phase D structured JSON canary.
+- RU fixtures use Russian expected payloads; mixed fixtures use Russian/English technical
+  values.
 - 12B must use hardened blocks schema; do not use loose blocks baseline for 12B.
 - 26B structured generation is excluded until load-only and tiny generation proof
   pass.

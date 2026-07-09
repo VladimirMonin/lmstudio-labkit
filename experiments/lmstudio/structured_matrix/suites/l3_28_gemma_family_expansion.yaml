@@ -7,9 +7,12 @@ configs:
 - id: load_only_12b_26b
   config: ../configs/matrix.l3_28b_gemma_load_only_12b_26b.yaml
   required: true
-- id: transcript_cleanup_canary
-  config: ../configs/matrix.l3_28c_gemma_transcript_cleanup_canary.yaml
+- id: transcript_cleanup_canary_e2b_e4b_12b
+  config: ../configs/matrix.l3_28c1_gemma_transcript_cleanup_canary_e2b_e4b_12b.yaml
   required: true
+- id: transcript_cleanup_tiny_canary_26b
+  config: ../configs/matrix.l3_28c2_gemma_26b_transcript_cleanup_tiny_canary.yaml
+  required: false
 - id: structured_json_canary
   config: ../configs/matrix.l3_28d_gemma_structured_json_canary.yaml
   required: true
@@ -22,5 +25,9 @@ configs:
 notes:
 - Prepared-only L3.28 suite. Do not run full suite automatically.
 - Execute phases manually with explicit owner approval and stop conditions.
+- Phase B is not executable through the ordinary matrix runner until a dedicated load-only
+  command/operator path exists.
+- Phase C1 excludes 26B. Phase C2 is optional and requires clean 26B load-only evidence
+  plus explicit owner approval.
 - No Qwen, route matrix, /v1/responses, overnight, throughput, broad session/warmup,
   host-app integration, or raw artifacts in Git.

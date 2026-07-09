@@ -1,0 +1,203 @@
+run_id: matrix_l3_28c2_gemma_26b_transcript_cleanup_tiny_canary
+models:
+- model_key: gemma4_26b_a4b_qat
+  model_id: google/gemma-4-26b-a4b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+tasks:
+- task_id: l326_transcript_cleanup_simple_01_short_noisy_dictation
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: transcript_cleanup
+  input_profile: l326_short_noisy_dictation
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_no_new_facts_v2
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema: &id001
+    type: object
+    required:
+    - language
+    - clean_text
+    - warnings
+    additionalProperties: false
+    properties:
+      language:
+        type: string
+      clean_text:
+        type: string
+        minLength: 1
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Сегодня мы быстро посмотрим, как почистить транскрипт и убрать лишние
+      паузы.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: local_raw_prose_quality
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/l326_product_benchmark/01_short_noisy_dictation.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  near_identity_policy: warning
+  language_drift_policy: warning
+  term_language_preservation_policy: warning
+- task_id: l326_transcript_cleanup_simple_02_technical_django_qwen_embedding
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: transcript_cleanup
+  input_profile: l326_technical_django_qwen_embedding
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_no_new_facts_v2
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema: *id001
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Сегодня в Django проекте подключаем Qwen embedding model и проверяем
+      JSON schema validation.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: local_raw_prose_quality
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/l326_product_benchmark/02_technical_django_qwen_embedding.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  near_identity_policy: warning
+  language_drift_policy: warning
+  term_language_preservation_policy: warning
+- task_id: l326_transcript_cleanup_simple_03_python_lesson_fragment
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: transcript_cleanup
+  input_profile: l326_python_lesson_fragment
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_no_new_facts_v2
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema: *id001
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Сначала создаём список, потом проходим циклом for и считаем сумму
+      элементов без лишних библиотек.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: local_raw_prose_quality
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/l326_product_benchmark/03_python_lesson_fragment.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  near_identity_policy: warning
+  language_drift_policy: warning
+  term_language_preservation_policy: warning
+axes:
+  context_tier:
+  - '8192'
+  retry_policy:
+  - 'off'
+  execution_mode:
+  - cold_per_request
+  cache_mode:
+  - none
+  lmstudio_parallel:
+  - '1'
+  app_concurrency:
+  - '1'
+  queue_pressure_mode:
+  - 'off'
+  modality:
+  - text
+  language:
+  - ru_ru
+  structure_complexity:
+  - simple
+  volume:
+  - single
+  task_intent:
+  - transcript_cleanup
+  input_profile:
+  - l326_short_noisy_dictation
+  - l326_technical_django_qwen_embedding
+  - l326_python_lesson_fragment
+  output_language_policy:
+  - preserve_input_language
+  - preserve_mixed_language
+  validation_policy:
+  - auto_schema_language_manual_quality
+  prompt_variant:
+  - strict_no_new_facts_v2
+  response_schema_complexity:
+  - simple
+repeats: 1
+safety:
+  live: true
+  allow_model_downloads: false
+  allow_model_loads: true
+  allow_remote_base_url: true
+  allow_raw_prompt_response_artifacts: true
+  allow_image_live: false
+  allow_stress: false
+  max_models: 1
+  max_context_tier: 8192
+  max_repeats: 1
+  max_requests: 3
+structured_runtime:
+  strict_json_schema: true
+notes:
+- Prepared-only Phase C2 26B tiny transcript_cleanup/simple canary.
+- Run only after 26B load-only passes at 8192 and 16384, cleanup final_loaded_instances=0
+  is proven, and the owner explicitly approves 26B generation.
+- This config is intentionally capped to 3 attempts and must not be included in broad
+  canary runs.
+- Raw prose cases are local-only and the output root must be a platform temp directory
+  outside the repository, for example /tmp/labkit-l328c2-26b-transcript-cleanup.
+- Do not use docs/, experiments/, or any tracked repository path as output-root for
+  this raw-prose canary.
