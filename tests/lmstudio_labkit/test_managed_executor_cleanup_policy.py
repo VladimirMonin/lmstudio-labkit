@@ -129,7 +129,7 @@ def test_managed_executor_fails_when_load_shape_is_not_verified() -> None:
     host = InsufficientLoadHostRunner()
     executor = ManagedLMStudioExecutor(host_runner=host, allow_model_loads=True)
 
-    with pytest.raises(ManagedExecutorError, match="load was not verified"):
+    with pytest.raises(ManagedExecutorError, match="runner_or_runtime_context_mismatch"):
         executor.execute(structured_plan())
 
     assert [name for name, _payload in host.calls] == [

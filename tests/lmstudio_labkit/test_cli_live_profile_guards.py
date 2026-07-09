@@ -106,6 +106,8 @@ def test_live_profile_requires_allow_model_loads_when_config_allows_loads(
 
 
 class _NoNetworkHostRunner:
+    context_lengths: list[int] = []
+
     def __init__(self, *, base_url: str, allow_remote_base_url: bool = False) -> None:
         self.base_url = base_url
         self.allow_remote_base_url = allow_remote_base_url
@@ -113,6 +115,7 @@ class _NoNetworkHostRunner:
 
     def load_model(self, *, model_id: str, context_length: int, parallel: int) -> object:
         self.loaded = True
+        self.context_lengths.append(context_length)
         return {
             "load_verified": True,
             "applied_load_config": {"context_length": context_length, "parallel": parallel},
@@ -153,6 +156,7 @@ def test_operator_live_managed_path_runs_with_explicit_flags(
 ) -> None:
     import lmstudio_labkit.cli as cli
 
+    _NoNetworkHostRunner.context_lengths = []
     monkeypatch.setattr(cli, "LocalLMStudioHostRunner", _NoNetworkHostRunner)
 
     assert (
@@ -180,6 +184,51 @@ def test_operator_live_managed_path_runs_with_explicit_flags(
     assert '"production_default": false' in planner_summary
     assert "Первый синтетический блок" not in cell_results
     assert "response_hash" in cell_results
+    assert _NoNetworkHostRunner.context_lengths == [8192, 8192]
+
+
+def test_operator_live_managed_passes_single_config_context_tier(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import lmstudio_labkit.cli as cli
+
+    config = _write_config(
+        tmp_path / "live_16k.yaml",
+        safety={
+            "live": True,
+            "allow_model_downloads": False,
+            "allow_model_loads": True,
+            "allow_remote_base_url": False,
+            "max_context_tier": 16384,
+            "max_requests": 1,
+        },
+    )
+    payload = yaml.safe_load(config.read_text(encoding="utf-8"))
+    payload["axes"]["context_tier"] = ["16384"]
+    payload["models"][0]["supported_context_tiers"] = ["16384"]
+    config.write_text(yaml.safe_dump(payload), encoding="utf-8")
+
+    _NoNetworkHostRunner.context_lengths = []
+    monkeypatch.setattr(cli, "LocalLMStudioHostRunner", _NoNetworkHostRunner)
+
+    assert (
+        cli_main(
+            [
+                "run",
+                "--config",
+                str(config),
+                "--output-root",
+                str(tmp_path),
+                "--profile",
+                "live-small",
+                "--live",
+                "--operator-live-managed",
+                "--allow-model-loads",
+            ]
+        )
+        == 0
+    )
+    assert _NoNetworkHostRunner.context_lengths == [16384]
 
 
 def test_local_host_runner_rejects_remote_without_explicit_allow() -> None:

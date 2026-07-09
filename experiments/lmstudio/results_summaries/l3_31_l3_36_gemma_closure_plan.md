@@ -65,23 +65,27 @@ Accepted at `context_tier=8192`:
 
 Structured JSON is not currently classified as a Gemma weakness after L3.28d.1 repair and L3.29 72/72 pass.
 
-## Known runner limitation
+## Known runner boundary
 
-The current managed executor rejects context tiers above 8192.
+The managed executor now admits only the explicit context allowlist `8192`, `16384`, and `32768`, and requires the plan `context_tier` to match the executor context exactly.
 
-Observed guard:
+Observed guards:
 
 ```text
-managed executor v1 requires context_tier=8192
+managed executor supported context lengths: 8192, 16384, 32768
+managed executor context_tier must match executor context
+operator live managed requires exactly one context_tier
 ```
 
-Source:
+Sources:
 
 ```text
+lmstudio_labkit/managed_executor.py::ManagedLMStudioExecutor.__post_init__
 lmstudio_labkit/managed_executor.py::_validate_plan
+lmstudio_labkit/cli.py::_single_managed_context_length
 ```
 
-Implication: any L3.29/L3.31 16k/32k text or structured cells are `runner_blocked` until the executor can safely validate/load/reuse the requested context tier.
+Implication: L3.31a can be admitted as a single 16k managed-live canary after non-live gates and explicit live approval. Mixed-context configs such as L3.31b remain prepared-only or `runner_blocked` until they are split by context tier or the runner gains explicit homogeneous grouping.
 
 ## Phase plan
 

@@ -145,11 +145,41 @@ def test_managed_executor_executes_single_mocked_compat_chat_request() -> None:
     assert host.calls[1][1]["parallel"] == 1
 
 
+def test_managed_executor_passes_16384_context_to_host_runner() -> None:
+    host = MockManagedHostRunner()
+    executor = ManagedLMStudioExecutor(
+        host_runner=host,
+        allow_model_loads=True,
+        context_length=16384,
+    )
+
+    result = executor.execute(structured_plan(context_tier="16384"))
+
+    assert result.load_verified is True
+    assert host.calls[1][0] == "load_model"
+    assert host.calls[1][1]["context_length"] == 16384
+    assert host.calls[1][1]["parallel"] == 1
+
+
+def test_managed_executor_passes_32768_context_to_host_runner() -> None:
+    host = MockManagedHostRunner()
+    executor = ManagedLMStudioExecutor(
+        host_runner=host,
+        allow_model_loads=True,
+        context_length=32768,
+    )
+
+    result = executor.execute(structured_plan(context_tier="32768"))
+
+    assert result.load_verified is True
+    assert host.calls[1][1]["context_length"] == 32768
+
+
 @pytest.mark.parametrize(
     ("overrides", "match"),
     [
         ({"endpoint_path": "/v1/responses"}, "/v1/chat/completions"),
-        ({"context_length": 4096}, "context 8192"),
+        ({"context_length": 4096}, "supported context"),
         ({"parallel": 2}, "parallel 1"),
         ({"temperature": 0.2}, "temperature 0"),
     ],
@@ -167,5 +197,16 @@ def test_managed_executor_rejects_non_compat_or_non_8192_plan() -> None:
     with pytest.raises(ManagedExecutorError, match="openai_compat"):
         executor.execute(structured_plan(endpoint_family="native"))
 
-    with pytest.raises(ManagedExecutorError, match="context_tier=8192"):
+    with pytest.raises(ManagedExecutorError, match="context_tier must match executor context"):
+        executor.execute(structured_plan(context_tier="32768"))
+
+
+def test_managed_executor_rejects_context_tier_mismatch_with_executor_context() -> None:
+    executor = ManagedLMStudioExecutor(
+        host_runner=MockManagedHostRunner(),
+        allow_model_loads=True,
+        context_length=16384,
+    )
+
+    with pytest.raises(ManagedExecutorError, match="context_tier must match executor context"):
         executor.execute(structured_plan(context_tier="32768"))

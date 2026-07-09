@@ -150,6 +150,7 @@ def main(argv: list[str] | None = None) -> int:
             executor = ManagedLMStudioExecutor(
                 host_runner=host_runner,
                 allow_model_loads=args.allow_model_loads,
+                context_length=_single_managed_context_length(config),
                 strict_json_schema=config.structured_runtime.strict_json_schema,
             )
             try:
@@ -282,6 +283,16 @@ def _reject_existing_run_dir(
 def _is_plan_only_run_dir(run_dir: Path) -> bool:
     cell_results = run_dir / "cell_results.jsonl"
     return cell_results.exists() and cell_results.read_text(encoding="utf-8") == ""
+
+
+def _single_managed_context_length(config: BenchmarkConfig) -> int:
+    context_tiers = tuple(config.axes.get("context_tier", ("8192",)))
+    if len(context_tiers) != 1:
+        raise SystemExit("operator live managed requires exactly one context_tier")
+    try:
+        return int(context_tiers[0])
+    except ValueError as error:
+        raise SystemExit("operator live managed context_tier must be an integer") from error
 
 
 def _load_safety(config_path: str | Path) -> dict[str, Any]:

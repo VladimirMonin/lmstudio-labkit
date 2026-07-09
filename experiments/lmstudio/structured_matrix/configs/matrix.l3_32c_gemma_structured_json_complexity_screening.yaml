@@ -1,0 +1,370 @@
+run_id: matrix_l3_32c_gemma_structured_json_complexity_screening
+models:
+- model_key: gemma4_e2b
+  model_id: google/gemma-4-e2b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_e4b
+  model_id: google/gemma-4-e4b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_12b_qat
+  model_id: google/gemma-4-12b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+tasks:
+- task_id: l328d1_repair_simple_ru_ru
+  family: structured_json
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: schema_only
+  input_profile: repair_schema_simple_ru_ru
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_repair_exact_shape
+  validation_policy: auto_schema_business
+  prompt: 'Return JSON only. Do not use markdown. Do not add explanations.
+
+    Return exactly this JSON shape:
+
+    {"language":"ru_ru","items":["первый","второй"]}
+
+    Rules:
+
+    - Use the language value exactly: ru_ru.
+
+    - Use exactly the two provided items.
+
+    - Return only fields: language, items.'
+  schema_family: simple
+  schema:
+    type: object
+    required:
+    - language
+    - items
+    additionalProperties: false
+    properties:
+      language:
+        type: string
+      items:
+        type: array
+        items:
+          type: string
+        minItems: 2
+  expected_output:
+    language: ru_ru
+    items:
+    - первый
+    - второй
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+  language_include_paths:
+  - items[*]
+- task_id: l329b_structured_simple_en_en
+  family: structured_json
+  modality: text
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: schema_only
+  input_profile: screening_schema_simple_en_en
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_repair_exact_shape
+  validation_policy: auto_schema_business
+  prompt: 'Return JSON only. Do not use markdown. Do not add explanations.
+
+
+    Return exactly this JSON shape:
+
+    {"language":"en_en","items":["first","second"]}
+
+
+    Rules:
+
+    - Use the language value exactly: en_en.
+
+    - Use exactly the two provided items.
+
+    - Return only fields: language, items.'
+  schema_family: simple
+  schema:
+    type: object
+    required:
+    - language
+    - items
+    additionalProperties: false
+    properties:
+      language:
+        type: string
+      items:
+        type: array
+        items:
+          type: string
+        minItems: 2
+  expected_output:
+    language: en_en
+    items:
+    - first
+    - second
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+  language_include_paths:
+  - items[*]
+- task_id: l328d1_repair_blocks_ru_en_mixed
+  family: structured_json
+  modality: text
+  language: ru_en_mixed
+  structure_complexity: medium
+  response_schema_complexity: blocks
+  volume: single
+  task_intent: id_preservation
+  input_profile: repair_blocks_ru_en_mixed
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_repair_exact_blocks
+  validation_policy: auto_schema_business
+  prompt: 'Return JSON only. Do not use markdown. Do not add explanations.
+
+    Return exactly this JSON shape:
+
+    {"blocks":[{"id":0,"text":"Проверяем Django модель"},{"id":1,"text":"Валидируем
+    JSON schema"},{"id":2,"text":"Сохраняем Qwen термин"}]}
+
+    Rules:
+
+    - Return exactly the same number of blocks.
+
+    - Preserve every id exactly.
+
+    - Preserve order exactly.
+
+    - Preserve the Russian and English technical terms exactly.
+
+    - Do not merge, split, delete, duplicate, or reorder blocks.
+
+    - Return only field: blocks.'
+  schema_family: blocks
+  schema_variant: hardened_const
+  expected_ids:
+  - 0
+  - 1
+  - 2
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: Проверяем Django модель
+    - id: 1
+      text: Валидируем JSON schema
+    - id: 2
+      text: Сохраняем Qwen термин
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+  language_include_paths:
+  - blocks[*].text
+- task_id: l332_complex_ru_en_mixed
+  family: structured_json
+  modality: text
+  language: ru_en_mixed
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: semantic_extraction
+  structured_task_complexity: semantic_extraction
+  input_profile: complex_ru_en_mixed
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_complex_exact_shape
+  validation_policy: auto_schema_business
+  prompt: 'Return JSON only. Return exactly this nested object with language ru_en_mixed,
+    one section, one paragraph element, extracted_data arrays, and warnings array.
+    Do not add fields. Text: Django модель сохраняет id, JSON schema и Qwen термин
+    без перевода.'
+  schema_family: complex
+  schema:
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          language:
+            type: string
+          sections:
+            type: array
+            minItems: 1
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+            items: {}
+          charts:
+            type: array
+            items: {}
+          ui_controls:
+            type: array
+            items: {}
+          code_entities:
+            type: array
+            items: {}
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      language: ru_en_mixed
+      sections:
+      - id: 0
+        title: Проверка JSON schema
+        elements:
+        - id: 0
+          type: paragraph
+          text: Django модель сохраняет id, JSON schema и Qwen термин без перевода.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+  language_include_paths:
+  - document.sections[*].title
+  - document.sections[*].elements[*].text
+axes:
+  context_tier:
+  - '8192'
+  - '16384'
+  retry_policy:
+  - 'off'
+  - retry1
+  execution_mode:
+  - cold_per_request
+  cache_mode:
+  - none
+  lmstudio_parallel:
+  - '1'
+  app_concurrency:
+  - '1'
+  queue_pressure_mode:
+  - 'off'
+  schema_variant:
+  - hardened_const
+  modality:
+  - text
+  language:
+  - ru_ru
+  - ru_en_mixed
+  - en_en
+  structure_complexity:
+  - simple
+  - medium
+  - complex
+  volume:
+  - single
+  task_intent:
+  - schema_only
+  - id_preservation
+  - semantic_extraction
+  input_profile:
+  - repair_schema_simple_ru_ru
+  - screening_schema_simple_en_en
+  - repair_blocks_ru_en_mixed
+  - complex_ru_en_mixed
+  output_language_policy:
+  - preserve_input_language
+  validation_policy:
+  - auto_schema_business
+  prompt_variant:
+  - structured_json_repair_exact_shape
+  - structured_json_repair_exact_blocks
+  - structured_json_complex_exact_shape
+  response_schema_complexity:
+  - simple
+  - blocks
+  - complex
+repeats: 2
+safety:
+  live: false
+  allow_model_downloads: false
+  allow_model_loads: false
+  allow_remote_base_url: false
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_models: 3
+  max_context_tier: 16384
+  max_repeats: 2
+  max_requests: 96
+structured_runtime:
+  strict_json_schema: true
+notes:
+- L3.32c sampled structured screening config. Full theoretical cartesian is 216; this
+  config prunes to 96 cells explicitly.
+- 'Sample shape: 4 representative structured tasks x 3 models x 2 contexts x 2 retry
+  x 2 repeats = 96.'
+- Run only after L3.32a/b canaries pass and context support is accepted.
+- No 26B structured in this screening.

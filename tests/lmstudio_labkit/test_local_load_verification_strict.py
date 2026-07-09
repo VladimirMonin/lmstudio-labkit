@@ -115,11 +115,11 @@ def test_exact_applied_or_load_config_passes(load_response: dict[str, Any]) -> N
                 "load_verified": True,
                 "applied_load_config": {"context_length": 16384, "parallel": 1},
             },
-            "load was not verified",
+            "runner_or_runtime_context_mismatch",
         ),
         (
             {"load_verified": True, "applied_load_config": {"context_length": 8192, "parallel": 2}},
-            "load was not verified",
+            "runner_or_runtime_parallel_mismatch",
         ),
     ],
 )

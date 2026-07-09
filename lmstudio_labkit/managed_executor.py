@@ -13,6 +13,9 @@ class ManagedExecutorError(RuntimeError):
     """Raised when managed executor guardrails reject a request."""
 
 
+SUPPORTED_MANAGED_CONTEXT_LENGTHS = frozenset({8192, 16384, 32768})
+
+
 @dataclass(frozen=True, slots=True)
 class ManagedExecutionResult:
     raw_response: str
@@ -71,9 +74,10 @@ class ManagedHostRunner(Protocol):
 class ManagedLMStudioExecutor:
     """Guarded adapter for a host-managed LM Studio runner.
 
-    Version 1 intentionally supports one shape only: text, structured JSON,
-    OpenAI-compatible ``/v1/chat/completions``, context 8192, parallel 1,
-    temperature 0. It performs no network I/O unless a host runner is injected.
+    Version 1 intentionally supports a narrow text-only live shape: structured
+    JSON over OpenAI-compatible ``/v1/chat/completions`` with explicit context
+    lengths, parallel 1, and temperature 0. It performs no network I/O unless a
+    host runner is injected.
     """
 
     host_runner: ManagedHostRunner
@@ -87,8 +91,9 @@ class ManagedLMStudioExecutor:
     def __post_init__(self) -> None:
         if self.endpoint_path != "/v1/chat/completions":
             raise ManagedExecutorError("managed executor supports only /v1/chat/completions")
-        if self.context_length != 8192:
-            raise ManagedExecutorError("managed executor v1 requires context 8192")
+        if self.context_length not in SUPPORTED_MANAGED_CONTEXT_LENGTHS:
+            supported = ", ".join(str(item) for item in sorted(SUPPORTED_MANAGED_CONTEXT_LENGTHS))
+            raise ManagedExecutorError(f"managed executor supported context lengths: {supported}")
         if self.parallel != 1:
             raise ManagedExecutorError("managed executor v1 requires parallel 1")
         if self.temperature != 0:
@@ -148,6 +153,13 @@ class ManagedLMStudioExecutor:
             final_loaded_instances = self.host_runner.count_loaded_instances(model_id=model_id)
             if not cleanup_verified or final_loaded_instances != 0:
                 raise ManagedExecutorError("managed executor load and cleanup were not verified")
+            mismatch = _load_verification_mismatch(
+                load_response,
+                context_length=self.context_length,
+                parallel=self.parallel,
+            )
+            if mismatch is not None:
+                raise ManagedExecutorError(mismatch)
             raise ManagedExecutorError("managed executor load was not verified")
         post_load_instances = self.host_runner.count_loaded_instances(model_id=model_id)
         if post_load_instances is None:
@@ -231,8 +243,8 @@ class ManagedLMStudioExecutor:
             raise ManagedExecutorError(
                 "managed executor v1 supports only openai_compat endpoint family"
             )
-        if plan.options.context_tier != "8192":
-            raise ManagedExecutorError("managed executor v1 requires context_tier=8192")
+        if plan.options.context_tier != str(self.context_length):
+            raise ManagedExecutorError("managed executor context_tier must match executor context")
         if plan.options.temperature != 0:
             raise ManagedExecutorError("managed executor v1 requires temperature 0")
         if plan.envelope.response_contract.mode != "json":
@@ -483,6 +495,25 @@ def _load_verified(value: object, *, context_length: int, parallel: int) -> bool
     if observed_parallel != parallel:
         return False
     return True
+
+
+def _load_verification_mismatch(value: object, *, context_length: int, parallel: int) -> str | None:
+    if not _verified_flag(value, "load_verified"):
+        return None
+    if not isinstance(value, Mapping):
+        return None
+    applied = value.get("applied_load_config")
+    if not isinstance(applied, Mapping):
+        applied = value.get("load_config")
+    if not isinstance(applied, Mapping):
+        return None
+    observed_context = _first_int_value(applied, "context_length", "contextLength")
+    observed_parallel = _first_int_value(applied, "parallel", "n_parallel", "numParallelSequences")
+    if observed_context != context_length:
+        return "runner_or_runtime_context_mismatch"
+    if observed_parallel != parallel:
+        return "runner_or_runtime_parallel_mismatch"
+    return None
 
 
 def _first_int_value(mapping: Mapping[str, object], *keys: str) -> int | None:

@@ -1,0 +1,227 @@
+run_id: matrix_l3_32b_gemma_complex_json_canary_12b
+models:
+- model_key: gemma4_12b_qat
+  model_id: google/gemma-4-12b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+tasks:
+- task_id: l332_complex_ru_ru
+  family: structured_json
+  modality: text
+  language: ru_ru
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: semantic_extraction
+  structured_task_complexity: semantic_extraction
+  input_profile: complex_ru_ru
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_complex_exact_shape
+  validation_policy: auto_schema_business
+  prompt: 'Return JSON only. Return exactly this nested object with language ru_ru,
+    one section, one paragraph element, extracted_data arrays, and warnings array.
+    Do not add fields. Text: Модель возвращает вложенный документ без лишних полей.'
+  schema_family: complex
+  schema: &id001
+    type: object
+    required:
+    - document
+    - extracted_data
+    - warnings
+    additionalProperties: false
+    properties:
+      document:
+        type: object
+        required:
+        - language
+        - sections
+        additionalProperties: false
+        properties:
+          language:
+            type: string
+          sections:
+            type: array
+            minItems: 1
+            items:
+              type: object
+              required:
+              - id
+              - title
+              - elements
+              additionalProperties: false
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                elements:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required:
+                    - id
+                    - type
+                    - text
+                    - confidence_hint
+                    additionalProperties: false
+                    properties:
+                      id:
+                        type: integer
+                      type:
+                        type: string
+                      text:
+                        type: string
+                      confidence_hint:
+                        type: string
+      extracted_data:
+        type: object
+        required:
+        - tables
+        - charts
+        - ui_controls
+        - code_entities
+        additionalProperties: false
+        properties:
+          tables:
+            type: array
+            items: {}
+          charts:
+            type: array
+            items: {}
+          ui_controls:
+            type: array
+            items: {}
+          code_entities:
+            type: array
+            items: {}
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    document:
+      language: ru_ru
+      sections:
+      - id: 0
+        title: Проверка структуры
+        elements:
+        - id: 0
+          type: paragraph
+          text: Модель возвращает вложенный документ без лишних полей.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+  language_include_paths:
+  - document.sections[*].title
+  - document.sections[*].elements[*].text
+- task_id: l332_complex_ru_en_mixed
+  family: structured_json
+  modality: text
+  language: ru_en_mixed
+  structure_complexity: complex
+  response_schema_complexity: complex
+  volume: single
+  task_intent: semantic_extraction
+  structured_task_complexity: semantic_extraction
+  input_profile: complex_ru_en_mixed
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_complex_exact_shape
+  validation_policy: auto_schema_business
+  prompt: 'Return JSON only. Return exactly this nested object with language ru_en_mixed,
+    one section, one paragraph element, extracted_data arrays, and warnings array.
+    Do not add fields. Text: Django модель сохраняет id, JSON schema и Qwen термин
+    без перевода.'
+  schema_family: complex
+  schema: *id001
+  expected_output:
+    document:
+      language: ru_en_mixed
+      sections:
+      - id: 0
+        title: Проверка JSON schema
+        elements:
+        - id: 0
+          type: paragraph
+          text: Django модель сохраняет id, JSON schema и Qwen термин без перевода.
+          confidence_hint: high
+    extracted_data:
+      tables: []
+      charts: []
+      ui_controls: []
+      code_entities: []
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+  language_include_paths:
+  - document.sections[*].title
+  - document.sections[*].elements[*].text
+axes:
+  context_tier:
+  - '8192'
+  retry_policy:
+  - 'off'
+  - retry1
+  execution_mode:
+  - cold_per_request
+  cache_mode:
+  - none
+  lmstudio_parallel:
+  - '1'
+  app_concurrency:
+  - '1'
+  queue_pressure_mode:
+  - 'off'
+  schema_variant:
+  - hardened_const
+  modality:
+  - text
+  language:
+  - ru_ru
+  - ru_en_mixed
+  structure_complexity:
+  - complex
+  volume:
+  - single
+  task_intent:
+  - semantic_extraction
+  input_profile:
+  - complex_ru_ru
+  - complex_ru_en_mixed
+  output_language_policy:
+  - preserve_input_language
+  validation_policy:
+  - auto_schema_business
+  prompt_variant:
+  - structured_json_complex_exact_shape
+  response_schema_complexity:
+  - complex
+repeats: 1
+safety:
+  live: false
+  allow_model_downloads: false
+  allow_model_loads: false
+  allow_remote_base_url: false
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_models: 1
+  max_context_tier: 8192
+  max_repeats: 2
+  max_requests: 4
+structured_runtime:
+  strict_json_schema: true
+notes:
+- L3.32b complex JSON 12B canary. Run only after L3.32a passes.
+- 'Expected attempts: 1 model x 1 schema x 2 languages x 2 retry = 4.'
+- No 26B complex.

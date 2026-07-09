@@ -46,6 +46,41 @@ class DirtyStateHostRunner:
         return self.pre_load_instances
 
 
+class ContextMismatchHostRunner:
+    def __init__(self, *, applied_context_length: int) -> None:
+        self.applied_context_length = applied_context_length
+        self.loaded_instances = 0
+        self.calls: list[str] = []
+
+    def load_model(self, *, model_id: str, context_length: int, parallel: int) -> object:
+        self.calls.append("load_model")
+        self.loaded_instances = 1
+        return {
+            "load_verified": True,
+            "applied_load_config": {
+                "context_length": self.applied_context_length,
+                "parallel": parallel,
+            },
+        }
+
+    def chat_completion(self, **kwargs: object) -> object:
+        self.calls.append("chat_completion")
+        return {
+            "choices": [
+                {"message": {"content": json.dumps({"id": "ok", "text": "Synthetic response"})}}
+            ]
+        }
+
+    def cleanup_model(self, *, model_id: str) -> object:
+        self.calls.append("cleanup_model")
+        self.loaded_instances = 0
+        return {"cleanup_verified": True}
+
+    def count_loaded_instances(self, *, model_id: str) -> int | None:
+        self.calls.append("count_loaded_instances")
+        return self.loaded_instances
+
+
 class FakeLocalRunner(LocalLMStudioHostRunner):
     unload_payloads: list[dict[str, object]]
     models_payload: dict[str, object]
@@ -88,7 +123,7 @@ class FakeLocalRunner(LocalLMStudioHostRunner):
         raise AssertionError(f"unexpected request {path} {payload}")
 
 
-def structured_plan() -> RequestPlan:
+def structured_plan(*, context_tier: str = "8192") -> RequestPlan:
     return RequestPlan(
         cell_id="dirty-state-cell",
         envelope=RequestEnvelope(
@@ -104,7 +139,7 @@ def structured_plan() -> RequestPlan:
         options=ExecutionOptions(
             model_id="mock/text",
             endpoint_family="openai_compat",
-            context_tier="8192",
+            context_tier=context_tier,
             temperature=0.0,
             timeout_s=30.0,
             live=True,
@@ -130,6 +165,25 @@ def test_managed_executor_refuses_dirty_or_ambiguous_preload_state(
 
     assert "load_model" not in host.calls
     assert "chat_completion" not in host.calls
+
+
+def test_managed_executor_reports_runtime_context_mismatch_without_chat() -> None:
+    host = ContextMismatchHostRunner(applied_context_length=8192)
+    executor = ManagedLMStudioExecutor(
+        host_runner=host,
+        allow_model_loads=True,
+        context_length=16384,
+    )
+
+    with pytest.raises(ManagedExecutorError, match="runner_or_runtime_context_mismatch"):
+        executor.execute(structured_plan(context_tier="16384"))
+
+    assert host.calls == [
+        "count_loaded_instances",
+        "load_model",
+        "cleanup_model",
+        "count_loaded_instances",
+    ]
 
 
 def test_local_lmstudio_cleanup_unloads_each_loaded_instance_by_instance_id() -> None:
