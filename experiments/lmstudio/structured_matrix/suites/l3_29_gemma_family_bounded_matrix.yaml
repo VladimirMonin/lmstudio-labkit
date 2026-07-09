@@ -1,24 +1,24 @@
 suite_id: l3_29_gemma_family_bounded_matrix
-description: Bounded Gemma family matrix for accepted transcript cleanup and repaired
-  structured JSON paths.
+description: Bounded Gemma family matrix for transcript cleanup and repaired structured
+  JSON lanes.
 configs:
 - id: transcript_cleanup_screening
-  config: experiments/lmstudio/structured_matrix/configs/matrix.l3_29_gemma_transcript_cleanup_screening.yaml
+  config: experiments/lmstudio/structured_matrix/configs/matrix.l3_29a_gemma_transcript_cleanup_screening.yaml
   required: true
-  planned_requests: 120
-- id: transcript_cleanup_26b_controlled
-  config: experiments/lmstudio/structured_matrix/configs/matrix.l3_29_gemma_26b_transcript_cleanup_controlled.yaml
+  planned_requests: 72
+- id: structured_json_screening
+  config: experiments/lmstudio/structured_matrix/configs/matrix.l3_29b_gemma_structured_json_screening.yaml
+  required: true
+  planned_requests: 72
+- id: 26b_transcript_cleanup_controlled
+  config: experiments/lmstudio/structured_matrix/configs/matrix.l3_29c_gemma_26b_transcript_cleanup_controlled.yaml
   required: false
   planned_requests: 5
-- id: structured_json_bounded
-  config: experiments/lmstudio/structured_matrix/configs/matrix.l3_29_gemma_structured_json_bounded.yaml
-  required: true
-  planned_requests: 24
 total_planned_requests: 149
-hard_max_requests: 150
+hard_max_requests: 160
 notes:
 - Do not run full suite automatically unless explicitly approved for L3.29 live.
-- Run phases manually and stop on privacy, cleanup, model load, or hard validation
-  failure.
+- Suite order is transcript_cleanup_screening -> structured_json_screening -> 26b_transcript_cleanup_controlled.
+- Do not run 26B automatically if earlier phases fail infrastructure.
 - Qwen, image live, complex schema, throughput, parallel, session/warmup, and overnight
   are forbidden.

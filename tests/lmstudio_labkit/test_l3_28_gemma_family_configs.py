@@ -267,19 +267,27 @@ def test_l3_29_suite_stays_within_bounded_matrix_cap() -> None:
     assert payload["suite_id"] == "l3_29_gemma_family_bounded_matrix"
     assert [entry["id"] for entry in payload["configs"]] == [
         "transcript_cleanup_screening",
-        "transcript_cleanup_26b_controlled",
-        "structured_json_bounded",
+        "structured_json_screening",
+        "26b_transcript_cleanup_controlled",
     ]
+    assert [Path(entry["config"]).name for entry in payload["configs"]] == [
+        "matrix.l3_29a_gemma_transcript_cleanup_screening.yaml",
+        "matrix.l3_29b_gemma_structured_json_screening.yaml",
+        "matrix.l3_29c_gemma_26b_transcript_cleanup_controlled.yaml",
+    ]
+    assert [entry["planned_requests"] for entry in payload["configs"]] == [72, 72, 5]
     assert payload["total_planned_requests"] == 149
-    assert payload["hard_max_requests"] == 150
-    assert "Do not run full suite automatically" in "\n".join(payload["notes"])
+    assert payload["hard_max_requests"] == 160
+    notes = "\n".join(payload["notes"])
+    assert "Do not run full suite automatically" in notes
+    assert "Do not run 26B automatically if earlier phases fail infrastructure" in notes
 
 
-def test_l3_29_transcript_cleanup_screening_shape() -> None:
-    config = _load_config("matrix.l3_29_gemma_transcript_cleanup_screening.yaml")
+def test_l3_29a_transcript_cleanup_screening_shape() -> None:
+    config = _load_config("matrix.l3_29a_gemma_transcript_cleanup_screening.yaml")
     plan = _build_matrix_plan(config)
 
-    assert len(plan.cells) == 120
+    assert len(plan.cells) == 72
     assert _model_ids(config) == {
         "google/gemma-4-e2b",
         "google/gemma-4-e4b",
@@ -291,40 +299,35 @@ def test_l3_29_transcript_cleanup_screening_shape() -> None:
     assert {cell.axes["context_tier"] for cell in plan.cells} == {"8192", "16384"}
     assert {cell.axes["retry_policy"] for cell in plan.cells} == {"off"}
     assert {cell.task.language for cell in plan.cells} >= {"ru_ru", "ru_en_mixed", "en_en"}
+    assert {cell.task.input_profile for cell in plan.cells} == {
+        "l326_short_noisy_dictation",
+        "l326_technical_django_qwen_embedding",
+        "l326_mixed_ru_en_technical_terms",
+        "l326_repeats_self_corrections",
+        "l326_product_model_names",
+        "l326_clean_english_control",
+    }
     assert {cell.task.manual_review_policy for cell in plan.cells} == {"local_raw_prose_quality"}
-    assert config.safety.max_requests == 120
+    assert config.safety.max_requests == 72
     assert config.safety.allow_raw_prompt_response_artifacts is True
     assert config.safety.allow_image_live is False
 
 
-def test_l3_29_26b_transcript_controlled_is_tiny_only() -> None:
-    config = _load_config("matrix.l3_29_gemma_26b_transcript_cleanup_controlled.yaml")
+def test_l3_29b_structured_json_screening_excludes_26b_and_uses_repair_contract() -> None:
+    config = _load_config("matrix.l3_29b_gemma_structured_json_screening.yaml")
     plan = _build_matrix_plan(config)
 
-    assert len(plan.cells) == 5
-    assert _model_ids(config) == {"google/gemma-4-26b-a4b-qat"}
-    assert {cell.task.task_intent for cell in plan.cells} == {"transcript_cleanup"}
-    assert {cell.axes["context_tier"] for cell in plan.cells} == {"8192"}
-    assert config.safety.max_requests == 5
-    assert config.safety.max_models == 1
-    payload = _load_config_payload("matrix.l3_29_gemma_26b_transcript_cleanup_controlled.yaml")
-    assert "Do not broaden 26B to structured JSON" in "\n".join(payload["notes"])
-
-
-def test_l3_29_structured_json_bounded_excludes_26b_and_uses_repair_contract() -> None:
-    config = _load_config("matrix.l3_29_gemma_structured_json_bounded.yaml")
-    plan = _build_matrix_plan(config)
-
-    assert len(plan.cells) == 24
+    assert len(plan.cells) == 72
     assert _model_ids(config) == {
         "google/gemma-4-e2b",
         "google/gemma-4-e4b",
         "google/gemma-4-12b-qat",
     }
     assert "google/gemma-4-26b-a4b-qat" not in _model_ids(config)
+    assert {cell.task.language for cell in plan.cells} == {"ru_ru", "ru_en_mixed", "en_en"}
     assert {cell.task.response_schema_complexity for cell in plan.cells} == {"simple", "blocks"}
     assert {cell.axes["schema_variant"] for cell in plan.cells} == {"hardened_const"}
-    assert {cell.axes["retry_policy"] for cell in plan.cells} == {"off"}
+    assert {cell.axes["retry_policy"] for cell in plan.cells} == {"off", "retry1"}
     assert {
         cell.task.language_include_paths
         for cell in plan.cells
@@ -335,12 +338,29 @@ def test_l3_29_structured_json_bounded_excludes_26b_and_uses_repair_contract() -
         for cell in plan.cells
         if cell.task.response_schema_complexity == "blocks"
     } == {("blocks[*].text",)}
-    assert config.safety.max_requests == 24
+    assert config.safety.max_requests == 72
     assert config.safety.allow_raw_prompt_response_artifacts is False
-    payload = _load_config_payload("matrix.l3_29_gemma_structured_json_bounded.yaml")
+    payload = _load_config_payload("matrix.l3_29b_gemma_structured_json_screening.yaml")
     notes = "\n".join(payload["notes"])
     assert "26B structured JSON remains blocked" in notes
     assert "No complex schema" in notes
+
+
+def test_l3_29c_26b_transcript_controlled_is_tiny_only() -> None:
+    config = _load_config("matrix.l3_29c_gemma_26b_transcript_cleanup_controlled.yaml")
+    plan = _build_matrix_plan(config)
+
+    assert len(plan.cells) == 5
+    assert _model_ids(config) == {"google/gemma-4-26b-a4b-qat"}
+    assert {cell.task.task_intent for cell in plan.cells} == {"transcript_cleanup"}
+    assert {cell.task.response_schema_complexity for cell in plan.cells} == {"simple"}
+    assert {cell.axes["context_tier"] for cell in plan.cells} == {"8192"}
+    assert config.safety.max_requests == 5
+    assert config.safety.max_models == 1
+    payload = _load_config_payload("matrix.l3_29c_gemma_26b_transcript_cleanup_controlled.yaml")
+    notes = "\n".join(payload["notes"])
+    assert "Do not run 26B automatically if earlier phases fail infrastructure" in notes
+    assert "26B structured JSON" in notes
 
 
 def test_l3_28_decision_record_has_admission_summary_columns() -> None:

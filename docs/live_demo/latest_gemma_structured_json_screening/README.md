@@ -1,4 +1,4 @@
-# Latest Gemma Transcript Cleanup Screening
+# Latest Gemma Structured JSON Screening
 
 Placeholder for sanitized L3.29 artifacts.
 

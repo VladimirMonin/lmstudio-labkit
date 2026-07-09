@@ -1,4 +1,4 @@
-run_id: matrix_l3_29_gemma_structured_json_bounded
+run_id: matrix_l3_29b_gemma_structured_json_screening
 models:
 - model_key: gemma4_e2b
   model_id: google/gemma-4-e2b
@@ -226,11 +226,115 @@ tasks:
   manual_review_policy: sanitized_metrics_only
   language_include_paths:
   - blocks[*].text
+- task_id: l329b_structured_simple_en_en
+  family: structured_json
+  modality: text
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: schema_only
+  input_profile: screening_schema_simple_en_en
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_repair_exact_shape
+  validation_policy: auto_schema_business
+  prompt: 'Return JSON only. Do not use markdown. Do not add explanations.
+
+
+    Return exactly this JSON shape:
+
+    {"language":"en_en","items":["first","second"]}
+
+
+    Rules:
+
+    - Use the language value exactly: en_en.
+
+    - Use exactly the two provided items.
+
+    - Return only fields: language, items.'
+  schema_family: simple
+  schema:
+    type: object
+    required:
+    - language
+    - items
+    additionalProperties: false
+    properties:
+      language:
+        type: string
+      items:
+        type: array
+        items:
+          type: string
+        minItems: 2
+  expected_output:
+    language: en_en
+    items:
+    - first
+    - second
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+  language_include_paths:
+  - items[*]
+- task_id: l329b_structured_blocks_en_en
+  family: structured_json
+  modality: text
+  language: en_en
+  structure_complexity: medium
+  response_schema_complexity: blocks
+  volume: single
+  task_intent: id_preservation
+  input_profile: screening_blocks_en_en
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_repair_exact_blocks
+  validation_policy: auto_schema_business
+  prompt: 'Return JSON only. Do not use markdown. Do not add explanations.
+
+
+    Return exactly this JSON shape:
+
+    {"blocks":[{"id":0,"text":"first block"},{"id":1,"text":"second block"},{"id":2,"text":"third
+    block"}]}
+
+
+    Rules:
+
+    - Return exactly the same number of blocks.
+
+    - Preserve every id exactly.
+
+    - Preserve order exactly.
+
+    - Do not merge, split, delete, duplicate, or reorder blocks.
+
+    - Return only field: blocks.'
+  schema_family: blocks
+  schema_variant: hardened_const
+  expected_ids:
+  - 0
+  - 1
+  - 2
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: first block
+    - id: 1
+      text: second block
+    - id: 2
+      text: third block
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+  language_include_paths:
+  - blocks[*].text
 axes:
   context_tier:
   - '8192'
   retry_policy:
   - 'off'
+  - retry1
   execution_mode:
   - cold_per_request
   cache_mode:
@@ -248,6 +352,7 @@ axes:
   language:
   - ru_ru
   - ru_en_mixed
+  - en_en
   structure_complexity:
   - simple
   - medium
@@ -261,6 +366,8 @@ axes:
   - repair_schema_simple_ru_en_mixed
   - repair_blocks_ru_ru
   - repair_blocks_ru_en_mixed
+  - screening_schema_simple_en_en
+  - screening_blocks_en_en
   output_language_policy:
   - preserve_input_language
   validation_policy:
@@ -283,12 +390,12 @@ safety:
   max_models: 3
   max_context_tier: 8192
   max_repeats: 2
-  max_requests: 24
+  max_requests: 72
 structured_runtime:
   strict_json_schema: true
 notes:
-- L3.29 bounded structured JSON screening admitted by L3.28d.1 repair.
+- L3.29 Lane B structured JSON screening admitted by L3.28d.1 repair.
 - Scope is E2B/E4B/12B only; 26B structured JSON remains blocked.
 - Only simple and blocks with hardened_const are allowed.
-- No complex schema, context matrix, Qwen, image, throughput, parallel, session, or
-  warmup scope.
+- No complex schema, Qwen, image, throughput, parallel, session, warmup, or overnight
+  scope.
