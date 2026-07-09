@@ -71,6 +71,9 @@ def test_gemma_vision_expected_yaml_contract_exists_for_every_asset() -> None:
         assert expected["content_language"] == asset["content_language"]
         assert expected["expected_visible_text"]
         assert expected["expected_objects"]
+        assert expected["visible_text_policy"] == "preserve_original_visible_text"
+        assert expected["description_language"] == "output_language"
+        assert expected["summary_language"] == "output_language"
         assert set(expected["forbidden_claims"]) == required_forbidden
         assert expected["task_expectations"]["simple_description"]["required_fields"] == [
             "description",

@@ -61,3 +61,6 @@ expected_chart:
   max_value:
     label: Апрель
     value: 21
+visible_text_policy: preserve_original_visible_text
+description_language: output_language
+summary_language: output_language

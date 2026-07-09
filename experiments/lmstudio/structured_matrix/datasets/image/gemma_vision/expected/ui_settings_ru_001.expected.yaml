@@ -62,3 +62,6 @@ expected_ui:
     label: Сохранить
   screen_purpose: Synthetic Russian model settings dialog with fields for model id,
     context length, temperature, JSON Schema state, and save/cancel actions.
+visible_text_policy: preserve_original_visible_text
+description_language: output_language
+summary_language: output_language

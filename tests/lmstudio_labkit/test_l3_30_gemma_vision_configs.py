@@ -29,6 +29,7 @@ NEW_CONFIGS = [
     "matrix.l3_30b_gemma_vision_capability_preflight.yaml",
     "matrix.l3_30c_gemma_vision_canary.prepared.yaml",
     "matrix.l3_30d_gemma_vision_screening.prepared.yaml",
+    "matrix.l3_30c_gemma_vision_tiny_capability_live.yaml",
 ]
 
 
@@ -38,6 +39,13 @@ def _config(name: str) -> BenchmarkConfig:
 
 def _model_ids(config: BenchmarkConfig) -> set[str]:
     return {model.model_id for model in config.models}
+
+
+def _assert_visible_text_policy(task) -> None:
+    assert task.expected_output["visible_text_policy"] == "preserve_original_visible_text"
+    assert task.expected_output["description_language"] == "output_language"
+    assert task.expected_output["summary_language"] == "output_language"
+    assert task.image_ground_truth["visible_text_policy"] == "preserve_original_visible_text"
 
 
 def test_l3_30_suite_order_and_config_names_match_contract() -> None:
@@ -91,6 +99,8 @@ def test_l3_30_canary_shape_is_prepared_only_with_hard_cap_16() -> None:
     assert config.safety.max_requests == 16
     assert len(plan.cells) == 0
     assert plan.skip_reasons == {"unsupported_modality": 16}
+    for task in config.tasks:
+        _assert_visible_text_policy(task)
 
 
 def test_l3_30_screening_shape_is_prepared_only_without_complex_or_qwen() -> None:
@@ -111,6 +121,27 @@ def test_l3_30_screening_shape_is_prepared_only_without_complex_or_qwen() -> Non
     assert config.safety.max_requests == 120
     assert len(plan.cells) == 0
     assert plan.skip_reasons == {"unsupported_modality": 304}
+    for task in config.tasks:
+        _assert_visible_text_policy(task)
+
+
+def test_l3_30_tiny_capability_live_template_is_not_live_as_committed() -> None:
+    config = _config("matrix.l3_30c_gemma_vision_tiny_capability_live.yaml")
+    plan = _build_matrix_plan(config)
+
+    assert _model_ids(config) == GEMMA_MODELS
+    assert len(config.tasks) == 4
+    assert config.safety.live is False
+    assert config.safety.allow_image_live is False
+    assert config.safety.allow_raw_prompt_response_artifacts is False
+    assert config.safety.max_requests == 8
+    assert set(config.axes["resize_profile"]) == {"max_side_1024"}
+    assert len(plan.cells) == 0
+    assert plan.skip_reasons == {"unsupported_modality": 16}
+    for task in config.tasks:
+        assert task.response_schema_complexity == "simple_description"
+        assert task.output_language_policy == "ru_ru"
+        _assert_visible_text_policy(task)
 
 
 def test_l3_30_report_declares_prepared_only_and_readiness_for_later_experiments() -> None:
@@ -120,3 +151,6 @@ def test_l3_30_report_declares_prepared_only_and_readiness_for_later_experiments
     assert "no_image_route_available" in text
     assert "L3.29 text/structured bounded matrix is prepared separately" in text
     assert "L3.30 vision capability/canary/screening is now prepared" in text
+    assert "visible_text_policy" in text
+    assert "Run L3.29 Gemma text/structured bounded matrix first" in text
+    assert "Do not run full 480-cell image cartesian" in text

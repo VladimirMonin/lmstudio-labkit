@@ -70,3 +70,6 @@ expected_ui:
     label: queue table
   screen_purpose: Synthetic Russian processing queue dashboard with three files, statuses,
     progress values, total task count, and error count.
+visible_text_policy: preserve_original_visible_text
+description_language: output_language
+summary_language: output_language

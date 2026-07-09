@@ -45,3 +45,6 @@ task_expectations:
   complex_layout_extraction:
     layout_elements_min: 2
     prepared_only: true
+visible_text_policy: preserve_original_visible_text
+description_language: output_language
+summary_language: output_language

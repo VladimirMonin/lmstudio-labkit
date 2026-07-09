@@ -1,4 +1,4 @@
-run_id: matrix_l3_30c_gemma_vision_canary_prepared
+run_id: matrix_l3_30c_gemma_vision_tiny_capability_live_prepared
 models:
 - model_key: gemma4_e2b
   model_id: google/gemma-4-e2b
@@ -257,9 +257,15 @@ safety:
   max_models: 4
   max_context_tier: 8192
   max_repeats: 1
-  max_requests: 16
+  max_requests: 8
 structured_runtime:
   strict_json_schema: true
 notes:
-- 'Prepared future live canary: eligible Gemma models x 4 assets x simple_description
-  x ru_ru x 1024. Not live.'
+- Prepared-only template for a future tiny image live capability canary; do not run
+  live as committed.
+- Before enabling live, replace models with only metadata/runtime-proven image-capable
+  Gemma models.
+- 'Future live shape: eligible Gemma models x 4 assets x simple_description x ru_ru
+  output x max_side_1024; hard cap 4-8.'
+- visible_text_policy=preserve_original_visible_text; description/summary language
+  follow output_language.

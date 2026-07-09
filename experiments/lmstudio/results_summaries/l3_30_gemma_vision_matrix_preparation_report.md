@@ -67,3 +67,18 @@ Eligible Gemma models x 10 images x compatible task intents x `simple_descriptio
 ## Experiment readiness
 
 L3.29 text/structured bounded matrix is prepared separately and should run first when inference returns. L3.30 vision capability/canary/screening is now prepared and waits for explicit approval plus capability proof.
+
+## Pre-live correction
+
+- `visible_text_policy`: `preserve_original_visible_text`; visible OCR text must not be translated.
+- `description_language`: `output_language`.
+- `summary_language`: `output_language`.
+- Do not run the prepared image matrix live; it includes broader screening contracts and complex is prepared-only.
+- Future tiny image live is represented by `matrix.l3_30c_gemma_vision_tiny_capability_live.yaml`, committed with `live=false` and `allow_image_live=false`; enabling it requires explicit approval and proven eligible image-capable Gemma models.
+
+## Execution policy
+
+1. Run L3.29 Gemma text/structured bounded matrix first when inference returns.
+2. Run L3.30 vision route capability probe/preflight next.
+3. Run tiny image canary only if capability is proven.
+4. Do not run full 480-cell image cartesian, complex image schema live, Qwen VL, throughput/parallel/session/warmup.

@@ -56,3 +56,6 @@ expected_scene:
   - notebook
   identity_expected: false
   sensitive_attributes_expected: false
+visible_text_policy: preserve_original_visible_text
+description_language: output_language
+summary_language: output_language

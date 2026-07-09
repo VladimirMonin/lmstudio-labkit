@@ -13,6 +13,11 @@ configs:
 - id: screening_prepared
   config: experiments/lmstudio/structured_matrix/configs/matrix.l3_30d_gemma_vision_screening.prepared.yaml
   required: false
+- id: tiny_capability_live_template
+  config: experiments/lmstudio/structured_matrix/configs/matrix.l3_30c_gemma_vision_tiny_capability_live.yaml
+  required: false
+  prepared_only: true
+  requires_explicit_live_approval: true
 suite_order:
 - asset_manifest_validation
 - capability_preflight
@@ -21,3 +26,8 @@ suite_order:
 notes:
 - Prepared-only. No image live artifacts yet. No raw private images/prompts/responses
   committed.
+- Do not run prepared image matrix live. Complex image schema is prepared-only.
+- Future image live requires a separate tiny capability config with proven eligible
+  image-capable models.
+- visible_text_policy=preserve_original_visible_text; description_language/summary_language
+  follow output_language.

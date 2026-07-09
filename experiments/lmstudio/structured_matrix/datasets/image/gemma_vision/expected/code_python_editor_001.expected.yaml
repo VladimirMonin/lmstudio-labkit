@@ -58,3 +58,6 @@ expected_ui:
     label: utils py tab
   screen_purpose: Synthetic dark-theme Python code editor screenshot with a project
     tree, utils.py tab, line numbers, and simple utility functions.
+visible_text_policy: preserve_original_visible_text
+description_language: output_language
+summary_language: output_language

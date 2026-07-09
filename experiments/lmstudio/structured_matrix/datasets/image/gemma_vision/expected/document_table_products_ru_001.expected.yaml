@@ -75,3 +75,6 @@ expected_ui:
     label: table header
   screen_purpose: Synthetic Russian document editor window with a product table containing
     item ids, names, quantities, and prices.
+visible_text_policy: preserve_original_visible_text
+description_language: output_language
+summary_language: output_language
