@@ -1,0 +1,130 @@
+run_id: matrix_l3_28b_gemma_load_only_12b_26b
+models:
+- model_key: gemma4_12b_qat
+  model_id: google/gemma-4-12b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_26b_a4b_qat
+  model_id: google/gemma-4-26b-a4b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+tasks:
+- task_id: l328b_load_only_guard_manifest
+  family: postprocessing
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: model_load_only_guard
+  input_profile: load_only_no_generation
+  output_language_policy: preserve_input_language
+  prompt_variant: strict_no_new_facts_v2
+  validation_policy: auto_schema_language_manual_quality
+  prompt: Rendered from prompt_template and source_fixture at config load time.
+  schema_family: simple
+  schema:
+    type: object
+    required:
+    - language
+    - clean_text
+    - warnings
+    additionalProperties: false
+    properties:
+      language:
+        type: string
+      clean_text:
+        type: string
+        minLength: 1
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_ids: []
+  id_paths: []
+  expected_output:
+    language: same_as_input
+    clean_text: Сегодня мы быстро посмотрим, как почистить транскрипт и убрать лишние
+      паузы.
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: metadata_only
+  language_include_paths:
+  - clean_text
+  - summary
+  - title
+  - tags[*]
+  source_fixture: experiments/lmstudio/structured_matrix/datasets/text/postprocessing/l326_product_benchmark/01_short_noisy_dictation.yaml
+  prompt_template: experiments/lmstudio/structured_matrix/prompts/strict_no_new_facts_v2.md
+  punctuation_policy: diagnostic
+  paragraphing_policy: 'off'
+  filler_cleanup_policy: diagnostic
+  term_normalization_policy: diagnostic
+  near_identity_policy: warning
+  language_drift_policy: warning
+  term_language_preservation_policy: warning
+axes:
+  context_tier:
+  - '8192'
+  - '16384'
+  - '32768'
+  retry_policy:
+  - 'off'
+  execution_mode:
+  - cold_per_request
+  cache_mode:
+  - none
+  lmstudio_parallel:
+  - '1'
+  app_concurrency:
+  - '1'
+  queue_pressure_mode:
+  - 'off'
+  modality:
+  - text
+  language:
+  - ru_ru
+  structure_complexity:
+  - simple
+  volume:
+  - single
+  task_intent:
+  - model_load_only_guard
+  input_profile:
+  - load_only_no_generation
+  output_language_policy:
+  - preserve_input_language
+  validation_policy:
+  - auto_schema_language_manual_quality
+  prompt_variant:
+  - strict_no_new_facts_v2
+  response_schema_complexity:
+  - simple
+repeats: 1
+safety:
+  live: false
+  allow_model_downloads: false
+  allow_model_loads: false
+  allow_remote_base_url: false
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_models: 2
+  max_context_tier: 32768
+  max_repeats: 1
+  max_requests: 5
+structured_runtime:
+  strict_json_schema: true
+notes:
+- Prepared-only manifest for Phase B load-only guards; this runner config must not
+  be used for generation.
+- '12B target contexts: 8192, 16384, 32768. 26B target contexts: 8192, 16384 only.'
+- Run load-only through lifecycle tooling after explicit owner approval; stop on failed
+  load verification or cleanup final zero failure.

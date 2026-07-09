@@ -1,0 +1,26 @@
+suite_id: l3_28_gemma_family_expansion
+stop_on_failure: true
+configs:
+- id: readiness
+  config: ../configs/matrix.l3_28a_gemma_readiness.yaml
+  required: true
+- id: load_only_12b_26b
+  config: ../configs/matrix.l3_28b_gemma_load_only_12b_26b.yaml
+  required: true
+- id: transcript_cleanup_canary
+  config: ../configs/matrix.l3_28c_gemma_transcript_cleanup_canary.yaml
+  required: true
+- id: structured_json_canary
+  config: ../configs/matrix.l3_28d_gemma_structured_json_canary.yaml
+  required: true
+- id: context_screening_example
+  config: ../configs/matrix.l3_28e_gemma_context_screening.example.yaml
+  required: false
+- id: vision_capability_preflight
+  config: ../configs/matrix.l3_28f_gemma_vision_capability_canary.yaml
+  required: true
+notes:
+- Prepared-only L3.28 suite. Do not run full suite automatically.
+- Execute phases manually with explicit owner approval and stop conditions.
+- No Qwen, route matrix, /v1/responses, overnight, throughput, broad session/warmup,
+  host-app integration, or raw artifacts in Git.

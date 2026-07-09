@@ -1,0 +1,227 @@
+run_id: matrix_l3_28d_gemma_structured_json_canary
+models:
+- model_key: gemma4_e2b
+  model_id: google/gemma-4-e2b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_e4b
+  model_id: google/gemma-4-e4b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_12b_qat
+  model_id: google/gemma-4-12b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+tasks:
+- task_id: l328d_structured_simple_ru_ru
+  family: structured_json
+  modality: text
+  language: ru_ru
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: schema_only
+  input_profile: schema_simple_ru_ru
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_strict
+  validation_policy: auto_schema_business
+  prompt: Return a JSON object that preserves the provided facts without adding new
+    facts.
+  schema_family: simple
+  schema:
+    type: object
+    required:
+    - language
+    - items
+    additionalProperties: false
+    properties:
+      language:
+        type: string
+      items:
+        type: array
+        items:
+          type: string
+        minItems: 2
+  expected_output:
+    language: ru_ru
+    items:
+    - alpha
+    - beta
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+- task_id: l328d_structured_simple_ru_en_mixed
+  family: structured_json
+  modality: text
+  language: ru_en_mixed
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: schema_only
+  input_profile: schema_simple_ru_en_mixed
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_strict
+  validation_policy: auto_schema_business
+  prompt: Return a JSON object that preserves the provided facts without adding new
+    facts.
+  schema_family: simple
+  schema:
+    type: object
+    required:
+    - language
+    - items
+    additionalProperties: false
+    properties:
+      language:
+        type: string
+      items:
+        type: array
+        items:
+          type: string
+        minItems: 2
+  expected_output:
+    language: ru_en_mixed
+    items:
+    - alpha
+    - beta
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+- task_id: l328d_structured_blocks_ru_ru
+  family: structured_json
+  modality: text
+  language: ru_ru
+  structure_complexity: medium
+  response_schema_complexity: blocks
+  volume: single
+  task_intent: id_preservation
+  input_profile: blocks_ru_ru
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_strict_id_const
+  validation_policy: auto_schema_business
+  prompt: Return JSON blocks with exact IDs and order. Do not add or remove IDs.
+  schema_family: blocks
+  schema_variant: per_position_id_const
+  expected_ids:
+  - 0
+  - 1
+  - 2
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: alpha
+    - id: 1
+      text: beta
+    - id: 2
+      text: gamma
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+- task_id: l328d_structured_blocks_ru_en_mixed
+  family: structured_json
+  modality: text
+  language: ru_en_mixed
+  structure_complexity: medium
+  response_schema_complexity: blocks
+  volume: single
+  task_intent: id_preservation
+  input_profile: blocks_ru_en_mixed
+  output_language_policy: preserve_input_language
+  prompt_variant: structured_json_strict_id_const
+  validation_policy: auto_schema_business
+  prompt: Return JSON blocks with exact IDs and order. Do not add or remove IDs.
+  schema_family: blocks
+  schema_variant: per_position_id_const
+  expected_ids:
+  - 0
+  - 1
+  - 2
+  id_paths:
+  - blocks[*].id
+  expected_output:
+    blocks:
+    - id: 0
+      text: alpha
+    - id: 1
+      text: beta
+    - id: 2
+      text: gamma
+  fake_mode: valid
+  manual_review_policy: sanitized_metrics_only
+axes:
+  context_tier:
+  - '8192'
+  retry_policy:
+  - 'off'
+  execution_mode:
+  - cold_per_request
+  cache_mode:
+  - none
+  lmstudio_parallel:
+  - '1'
+  app_concurrency:
+  - '1'
+  queue_pressure_mode:
+  - 'off'
+  schema_variant:
+  - per_position_id_const
+  modality:
+  - text
+  language:
+  - ru_ru
+  - ru_en_mixed
+  structure_complexity:
+  - simple
+  - medium
+  volume:
+  - single
+  task_intent:
+  - schema_only
+  - id_preservation
+  input_profile:
+  - schema_simple_ru_ru
+  - schema_simple_ru_en_mixed
+  - blocks_ru_ru
+  - blocks_ru_en_mixed
+  output_language_policy:
+  - preserve_input_language
+  validation_policy:
+  - auto_schema_business
+  prompt_variant:
+  - structured_json_strict
+  - structured_json_strict_id_const
+  response_schema_complexity:
+  - simple
+  - blocks
+repeats: 1
+safety:
+  live: true
+  allow_model_downloads: false
+  allow_model_loads: true
+  allow_remote_base_url: true
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_models: 3
+  max_context_tier: 8192
+  max_repeats: 1
+  max_requests: 12
+structured_runtime:
+  strict_json_schema: true
+notes:
+- Prepared-only Phase D structured JSON canary.
+- 12B must use hardened blocks schema; do not use loose blocks baseline for 12B.
+- 26B structured generation is excluded until load-only and tiny generation proof
+  pass.
+- No raw prompt/response artifacts are enabled.

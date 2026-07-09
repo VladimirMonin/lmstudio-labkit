@@ -1,0 +1,137 @@
+run_id: matrix_l3_28f_gemma_vision_capability_canary
+models:
+- model_key: gemma4_e2b
+  model_id: google/gemma-4-e2b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_e4b
+  model_id: google/gemma-4-e4b
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_12b_qat
+  model_id: google/gemma-4-12b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+  - '32768'
+- model_key: gemma4_26b_a4b_qat
+  model_id: google/gemma-4-26b-a4b-qat
+  supported_modalities:
+  - text
+  supported_context_tiers:
+  - '8192'
+  - '16384'
+tasks:
+- task_id: l328f_vision_capability_probe_placeholder
+  family: vision
+  modality: image
+  language: en_en
+  structure_complexity: simple
+  response_schema_complexity: simple
+  volume: single
+  task_intent: vision_capability_probe
+  input_profile: ui_screenshot_public_safe
+  output_language_policy: ru_ru
+  prompt_variant: vision_simple_description
+  validation_policy: capability_preflight_then_manual
+  prompt: Describe the public-safe image if and only if the model/runtime supports
+    image input.
+  image_hash: placeholder_public_safe_fixture
+  schema_family: simple
+  schema:
+    type: object
+    required:
+    - description
+    - warnings
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+      warnings:
+        type: array
+        items:
+          type: string
+  expected_output:
+    description: public-safe image description
+    warnings: []
+  fake_mode: valid
+  manual_review_policy: vision_capability_only
+  tags: []
+axes:
+  context_tier:
+  - '8192'
+  retry_policy:
+  - 'off'
+  execution_mode:
+  - cold_per_request
+  cache_mode:
+  - none
+  lmstudio_parallel:
+  - '1'
+  app_concurrency:
+  - '1'
+  queue_pressure_mode:
+  - 'off'
+  modality:
+  - image
+  image_type:
+  - ui_screenshot
+  - document_table
+  - chart_graph
+  - code_screenshot
+  output_language:
+  - ru_ru
+  image_interaction_mode:
+  - single_image
+  resize_profile:
+  - max_side_1024
+  language:
+  - en_en
+  structure_complexity:
+  - simple
+  volume:
+  - single
+  task_intent:
+  - vision_capability_probe
+  input_profile:
+  - ui_screenshot_public_safe
+  output_language_policy:
+  - ru_ru
+  validation_policy:
+  - capability_preflight_then_manual
+  prompt_variant:
+  - vision_simple_description
+  response_schema_complexity:
+  - simple
+repeats: 1
+safety:
+  live: false
+  allow_model_downloads: false
+  allow_model_loads: false
+  allow_remote_base_url: false
+  allow_raw_prompt_response_artifacts: false
+  allow_image_live: false
+  allow_stress: false
+  max_models: 4
+  max_context_tier: 8192
+  max_repeats: 1
+  max_requests: 1
+structured_runtime:
+  strict_json_schema: true
+notes:
+- Prepared-only Phase F vision capability manifest. No image live run is allowed from
+  this config as committed.
+- All current Gemma model specs are text-only through this runtime until model metadata
+  proves image capability.
+- If capability is proven later, create a separate explicit live image canary with
+  max_side_1024 first and max_side_512 fallback.
