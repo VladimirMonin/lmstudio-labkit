@@ -1,6 +1,6 @@
 # L3.28 Gemma Family Expansion Decision Record
 
-Status: prepared-only decision record. Live phases are not complete yet.
+Status: live phased run completed. See `experiments/lmstudio/results_summaries/l3_28_gemma_family_live_decision_update.md` for the sanitized live update.
 
 ## Questions to close
 

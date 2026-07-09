@@ -167,7 +167,7 @@ def test_l3_28_structured_json_canary_uses_hardened_blocks_and_ru_payloads() -> 
     assert {cell.task.response_schema_complexity for cell in plan.cells} == {"simple", "blocks"}
     block_cells = [cell for cell in plan.cells if cell.task.response_schema_complexity == "blocks"]
     assert block_cells
-    assert {cell.axes["schema_variant"] for cell in block_cells} == {"per_position_id_const"}
+    assert {cell.axes["schema_variant"] for cell in block_cells} == {"hardened_const"}
     assert {cell.axes["retry_policy"] for cell in plan.cells} == {"off"}
     assert config.safety.allow_raw_prompt_response_artifacts is False
 

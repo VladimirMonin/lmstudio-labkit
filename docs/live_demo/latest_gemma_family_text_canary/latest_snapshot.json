@@ -1,0 +1,164 @@
+{
+  "attempt_count": 15,
+  "cache_modes": [
+    "none"
+  ],
+  "cell_count": 15,
+  "config_hash": "edbc29ac98c261146eb586597a291d865cb472ecf076cf89c1c84d53b0407fb6",
+  "execution_modes": [
+    "cold_per_request"
+  ],
+  "execution_targets": [
+    "local_managed"
+  ],
+  "fail_count": 0,
+  "failure_categories": {},
+  "filtered_cell_count": 15,
+  "hard_fail_count": 0,
+  "length_ratio_failures": {
+    "count": 0,
+    "max_actual_ratio": null,
+    "min_actual_ratio": null,
+    "model_ids": [],
+    "policy_max": [],
+    "policy_min": [],
+    "task_ids": []
+  },
+  "length_ratio_warning_count": 0,
+  "lifecycle": {
+    "cleanup_scopes": [
+      "per_request"
+    ],
+    "final_loaded_instances": [
+      0
+    ],
+    "load_scopes": [
+      "per_request"
+    ],
+    "session_cleanup_verified": [
+      "True"
+    ],
+    "session_ids": [
+      "session_0fe35605d89357f4",
+      "session_1df2d54ae2418811",
+      "session_23eca0d8fe167a92",
+      "session_49a71ab072cbf3ca",
+      "session_6183e4a85f93230c",
+      "session_691e0ee8128413d6",
+      "session_6fa4c46cb98212eb",
+      "session_84bd9b44d97eb6b9",
+      "session_976973005121a9e3",
+      "session_ade35543a13747ae",
+      "session_ca45dee777ef35e3",
+      "session_cb956f0089299853",
+      "session_d30babf0fd58e31b",
+      "session_ea84fb44093fe695",
+      "session_f1c4585a36a5d279"
+    ],
+    "session_request_counts": [
+      1
+    ],
+    "session_request_indices": [
+      1
+    ]
+  },
+  "live": true,
+  "live_bridge": {
+    "allow_model_load": true,
+    "allow_remote": true,
+    "allow_stress": false,
+    "base_url_kind": "local",
+    "base_url_scheme": "http",
+    "live": true,
+    "max_requests": 15,
+    "profile": "live-screening"
+  },
+  "model_ids": [
+    "google/gemma-4-12b-qat",
+    "google/gemma-4-e2b",
+    "google/gemma-4-e4b"
+  ],
+  "model_status": {
+    "google/gemma-4-12b-qat": {
+      "pass": 5
+    },
+    "google/gemma-4-e2b": {
+      "pass": 5
+    },
+    "google/gemma-4-e4b": {
+      "pass": 5
+    }
+  },
+  "models": [
+    "gemma4_12b_qat",
+    "gemma4_e2b",
+    "gemma4_e4b"
+  ],
+  "pass_count": 15,
+  "pass_rate": 1.0,
+  "per_complexity": {
+    "simple": {
+      "pass": 15,
+      "warning": 30
+    }
+  },
+  "per_language": {
+    "ru_en_mixed": {
+      "pass": 3,
+      "warning": 6
+    },
+    "ru_ru": {
+      "pass": 12,
+      "warning": 24
+    }
+  },
+  "per_volume": {
+    "single": {
+      "pass": 15,
+      "warning": 30
+    }
+  },
+  "resource_telemetry_modes": [
+    "full"
+  ],
+  "retry_impact": {
+    "off": {
+      "pass": 15,
+      "warning": 30
+    }
+  },
+  "run_id": "matrix_l3_28c1_gemma_transcript_cleanup_canary_e2b_e4b_12b",
+  "safety": {
+    "public_safe": true,
+    "raw_base_url_stored": false,
+    "raw_prompt_response_stored": false,
+    "raw_prompt_stored": false,
+    "raw_response_stored": false
+  },
+  "schema_version": "latest-text-remote-snapshot-v1",
+  "skipped_cell_count": 285,
+  "timing": {
+    "latency_ms_max": 2847.462,
+    "latency_ms_min": 838.488,
+    "total_latency_ms_max": 2847.462,
+    "total_latency_ms_min": 838.488
+  },
+  "token_counts": {
+    "completion_tokens": 826,
+    "prompt_tokens": 5421
+  },
+  "warmup": {
+    "cache_hit_reported": [
+      "unknown"
+    ],
+    "kv_reuse_proven": [
+      "False"
+    ],
+    "measured_request_count": 15,
+    "warmup_request_count": 0
+  },
+  "warning_categories": {
+    "punctuation_metrics": 15
+  },
+  "warning_count": 30
+}
