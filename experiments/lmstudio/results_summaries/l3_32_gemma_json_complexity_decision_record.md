@@ -66,3 +66,24 @@ report has a fixed sanitized shape:
 - `hardened_const` remains the only LabKit matrix schema variant in prepared
   L3.32 configs; the legacy `per_position_id_const` alias remains limited to
   historical live-smoke artifacts.
+
+## Launch attempt status
+
+Recorded on 2026-07-10, after owner approval to follow the staged live order:
+
+```yaml
+config: experiments/lmstudio/structured_matrix/configs/matrix.l3_32a_gemma_complex_json_canary_e2b_e4b.yaml
+preflight_status: pass
+planned_request_count: 4
+live_attempt_count: 0
+classification: blocked_after_l3_31a_not_accepted
+model_failure: false
+```
+
+L3.32a did not run live because the accepted order requires L3.31a acceptance
+or explicit deferral first, and L3.31a was blocked by runtime unavailability.
+The runtime was also unavailable at `http://127.0.0.1:1234`, so no model output
+was produced.
+
+Do not run L3.32b, L3.32c, or 26B structured cells until L3.32a has accepted
+live evidence or is explicitly reclassified.

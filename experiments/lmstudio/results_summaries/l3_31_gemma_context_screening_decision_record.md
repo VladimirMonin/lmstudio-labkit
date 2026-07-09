@@ -48,3 +48,28 @@ No live LM Studio calls, model loads, downloads, remote inference, stress runs, 
 | L3.31c 26B 16k controlled policy | prepared_only | 26B remains gated on explicit owner approval and prior 26B load-only proof at 16384. |
 | L3.31 model failures | none_claimed | No L3.31 live model outputs were generated in this non-live slice, so there is no model-failure evidence. |
 | L3.31 live acceptance | not_claimed | Acceptance remains blocked until live applied-context proof and cleanup proof exist. |
+
+## Launch attempt status
+
+Recorded on 2026-07-10, after owner approval to follow the staged live order:
+
+```yaml
+config: experiments/lmstudio/structured_matrix/configs/matrix.l3_31a_gemma_context_canary.yaml
+preflight_status: pass
+planned_request_count: 9
+live_attempt_count: 0
+runtime_status: unavailable
+classification: runner_blocked_runtime_unavailable
+model_failure: false
+```
+
+The local LM Studio API endpoint was not listening at `http://127.0.0.1:1234`:
+
+```text
+GET /v1/models -> connection refused
+GET /api/v1/models -> connection refused
+```
+
+L3.31a therefore remains not accepted. It must not be converted into a model
+failure because no model output was produced and `applied_context=16384` could
+not be proven.
