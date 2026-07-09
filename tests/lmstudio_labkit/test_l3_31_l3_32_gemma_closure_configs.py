@@ -6,7 +6,7 @@ from pathlib import Path
 from lmstudio_labkit.benchmarks import _build_matrix_plan
 from lmstudio_labkit.validation import validate_response
 
-from lmstudio_labkit import BenchmarkConfig, plan_matrix
+from lmstudio_labkit import BenchmarkConfig, plan_matrix, run_matrix
 
 CONFIG_DIR = Path("experiments/lmstudio/structured_matrix/configs")
 REPORT_DIR = Path("experiments/lmstudio/results_summaries")
@@ -196,3 +196,96 @@ def test_l3_31_l3_32_reports_and_demo_dirs_exist() -> None:
     assert (REPORT_DIR / "l3_32_gemma_json_complexity_decision_record.md").is_file()
     assert (DOCS_DIR / "latest_gemma_context_screening" / "README.md").is_file()
     assert (DOCS_DIR / "latest_gemma_json_complexity" / "README.md").is_file()
+
+
+def test_l3_33_cache_session_configs_have_expected_plan_sizes_and_gates() -> None:
+    canary = _config("matrix.l3_33a_gemma_cache_session_canary.yaml")
+    prefix_reuse = _config("matrix.l3_33b_gemma_prompt_prefix_reuse.yaml")
+
+    assert _planned_count("matrix.l3_33a_gemma_cache_session_canary.yaml") == 48
+    assert _planned_count("matrix.l3_33b_gemma_prompt_prefix_reuse.yaml") == 12
+
+    assert _model_ids(canary) == {"google/gemma-4-e4b", "google/gemma-4-12b-qat"}
+    assert _model_ids(prefix_reuse) == {"google/gemma-4-e4b", "google/gemma-4-12b-qat"}
+
+    assert _all_axes(canary, "context_tier") == {"8192"}
+    assert _all_axes(canary, "execution_mode") == {"cold_per_request", "session_loaded"}
+    assert _all_axes(canary, "cache_mode") == {"none", "warmup_first"}
+    assert canary.repeats == 3
+    assert canary.safety.live is False
+    assert canary.safety.allow_model_loads is False
+    assert canary.safety.allow_model_downloads is False
+    assert canary.safety.allow_raw_prompt_response_artifacts is False
+    assert canary.safety.allow_image_live is False
+    assert canary.safety.allow_stress is False
+    assert canary.safety.max_requests == 48
+
+    assert _all_axes(prefix_reuse, "execution_mode") == {"cold_per_request"}
+    assert _all_axes(prefix_reuse, "cache_mode") == {"prompt_prefix_reuse"}
+    assert prefix_reuse.repeats == 2
+    assert prefix_reuse.safety.live is False
+    assert prefix_reuse.safety.max_requests == 12
+
+
+def test_l3_33_configs_are_gemma_text_only_and_exclude_broad_modes() -> None:
+    for name in [
+        "matrix.l3_33a_gemma_cache_session_canary.yaml",
+        "matrix.l3_33b_gemma_prompt_prefix_reuse.yaml",
+    ]:
+        config = _config(name)
+        assert all("gemma" in model.model_id for model in config.models)
+        assert all("qwen" not in model.model_id.lower() for model in config.models)
+        assert _all_axes(config, "modality") == {"text"}
+        assert _all_axes(config, "lmstudio_parallel") == {"1"}
+        assert _all_axes(config, "app_concurrency") == {"1"}
+        assert _all_axes(config, "queue_pressure_mode") == {"off"}
+        assert config.safety.allow_remote_base_url is False
+
+
+def test_l3_33_cache_telemetry_fields_are_reserved_in_artifacts(tmp_path: Path) -> None:
+    config = _config("matrix.l3_33a_gemma_cache_session_canary.yaml")
+    artifacts = run_matrix(config, tmp_path)
+    records = [
+        json.loads(line)
+        for line in artifacts.cell_results.read_text(encoding="utf-8").splitlines()
+        if line
+    ]
+    cell_summary_header = artifacts.cell_summary.read_text(encoding="utf-8").splitlines()[0]
+
+    required_record_fields = {
+        "cache_mode",
+        "cache_group_id",
+        "session_id",
+        "session_request_index",
+        "is_warmup_request",
+        "stable_prefix_hash",
+        "schema_hash",
+        "prompt_template_hash",
+        "dynamic_input_hash",
+        "same_input_hash",
+        "ttft_ms",
+        "prompt_processing_ms",
+        "total_latency_ms",
+        "tokens_per_sec",
+        "cache_hit_reported",
+        "cache_hit_inferred",
+        "kv_reuse_proven",
+    }
+    for field in required_record_fields:
+        assert field in records[0]
+
+    for field in ["execution_mode", *sorted(required_record_fields)]:
+        assert field in cell_summary_header
+
+    warmup_rows = [row for row in records if row["cache_mode"] == "warmup_first"]
+    assert {row["kv_reuse_proven"] for row in warmup_rows} == {False}
+    assert {row["cache_hit_reported"] for row in warmup_rows} == {"unknown"}
+    assert {row["cache_hit_inferred"] for row in warmup_rows} == {"unknown"}
+    assert any(row["is_warmup_request"] is True for row in warmup_rows)
+    assert any(row["is_warmup_request"] is False for row in warmup_rows)
+
+
+def test_l3_33_reports_and_demo_dir_exist() -> None:
+    assert (REPORT_DIR / "l3_33_gemma_cache_session_warmup_evidence_import.md").is_file()
+    assert (REPORT_DIR / "l3_33_gemma_cache_session_decision_record.md").is_file()
+    assert (DOCS_DIR / "latest_gemma_cache_session" / "README.md").is_file()

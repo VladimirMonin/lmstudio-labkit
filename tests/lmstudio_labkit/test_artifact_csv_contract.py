@@ -17,6 +17,7 @@ CELL_SUMMARY_COLUMNS = {
     "context_tier",
     "schema_variant",
     "retry_policy",
+    "execution_mode",
     "cache_mode",
     "cache_group_id",
     "warmup_request_index",
@@ -157,6 +158,7 @@ def test_artifact_csv_contract_flattens_axis_and_resource_values(tmp_path: Path)
     assert cell_rows[0]["language"] == "ru_ru"
     assert cell_rows[0]["structure_complexity"] == "medium"
     assert cell_rows[0]["schema_variant"] == "hardened_const"
+    assert cell_rows[0]["execution_mode"] == "cold_per_request"
     assert cell_rows[0]["json_parse_status"] == "pass"
     assert cell_rows[0]["id_exact_status"] == "pass"
     assert cell_rows[0]["finish_reason"] == "stop"

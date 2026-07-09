@@ -704,11 +704,33 @@ Required refined child cards before dispatching broad work:
 
 The next safe launch is not L3.35 or L3.36.
 
-Launch order from here:
+Use two separate tracks depending on runtime availability.
 
-1. L3.33 evidence import + non-live cache/session preparation.
-2. L3.34 read-only capability metadata probe/preparation.
-3. Then request explicit owner approval for any live L3.31a/L3.32a/L3.33a/L3.34 route probe.
+## If inference is available
+
+Live order:
+
+1. L3.31a — 16k context canary.
+2. L3.32a — complex JSON E2B/E4B canary.
+3. L3.33a — cache/session canary, after context and complex canaries are accepted or explicitly deferred.
+4. L3.34 — tiny image route probe, only after read-only metadata proves eligible image-capable Gemma model(s).
+5. L3.35 — image matrix, only if L3.34 proves at least one eligible image-capable Gemma route.
+6. L3.36 — final synthesis, only after L3.31-L3.35 evidence exists.
+
+L3.31a must not be converted into a model failure if the runner blocks 16k or silently downgrades context. The status is `runner_blocked` unless `applied_context=16384` is proven for every cell.
+
+L3.32a starts only after L3.31a is accepted or explicitly deferred by the owner/coordinator. If L3.32a fails, do not run 12B complex, broad L3.32c, or 26B structured.
+
+## If inference is unavailable
+
+Safe non-live work:
+
+1. L3.33 evidence import.
+2. L3.33 cache/session telemetry and config preparation.
+3. L3.34 read-only image capability metadata preparation.
+4. L3.34 route probe config/report preparation, without live image requests.
+
+This non-live track does not supersede the live order. It only keeps the project moving while GPU/runtime inference is unavailable.
 
 L3.35 remains blocked until L3.34 proves at least one eligible image-capable Gemma route.
 
