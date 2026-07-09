@@ -1,0 +1,10 @@
+suite_id: l3_28a_gemma_12b_transcript_cleanup_canary
+stop_on_failure: true
+configs:
+- id: gemma_12b_transcript_cleanup_canary_10
+  config: ../configs/matrix.l3_28a_gemma_12b_transcript_cleanup_canary.yaml
+  required: true
+notes:
+- Prepared-only suite. Run only after explicit live approval.
+- 'Purpose: test whether 12B improves prose quality over E4B without touching Blocks
+  JSON or complex schema.'

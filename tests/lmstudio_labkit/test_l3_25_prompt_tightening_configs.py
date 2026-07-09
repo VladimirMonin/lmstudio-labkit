@@ -159,3 +159,28 @@ def test_l3_27_raw_prose_quality_canary_is_tiny() -> None:
     assert config.safety.allow_raw_prompt_response_artifacts is True
     assert {cell.task.task_intent for cell in plan.cells} == {"transcript_cleanup"}
     assert {cell.task.prompt_variant for cell in plan.cells} == {"strict_no_new_facts_v2"}
+
+
+def test_l3_28a_gemma_12b_transcript_cleanup_canary_is_prepared_only() -> None:
+    config = BenchmarkConfig.from_file(
+        CONFIG_DIR / "matrix.l3_28a_gemma_12b_transcript_cleanup_canary.yaml"
+    )
+    plan = _build_matrix_plan(config)
+
+    assert len(plan.cells) == 10
+    assert config.repeats == 1
+    assert len(config.tasks) == 10
+    assert {cell.model.model_id for cell in plan.cells} == {"google/gemma-4-12b-qat"}
+    assert {cell.task.task_intent for cell in plan.cells} == {"transcript_cleanup"}
+    assert {cell.task.response_schema_complexity for cell in plan.cells} == {"simple"}
+    assert {cell.task.prompt_variant for cell in plan.cells} == {"strict_no_new_facts_v2"}
+    assert {cell.task.manual_review_policy for cell in plan.cells} == {"local_raw_prose_quality"}
+    assert all(cell.axes["retry_policy"] == "off" for cell in plan.cells)
+    assert all(cell.axes["execution_mode"] == "cold_per_request" for cell in plan.cells)
+    assert all(cell.axes["cache_mode"] == "none" for cell in plan.cells)
+    assert all(cell.axes["lmstudio_parallel"] == "1" for cell in plan.cells)
+    assert all(cell.axes["app_concurrency"] == "1" for cell in plan.cells)
+    assert config.safety.max_requests == 10
+    assert config.safety.allow_raw_prompt_response_artifacts is True
+    assert config.safety.allow_image_live is False
+    assert config.safety.allow_stress is False
