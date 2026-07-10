@@ -1,0 +1,28 @@
+{
+  "asset": "ui_settings_ru_001",
+  "results": [
+    {
+      "model_id": "google/gemma-4-e4b",
+      "asset": "ui_settings_ru_001",
+      "phase": "phase1_plain_text",
+      "status": "fail",
+      "http_status": 200,
+      "finish_reason": "length",
+      "max_tokens": 256,
+      "latency_ms": 3270.475,
+      "prompt_tokens": 298,
+      "completion_tokens": 256,
+      "response_char_count": 0,
+      "json_parse_pass": false,
+      "schema_pass": false,
+      "description_char_count": null,
+      "visible_text_count": null,
+      "pre_loaded_count": 0,
+      "loaded_after_load_count": 1,
+      "final_loaded_count": 0,
+      "load_verified": true,
+      "cleanup_verified": true
+    }
+  ],
+  "final_loaded_total": 0
+}
