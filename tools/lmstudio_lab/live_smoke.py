@@ -2478,10 +2478,7 @@ def _resolve_concurrency_max_tokens_override(
 ) -> int | None:
     if max_tokens_override is None:
         return None
-    if diagnostic_kind not in _PLAIN_TEXT_CONCURRENCY_DIAGNOSTIC_KINDS:
-        raise ValueError(
-            "max_tokens_override is supported only for plain-text concurrency diagnostics"
-        )
+    _validate_concurrency_diagnostic_kind(diagnostic_kind)
     if (
         isinstance(max_tokens_override, bool)
         or not isinstance(max_tokens_override, int)
@@ -3014,6 +3011,7 @@ def _build_medium_pair_specs(
     queue_pressure_mode: bool,
     verified_context_length: int,
     context_fit_safety_ratio: float,
+    max_tokens_override: int | None = None,
 ) -> tuple[tuple[_ConcurrencyRequestSpec, ...] | None, LiveConcurrencyDiagnosticsOutcome | None]:
     chunked_view = load_chunked_dataset_view(_LIVE_MEDIUM_CHUNKED_DATASET_ID)
     dataset_manifest = load_dataset_manifest(_LIVE_MEDIUM_CHUNKED_DATASET_ID)
@@ -3024,9 +3022,10 @@ def _build_medium_pair_specs(
             estimated_input_tokens=chunk.estimated_input_tokens,
             items_count=chunk.items_count,
         )
+        effective_max_tokens = max_tokens_override or max_tokens
         context_fit = evaluate_context_fit(
             estimated_input_tokens=chunk.estimated_input_tokens,
-            max_tokens=max_tokens,
+            max_tokens=effective_max_tokens,
             effective_context_length=verified_context_length,
             safety_ratio=context_fit_safety_ratio,
         )
@@ -3037,7 +3036,7 @@ def _build_medium_pair_specs(
             messages=messages,
             prompt_meta=prompt_meta,
             response_format=build_factual_blocks_response_format(),
-            max_tokens=max_tokens,
+            max_tokens=effective_max_tokens,
             estimated_input_tokens=chunk.estimated_input_tokens,
             requested_context_length=verified_context_length,
             validator_kind="structured",
@@ -3196,6 +3195,7 @@ def run_live_concurrency_diagnostics(
             queue_pressure_mode=queue_pressure_mode,
             verified_context_length=resolved_context_length,
             context_fit_safety_ratio=resolved_context_fit_ratio,
+            max_tokens_override=resolved_max_tokens_override,
         )
         if preflight_outcome is not None:
             return preflight_outcome

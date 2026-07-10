@@ -6817,37 +6817,88 @@ def test_run_live_concurrency_diagnostics_medium_pair_aborts_on_context_fit_fail
     assert outcome.summary["structured_error_count"] == 1
 
 
-@pytest.mark.parametrize("diagnostic_kind", ["structured_small_pair", "medium_pair"])
-def test_run_live_concurrency_diagnostics_rejects_non_plain_text_override_before_transport(
-    diagnostic_kind: str,
-) -> None:
-    transport_called = False
+def test_run_live_concurrency_diagnostics_structured_small_pair_allows_max_tokens_override() -> (
+    None
+):
+    payloads: list[dict[str, object]] = []
 
-    def forbidden_transport(*_args, **_kwargs):
-        nonlocal transport_called
-        transport_called = True
-        raise AssertionError("transport should not be called for invalid max_tokens override")
+    def fake_transport(
+        url: str,
+        payload: dict[str, object],
+        timeout_s: float,
+    ) -> dict[str, object]:
+        assert url == "http://127.0.0.1:1234/v1/chat/completions"
+        assert timeout_s == 30.0
+        payloads.append(payload)
+        return {
+            "choices": [
+                {
+                    "finish_reason": "length",
+                    "message": {"content": _valid_blocks_json()},
+                }
+            ],
+            "usage": {"prompt_tokens": 44, "completion_tokens": 1024, "total_tokens": 1068},
+        }
 
-    kwargs = {
-        "base_url": "http://127.0.0.1:1234",
-        "model_id": "placeholder/local-model",
-        "model_key": "local_placeholder",
-        "run_id": f"diag-{diagnostic_kind}-override-rejected",
-        "diagnostic_kind": diagnostic_kind,
-        "app_concurrency": 1,
-        "transport": forbidden_transport,
-        "max_tokens_override": 768,
-    }
-    if diagnostic_kind == "medium_pair":
-        kwargs["verified_context_length"] = 8192
+    outcome = lmstudio_lab.run_live_concurrency_diagnostics(
+        base_url="http://127.0.0.1:1234",
+        model_id="placeholder/local-model",
+        model_key="local_placeholder",
+        run_id="diag-structured-small-max-tokens",
+        diagnostic_kind="structured_small_pair",
+        app_concurrency=1,
+        loaded_parallel=1,
+        transport=fake_transport,
+        max_tokens_override=1024,
+    )
 
-    with pytest.raises(
-        ValueError,
-        match="max_tokens_override is supported only for plain-text concurrency diagnostics",
-    ):
-        lmstudio_lab.run_live_concurrency_diagnostics(**kwargs)
+    assert len(payloads) == 2
+    assert all(payload["max_tokens"] == 1024 for payload in payloads)
+    assert all(metric.max_tokens == 1024 for metric in outcome.metrics)
+    assert all(metric.validation.finish_reason == "length" for metric in outcome.metrics)
+    assert outcome.summary["max_tokens"] == 1024
+    assert outcome.summary["max_tokens_override"] == 1024
 
-    assert transport_called is False
+
+def test_run_live_concurrency_diagnostics_medium_pair_uses_override_for_context_fit_and_payload() -> (
+    None
+):
+    payloads: list[dict[str, object]] = []
+
+    def fake_transport(
+        _url: str,
+        payload: dict[str, object],
+        _timeout_s: float,
+    ) -> dict[str, object]:
+        payloads.append(payload)
+        return {
+            "choices": [
+                {
+                    "finish_reason": "stop",
+                    "message": {"content": _valid_blocks_json()},
+                }
+            ],
+            "usage": {"prompt_tokens": 64, "completion_tokens": 20, "total_tokens": 84},
+        }
+
+    outcome = lmstudio_lab.run_live_concurrency_diagnostics(
+        base_url="http://127.0.0.1:1234",
+        model_id="placeholder/local-model",
+        model_key="local_placeholder",
+        run_id="diag-medium-pair-max-tokens",
+        diagnostic_kind="medium_pair",
+        app_concurrency=1,
+        loaded_parallel=1,
+        verified_context_length=8192,
+        transport=fake_transport,
+        max_tokens_override=1024,
+    )
+
+    assert len(payloads) == 2
+    assert all(payload["max_tokens"] == 1024 for payload in payloads)
+    assert all(metric.max_tokens == 1024 for metric in outcome.metrics)
+    assert outcome.summary["max_tokens"] == 1024
+    assert outcome.summary["max_tokens_override"] == 1024
 
 
 def test_run_live_concurrency_diagnostics_marks_queue_pressure_mode_when_opted_in() -> None:
@@ -7155,6 +7206,7 @@ def test_cli_probe_concurrency_writes_safe_artifacts(
     environment_payload = json.loads((run_dir / "environment.json").read_text(encoding="utf-8"))
     assert environment_payload["loaded_parallel"] == 2
     assert environment_payload["allow_queue_pressure"] is False
+    assert environment_payload["max_tokens"] == 768
     assert environment_payload["max_tokens_override"] == 768
 
 
@@ -7225,38 +7277,6 @@ def test_cli_probe_concurrency_writes_safe_artifacts(
             ],
             "--max-tokens must be a positive integer",
             id="non_positive_max_tokens",
-        ),
-        pytest.param(
-            [
-                "probe-concurrency",
-                "--model-id",
-                "placeholder/local-model",
-                "--kind",
-                "structured_small_pair",
-                "--loaded-parallel",
-                "1",
-                "--max-tokens",
-                "768",
-            ],
-            "--max-tokens override is supported only for plain_text_pair, plain_text_artifacts, plain_text_artifacts_normalized",
-            id="structured_override_rejected",
-        ),
-        pytest.param(
-            [
-                "probe-concurrency",
-                "--model-id",
-                "placeholder/local-model",
-                "--kind",
-                "medium_pair",
-                "--loaded-parallel",
-                "1",
-                "--verified-context-length",
-                "8192",
-                "--max-tokens",
-                "768",
-            ],
-            "--max-tokens override is supported only for plain_text_pair, plain_text_artifacts, plain_text_artifacts_normalized",
-            id="medium_override_rejected",
         ),
     ],
 )

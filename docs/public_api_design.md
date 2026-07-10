@@ -62,7 +62,7 @@ Planned concepts:
 - `ImageInput` — image metadata reference with hash, dimensions, and declared source type.
 - `ChatMessage` — role/content message unit.
 - `ResponseContract` — structured or non-structured expectation.
-- `ExecutionOptions` — model, endpoint family, timeout, context tier, temperature, and retry policy.
+- `ExecutionOptions` — model, endpoint family, timeout, context tier, max tokens, temperature, and retry policy.
 - `RequestPlan` — executable plan produced from config and datasets.
 - `RequestResult` — privacy-safe execution result envelope.
 

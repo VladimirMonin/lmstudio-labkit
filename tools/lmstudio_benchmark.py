@@ -2623,6 +2623,7 @@ def _build_concurrency_probe_environment_payload(
     payload["loaded_parallel"] = loaded_parallel
     payload["allow_queue_pressure"] = allow_queue_pressure
     payload["timeout_s"] = timeout_s
+    payload["max_tokens"] = max_tokens_override
     payload["max_tokens_override"] = max_tokens_override
     payload["context_fit_safety_ratio"] = context_fit_safety_ratio
     payload["raw_prompt_response_stored"] = False
@@ -3179,11 +3180,6 @@ def _run_probe_concurrency(args: argparse.Namespace) -> int:
         raise ValueError("--app-concurrency must be between 1 and 2")
     if args.kind == "medium_pair" and args.verified_context_length is None:
         raise ValueError("--verified-context-length is required for --kind medium_pair")
-    if args.max_tokens is not None and args.kind in {"structured_small_pair", "medium_pair"}:
-        raise ValueError(
-            "--max-tokens override is supported only for plain_text_pair, "
-            "plain_text_artifacts, plain_text_artifacts_normalized"
-        )
     if args.loaded_parallel is not None and (
         isinstance(args.loaded_parallel, bool)
         or not isinstance(args.loaded_parallel, int)

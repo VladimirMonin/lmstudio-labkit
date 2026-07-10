@@ -174,6 +174,7 @@ class ExecutionOptions:
     model_id: str
     endpoint_family: str = "openai_compat"
     context_tier: str = "8192"
+    max_tokens: int | None = None
     temperature: float = 0.0
     timeout_s: float = 30.0
     retry_policy: Literal["off", "retry1"] = "off"
@@ -184,6 +185,7 @@ class ExecutionOptions:
             "model_id": self.model_id,
             "endpoint_family": self.endpoint_family,
             "context_tier": self.context_tier,
+            "max_tokens": self.max_tokens,
             "temperature": self.temperature,
             "timeout_s": self.timeout_s,
             "retry_policy": self.retry_policy,

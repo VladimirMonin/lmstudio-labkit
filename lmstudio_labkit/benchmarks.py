@@ -296,6 +296,7 @@ class MatrixCell:
             model_id=self.model.model_id,
             endpoint_family=self.model.endpoint_family,
             context_tier=self.axes.get("context_tier", "8192"),
+            max_tokens=_positive_int_axis(self.axes.get("max_tokens")),
             timeout_s=_positive_float_axis(self.axes.get("request_timeout_s"), 30.0),
             retry_policy="retry1" if self.axes.get("retry_policy") == "retry1" else "off",
             live=False,
@@ -372,6 +373,7 @@ def _build_matrix_plan(config: BenchmarkConfig) -> MatrixPlan:
         ("execution_target", lambda task: ("local_managed",)),
         ("resource_telemetry_mode", lambda task: ("full",)),
         ("request_timeout_s", lambda task: ("30",)),
+        ("max_tokens", lambda task: ("none",)),
     )
     for model in config.models:
         for task in config.tasks:
@@ -854,6 +856,7 @@ def _row_from_execution(
         "task_id": cell.task.task_id,
         "axes": cell.axes,
         "request": request_plan.envelope.safe_metadata(),
+        "options": request_plan.options.safe_metadata(),
         "result": result.safe_metadata(),
         "validation": validation.to_dict(),
         "input_char_count": input_char_count,
@@ -936,6 +939,7 @@ def run_live_small_text_screening(
                 "task_id": cell.task.task_id,
                 "axes": cell.axes,
                 "request": request_plan.envelope.safe_metadata(),
+                "options": request_plan.options.safe_metadata(),
                 "result": result.safe_metadata(),
                 "validation": validation.to_dict(),
                 "input_char_count": input_char_count,
@@ -1381,6 +1385,7 @@ def _with_live_execution(plan: RequestPlan) -> RequestPlan:
             model_id=plan.options.model_id,
             endpoint_family=plan.options.endpoint_family,
             context_tier=plan.options.context_tier,
+            max_tokens=plan.options.max_tokens,
             temperature=plan.options.temperature,
             timeout_s=plan.options.timeout_s,
             retry_policy=plan.options.retry_policy,
@@ -1415,6 +1420,21 @@ def _positive_float_axis(value: Any, default: float) -> float:
     except (TypeError, ValueError):
         return default
     return parsed if parsed > 0 else default
+
+
+def _positive_int_axis(value: Any) -> int | None:
+    if value is None:
+        return None
+    normalized = str(value).strip().casefold()
+    if normalized in {"", "none", "off", "null"}:
+        return None
+    try:
+        parsed = int(normalized)
+    except (TypeError, ValueError):
+        raise ValueError("max_tokens axis must be a positive integer or 'none'") from None
+    if parsed <= 0:
+        raise ValueError("max_tokens axis must be a positive integer or 'none'")
+    return parsed
 
 
 def _metadata_mode(value: Any) -> str:

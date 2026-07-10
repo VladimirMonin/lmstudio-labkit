@@ -138,6 +138,7 @@ def _write_cell_summary(
         "structure_complexity",
         "volume",
         "context_tier",
+        "max_tokens",
         "schema_variant",
         "retry_policy",
         "execution_mode",
@@ -272,6 +273,7 @@ def _write_model_summary(
 
 def _cell_summary_row(row: dict[str, Any]) -> dict[str, Any]:
     axes: dict[str, Any] = row["axes"] if isinstance(row.get("axes"), dict) else {}
+    options: dict[str, Any] = row["options"] if isinstance(row.get("options"), dict) else {}
     result: dict[str, Any] = row["result"] if isinstance(row.get("result"), dict) else {}
     token_counts = (
         result.get("token_counts") if isinstance(result.get("token_counts"), dict) else {}
@@ -296,6 +298,7 @@ def _cell_summary_row(row: dict[str, Any]) -> dict[str, Any]:
         "structure_complexity": axes.get("structure_complexity"),
         "volume": axes.get("volume"),
         "context_tier": axes.get("context_tier"),
+        "max_tokens": options.get("max_tokens") or axes.get("max_tokens"),
         "schema_variant": axes.get("schema_variant"),
         "retry_policy": axes.get("retry_policy"),
         "execution_mode": axes.get("execution_mode"),

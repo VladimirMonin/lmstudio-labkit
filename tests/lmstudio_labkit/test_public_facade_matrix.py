@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
 import yaml
 from lmstudio_labkit.benchmarks import plan_matrix
 from lmstudio_labkit.cli import main as cli_main
@@ -56,6 +57,7 @@ def sample_config() -> dict:
             "structure_complexity": ["simple"],
             "volume": ["single"],
             "context_tier": ["8192", "16384"],
+            "max_tokens": ["1024"],
             "schema_variant": ["baseline_loose", "hardened_const"],
             "retry_policy": ["off", "retry1"],
         },
@@ -81,7 +83,18 @@ def test_matrix_planner_expands_config_axes() -> None:
 
     assert len(plan.cells) == 16
     assert {cell.axes["context_tier"] for cell in plan.cells} == {"8192", "16384"}
+    assert {cell.axes["max_tokens"] for cell in plan.cells} == {"1024"}
+    assert {cell.to_request_plan().options.max_tokens for cell in plan.cells} == {1024}
     assert {cell.axes["retry_policy"] for cell in plan.cells} == {"off", "retry1"}
+
+
+def test_matrix_planner_rejects_invalid_max_tokens_axis() -> None:
+    config_payload = sample_config()
+    config_payload["axes"]["max_tokens"] = ["0"]
+    config = BenchmarkConfig.from_dict(config_payload)
+
+    with pytest.raises(ValueError, match="max_tokens axis"):
+        plan_matrix(config).cells[0].to_request_plan()
 
 
 def test_fake_runner_writes_privacy_safe_artifacts(tmp_path: Path) -> None:
@@ -103,6 +116,11 @@ def test_fake_runner_writes_privacy_safe_artifacts(tmp_path: Path) -> None:
         for path in artifacts.as_dict().values()
         if Path(path).is_file()
     )
+    first_cell = json.loads(artifacts.cell_results.read_text(encoding="utf-8").splitlines()[0])
+    cell_summary_text = artifacts.cell_summary.read_text(encoding="utf-8")
+    assert first_cell["options"]["max_tokens"] == 1024
+    assert ",max_tokens," in cell_summary_text.splitlines()[0]
+    assert ",1024," in cell_summary_text
     assert "private-free fixture" not in artifact_text
     assert "raw_response" not in artifact_text
     privacy_scan = json.loads(artifacts.privacy_scan.read_text(encoding="utf-8"))
