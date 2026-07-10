@@ -1,8 +1,8 @@
 # L3.31-L3.36 Gemma Admission Matrix
 
-Status: updated after L3.31b forensics, L3.33b source application cache evidence import, and L3.34.1 vision repair probe.
+Status: updated after L3.31b forensics, L3.33b source application cache evidence import, recorder-safe max-token support, Context7/code evidence, and L3.34.1 vision repair investigation.
 
-Timestamp: 2026-07-10T10:27:39+05:00
+Timestamp: 2026-07-10T11:13:04+05:00
 
 Legend:
 
@@ -72,7 +72,7 @@ E4B: all 3 L3.31a 16k cells passed
 26B: not_run
 ```
 
-The 12B failure is not broad 16k context degradation by current evidence; it is `12B + blocks + 16k` specific.
+The 12B failure is not broad 16k context degradation by current evidence; it is `12B + blocks + 16k` specific. Follow-up implementation work added recorder-safe explicit `max_tokens` support to LabKit request plans, but that only repairs the offline contract gap. It does not retroactively admit the failed 12B cell; admission still requires a fresh capped live result with durable sanitized recorder output.
 
 ### Cache/session
 
@@ -93,6 +93,7 @@ L3.33b source application import changes the interpretation, not the model resul
 warmup_first_requires: session_loaded_or_owner_loaded_model
 cold_per_request_plus_warmup_first: invalid_shape
 cached_tokens: telemetry_if_reported_not_proof_by_itself
+max_tokens: must_be_explicit_for_repair_or_admission_runs
 ```
 
 ### Vision
@@ -114,6 +115,8 @@ status: blocked
 ```
 
 Because Phase 1 failed, minimal JSON, simple_description, and other models were not run. No Gemma model is eligible for L3.35.
+
+Follow-up Context7/code research classifies the next image repair as a route/envelope question first: native `/api/v1/chat` with `input` text/image `data_url` items and `output[]` extraction should be tested before repeating the same OpenAI-compatible image payload with a larger cap. No such native route canary is admitted here.
 
 ## Final admission decision
 
@@ -139,5 +142,8 @@ cache_session:
   kv_reuse_proven: false
 vision:
   eligible_for_l3_35: []
-  blocked_reason: E4B plain text image sanity failed with finish_length_empty_content
+  blocked_reason: no non-empty plain-text or JSON/schema-pass image route evidence
+next_repair_gates:
+  - 12B 16k blocks capped rerun with durable recorder output
+  - native /api/v1/chat image route canary before any L3.35 matrix
 ```
