@@ -35,4 +35,15 @@ Because Phase 1 failed, the repair sequence stopped. Minimal JSON, simple_descri
 l3_35_eligible_models: []
 ```
 
+## Follow-up investigation summary
+
+No new live image request was run for the follow-up investigation. Current LM Studio docs point to a more specific next repair path than increasing the same `max_tokens` cap:
+
+- first try native `POST /api/v1/chat` with `input` items `{type: text, content: ...}` and `{type: image, data_url: data:image/png;base64,...}`;
+- extract text from the native `output[]` response envelope rather than `choices[].message.content`;
+- use the native `max_output_tokens` cap for that route;
+- keep the next rerun to E4B + `ui_settings_ru_001` + plain text only, with an optional same-route 512-token retry only if the 128-token native probe is still empty/length-limited.
+
+L3.35 stays blocked until a native/plain-text image route returns non-empty output and cleanup final zero.
+
 No raw prompt/response text is stored here.
