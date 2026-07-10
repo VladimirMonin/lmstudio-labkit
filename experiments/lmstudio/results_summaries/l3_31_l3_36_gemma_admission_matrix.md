@@ -99,6 +99,8 @@ The bounded L3.37 staircase used the exact installed
 `reasoning: off/on` with default `on`. It produced 12 privately retained attempts
 and a sanitized companion summary:
 
+Canonical public evidence pack: [L3.37 Gemma 12B reasoning and output-budget evidence](l3_37_gemma_12b_reasoning_output_budget/report.md).
+
 ```yaml
 native_reasoning_off:
   8192: schema_valid_at_1024

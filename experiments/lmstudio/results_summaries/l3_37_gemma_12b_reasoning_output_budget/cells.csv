@@ -1,0 +1,13 @@
+cell_id,route,context_tier,reasoning_mode,output_cap,total_output_tokens,reasoning_output_tokens,message_char_count,parse_schema_status,classification,finish_reason,cleanup_verified,final_loaded_count
+native-01,/api/v1/chat,8192,off,1024,35,0,102,schema_valid,accepted_first_sufficient_cap,,true,0
+native-02,/api/v1/chat,8192,on,1024,1024,1021,0,empty,reasoning_dominant_cap_exhaustion_escalate_once,,true,0
+native-03,/api/v1/chat,16384,off,1024,35,0,102,schema_valid,accepted_first_sufficient_cap,,true,0
+native-04,/api/v1/chat,16384,on,1024,1024,1021,0,empty,reasoning_dominant_cap_exhaustion_escalate_once,,true,0
+native-05,/api/v1/chat,8192,on,2048,2048,2045,0,empty,reasoning_dominant_cap_exhaustion_escalate_once,,true,0
+native-06,/api/v1/chat,16384,on,2048,2048,2045,0,empty,reasoning_dominant_cap_exhaustion_escalate_once,,true,0
+native-07,/api/v1/chat,8192,on,3072,3072,3069,0,empty,reasoning_dominant_cap_exhaustion_escalate_once,,true,0
+native-08,/api/v1/chat,16384,on,3072,3072,3069,0,empty,reasoning_dominant_cap_exhaustion_escalate_once,,true,0
+native-09,/api/v1/chat,8192,on,4096,4096,4093,0,empty,reasoning_dominant_cap_exhaustion_no_rescue_le_4096,,true,0
+native-10,/api/v1/chat,16384,on,4096,4096,4093,0,empty,reasoning_dominant_cap_exhaustion_no_rescue_le_4096,,true,0
+strict-01,/v1/chat/completions,8192,not_exposed_in_tested_route,1024,1024,,0,empty,strict_json_invalid,length,true,0
+strict-02,/v1/chat/completions,16384,not_exposed_in_tested_route,1024,1024,,0,empty,strict_json_invalid,length,true,0

@@ -1,0 +1,138 @@
+{
+  "schema_version": "lmstudio-labkit-l337-public-report-v1",
+  "experiment_id": "l3_37_gemma_12b_reasoning_output_budget",
+  "evidence_scope": "single blocks JSON task on one exact 12B model variant and two routes",
+  "source": {
+    "sanitized_companion": "experiments/lmstudio/live_runs/t_4b30753d/sanitized_task_summary.json",
+    "sanitized_companion_sha256": "8d83f83dbabf5ba5a6cb07baaf0fba39fc8bc3044c9299d15c6f707c615ee89e",
+    "source_live_task": "t_4b30753d",
+    "prompt_sha256": "058e8cdd19b3d9d2d55127821db045c4a4ef39e2a28abed4452a3b2ff8d77da9",
+    "schema_sha256": "ff3690e2c024a4b5ecdd5c2eb2772adbf1d5a5f732b5fad920e857ef4201a47f",
+    "raw_payloads_in_report_pack": false
+  },
+  "model": {
+    "id": "google/gemma-4-12b-qat",
+    "reasoning_allowed_options": [
+      "off",
+      "on"
+    ],
+    "reasoning_default": "on"
+  },
+  "execution": {
+    "contexts": [
+      8192,
+      16384
+    ],
+    "caps": [
+      1024,
+      2048,
+      3072,
+      4096
+    ],
+    "native_cells": 10,
+    "strict_cells": 2,
+    "total_cells": 12,
+    "parallelism": 1,
+    "retries": "off"
+  },
+  "native_results": {
+    "reasoning_off": {
+      "8192": {
+        "first_sufficient_cap": 1024,
+        "total_output_tokens": 35,
+        "reasoning_output_tokens": 0,
+        "parse_schema_status": "schema_valid"
+      },
+      "16384": {
+        "first_sufficient_cap": 1024,
+        "total_output_tokens": 35,
+        "reasoning_output_tokens": 0,
+        "parse_schema_status": "schema_valid"
+      }
+    },
+    "reasoning_on": {
+      "8192": {
+        "tested_caps": [
+          1024,
+          2048,
+          3072,
+          4096
+        ],
+        "reasoning_output_tokens": [
+          1021,
+          2045,
+          3069,
+          4093
+        ],
+        "message_char_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "classification": "reasoning_dominant_cap_exhaustion_no_rescue_le_4096"
+      },
+      "16384": {
+        "tested_caps": [
+          1024,
+          2048,
+          3072,
+          4096
+        ],
+        "reasoning_output_tokens": [
+          1021,
+          2045,
+          3069,
+          4093
+        ],
+        "message_char_counts": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "classification": "reasoning_dominant_cap_exhaustion_no_rescue_le_4096"
+      }
+    },
+    "context_interaction_supported": false
+  },
+  "strict_route_results": {
+    "route": "/v1/chat/completions",
+    "cells": 2,
+    "contexts": [
+      8192,
+      16384
+    ],
+    "cap": 1024,
+    "completion_tokens_each": 1024,
+    "finish_reason_each": "length",
+    "message_char_count_each": 0,
+    "parse_schema_status_each": "empty",
+    "classification": "strict_route_default_reasoning_interaction_underdetermined"
+  },
+  "safety": {
+    "cleanup_verified_cells": 12,
+    "cleanup_failures": 0,
+    "final_global_loaded_count": 0,
+    "raw_prompt_response_reasoning_in_report_pack": false
+  },
+  "conclusion": "For the tested native 12B blocks JSON conditions, valid visible JSON required reasoning off. This is route-, task-, model-, and configuration-specific evidence, not an all-task or all-model claim.",
+  "future_work": {
+    "source_research_task": "t_465d99eb",
+    "status": "proposed_not_executed",
+    "model": "google/gemma-4-26b-a4b-qat",
+    "route": "/api/v1/chat",
+    "maximum_cells": 4,
+    "contexts": [
+      8192,
+      16384
+    ],
+    "reasoning_modes": [
+      "off",
+      "on"
+    ],
+    "output_cap": 1024,
+    "conditional_16k": true,
+    "execution_policy": "sequential cold-load cells with per-cell cleanup and final zero verification"
+  }
+}

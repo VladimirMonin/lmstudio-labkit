@@ -1,0 +1,24 @@
+{
+  "schema_version": "lmstudio-labkit-public-report-privacy-v1",
+  "scan_scope": "l3_37_gemma_12b_reasoning_output_budget_public_pack",
+  "scanned_artifacts": [
+    "report.md",
+    "summary.json",
+    "cells.csv"
+  ],
+  "checks": [
+    "absolute_home_path",
+    "temporary_path",
+    "hermes_private_data",
+    "base_url",
+    "credential_assignment"
+  ],
+  "raw_prompt_response_reasoning_stored": false,
+  "private_path_stored": false,
+  "username_stored": false,
+  "credentials_stored": false,
+  "base_url_stored": false,
+  "hermes_data_stored": false,
+  "violation_count": 0,
+  "status": "pass"
+}
