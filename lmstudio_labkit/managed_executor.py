@@ -845,6 +845,7 @@ class LocalLMStudioHostRunner:
         request_id: str = "native-diagnostic",
         attempt_index: int = 1,
         context_length: int = 8192,
+        image_data_url: str | None = None,
     ) -> NativeChatDiagnosticResult:
         """Run one explicitly enabled native reasoning diagnostic request.
 
@@ -877,6 +878,13 @@ class LocalLMStudioHostRunner:
             reasoning=reasoning,
         )
         native_input, system_prompt = _native_input_from_messages(messages)
+        if image_data_url is not None:
+            if not image_data_url.startswith("data:image/"):
+                raise ManagedExecutorError("native diagnostic image must be an image data URL")
+            native_input = [
+                {"type": "text", "content": native_input},
+                {"type": "image", "data_url": image_data_url},
+            ]
         payload: dict[str, object] = {
             "model": model_id,
             "input": native_input,
@@ -1040,6 +1048,32 @@ class LocalLMStudioHostRunner:
     def count_loaded_instances(self, *, model_id: str) -> int | None:
         instance_ids = self._loaded_instance_ids(model_id=model_id)
         return None if instance_ids is None else len(instance_ids)
+
+    def count_all_loaded_instances(self) -> int | None:
+        response = self._request_json("/api/v1/models", None, self.default_timeout_s)
+        models = response.get("models", response.get("data"))
+        if not isinstance(models, Sequence) or isinstance(models, (str, bytes, bytearray)):
+            return None
+        total = 0
+        for item in models:
+            if not isinstance(item, Mapping):
+                continue
+            loaded = item.get("loaded_instances", item.get("instances"))
+            if isinstance(loaded, Sequence) and not isinstance(loaded, (str, bytes, bytearray)):
+                total += len(loaded)
+            elif item.get("loaded") is True or item.get("state") == "loaded":
+                total += 1
+        return total
+
+    def model_metadata(self, *, model_id: str) -> Mapping[str, object] | None:
+        response = self._request_json("/api/v1/models", None, self.default_timeout_s)
+        models = response.get("models", response.get("data"))
+        if not isinstance(models, Sequence) or isinstance(models, (str, bytes, bytearray)):
+            return None
+        matches = [
+            item for item in models if isinstance(item, Mapping) and item.get("key") == model_id
+        ]
+        return matches[0] if len(matches) == 1 else None
 
     def _loaded_instance_ids(self, *, model_id: str) -> list[str] | None:
         response = self._request_json("/api/v1/models", None, self.default_timeout_s)

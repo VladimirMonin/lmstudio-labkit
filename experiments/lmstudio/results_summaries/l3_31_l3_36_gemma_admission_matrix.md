@@ -1,8 +1,8 @@
-# L3.31-L3.37 Gemma Admission Matrix
+# L3.31-L3.38 Gemma Admission Matrix
 
-Status: reconciled after the bounded L3.37 12B reasoning/output-cap diagnostic. Family closure remains partial, not green.
+Status: reconciled after the bounded L3.38 reasoning-off follow-up. Family closure remains partial, not green.
 
-Timestamp: 2026-07-10T20:19:01+05:00
+Timestamp: 2026-07-10T22:15:00+05:00
 
 Legend:
 
@@ -18,9 +18,9 @@ Legend:
 | model | 8192_transcript_cleanup | 8192_structured_simple | 8192_structured_blocks | 8192_complex | 16k_transcript_cleanup | 16k_structured_simple | 16k_structured_blocks | cache_session | vision_plain | vision_min_json | vision_simple_description | status | blocked_reason |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `google/gemma-4-e2b` | accepted | accepted | accepted | accepted | accepted | accepted | accepted | not_run | not_run | not_run | not_run | accepted_text_json_only | vision not run after the required E4B native minimal-JSON gate failed; cache not run for E2B |
-| `google/gemma-4-e4b` | accepted | accepted | accepted | accepted | accepted | accepted | accepted | accepted_narrow | accepted_native_narrow | blocked | blocked | partial | native `/api/v1/chat` plain text passed for one asset; minimal JSON failed malformed without truncation; no KV reuse proof for cache despite cache_session quality pass |
-| `google/gemma-4-12b-qat` | accepted | accepted | accepted_native_reasoning_off_narrow | blocked | accepted | accepted | accepted_native_reasoning_off_narrow | blocked_research_only | not_run | not_run | not_run | partial_route_specific | L3.37 native reasoning-off produced schema-valid blocks JSON at 1024 for both contexts, but reasoning-on exhausted every cap through 4096 and the strict route remained empty/length-capped; complex and cache/session remain blocked |
-| `google/gemma-4-26b-a4b-qat` | accepted_controlled_transcript_only | not_run | not_run | not_run | not_run | not_run | not_run | not_run | not_run | not_run | not_run | research_only_limited | only controlled transcript baseline evidence from earlier 8192 scope; excluded from L3.31a/L3.32a/L3.33a and not run after the E4B native minimal-JSON gate failed |
+| `google/gemma-4-e4b` | accepted | accepted | accepted | accepted | accepted | accepted | accepted | accepted_narrow | accepted_native_narrow | blocked | blocked | partial | L3.38 accepted native image transport and text-only minimal JSON with reasoning off, but the image JSON returned the wrong grounded boolean; no KV reuse proof |
+| `google/gemma-4-12b-qat` | accepted | accepted | accepted_native_reasoning_off_narrow | blocked | accepted | accepted | accepted_native_reasoning_off_narrow | blocked_research_only | not_run | not_run | not_run | partial_route_specific | L3.38 repeated-context reasoning-off showed timing effects but 0/6 strict-valid outputs; strict-route reasoning disable remains unproven and generated zero confirmation rows |
+| `google/gemma-4-26b-a4b-qat` | accepted_controlled_transcript_only | not_run | accepted_native_canary | not_run | not_run | not_run | accepted_native_canary | not_run | not_run | not_run | not_run | research_only_limited | L3.38 native blocks canary passed 4/4 at 8192/16384 with reasoning off/on; reasoning off preserved the answer with substantially lower measured overhead, but broader admission remains blocked |
 
 ## Evidence notes
 
@@ -147,11 +147,11 @@ cached_tokens: telemetry_if_reported_not_proof_by_itself
 max_tokens: must_be_explicit_for_repair_or_admission_runs
 ```
 
-The focused 12B repeated-context follow-up at 16384 also remained blocked. A
-reduced exact-repeat/stable-prefix comparison showed 62.08x and 1.58x timing
-improvements respectively, but all six outputs were length-limited at the
-128-token cap and runtime `cached_tokens` accounting was unavailable. This is
-timing-only research evidence, not KV-reuse or cache-benefit proof.
+The L3.38 focused 12B repeated-context follow-up at 16384 also remained blocked.
+With native reasoning off and a 1024-token cap, exact-repeat and stable-prefix
+comparisons showed 4.985x and 4.392x first-to-warm latency ratios respectively,
+but all six outputs leaked Markdown fences and failed strict local JSON parsing.
+This is timing-only research evidence, not KV-reuse or cache-benefit proof.
 
 ### Vision
 
@@ -179,6 +179,38 @@ JSON, so the adaptive policy correctly stopped after one 256-token stage and
 the tiny screening gate was skipped. Native plain text is accepted narrowly;
 structured vision and L3.35 remain blocked.
 
+L3.38 then retried the smallest reasoning-off chain. Plain text and text-only
+minimal JSON passed. The image request returned valid, non-truncated JSON, which
+accepts image transport but not understanding: its grounded boolean contradicted
+the verified fixture. Structured vision therefore remains blocked for quality,
+not for route transport or output-budget exhaustion.
+
+### L3.38 reasoning-off follow-up
+
+Canonical public evidence pack: [L3.38 reasoning-off follow-up](l3_38_reasoning_off_followup/report.md).
+
+```yaml
+generation_cells: 13
+http_200_terminal: 13
+private_records: 13
+cleanup_verified: 13
+final_global_loaded_count: 0
+26b_native_blocks:
+  8192: off_and_on_schema_valid
+  16384: off_and_on_schema_valid
+  recommendation: reasoning_off_for_this_exact_task
+e4b_native_vision:
+  text_minimal_json: accepted
+  image_transport: accepted
+  image_grounding: blocked_incorrect_boolean
+12b_native_repeated_context:
+  valid_rows: 0_of_6
+  decision: research_only
+12b_openai_strict_json:
+  generation_rows: 0
+  decision: blocked_route_contract_underdetermined
+```
+
 ## Final admission decision
 
 ```yaml
@@ -203,19 +235,26 @@ structured_json:
       native_reasoning_off_blocks: accepted_narrow_at_8192_and_16384
       native_reasoning_on_blocks: reasoning_dominant_no_rescue_le_4096
       openai_strict_blocks: blocked_empty_length_at_1024
+    google/gemma-4-26b-a4b-qat:
+      native_blocks_canary_8192: accepted_off_and_on
+      native_blocks_canary_16384: accepted_off_and_on
+      recommended_reasoning_for_exact_task: off
+      broader_structured_admission: blocked
 cache_session:
   accepted_narrow:
     - google/gemma-4-e4b
   blocked:
-    - google/gemma-4-12b-qat
+    - google/gemma-4-12b-qat; L3.38 reasoning-off rerun remained 0/6 strict-valid
   kv_reuse_proven: false
 vision:
   eligible_for_l3_35: []
   native_plain_text_accepted_narrow:
     - google/gemma-4-e4b one-asset gate
-  blocked_reason: native minimal JSON failed malformed without truncation
+  image_transport_accepted_narrow:
+    - google/gemma-4-e4b one-asset reasoning-off gate
+  blocked_reason: L3.38 image JSON was valid and non-truncated but grounded the verified fixture incorrectly
 next_repair_gates:
-  - expose and verify an explicit reasoning-off contract for the production structured route, or keep the native reasoning-off path isolated as a narrow fallback
+  - expose and verify an explicit reasoning-off contract for the OpenAI-compatible structured route, or keep the native reasoning-off path isolated as a narrow fallback
   - do not broaden 12B complex JSON from the blocks-only L3.37 result
-  - repair native minimal JSON before any L3.35 matrix
+  - repair E4B image grounding before any L3.35 matrix
 ```

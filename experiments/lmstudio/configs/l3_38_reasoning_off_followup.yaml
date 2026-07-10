@@ -1,0 +1,122 @@
+schema_version: lmstudio-labkit-l338-followup-v1
+experiment_id: l3_38_reasoning_off_followup
+execution:
+  serial_only: true
+  parallel: 1
+  retries: "off"
+  temperature: 0
+  private_forensics_required: true
+  private_forensics_must_be_external: true
+  global_loaded_count_required_between_phases: 0
+  allow_model_downloads: false
+  allow_raw_artifacts_in_git: false
+  remote_resource_telemetry: timing_only
+output:
+  sanitized_root: experiments/lmstudio/live_runs/l3_38_reasoning_off_followup
+  private_path_in_summary: false
+contracts:
+  blocks:
+    prompt: >-
+      Return JSON only. Do not use Markdown or add explanations. Return exactly
+      {"blocks":[{"id":0,"text":"первый блок"},{"id":1,"text":"второй блок"},{"id":2,"text":"третий блок"}]}.
+      Preserve every id and the order. Do not merge, split, delete, duplicate, or reorder blocks.
+    schema:
+      type: object
+      required: [blocks]
+      additionalProperties: false
+      properties:
+        blocks:
+          type: array
+          minItems: 3
+          maxItems: 3
+          items:
+            type: object
+            required: [id, text]
+            additionalProperties: false
+            properties:
+              id: {type: integer}
+              text: {type: string, minLength: 1}
+  tiny_marker:
+    schema:
+      type: object
+      required: [marker, status, warnings]
+      additionalProperties: false
+      properties:
+        marker: {type: string}
+        status: {type: string, const: ok}
+        warnings:
+          type: array
+          maxItems: 0
+          items: {type: string}
+phases:
+  moe_8k:
+    model_id: google/gemma-4-26b-a4b-qat
+    context_length: 8192
+    route: /api/v1/chat
+    reasoning_modes: ["off", "on"]
+    max_output_tokens: 1024
+    lifecycle: cold_per_cell
+    expected_rows: 2
+    next_phase: moe_16k
+    next_phase_condition: interpretable_pair
+  moe_16k:
+    model_id: google/gemma-4-26b-a4b-qat
+    context_length: 16384
+    route: /api/v1/chat
+    reasoning_modes: ["off", "on"]
+    max_output_tokens: 1024
+    lifecycle: cold_per_cell
+    expected_rows: 2
+    requires_prior_phase: moe_8k
+    prior_phase_condition: interpretable_pair
+  e4b_vision:
+    model_id: google/gemma-4-e4b
+    context_length: 8192
+    route: /api/v1/chat
+    reasoning: "off"
+    max_output_tokens: 1024
+    image_fixture: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/fixtures/ui_settings_ru_001.webp
+    image_sha256: 8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d
+    lifecycle: cold_per_gate
+    gate_order: [text_route_preflight, text_minimal_json, image_minimal_json]
+    stop_on_first_failed_gate: true
+    expected_rows_maximum: 3
+  repeated_context_12b:
+    model_id: google/gemma-4-12b-qat
+    context_length: 16384
+    route: /api/v1/chat
+    reasoning: "off"
+    max_output_tokens: 1024
+    lifecycle: loaded_session_per_comparison
+    comparison_order: [exact_same_input, stable_prefix_dynamic_suffix]
+    requests_per_comparison: 3
+    expected_rows: 6
+    store_server_conversation: false
+    interpretation: timing_and_response_quality_only
+    kv_reuse_claim_allowed: false
+    memory_claim_allowed_over_remote_link: false
+  strict_json_investigation:
+    model_id: google/gemma-4-12b-qat
+    context_length: 8192
+    route: /v1/chat/completions
+    max_tokens: 1024
+    response_format: json_schema
+    request_reasoning_control: unavailable_unproven
+    probe_enabled: false
+    expected_rows: 0
+    blocked_reason: >-
+      The OpenAI-compatible request contract has no separately proven reasoning-off
+      control, so a generation probe is disabled. Read-only route-contract investigation
+      is allowed; enabling a probe requires a new explicit contract and review.
+stop_conditions:
+  - any pre-phase global loaded count is not zero
+  - exact model capability metadata does not advertise the requested reasoning mode
+  - load materialization is not exactly one target instance
+  - HTTP or runtime failure
+  - private forensic capture is unavailable
+  - cleanup is not verified
+  - any post-phase global loaded count is not zero
+  - moe_16k is requested without an interpretable moe_8k summary
+  - vision text route preflight fails
+  - vision text minimal JSON is malformed or schema-invalid without truncation evidence
+  - strict JSON generation remains disabled while reasoning-off is unproven

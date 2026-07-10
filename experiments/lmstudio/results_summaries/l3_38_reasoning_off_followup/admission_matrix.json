@@ -1,0 +1,83 @@
+{
+  "schema_version": "lmstudio-labkit-l338-synthesis-v1",
+  "family": "gemma-4",
+  "family_closure": "partial_not_green",
+  "generation_cells": {
+    "attempted": 13,
+    "http_200_terminal": 13,
+    "cleanup_verified": 13,
+    "final_global_loaded_count": 0
+  },
+  "strict_route_generation_cells": 0,
+  "lanes": {
+    "moe_26b_native_blocks": {
+      "attempted": 4,
+      "schema_valid": 4,
+      "contexts": [8192, 16384],
+      "reasoning_modes": ["off", "on"],
+      "decision": "accepted_narrow",
+      "reasoning_recommendation": "off_for_this_exact_bounded_blocks_task",
+      "reasoning_basis": "same validated visible payload with zero reasoning tokens and about 20 seconds less latency per paired cell",
+      "non_claims": ["strict structured output", "complex JSON", "cache reuse", "vision", "broad 26B admission"]
+    },
+    "e4b_native_vision": {
+      "attempted": 3,
+      "plain_route": "accepted",
+      "text_minimal_json": "accepted",
+      "image_transport": "accepted",
+      "image_grounding": "blocked_incorrect_grounded_boolean",
+      "decision": "not_admitted",
+      "reasoning_recommendation": "off_for_bounded_native_vision_diagnostics_only",
+      "reasoning_basis": "reasoning output stayed zero, but reasoning-off did not repair image grounding"
+    },
+    "12b_native_repeated_context": {
+      "attempted": 6,
+      "terminal_http_200": 6,
+      "schema_valid": 0,
+      "reasoning": "off",
+      "decision": "research_only",
+      "classification": "strong_loaded_session_timing_effect_with_zero_schema_valid_responses",
+      "kv_reuse_claimed": false,
+      "memory_claimed": false,
+      "reasoning_recommendation": "off_is_necessary_for_bounded_visible_output_but_not_sufficient_for_contract_validity"
+    },
+    "12b_openai_compatible_strict_json": {
+      "attempted": 0,
+      "decision": "blocked",
+      "classification": "route_specific_reasoning_disable_underdetermined",
+      "reasoning_recommendation": "none_until_route_specific_contract_exists"
+    }
+  },
+  "model_cards": {
+    "google/gemma-4-e2b": {
+      "l3_38_change": "none",
+      "status": "accepted_text_json_only"
+    },
+    "google/gemma-4-e4b": {
+      "l3_38_change": "image transport and text minimal JSON localized separately from image grounding",
+      "status": "partial",
+      "accepted": ["native plain text narrow", "native text-only minimal JSON narrow", "native image payload transport"],
+      "blocked": ["structured image grounding", "broader vision screening"],
+      "recommended_reasoning": {"native bounded vision diagnostic": "off"}
+    },
+    "google/gemma-4-12b-qat": {
+      "l3_38_change": "reasoning-off repeated-context rerun completed but strict local validity remained zero",
+      "status": "partial_route_specific",
+      "accepted": ["native reasoning-off blocks JSON narrow at 8192 and 16384 from prior evidence"],
+      "research_only": ["native repeated-context timing at 16384"],
+      "blocked": ["native repeated-context product admission", "OpenAI-compatible strict JSON reasoning-off confirmation"],
+      "recommended_reasoning": {
+        "native blocks JSON diagnostic": "off",
+        "native repeated-context diagnostic": "off_but_contract_repair_required",
+        "OpenAI-compatible strict JSON": "undetermined"
+      }
+    },
+    "google/gemma-4-26b-a4b-qat": {
+      "l3_38_change": "native off/on blocks canary accepted narrowly at 8192 and 16384",
+      "status": "research_only_limited",
+      "accepted": ["native blocks JSON paired canary at 8192", "native blocks JSON paired canary at 16384"],
+      "blocked": ["strict structured output", "complex JSON", "cache/session", "vision", "broad admission"],
+      "recommended_reasoning": {"native bounded blocks transformation": "off"}
+    }
+  }
+}

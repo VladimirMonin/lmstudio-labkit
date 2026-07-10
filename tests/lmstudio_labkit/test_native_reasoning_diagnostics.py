@@ -167,6 +167,7 @@ def test_native_diagnostic_serializes_route_controls_and_captures_private_attemp
         request_id="native-cell",
         attempt_index=2,
         context_length=16384,
+        image_data_url="data:image/png;base64,cHVibGljLXNhZmU=",
     )
 
     assert requests == [
@@ -183,7 +184,10 @@ def test_native_diagnostic_serializes_route_controls_and_captures_private_attemp
             },
             "payload": {
                 "model": "mock/text",
-                "input": "Synthetic request",
+                "input": [
+                    {"type": "text", "content": "Synthetic request"},
+                    {"type": "image", "data_url": "data:image/png;base64,cHVibGljLXNhZmU="},
+                ],
                 "reasoning": "on",
                 "max_output_tokens": 2048,
                 "temperature": 0.0,
@@ -253,3 +257,34 @@ def test_native_diagnostic_rejects_reasoning_not_advertised_by_exact_model(
         )
 
     assert requests == ["http://127.0.0.1:1234/api/v1/models"]
+
+
+def test_local_runner_reports_global_loaded_count_and_exact_model_metadata(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    def fake_urlopen(req: object, timeout: float | None = None) -> _JSONResponse:
+        del req, timeout
+        return _JSONResponse(
+            {
+                "models": [
+                    {
+                        "key": "mock/text",
+                        "capabilities": {"reasoning": {"allowed_options": ["off", "on"]}},
+                        "loaded_instances": [{"id": "instance-a"}],
+                    },
+                    {
+                        "key": "mock/other",
+                        "loaded_instances": [{"id": "instance-b"}],
+                    },
+                ]
+            }
+        )
+
+    monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+    runner = LocalLMStudioHostRunner()
+
+    assert runner.count_all_loaded_instances() == 2
+    metadata = runner.model_metadata(model_id="mock/text")
+    assert metadata is not None
+    assert metadata["key"] == "mock/text"
+    assert runner.model_metadata(model_id="mock/missing") is None

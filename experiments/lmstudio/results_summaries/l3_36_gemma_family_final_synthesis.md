@@ -1,6 +1,6 @@
-# L3.36 Gemma Family Final Synthesis
+# L3.36 Gemma Family Final Synthesis with L3.38 Addendum
 
-Status: reconciled partial final synthesis after all bounded closure lanes. Gemma is not fully closed as a green model family.
+Status: reconciled through the bounded L3.38 reasoning-off follow-up. Gemma is not fully closed as a green model family.
 
 Timestamp: 2026-07-10T18:35:36+05:00
 
@@ -104,6 +104,23 @@ vision:
     - google/gemma-4-e4b one-asset gate
   blocked_reason: native minimal JSON failed malformed without truncation
 ```
+
+## L3.38 affected model cards
+
+The canonical L3.38 evidence pack is
+[L3.38 reasoning-off follow-up](l3_38_reasoning_off_followup/report.md).
+
+| model | L3.38 evidence | current recommendation |
+|---|---|---|
+| `google/gemma-4-e2b` | unchanged | retain the accepted lightweight text/JSON role; no L3.38 cache or vision claim |
+| `google/gemma-4-e4b` | native text-only minimal JSON passed; image transport succeeded; the image JSON grounded the verified fixture incorrectly | keep text and transport acceptance narrow; block structured vision; use reasoning off only for bounded native diagnostics, not as a global quality remedy |
+| `google/gemma-4-12b-qat` | native reasoning-off repeated-context comparison completed, but 0/6 outputs passed the strict local JSON contract; strict-route confirmation stayed at zero requests | keep timing evidence research-only; native reasoning off is necessary for bounded visible output on diagnosed tasks but is not sufficient for session/cache contract validity; strict-route reasoning remains undetermined |
+| `google/gemma-4-26b-a4b-qat` | native blocks JSON passed 4/4 across 8192/16384 and reasoning off/on | accept only the paired native canary scope; prefer reasoning off for this exact bounded task because the visible answer stayed valid with substantially lower reasoning overhead |
+
+Family closure remains `partial_not_green`. The L3.38 evidence does not broaden
+the default 8192 product scope, admit E4B structured vision, admit 12B
+session/cache, establish OpenAI-compatible reasoning control, or prove physical
+KV reuse.
 
 ## Non-claims
 
