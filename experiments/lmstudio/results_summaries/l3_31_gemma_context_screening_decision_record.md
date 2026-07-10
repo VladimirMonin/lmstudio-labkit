@@ -1,6 +1,6 @@
 # L3.31 Gemma Context Screening Decision Record
 
-Status: prepared. L3.31a context canary is the only initial live candidate after executor support, preflight/tests, and explicit live approval pass.
+Status: historical preparation record, reconciled with the completed bounded evidence below.
 
 ## Prepared configs
 
@@ -73,3 +73,34 @@ GET /api/v1/models -> connection refused
 L3.31a therefore remains not accepted. It must not be converted into a model
 failure because no model output was produced and `applied_context=16384` could
 not be proven.
+
+## Closure evidence update — 2026-07-10
+
+The runtime-unavailable launch attempt above was later superseded by a bounded
+live rerun and one narrowly approved 12B repair attempt:
+
+```yaml
+l3_31a:
+  attempts: 9
+  pass: 8
+  fail: 1
+  accepted:
+    - E2B transcript/simple/blocks at 16384
+    - E4B transcript/simple/blocks at 16384
+    - 12B transcript/simple at 16384
+  blocked:
+    - 12B blocks at 16384
+  privacy: pass
+  final_loaded_count: 0
+l3_31c_12b_blocks_repair:
+  attempts: 1
+  max_tokens: 1024
+  finish_reason: length
+  completion_tokens: 1024
+  status: fail
+  final_loaded_count: 0
+```
+
+The capped repair result is durable model-output evidence, not a recorder
+failure and not a runner blocker. It does not admit the failed 12B blocks cell.
+No 32k, broad L3.31b, 26B context, parallel, or stress run was performed.

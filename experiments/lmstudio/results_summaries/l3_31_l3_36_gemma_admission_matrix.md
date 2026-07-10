@@ -1,8 +1,8 @@
 # L3.31-L3.36 Gemma Admission Matrix
 
-Status: updated after L3.31b forensics, L3.33b source application cache evidence import, recorder-safe max-token support, Context7/code evidence, and L3.34.1 vision repair investigation.
+Status: reconciled after the bounded 12B output-budget/cache lanes and native E4B vision gate. Family closure remains partial, not green.
 
-Timestamp: 2026-07-10T11:13:04+05:00
+Timestamp: 2026-07-10T18:35:36+05:00
 
 Legend:
 
@@ -17,10 +17,10 @@ Legend:
 
 | model | 8192_transcript_cleanup | 8192_structured_simple | 8192_structured_blocks | 8192_complex | 16k_transcript_cleanup | 16k_structured_simple | 16k_structured_blocks | cache_session | vision_plain | vision_min_json | vision_simple_description | status | blocked_reason |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| `google/gemma-4-e2b` | accepted | accepted | accepted | accepted | accepted | accepted | accepted | not_run | not_run | not_run | not_run | accepted_text_json_only | vision not eligible because E4B Phase 1 failed before other models; cache not run for E2B |
-| `google/gemma-4-e4b` | accepted | accepted | accepted | accepted | accepted | accepted | accepted | accepted_narrow | blocked | blocked | blocked | partial | vision plain text failed with `finish_reason=length` at explicit `max_tokens=256`; no KV reuse proof for cache despite cache_session quality pass |
-| `google/gemma-4-12b-qat` | accepted | accepted | accepted | not_run | accepted | accepted | blocked | blocked | not_run | not_run | not_run | partial_blocked | 16k blocks failed with `finish_reason=length` after 16261 completion tokens and empty content; L3.33a cache/session had 2 finish_length hard failures; complex 8192 not run in L3.32a |
-| `google/gemma-4-26b-a4b-qat` | accepted_controlled_transcript_only | not_run | not_run | not_run | not_run | not_run | not_run | not_run | not_run | not_run | not_run | research_only_limited | only controlled transcript baseline evidence from earlier 8192 scope; excluded from L3.31a/L3.32a/L3.33a; vision follow-up not eligible because E4B Phase 1 failed |
+| `google/gemma-4-e2b` | accepted | accepted | accepted | accepted | accepted | accepted | accepted | not_run | not_run | not_run | not_run | accepted_text_json_only | vision not run after the required E4B native minimal-JSON gate failed; cache not run for E2B |
+| `google/gemma-4-e4b` | accepted | accepted | accepted | accepted | accepted | accepted | accepted | accepted_narrow | accepted_native_narrow | blocked | blocked | partial | native `/api/v1/chat` plain text passed for one asset; minimal JSON failed malformed without truncation; no KV reuse proof for cache despite cache_session quality pass |
+| `google/gemma-4-12b-qat` | accepted | accepted | accepted | blocked | accepted | accepted | blocked | blocked_research_only | not_run | not_run | not_run | partial_blocked | bounded 16k blocks repair and one 8192 complex case both ended at the 1024-token cap; repeated 16k session-cache outputs were 6/6 length-limited and runtime cache accounting was unavailable |
+| `google/gemma-4-26b-a4b-qat` | accepted_controlled_transcript_only | not_run | not_run | not_run | not_run | not_run | not_run | not_run | not_run | not_run | not_run | research_only_limited | only controlled transcript baseline evidence from earlier 8192 scope; excluded from L3.31a/L3.32a/L3.33a and not run after the E4B native minimal-JSON gate failed |
 
 ## Evidence notes
 
@@ -54,7 +54,7 @@ L3.32a adds:
 8192_complex:
   google/gemma-4-e2b: accepted
   google/gemma-4-e4b: accepted
-  google/gemma-4-12b-qat: not_run
+  google/gemma-4-12b-qat: blocked_bounded_512_to_1024
   google/gemma-4-26b-a4b-qat: not_run
 ```
 
@@ -72,7 +72,19 @@ E4B: all 3 L3.31a 16k cells passed
 26B: not_run
 ```
 
-The 12B failure is not broad 16k context degradation by current evidence; it is `12B + blocks + 16k` specific. Follow-up implementation work added recorder-safe explicit `max_tokens` support to LabKit request plans, but that only repairs the offline contract gap. It does not retroactively admit the failed 12B cell; admission still requires a fresh capped live result with durable sanitized recorder output.
+The 12B failure is not broad 16k context degradation by current evidence; it is
+`12B + blocks + 16k` specific. The follow-up managed-executor seam forwards the
+explicit cap, and the one approved durable repair attempt reached
+`finish_reason=length` with `completion_tokens=1024`. The cell therefore remains
+blocked on model-output evidence, not on recorder readiness.
+
+### 12B complex JSON
+
+The E2B/E4B L3.32a result remains 4/4 accepted. One bounded 12B complex case was
+then run with adaptive stages `512 -> 1024`; it reached the upper stage with
+`finish_reason=length`, empty extracted content, and no parse/schema/business
+admission. This changes 12B complex from `not_run` to `blocked` without
+authorizing broad L3.32c or 26B expansion.
 
 ### Cache/session
 
@@ -96,6 +108,12 @@ cached_tokens: telemetry_if_reported_not_proof_by_itself
 max_tokens: must_be_explicit_for_repair_or_admission_runs
 ```
 
+The focused 12B repeated-context follow-up at 16384 also remained blocked. A
+reduced exact-repeat/stable-prefix comparison showed 62.08x and 1.58x timing
+improvements respectively, but all six outputs were length-limited at the
+128-token cap and runtime `cached_tokens` accounting was unavailable. This is
+timing-only research evidence, not KV-reuse or cache-benefit proof.
+
 ### Vision
 
 L3.34 established that PNG data URI image payloads are accepted at API route level, but structured JSON failed with `finish_reason=length` for all four target models.
@@ -114,9 +132,13 @@ final_loaded_count: 0
 status: blocked
 ```
 
-Because Phase 1 failed, minimal JSON, simple_description, and other models were not run. No Gemma model is eligible for L3.35.
-
-Follow-up Context7/code research classifies the next image repair as a route/envelope question first: native `/api/v1/chat` with `input` text/image `data_url` items and `output[]` extraction should be tested before repeating the same OpenAI-compatible image payload with a larger cap. No such native route canary is admitted here.
+The later native E4B gate resolved the route/envelope question. Native
+`/api/v1/chat` with `input` text/image `data_url` items and `output[]` extraction
+returned 506 characters of non-empty plain text at `max_output_tokens=128`.
+The immediately following minimal-JSON gate returned malformed, non-truncated
+JSON, so the adaptive policy correctly stopped after one 256-token stage and
+the tiny screening gate was skipped. Native plain text is accepted narrowly;
+structured vision and L3.35 remain blocked.
 
 ## Final admission decision
 
@@ -134,6 +156,8 @@ structured_json:
   best_current_models:
     - google/gemma-4-e2b
     - google/gemma-4-e4b
+  blocked:
+    - google/gemma-4-12b-qat bounded 8192 complex case
 cache_session:
   accepted_narrow:
     - google/gemma-4-e4b
@@ -142,8 +166,10 @@ cache_session:
   kv_reuse_proven: false
 vision:
   eligible_for_l3_35: []
-  blocked_reason: no non-empty plain-text or JSON/schema-pass image route evidence
+  native_plain_text_accepted_narrow:
+    - google/gemma-4-e4b one-asset gate
+  blocked_reason: native minimal JSON failed malformed without truncation
 next_repair_gates:
-  - 12B 16k blocks capped rerun with durable recorder output
-  - native /api/v1/chat image route canary before any L3.35 matrix
+  - redesign 12B output validity without widening the 16k blocks or complex caps
+  - repair native minimal JSON before any L3.35 matrix
 ```

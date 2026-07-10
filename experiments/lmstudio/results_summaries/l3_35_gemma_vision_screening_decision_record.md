@@ -1,8 +1,11 @@
 # L3.35 Gemma Vision Screening Decision Record
 
-Status: blocked / unsupported modality pending L3.34 capability proof.
+Status: blocked after native E4B plain text passed but minimal JSON failed.
 
-No live image request, model load, model download, image quality benchmark, full cartesian, complex image schema run, Qwen/VL run, stress run, or raw prompt/response artifact was produced for this record.
+This record began as a prepared-only capability gate. Later bounded route probes
+did send image requests, but no L3.35 screening matrix, model download, full
+cartesian, complex image schema run, Qwen/VL run, stress run, or tracked raw
+prompt/response/image artifact was produced.
 
 ## Dependency
 
@@ -12,21 +15,24 @@ Current L3.34 status:
 
 ```yaml
 committed_gemma_modalities: text_only
-metadata_positive_image_capable_gemma_models: []
-route_probe_live_request_count: 0
-status: no_image_route_available
+runtime_metadata_vision_capability: true
+native_e4b_plain_text: pass
+native_e4b_minimal_json: failed_malformed_json_without_truncation
+tiny_screening_attempt_count: 0
+status: blocked_structured_vision_gate
 ```
 
 ## Decision
 
 ```yaml
-l3_35_status: blocked_unsupported_modality
-quality_failure: false
+l3_35_status: blocked
+quality_failure: not_assessed
 image_quality_attempt_count: 0
-reason: no eligible image-capable Gemma route has been proven
+reason: native plain text passed, but the required minimal JSON gate failed
 ```
 
-This is not a model-quality failure. It is a capability-gate result.
+This is not an image-quality failure because screening never started. It is a
+structured-output gate failure after native plain-text route capability passed.
 
 ## Prepared future shape
 

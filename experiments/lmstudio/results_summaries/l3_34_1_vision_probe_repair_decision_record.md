@@ -249,3 +249,14 @@ stop_conditions:
 ```
 
 If `/api/v1/chat` passes plain text, then a separate narrow card may test minimal JSON/simple_description on the same route and same model. If `/api/v1/chat` fails the same way, keep L3.35 blocked and classify the blocker as native-image-route/model capability failure for current Gemma runtime evidence, not as a validator/schema issue.
+
+## Superseding native-route result — 2026-07-10
+
+The recommended native E4B gate was subsequently run with the same public-safe
+asset. `/api/v1/chat` returned non-empty plain text from `output[]` at the
+128-token stage, proving the native plain-text route. The immediately following
+minimal-JSON gate returned malformed, non-truncated JSON and the adaptive policy
+correctly stopped without increasing the budget. The tiny screening gate was
+therefore skipped. L3.35 remains blocked for structured vision, but the earlier
+compat-envelope conclusion that image plain text was unusable must not be
+generalized to the native route.

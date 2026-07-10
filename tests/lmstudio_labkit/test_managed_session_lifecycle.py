@@ -53,6 +53,18 @@ class SessionLifecycleHostRunner:
         return self.loaded_instances
 
 
+class CachedSessionLifecycleHostRunner(SessionLifecycleHostRunner):
+    def chat_completion(self, **kwargs: object) -> object:
+        payload = super().chat_completion(**kwargs)
+        assert isinstance(payload, dict)
+        usage = payload["usage"]
+        assert isinstance(usage, dict)
+        usage["prompt_tokens_details"] = {
+            "cached_tokens": 0 if self.chat_count == 1 else 6,
+        }
+        return payload
+
+
 def session_payload() -> dict[str, Any]:
     return {
         "run_id": "managed_session_lifecycle",
@@ -173,6 +185,34 @@ def test_run_matrix_session_loaded_uses_one_lifecycle_for_repeated_cells(tmp_pat
     assert [row["session_cleanup_verified"] for row in rows] == [True, True, True]
     assert [row["cache_hit_reported"] for row in rows] == ["unknown", "unknown", "unknown"]
     assert [row["kv_reuse_proven"] for row in rows] == [False, False, False]
+
+
+def test_run_matrix_session_reports_cached_token_hits_after_warmup(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    host = CachedSessionLifecycleHostRunner()
+    transport = ManagedLMStudioTransport(
+        ManagedLMStudioExecutor(host_runner=host, allow_model_loads=True)
+    )
+
+    artifacts = run_matrix(
+        BenchmarkConfig.from_dict(session_payload()),
+        tmp_path,
+        transport=transport,
+        live_options=LiveBridgeOptions(
+            live=True,
+            allow_model_load=True,
+            allow_remote=True,
+            max_requests=3,
+        ),
+    )
+
+    rows = [
+        json.loads(line)
+        for line in artifacts.cell_results.read_text(encoding="utf-8").splitlines()
+        if line
+    ]
+    assert [row["cached_tokens"] for row in rows] == [0, 6, 6]
+    assert [row["cache_hit_reported"] for row in rows] == ["miss", "hit", "hit"]
+    assert [row["kv_reuse_proven"] for row in rows] == [False, True, True]
 
 
 def cold_payload() -> dict[str, Any]:

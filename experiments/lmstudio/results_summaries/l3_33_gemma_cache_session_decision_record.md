@@ -1,6 +1,6 @@
 # L3.33 Gemma Cache/Session Decision Record
 
-Status: prepared-only. No L3.33 live inference has been run.
+Status: historical preparation record, reconciled with bounded live cache/session evidence below.
 
 ## Prepared configs
 
@@ -67,3 +67,36 @@ pre-existing/sibling untracked L3.34 test file that would be reformatted. The
 L3.33 touched Python files passed targeted format check.
 
 This prepared-only record intentionally claims no live LM Studio calls, model loads, downloads, remote inference, stress runs, raw prompt artifacts, or raw response artifacts.
+
+## Closure evidence update — 2026-07-10
+
+Later bounded live evidence supersedes the prepared-only status:
+
+```yaml
+l3_33a_8192:
+  attempts: 24
+  pass: 22
+  fail: 2
+  E4B: accepted_narrow_session_loaded_quality_scope
+  12B: blocked_finish_length
+  final_loaded_count: 0
+l3_33c_12b_16384_repair:
+  oversized_reproduction: timed_out_then_cleanup_zero
+  reduced_comparison:
+    exact_same_input_requests: 3
+    stable_prefix_requests: 3
+    valid_outputs: 0
+    finish_length: 6
+    output_cap: 128
+    reported_cached_tokens: unavailable
+    exact_repeat_speedup: 62.08x
+    stable_prefix_speedup: 1.58x
+  classification: timing_only_research_signal
+  final_loaded_count: 0
+kv_reuse_proven: false
+cache_benefit_claimed: false
+```
+
+The managed telemetry seam now preserves runtime-reported `cached_tokens`, but
+the 12B run did not report that field. Timing differences therefore do not prove
+physical KV reuse, and invalid/truncated outputs prevent cache/session admission.

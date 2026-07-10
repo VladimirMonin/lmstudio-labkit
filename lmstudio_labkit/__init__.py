@@ -25,6 +25,13 @@ from .managed_executor import (
     ManagedLMStudioExecutor,
     ManagedLMStudioTransport,
 )
+from .output_budget import (
+    AdaptiveOutputBudgetPolicy,
+    OutputBudgetDecision,
+    OutputBudgetObservation,
+    decide_output_budget,
+    observe_output_budget,
+)
 from .requests import (
     ChatMessage,
     ExecutionOptions,
@@ -52,6 +59,7 @@ from .validation import (
 )
 
 __all__ = [
+    "AdaptiveOutputBudgetPolicy",
     "ArtifactSet",
     "BenchmarkConfig",
     "BenchmarkSafetyConfig",
@@ -71,6 +79,8 @@ __all__ = [
     "MatrixPlan",
     "MatrixTransport",
     "ModelSpec",
+    "OutputBudgetDecision",
+    "OutputBudgetObservation",
     "RequestEnvelope",
     "RequestPlan",
     "RequestResult",
@@ -84,11 +94,13 @@ __all__ = [
     "build_blocks_schema",
     "build_simple_flat_schema",
     "collect_ids_by_path",
+    "decide_output_budget",
     "export_review_pack",
     "export_latest_text_remote_snapshot",
     "load_task_manifest",
     "load_task_manifests",
     "load_task_specs",
+    "observe_output_budget",
     "plan_matrix",
     "run_live_small_text_screening",
     "run_matrix",

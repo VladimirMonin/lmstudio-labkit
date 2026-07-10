@@ -45,6 +45,7 @@ class MockManagedHostRunner:
         response_format: object,
         temperature: float,
         timeout_s: float,
+        max_tokens: int | None = None,
     ) -> object:
         self.calls.append(
             (
@@ -54,6 +55,7 @@ class MockManagedHostRunner:
                     "model_id": model_id,
                     "messages": messages,
                     "response_format": response_format,
+                    "max_tokens": max_tokens,
                     "temperature": temperature,
                     "timeout_s": timeout_s,
                 },
@@ -77,6 +79,57 @@ class MockManagedHostRunner:
     def count_loaded_instances(self, *, model_id: str) -> int | None:
         self.calls.append(("count_loaded_instances", {"model_id": model_id}))
         return self.loaded_instances
+
+
+class LegacySignatureManagedHostRunner(MockManagedHostRunner):
+    def chat_completion(
+        self,
+        *,
+        endpoint_path: str,
+        model_id: str,
+        messages: object,
+        response_format: object,
+        temperature: float,
+        timeout_s: float,
+    ) -> object:
+        return super().chat_completion(
+            endpoint_path=endpoint_path,
+            model_id=model_id,
+            messages=messages,
+            response_format=response_format,
+            temperature=temperature,
+            timeout_s=timeout_s,
+        )
+
+
+class CachedUsageManagedHostRunner(MockManagedHostRunner):
+    def chat_completion(
+        self,
+        *,
+        endpoint_path: str,
+        model_id: str,
+        messages: object,
+        response_format: object,
+        temperature: float,
+        timeout_s: float,
+        max_tokens: int | None = None,
+    ) -> object:
+        payload = super().chat_completion(
+            endpoint_path=endpoint_path,
+            model_id=model_id,
+            messages=messages,
+            response_format=response_format,
+            temperature=temperature,
+            timeout_s=timeout_s,
+            max_tokens=max_tokens,
+        )
+        assert isinstance(payload, dict)
+        payload["usage"] = {
+            "prompt_tokens": 120,
+            "completion_tokens": 5,
+            "prompt_tokens_details": {"cached_tokens": 96},
+        }
+        return payload
 
 
 def structured_plan(**option_overrides: object) -> RequestPlan:
@@ -125,6 +178,7 @@ def test_managed_executor_executes_single_mocked_compat_chat_request() -> None:
     assert json.loads(result.raw_response) == {"id": "ok", "text": "Synthetic response"}
     assert result.prompt_tokens == 7
     assert result.completion_tokens == 5
+    assert result.cached_tokens is None
     assert result.finish_reason == "stop"
     assert result.load_verified is True
     assert result.cleanup_verified is True
@@ -139,10 +193,51 @@ def test_managed_executor_executes_single_mocked_compat_chat_request() -> None:
     ]
     chat_payload = host.calls[3][1]
     assert chat_payload["endpoint_path"] == "/v1/chat/completions"
+    assert chat_payload["max_tokens"] is None
     assert chat_payload["temperature"] == 0.0
     assert chat_payload["response_format"]["type"] == "json_schema"
     assert host.calls[1][1]["context_length"] == 8192
     assert host.calls[1][1]["parallel"] == 1
+
+
+def test_managed_executor_preserves_reported_cached_token_usage() -> None:
+    host = CachedUsageManagedHostRunner()
+    executor = ManagedLMStudioExecutor(host_runner=host, allow_model_loads=True)
+
+    result = executor.execute(structured_plan())
+
+    assert result.cached_tokens == 96
+
+
+def test_unset_budget_preserves_legacy_host_runner_signature_and_cleanup() -> None:
+    host = LegacySignatureManagedHostRunner()
+    executor = ManagedLMStudioExecutor(host_runner=host, allow_model_loads=True)
+
+    result = executor.execute(structured_plan())
+
+    assert result.finish_reason == "stop"
+    assert result.final_loaded_instances == 0
+    assert host.loaded_instances == 0
+    assert host.calls[-2:] == [
+        ("cleanup_model", {"model_id": "mock/text"}),
+        ("count_loaded_instances", {"model_id": "mock/text"}),
+    ]
+
+
+@pytest.mark.parametrize("max_tokens", [1, 1024, 32768])
+def test_managed_executor_forwards_explicit_max_tokens_unchanged(max_tokens: int) -> None:
+    host = MockManagedHostRunner()
+    executor = ManagedLMStudioExecutor(host_runner=host, allow_model_loads=True)
+
+    result = executor.execute(structured_plan(max_tokens=max_tokens))
+
+    assert result.finish_reason == "stop"
+    assert host.calls[3][0] == "chat_completion"
+    assert host.calls[3][1]["max_tokens"] == max_tokens
+    assert host.calls[-2:] == [
+        ("cleanup_model", {"model_id": "mock/text"}),
+        ("count_loaded_instances", {"model_id": "mock/text"}),
+    ]
 
 
 def test_managed_executor_passes_16384_context_to_host_runner() -> None:

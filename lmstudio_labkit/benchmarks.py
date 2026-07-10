@@ -845,7 +845,12 @@ def _row_from_execution(
             input_char_count=input_char_count,
             input_text=_input_text_for_validation(request_plan),
         )
-    cache_telemetry = _cache_telemetry_fields(cell, request_plan)
+    cache_telemetry = _cache_telemetry_fields(
+        cell,
+        request_plan,
+        result=result,
+        validation_passed=validation.status == "pass" and result.status == "ok",
+    )
     timing_telemetry = _timing_telemetry_fields(result)
     row = {
         "run_id": config.run_id,
@@ -927,7 +932,12 @@ def run_live_small_text_screening(
             input_char_count=input_char_count,
             input_text=_input_text_for_validation(request_plan),
         )
-        cache_telemetry = _cache_telemetry_fields(cell, request_plan)
+        cache_telemetry = _cache_telemetry_fields(
+            cell,
+            request_plan,
+            result=result,
+            validation_passed=validation.status == "pass" and result.status == "ok",
+        )
         timing_telemetry = _timing_telemetry_fields(result)
         rows.append(
             {
@@ -1536,7 +1546,13 @@ def _is_warmup_first_request(cell: MatrixCell) -> bool:
     return cell.axes.get("cache_mode", "none") == "warmup_first" and cell.repeat_index == 0
 
 
-def _cache_telemetry_fields(cell: MatrixCell, request_plan: RequestPlan) -> dict[str, Any]:
+def _cache_telemetry_fields(
+    cell: MatrixCell,
+    request_plan: RequestPlan,
+    *,
+    result: RequestResult | None = None,
+    validation_passed: bool = False,
+) -> dict[str, Any]:
     cache_mode = cell.axes.get("cache_mode", "none")
     request_metadata = request_plan.envelope.safe_metadata()
     response_contract = request_metadata.get("response_contract")
@@ -1582,6 +1598,10 @@ def _cache_telemetry_fields(cell: MatrixCell, request_plan: RequestPlan) -> dict
             }
         )[:16]
     )
+    cached_tokens = result.token_counts.get("cached") if result is not None else None
+    cache_hit_reported = (
+        "unknown" if cached_tokens is None else ("hit" if cached_tokens > 0 else "miss")
+    )
     return {
         "cache_mode": cache_mode,
         "cache_group_id": cache_group_id,
@@ -1600,8 +1620,9 @@ def _cache_telemetry_fields(cell: MatrixCell, request_plan: RequestPlan) -> dict
             }
         ),
         "cache_hit_inferred": "unknown",
-        "cache_hit_reported": "unknown",
-        "kv_reuse_proven": False,
+        "cache_hit_reported": cache_hit_reported,
+        "cached_tokens": cached_tokens,
+        "kv_reuse_proven": bool(cached_tokens and validation_passed),
     }
 
 

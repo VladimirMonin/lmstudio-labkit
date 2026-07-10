@@ -94,3 +94,55 @@ def test_local_runner_reports_nested_safe_http_error_detail(
     assert "message='Missing required field instance_id'" in message
     assert "param='instance_id'" in message
     assert "type='invalid_request'" in message
+
+
+@pytest.mark.parametrize("max_tokens", [1, 1024, 32768])
+def test_local_runner_serializes_explicit_max_tokens_unchanged(
+    monkeypatch: pytest.MonkeyPatch, max_tokens: int
+) -> None:
+    payloads: list[dict[str, object]] = []
+
+    def fake_urlopen(req: object, timeout: float | None = None) -> _FakeResponse:
+        data = getattr(req, "data", None)
+        assert isinstance(data, bytes)
+        payloads.append(json.loads(data.decode("utf-8")))
+        return _FakeResponse({"choices": []})
+
+    monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+
+    runner = LocalLMStudioHostRunner()
+    runner.chat_completion(
+        endpoint_path="/v1/chat/completions",
+        model_id="mock/text",
+        messages=({"role": "user", "content": "Synthetic request"},),
+        response_format={"type": "json_schema"},
+        max_tokens=max_tokens,
+        temperature=0.0,
+        timeout_s=15.0,
+    )
+
+    assert payloads[0]["max_tokens"] == max_tokens
+
+
+def test_local_runner_omits_max_tokens_when_unset(monkeypatch: pytest.MonkeyPatch) -> None:
+    payloads: list[dict[str, object]] = []
+
+    def fake_urlopen(req: object, timeout: float | None = None) -> _FakeResponse:
+        data = getattr(req, "data", None)
+        assert isinstance(data, bytes)
+        payloads.append(json.loads(data.decode("utf-8")))
+        return _FakeResponse({"choices": []})
+
+    monkeypatch.setattr("urllib.request.urlopen", fake_urlopen)
+
+    runner = LocalLMStudioHostRunner()
+    runner.chat_completion(
+        endpoint_path="/v1/chat/completions",
+        model_id="mock/text",
+        messages=({"role": "user", "content": "Synthetic request"},),
+        response_format={"type": "json_schema"},
+        temperature=0.0,
+        timeout_s=15.0,
+    )
+
+    assert "max_tokens" not in payloads[0]

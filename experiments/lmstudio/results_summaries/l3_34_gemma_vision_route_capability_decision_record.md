@@ -1,6 +1,9 @@
 # L3.34 Gemma Vision Route Capability Decision Record
 
-Status: prepared-only. No live image request was run.
+Status: historical preparation record, reconciled with compat and native route evidence below.
+
+No live image request was run in the original preparation slice. Later bounded
+route evidence is recorded separately in the closure update.
 
 ## Scope
 
@@ -77,3 +80,35 @@ If the route rejects image payloads after metadata eligibility, classify the res
 ## Downstream decision
 
 L3.35 image matrix work remains blocked until L3.34 proves at least one eligible Gemma image route. If no eligible route is proven, close image benchmarking as `unsupported_modality` / `blocked`, not as a failed quality benchmark.
+
+## Closure evidence update — 2026-07-10
+
+Runtime metadata later reported vision capability for the target Gemma models,
+superseding the committed text-only metadata posture for that runtime. Bounded
+route probes then established:
+
+```yaml
+compat_png_data_uri_probe:
+  models: [E2B, E4B, 12B, 26B]
+  payload_accepted: true
+  schema_pass: 0
+  finish_length: 4
+  each_final_loaded_count: 0
+native_e4b_gate:
+  route: /api/v1/chat
+  plain_text:
+    status: pass
+    non_empty_chars: 506
+    max_output_tokens: 128
+  minimal_json:
+    status: fail
+    structure_status: parse_invalid
+    truncation_observed: false
+    adaptive_action: stop
+  tiny_screening: skipped_by_minimal_json_failure
+  final_loaded_global_count: 0
+```
+
+The native E4B route is proven for non-empty plain text in this one-asset shape.
+Structured image output and broader vision screening remain blocked; route
+acceptance and plain-text success are not model-quality or JSON admission.

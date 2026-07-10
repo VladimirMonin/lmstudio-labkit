@@ -1,6 +1,6 @@
 # L3.32 Gemma JSON Complexity Decision Record
 
-Status: prepared-only. No L3.32 live inference has been run.
+Status: historical preparation record, reconciled with the bounded live canaries below.
 
 ## Prepared configs
 
@@ -87,3 +87,34 @@ was produced.
 
 Do not run L3.32b, L3.32c, or 26B structured cells until L3.32a has accepted
 live evidence or is explicitly reclassified.
+
+## Closure evidence update — 2026-07-10
+
+The blocked launch attempt above was later superseded by explicit owner approval
+to continue the independent probes:
+
+```yaml
+l3_32a_e2b_e4b:
+  attempts: 4
+  pass: 4
+  fail: 0
+  status: accepted_narrow
+  privacy: pass
+  final_loaded_count: 0
+l3_32b_12b_bounded_case:
+  planned_cells: 1
+  output_budget_attempts: 2
+  output_budgets_used: [512, 1024]
+  finish_reason: length
+  completion_tokens: 1024
+  status: fail
+  stop_reason: observed_truncation_limit_reached
+  final_loaded_count: 0
+l3_32c_broad_screening: not_run
+l3_32d_26b: not_run
+```
+
+Complex JSON is admitted only for the four-cell E2B/E4B canary scope. The
+single 12B case is now executed and blocked by bounded truncation; it must no
+longer be described as merely prepared or not run. No broad screening or 26B
+structured expansion followed.

@@ -6,6 +6,11 @@ from dataclasses import dataclass
 from hashlib import sha256
 from typing import Any, Protocol, cast
 
+from .output_budget import (
+    AdaptiveOutputBudgetPolicy,
+    decide_output_budget,
+    observe_output_budget,
+)
 from .requests import RequestPlan, RequestResult
 
 
@@ -26,6 +31,7 @@ class ManagedExecutionResult:
     load_verified: bool
     cleanup_verified: bool
     final_loaded_instances: int | None
+    cached_tokens: int | None = None
     post_load_instances: int | None = None
     strict_schema_runtime_support: bool | None = None
     hardened_schema_validation_available: bool = True
@@ -37,6 +43,9 @@ class ManagedExecutionResult:
     loaded_before_session: int | None = None
     loaded_after_session_load: int | None = None
     session_cleanup_verified: bool | None = None
+    output_budget_attempts: int = 1
+    output_budgets_used: tuple[int, ...] = ()
+    output_budget_stop_reason: str | None = None
 
 
 class ManagedHostRunner(Protocol):
@@ -63,6 +72,7 @@ class ManagedHostRunner(Protocol):
         response_format: Mapping[str, object],
         temperature: float,
         timeout_s: float,
+        max_tokens: int | None = None,
     ) -> object: ...
 
     def cleanup_model(self, *, model_id: str) -> object: ...
@@ -87,6 +97,7 @@ class ManagedLMStudioExecutor:
     parallel: int = 1
     temperature: float = 0.0
     strict_json_schema: bool = True
+    output_budget_policy: AdaptiveOutputBudgetPolicy | None = None
 
     def __post_init__(self) -> None:
         if self.endpoint_path != "/v1/chat/completions":
@@ -181,21 +192,94 @@ class ManagedLMStudioExecutor:
                 )
             raise ManagedExecutorError("managed executor loaded instance was not visible")
         session_id = _session_id(model_id=model_id, plans=plans)
-        payloads: list[tuple[object, float]] = []
+        payloads: list[
+            tuple[
+                str,
+                float,
+                int | None,
+                int | None,
+                int | None,
+                str | None,
+                tuple[int, ...],
+                str | None,
+            ]
+        ] = []
         try:
             for plan in plans:
-                started = time.monotonic()
-                raw_payload = self.host_runner.chat_completion(
-                    endpoint_path=self.endpoint_path,
-                    model_id=model_id,
-                    messages=_messages_from_plan(plan),
-                    response_format=_response_format_from_plan(
-                        plan, strict_json_schema=self.strict_json_schema
-                    ),
-                    temperature=self.temperature,
-                    timeout_s=plan.options.timeout_s,
+                adaptive_policy = (
+                    self.output_budget_policy if plan.options.max_tokens is None else None
                 )
-                payloads.append((raw_payload, round((time.monotonic() - started) * 1000, 3)))
+                budgets: tuple[int | None, ...] = (
+                    adaptive_policy.stages_for(plan.envelope.response_contract)
+                    if adaptive_policy is not None
+                    else (plan.options.max_tokens,)
+                )
+                if adaptive_policy is not None:
+                    adaptive_policy = adaptive_policy.resolved_for(plan.envelope.response_contract)
+                budgets_used: list[int] = []
+                total_latency_ms = 0.0
+                raw_response = ""
+                prompt_tokens: int | None = None
+                completion_tokens: int | None = None
+                cached_tokens: int | None = None
+                finish_reason: str | None = None
+                stop_reason: str | None = (
+                    "caller_override" if plan.options.max_tokens is not None else None
+                )
+                for attempt_index, max_tokens in enumerate(budgets, start=1):
+                    started = time.monotonic()
+                    chat_options: dict[str, Any] = {
+                        "endpoint_path": self.endpoint_path,
+                        "model_id": model_id,
+                        "messages": _messages_from_plan(plan),
+                        "response_format": _response_format_from_plan(
+                            plan, strict_json_schema=self.strict_json_schema
+                        ),
+                        "temperature": self.temperature,
+                        "timeout_s": plan.options.timeout_s,
+                    }
+                    if max_tokens is not None:
+                        chat_options["max_tokens"] = max_tokens
+                    raw_payload = self.host_runner.chat_completion(**chat_options)
+                    total_latency_ms += (time.monotonic() - started) * 1000
+                    (
+                        raw_response,
+                        prompt_tokens,
+                        completion_tokens,
+                        cached_tokens,
+                        finish_reason,
+                    ) = _parse_chat_payload(raw_payload)
+                    if adaptive_policy is None:
+                        break
+                    assert max_tokens is not None
+                    budgets_used.append(max_tokens)
+                    observation = observe_output_budget(
+                        raw_response=raw_response,
+                        contract=plan.envelope.response_contract,
+                        budget=max_tokens,
+                        finish_reason=finish_reason,
+                        completion_tokens=completion_tokens,
+                    )
+                    decision = decide_output_budget(
+                        adaptive_policy,
+                        attempt_index=attempt_index,
+                        observation=observation,
+                    )
+                    stop_reason = decision.reason
+                    if decision.action == "stop":
+                        break
+                payloads.append(
+                    (
+                        raw_response,
+                        round(total_latency_ms, 3),
+                        prompt_tokens,
+                        completion_tokens,
+                        cached_tokens,
+                        finish_reason,
+                        tuple(budgets_used),
+                        stop_reason,
+                    )
+                )
         finally:
             cleanup_response = self.host_runner.cleanup_model(model_id=model_id)
             cleanup_verified = _verified_flag(cleanup_response, "cleanup_verified")
@@ -205,16 +289,24 @@ class ManagedLMStudioExecutor:
             if final_loaded_instances != 0:
                 raise ManagedExecutorError("managed executor final loaded instances must be zero")
         results: list[ManagedExecutionResult] = []
-        for index, (raw_payload, latency_ms) in enumerate(payloads, start=1):
-            raw_response, prompt_tokens, completion_tokens, finish_reason = _parse_chat_payload(
-                raw_payload
-            )
+        for index, payload in enumerate(payloads, start=1):
+            (
+                raw_response,
+                latency_ms,
+                prompt_tokens,
+                completion_tokens,
+                cached_tokens,
+                finish_reason,
+                output_budgets_used,
+                output_budget_stop_reason,
+            ) = payload
             results.append(
                 ManagedExecutionResult(
                     raw_response=raw_response,
                     latency_ms=latency_ms,
                     prompt_tokens=prompt_tokens,
                     completion_tokens=completion_tokens,
+                    cached_tokens=cached_tokens,
                     finish_reason=finish_reason,
                     load_verified=load_verified,
                     cleanup_verified=cleanup_verified,
@@ -230,6 +322,9 @@ class ManagedLMStudioExecutor:
                     loaded_before_session=pre_load_instances,
                     loaded_after_session_load=post_load_instances,
                     session_cleanup_verified=cleanup_verified,
+                    output_budget_attempts=max(1, len(output_budgets_used)),
+                    output_budgets_used=output_budgets_used,
+                    output_budget_stop_reason=output_budget_stop_reason,
                 )
             )
         return tuple(results)
@@ -311,6 +406,9 @@ def _lifecycle_metadata(execution: ManagedExecutionResult) -> dict[str, object]:
         "loaded_after_session_load": execution.loaded_after_session_load,
         "final_loaded_instances": execution.final_loaded_instances,
         "session_cleanup_verified": execution.session_cleanup_verified,
+        "output_budget_attempts": execution.output_budget_attempts,
+        "output_budgets_used": list(execution.output_budgets_used),
+        "output_budget_stop_reason": execution.output_budget_stop_reason,
     }
 
 
@@ -408,9 +506,11 @@ def _merge_prefix_items(prefix_items: Sequence[object]) -> dict[str, Any] | None
     return merged
 
 
-def _parse_chat_payload(payload: object) -> tuple[str, int | None, int | None, str | None]:
+def _parse_chat_payload(
+    payload: object,
+) -> tuple[str, int | None, int | None, int | None, str | None]:
     if isinstance(payload, str):
-        return payload, None, None, None
+        return payload, None, None, None, None
     if not isinstance(payload, Mapping):
         raise ManagedExecutorError("chat completion payload must be text or a mapping")
     raw_response = _extract_content(payload)
@@ -423,8 +523,22 @@ def _parse_chat_payload(payload: object) -> tuple[str, int | None, int | None, s
     completion_tokens = (
         _int_from_mapping(usage, "completion_tokens") if isinstance(usage, Mapping) else None
     )
+    cached_tokens = _cached_tokens_from_usage(usage) if isinstance(usage, Mapping) else None
     finish_reason = _extract_finish_reason(payload)
-    return raw_response, prompt_tokens, completion_tokens, finish_reason
+    return raw_response, prompt_tokens, completion_tokens, cached_tokens, finish_reason
+
+
+def _cached_tokens_from_usage(usage: Mapping[str, object]) -> int | None:
+    direct = _int_from_mapping(usage, "cached_tokens")
+    if direct is not None:
+        return direct
+    for details_key in ("prompt_tokens_details", "input_tokens_details"):
+        details = usage.get(details_key)
+        if isinstance(details, Mapping):
+            cached = _int_from_mapping(details, "cached_tokens")
+            if cached is not None:
+                return cached
+    return None
 
 
 def _extract_content(payload: Mapping[str, object]) -> str | None:
@@ -580,6 +694,7 @@ class LocalLMStudioHostRunner:
         response_format: Mapping[str, object],
         temperature: float,
         timeout_s: float,
+        max_tokens: int | None = None,
     ) -> object:
         if endpoint_path != "/v1/chat/completions":
             raise ManagedExecutorError("local managed runner supports only /v1/chat/completions")
@@ -589,6 +704,8 @@ class LocalLMStudioHostRunner:
             "response_format": dict(response_format),
             "temperature": temperature,
         }
+        if max_tokens is not None:
+            payload["max_tokens"] = max_tokens
         return self._request_json(endpoint_path, payload, timeout_s)
 
     def cleanup_model(self, *, model_id: str) -> object:
@@ -737,6 +854,8 @@ def _token_counts(result: ManagedExecutionResult) -> dict[str, int]:
         counts["prompt"] = result.prompt_tokens
     if result.completion_tokens is not None:
         counts["completion"] = result.completion_tokens
+    if result.cached_tokens is not None:
+        counts["cached"] = result.cached_tokens
     return counts
 
 

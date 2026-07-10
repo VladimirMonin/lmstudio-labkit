@@ -130,6 +130,7 @@ class _NoNetworkHostRunner:
         response_format: object,
         temperature: float,
         timeout_s: float,
+        max_tokens: int | None = None,
     ) -> object:
         return {
             "choices": [
