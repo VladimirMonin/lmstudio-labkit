@@ -3,9 +3,16 @@ from __future__ import annotations
 import time
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from hashlib import sha256
 from typing import Any, Protocol, cast
 
+from .failure_forensics import (
+    ForensicsRecordHandle,
+    LocalFailureForensics,
+    NativeChatDiagnosticResult,
+    parse_native_chat_response,
+)
 from .output_budget import (
     AdaptiveOutputBudgetPolicy,
     decide_output_budget,
@@ -46,6 +53,7 @@ class ManagedExecutionResult:
     output_budget_attempts: int = 1
     output_budgets_used: tuple[int, ...] = ()
     output_budget_stop_reason: str | None = None
+    failure_forensics_attempts: tuple[dict[str, object], ...] = ()
 
 
 class ManagedHostRunner(Protocol):
@@ -98,6 +106,7 @@ class ManagedLMStudioExecutor:
     temperature: float = 0.0
     strict_json_schema: bool = True
     output_budget_policy: AdaptiveOutputBudgetPolicy | None = None
+    failure_forensics: LocalFailureForensics | None = None
 
     def __post_init__(self) -> None:
         if self.endpoint_path != "/v1/chat/completions":
@@ -192,6 +201,7 @@ class ManagedLMStudioExecutor:
                 )
             raise ManagedExecutorError("managed executor loaded instance was not visible")
         session_id = _session_id(model_id=model_id, plans=plans)
+        all_forensics_handles: list[ForensicsRecordHandle] = []
         payloads: list[
             tuple[
                 str,
@@ -202,6 +212,7 @@ class ManagedLMStudioExecutor:
                 str | None,
                 tuple[int, ...],
                 str | None,
+                tuple[dict[str, object], ...],
             ]
         ] = []
         try:
@@ -226,7 +237,9 @@ class ManagedLMStudioExecutor:
                 stop_reason: str | None = (
                     "caller_override" if plan.options.max_tokens is not None else None
                 )
+                plan_forensics_handles: list[ForensicsRecordHandle] = []
                 for attempt_index, max_tokens in enumerate(budgets, start=1):
+                    started_at = datetime.now(UTC).isoformat()
                     started = time.monotonic()
                     chat_options: dict[str, Any] = {
                         "endpoint_path": self.endpoint_path,
@@ -241,14 +254,45 @@ class ManagedLMStudioExecutor:
                     if max_tokens is not None:
                         chat_options["max_tokens"] = max_tokens
                     raw_payload = self.host_runner.chat_completion(**chat_options)
-                    total_latency_ms += (time.monotonic() - started) * 1000
-                    (
-                        raw_response,
-                        prompt_tokens,
-                        completion_tokens,
-                        cached_tokens,
-                        finish_reason,
-                    ) = _parse_chat_payload(raw_payload)
+                    attempt_latency_ms = (time.monotonic() - started) * 1000
+                    total_latency_ms += attempt_latency_ms
+                    try:
+                        (
+                            raw_response,
+                            prompt_tokens,
+                            completion_tokens,
+                            cached_tokens,
+                            finish_reason,
+                        ) = _parse_chat_payload(raw_payload)
+                    except ManagedExecutorError:
+                        handle = _capture_compat_forensics_attempt(
+                            forensics=self.failure_forensics,
+                            plan=plan,
+                            attempt_index=attempt_index,
+                            context_length=self.context_length,
+                            max_tokens=max_tokens,
+                            started_at=started_at,
+                            latency_ms=attempt_latency_ms,
+                            raw_payload=raw_payload,
+                        )
+                        if handle is not None:
+                            all_forensics_handles.append(handle)
+                        raise
+                    handle = _capture_compat_forensics_attempt(
+                        forensics=self.failure_forensics,
+                        plan=plan,
+                        attempt_index=attempt_index,
+                        context_length=self.context_length,
+                        max_tokens=max_tokens,
+                        started_at=started_at,
+                        latency_ms=attempt_latency_ms,
+                        raw_payload=raw_payload,
+                        raw_response=raw_response,
+                        finish_reason=finish_reason,
+                    )
+                    if handle is not None:
+                        plan_forensics_handles.append(handle)
+                        all_forensics_handles.append(handle)
                     if adaptive_policy is None:
                         break
                     assert max_tokens is not None
@@ -278,12 +322,25 @@ class ManagedLMStudioExecutor:
                         finish_reason,
                         tuple(budgets_used),
                         stop_reason,
+                        tuple(
+                            self.failure_forensics.safe_manifest_entry(handle)
+                            for handle in plan_forensics_handles
+                        )
+                        if self.failure_forensics is not None
+                        else (),
                     )
                 )
         finally:
             cleanup_response = self.host_runner.cleanup_model(model_id=model_id)
             cleanup_verified = _verified_flag(cleanup_response, "cleanup_verified")
             final_loaded_instances = self.host_runner.count_loaded_instances(model_id=model_id)
+            if self.failure_forensics is not None:
+                for handle in all_forensics_handles:
+                    self.failure_forensics.finalize_attempt(
+                        handle,
+                        cleanup_result=cleanup_response,
+                        final_loaded_instances=final_loaded_instances,
+                    )
             if not cleanup_verified:
                 raise ManagedExecutorError("managed executor cleanup was not verified")
             if final_loaded_instances != 0:
@@ -299,6 +356,7 @@ class ManagedLMStudioExecutor:
                 finish_reason,
                 output_budgets_used,
                 output_budget_stop_reason,
+                failure_forensics_attempts,
             ) = payload
             results.append(
                 ManagedExecutionResult(
@@ -325,6 +383,7 @@ class ManagedLMStudioExecutor:
                     output_budget_attempts=max(1, len(output_budgets_used)),
                     output_budgets_used=output_budgets_used,
                     output_budget_stop_reason=output_budget_stop_reason,
+                    failure_forensics_attempts=failure_forensics_attempts,
                 )
             )
         return tuple(results)
@@ -409,6 +468,7 @@ def _lifecycle_metadata(execution: ManagedExecutionResult) -> dict[str, object]:
         "output_budget_attempts": execution.output_budget_attempts,
         "output_budgets_used": list(execution.output_budgets_used),
         "output_budget_stop_reason": execution.output_budget_stop_reason,
+        "failure_forensics_attempts": list(execution.failure_forensics_attempts),
     }
 
 
@@ -419,6 +479,48 @@ def _messages_from_plan(plan: RequestPlan) -> tuple[Mapping[str, str], ...]:
             for message in plan.envelope.chat_messages
         )
     return tuple({"role": "user", "content": item.text} for item in plan.envelope.text_inputs)
+
+
+def _capture_compat_forensics_attempt(
+    *,
+    forensics: LocalFailureForensics | None,
+    plan: RequestPlan,
+    attempt_index: int,
+    context_length: int,
+    max_tokens: int | None,
+    started_at: str,
+    latency_ms: float,
+    raw_payload: object,
+    raw_response: str | None = None,
+    finish_reason: str | None = None,
+) -> ForensicsRecordHandle | None:
+    if forensics is None:
+        return None
+    if raw_response is None:
+        if isinstance(raw_payload, str):
+            raw_response = raw_payload
+        elif isinstance(raw_payload, Mapping):
+            raw_response = _extract_content(raw_payload) or ""
+        else:
+            raw_response = ""
+    if finish_reason is None and isinstance(raw_payload, Mapping):
+        finish_reason = _extract_finish_reason(raw_payload)
+    return forensics.capture_attempt(
+        request_id=plan.envelope.request_id,
+        attempt_index=attempt_index,
+        context_length=context_length,
+        output_cap=max_tokens,
+        reasoning_mode=None,
+        started_at=started_at,
+        latency_ms=round(latency_ms, 3),
+        http_status=200,
+        content_type="application/json",
+        raw_envelope=raw_payload,
+        reasoning_text=_extract_reasoning_content(raw_payload),
+        message_text=raw_response,
+        finish_reason=finish_reason,
+        boundary="terminal",
+    )
 
 
 def _response_format_from_plan(
@@ -559,6 +661,27 @@ def _extract_content(payload: Mapping[str, object]) -> str | None:
     return text if isinstance(text, str) else None
 
 
+def _extract_reasoning_content(payload: object) -> str:
+    if not isinstance(payload, Mapping):
+        return ""
+    for key in ("reasoning", "reasoning_content"):
+        value = payload.get(key)
+        if isinstance(value, str):
+            return value
+    choices = payload.get("choices")
+    if not isinstance(choices, list) or not choices or not isinstance(choices[0], Mapping):
+        return ""
+    first_choice = choices[0]
+    message = first_choice.get("message")
+    if not isinstance(message, Mapping):
+        return ""
+    for key in ("reasoning", "reasoning_content"):
+        value = message.get(key)
+        if isinstance(value, str):
+            return value
+    return ""
+
+
 def _extract_finish_reason(payload: Mapping[str, object]) -> str | None:
     direct = payload.get("finish_reason")
     if isinstance(direct, str):
@@ -650,6 +773,8 @@ class LocalLMStudioHostRunner:
     base_url: str = "http://127.0.0.1:1234"
     default_timeout_s: float = 120.0
     allow_remote_base_url: bool = False
+    allow_native_diagnostics: bool = False
+    failure_forensics: LocalFailureForensics | None = None
 
     def __post_init__(self) -> None:
         from urllib.parse import urlparse
@@ -707,6 +832,198 @@ class LocalLMStudioHostRunner:
         if max_tokens is not None:
             payload["max_tokens"] = max_tokens
         return self._request_json(endpoint_path, payload, timeout_s)
+
+    def native_chat_diagnostic(
+        self,
+        *,
+        model_id: str,
+        messages: Sequence[Mapping[str, str]],
+        reasoning: str,
+        max_output_tokens: int,
+        timeout_s: float,
+        stream: bool = True,
+        request_id: str = "native-diagnostic",
+        attempt_index: int = 1,
+        context_length: int = 8192,
+    ) -> NativeChatDiagnosticResult:
+        """Run one explicitly enabled native reasoning diagnostic request.
+
+        This route is intentionally separate from strict OpenAI-compatible JSON.
+        It accepts only the bounded L3.37 output-cap staircase and never stores a
+        server-side conversation.
+        """
+
+        if not self.allow_native_diagnostics:
+            raise ManagedExecutorError("native diagnostics require allow_native_diagnostics=true")
+        allowed_caps = (1024, 2048, 3072, 4096)
+        if max_output_tokens not in allowed_caps:
+            raise ManagedExecutorError(
+                "native diagnostic max_output_tokens must be one of 1024, 2048, 3072, 4096"
+            )
+        if reasoning not in {"off", "on", "low", "medium", "high"}:
+            raise ManagedExecutorError(
+                "native diagnostic reasoning must be one of off, on, low, medium, high"
+            )
+        if attempt_index < 1:
+            raise ManagedExecutorError("native diagnostic attempt_index must be positive")
+        if context_length not in SUPPORTED_MANAGED_CONTEXT_LENGTHS:
+            raise ManagedExecutorError("native diagnostic context_length is unsupported")
+        if self.failure_forensics is None or not self.failure_forensics.enabled:
+            raise ManagedExecutorError(
+                "native diagnostics require enabled local failure forensics before request"
+            )
+        reasoning_allowed_options, reasoning_default = self._preflight_native_reasoning(
+            model_id=model_id,
+            reasoning=reasoning,
+        )
+        native_input, system_prompt = _native_input_from_messages(messages)
+        payload: dict[str, object] = {
+            "model": model_id,
+            "input": native_input,
+            "reasoning": reasoning,
+            "max_output_tokens": max_output_tokens,
+            "temperature": 0.0,
+            "stream": stream,
+            "store": False,
+        }
+        if system_prompt is not None:
+            payload["system_prompt"] = system_prompt
+        started_at = datetime.now(UTC).isoformat()
+        started = time.monotonic()
+        raw_body, content_type, http_status = self._request_native_chat(
+            payload=payload,
+            timeout_s=timeout_s,
+            stream=stream,
+        )
+        parsed = parse_native_chat_response(
+            raw_body,
+            content_type=content_type,
+            http_status=http_status,
+        )
+        handle = None
+        if self.failure_forensics is not None:
+            handle = self.failure_forensics.capture_attempt(
+                request_id=request_id,
+                attempt_index=attempt_index,
+                context_length=context_length,
+                output_cap=max_output_tokens,
+                reasoning_mode=reasoning,
+                started_at=started_at,
+                latency_ms=round((time.monotonic() - started) * 1000, 3),
+                http_status=http_status,
+                content_type=content_type,
+                raw_envelope=parsed.raw_envelope,
+                sse_frames=parsed.sse_frames,
+                reasoning_text=parsed.reasoning_text,
+                message_text=parsed.message_text,
+                finish_reason=parsed.finish_reason,
+                boundary=parsed.boundary,
+            )
+        return NativeChatDiagnosticResult(
+            http_status=parsed.http_status,
+            content_type=parsed.content_type,
+            raw_body=parsed.raw_body,
+            raw_envelope=parsed.raw_envelope,
+            sse_frames=parsed.sse_frames,
+            reasoning_text=parsed.reasoning_text,
+            message_text=parsed.message_text,
+            numeric_stats=parsed.numeric_stats,
+            finish_reason=parsed.finish_reason,
+            boundary=parsed.boundary,
+            reasoning_allowed_options=reasoning_allowed_options,
+            reasoning_default=reasoning_default,
+            forensics_handle=handle,
+        )
+
+    def _preflight_native_reasoning(
+        self,
+        *,
+        model_id: str,
+        reasoning: str,
+    ) -> tuple[tuple[str, ...], str]:
+        response = self._request_json("/api/v1/models", None, self.default_timeout_s)
+        models = response.get("models")
+        if not isinstance(models, Sequence) or isinstance(models, (str, bytes, bytearray)):
+            raise ManagedExecutorError(
+                "native diagnostic capability preflight returned no model list"
+            )
+        exact_matches = [
+            item for item in models if isinstance(item, Mapping) and item.get("key") == model_id
+        ]
+        if len(exact_matches) != 1:
+            raise ManagedExecutorError(
+                f"native diagnostic exact model capability preflight did not find {model_id}"
+            )
+        capabilities = exact_matches[0].get("capabilities")
+        reasoning_capability = (
+            capabilities.get("reasoning") if isinstance(capabilities, Mapping) else None
+        )
+        if not isinstance(reasoning_capability, Mapping):
+            raise ManagedExecutorError(
+                f"native diagnostic exact model {model_id} exposes no reasoning capability"
+            )
+        raw_allowed = reasoning_capability.get("allowed_options")
+        if not isinstance(raw_allowed, Sequence) or isinstance(
+            raw_allowed, (str, bytes, bytearray)
+        ):
+            raise ManagedExecutorError(
+                f"native diagnostic exact model {model_id} exposes no reasoning options"
+            )
+        allowed = tuple(item for item in raw_allowed if isinstance(item, str))
+        default = reasoning_capability.get("default")
+        if not allowed or not isinstance(default, str) or default not in allowed:
+            raise ManagedExecutorError(
+                f"native diagnostic exact model {model_id} has invalid reasoning capability metadata"
+            )
+        if reasoning not in allowed:
+            raise ManagedExecutorError(
+                f"native diagnostic reasoning {reasoning} is not advertised by exact model {model_id}"
+            )
+        return allowed, default
+
+    def _request_native_chat(
+        self,
+        *,
+        payload: Mapping[str, object],
+        timeout_s: float,
+        stream: bool,
+    ) -> tuple[bytes, str, int]:
+        import json
+        from urllib import request as urllib_request
+        from urllib.error import HTTPError, URLError
+
+        path = "/api/v1/chat"
+        req = urllib_request.Request(
+            self.base_url.rstrip("/") + path,
+            data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+            method="POST",
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "text/event-stream" if stream else "application/json",
+            },
+        )
+        try:
+            with urllib_request.urlopen(req, timeout=timeout_s) as response:
+                raw_body = response.read()
+                status = int(getattr(response, "status", 200))
+                headers = getattr(response, "headers", None)
+                get_content_type = getattr(headers, "get_content_type", None)
+                content_type = (
+                    str(get_content_type())
+                    if callable(get_content_type)
+                    else ("text/event-stream" if stream else "application/json")
+                )
+                return raw_body, content_type, status
+        except HTTPError as error:
+            raw_body = error.read()
+            headers = getattr(error, "headers", None)
+            get_content_type = getattr(headers, "get_content_type", None)
+            content_type = (
+                str(get_content_type()) if callable(get_content_type) else "application/json"
+            )
+            return raw_body, content_type, int(error.code)
+        except URLError as error:
+            raise ManagedExecutorError("LM Studio local endpoint is not reachable") from error
 
     def cleanup_model(self, *, model_id: str) -> object:
         instance_ids = self._loaded_instance_ids(model_id=model_id)
@@ -799,6 +1116,38 @@ def _coerce_positive_int(value: object, default: int) -> int:
     except (TypeError, ValueError):
         return default
     return parsed if parsed > 0 else default
+
+
+def _native_input_from_messages(
+    messages: Sequence[Mapping[str, str]],
+) -> tuple[str | list[dict[str, str]], str | None]:
+    if not messages:
+        raise ManagedExecutorError("native diagnostic requires at least one message")
+    system_prompts: list[str] = []
+    inputs: list[str] = []
+    for message in messages:
+        role = message.get("role")
+        content = message.get("content")
+        if not isinstance(role, str) or not isinstance(content, str) or not content:
+            raise ManagedExecutorError("native diagnostic messages require role and content")
+        if role == "system":
+            system_prompts.append(content)
+        elif role == "user":
+            inputs.append(content)
+        else:
+            raise ManagedExecutorError(
+                "native diagnostic accepts system/user messages only; it is not OpenAI chat history"
+            )
+    if len(system_prompts) > 1:
+        raise ManagedExecutorError("native diagnostic accepts at most one system message")
+    if not inputs:
+        raise ManagedExecutorError("native diagnostic requires a user input")
+    native_input: str | list[dict[str, str]]
+    if len(inputs) == 1:
+        native_input = inputs[0]
+    else:
+        native_input = [{"type": "text", "content": content} for content in inputs]
+    return native_input, system_prompts[0] if system_prompts else None
 
 
 def _safe_http_error_detail(error: object) -> str:

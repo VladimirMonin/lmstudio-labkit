@@ -8,6 +8,7 @@ from lmstudio_labkit import (
     BenchmarkConfig,
     ChatMessage,
     ExecutionOptions,
+    LocalFailureForensics,
     ManagedLMStudioExecutor,
     ManagedLMStudioTransport,
     RequestEnvelope,
@@ -130,4 +131,29 @@ def test_run_matrix_with_managed_executor_writes_no_raw_response_artifacts(tmp_p
     assert "Synthetic prompt" not in cell_results
     assert "Synthetic response" not in summary
     assert "response_hash" in cell_results
+    assert json.loads(artifacts.privacy_scan.read_text(encoding="utf-8"))["status"] == "pass"
+
+
+def test_public_artifacts_include_only_sanitized_private_pack_manifest(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    private_root = tmp_path / "private-pack"
+    forensics = LocalFailureForensics(private_root, repo_root=repo, enabled=True)
+    config = BenchmarkConfig.from_dict(minimal_payload())
+    transport = ManagedLMStudioTransport(
+        ManagedLMStudioExecutor(
+            host_runner=MockManagedHostRunner(),
+            allow_model_loads=True,
+            failure_forensics=forensics,
+        )
+    )
+
+    artifacts = run_matrix(config, tmp_path / "public", transport=transport)
+
+    cell_results = artifacts.cell_results.read_text(encoding="utf-8")
+    assert '"private_local_pack_exists": true' in cell_results
+    assert "Synthetic response" not in cell_results
+    assert "Synthetic prompt" not in cell_results
+    assert str(private_root) not in cell_results
+    assert "malformed_tail" not in cell_results
     assert json.loads(artifacts.privacy_scan.read_text(encoding="utf-8"))["status"] == "pass"

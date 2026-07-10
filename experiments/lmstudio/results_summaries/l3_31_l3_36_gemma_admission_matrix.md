@@ -1,8 +1,8 @@
-# L3.31-L3.36 Gemma Admission Matrix
+# L3.31-L3.37 Gemma Admission Matrix
 
-Status: reconciled after the bounded 12B output-budget/cache lanes and native E4B vision gate. Family closure remains partial, not green.
+Status: reconciled after the bounded L3.37 12B reasoning/output-cap diagnostic. Family closure remains partial, not green.
 
-Timestamp: 2026-07-10T18:35:36+05:00
+Timestamp: 2026-07-10T20:19:01+05:00
 
 Legend:
 
@@ -19,7 +19,7 @@ Legend:
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | `google/gemma-4-e2b` | accepted | accepted | accepted | accepted | accepted | accepted | accepted | not_run | not_run | not_run | not_run | accepted_text_json_only | vision not run after the required E4B native minimal-JSON gate failed; cache not run for E2B |
 | `google/gemma-4-e4b` | accepted | accepted | accepted | accepted | accepted | accepted | accepted | accepted_narrow | accepted_native_narrow | blocked | blocked | partial | native `/api/v1/chat` plain text passed for one asset; minimal JSON failed malformed without truncation; no KV reuse proof for cache despite cache_session quality pass |
-| `google/gemma-4-12b-qat` | accepted | accepted | accepted | blocked | accepted | accepted | blocked | blocked_research_only | not_run | not_run | not_run | partial_blocked | bounded 16k blocks repair and one 8192 complex case both ended at the 1024-token cap; repeated 16k session-cache outputs were 6/6 length-limited and runtime cache accounting was unavailable |
+| `google/gemma-4-12b-qat` | accepted | accepted | accepted_native_reasoning_off_narrow | blocked | accepted | accepted | accepted_native_reasoning_off_narrow | blocked_research_only | not_run | not_run | not_run | partial_route_specific | L3.37 native reasoning-off produced schema-valid blocks JSON at 1024 for both contexts, but reasoning-on exhausted every cap through 4096 and the strict route remained empty/length-capped; complex and cache/session remain blocked |
 | `google/gemma-4-26b-a4b-qat` | accepted_controlled_transcript_only | not_run | not_run | not_run | not_run | not_run | not_run | not_run | not_run | not_run | not_run | research_only_limited | only controlled transcript baseline evidence from earlier 8192 scope; excluded from L3.31a/L3.32a/L3.33a and not run after the E4B native minimal-JSON gate failed |
 
 ## Evidence notes
@@ -72,11 +72,17 @@ E4B: all 3 L3.31a 16k cells passed
 26B: not_run
 ```
 
-The 12B failure is not broad 16k context degradation by current evidence; it is
-`12B + blocks + 16k` specific. The follow-up managed-executor seam forwards the
-explicit cap, and the one approved durable repair attempt reached
-`finish_reason=length` with `completion_tokens=1024`. The cell therefore remains
-blocked on model-output evidence, not on recorder readiness.
+The 12B failure is not broad 16k context degradation by current evidence. L3.37
+further localizes the earlier `12B + blocks + 16k` failure: the native route with
+reasoning explicitly disabled produced schema-valid blocks JSON at 1024 for both
+8192 and 16384. This is a narrow native/local-validation acceptance, not proof
+that the OpenAI-compatible strict route is repaired.
+
+With native reasoning enabled, visible output remained empty while reasoning
+consumed 1021/1024, 2045/2048, 3069/3072, and 4093/4096 output tokens at both
+contexts. Increasing the cap did not rescue visible output. The mechanism is
+therefore reasoning-dominant cap exhaustion, not simple visible-output budget
+insufficiency and not a context-size interaction.
 
 ### 12B complex JSON
 
@@ -85,6 +91,37 @@ then run with adaptive stages `512 -> 1024`; it reached the upper stage with
 `finish_reason=length`, empty extracted content, and no parse/schema/business
 admission. This changes 12B complex from `not_run` to `blocked` without
 authorizing broad L3.32c or 26B expansion.
+
+### L3.37 reasoning and structured-route diagnosis
+
+The bounded L3.37 staircase used the exact installed
+`google/gemma-4-12b-qat` variant, whose native capability metadata advertised
+`reasoning: off/on` with default `on`. It produced 12 privately retained attempts
+and a sanitized companion summary:
+
+```yaml
+native_reasoning_off:
+  8192: schema_valid_at_1024
+  16384: schema_valid_at_1024
+native_reasoning_on:
+  8192: reasoning_dominant_cap_exhaustion_no_rescue_le_4096
+  16384: reasoning_dominant_cap_exhaustion_no_rescue_le_4096
+openai_strict_json:
+  8192: empty_length_at_1024
+  16384: empty_length_at_1024
+context_interaction_supported: false
+private_records: 12
+cleanup_verified_for_every_record: true
+final_global_loaded_count: 0
+sanitized_summary_sha256: 8d83f83dbabf5ba5a6cb07baaf0fba39fc8bc3044c9299d15c6f707c615ee89e
+```
+
+This evidence rules out a general inability to produce the blocks schema and
+does not support a runtime/template pathology on the native reasoning-off path.
+The strict-route failures remain underdetermined between constrained-route,
+chat-template, and default/hidden-reasoning interaction because that route has
+no separately proven reasoning-off control in this experiment. They must not be
+reported as a simple budget shortage or as broad 12B structured incapability.
 
 ### Cache/session
 
@@ -149,15 +186,21 @@ safe_default_context: 8192
   accepted:
     - google/gemma-4-e2b canary scope
     - google/gemma-4-e4b canary scope
-    - google/gemma-4-12b-qat transcript/simple only
+    - google/gemma-4-12b-qat transcript/simple on the established route
+    - google/gemma-4-12b-qat blocks on native reasoning-off with local schema validation only
   blocked:
-    - google/gemma-4-12b-qat structured_blocks
+    - google/gemma-4-12b-qat structured_blocks on OpenAI-compatible strict JSON
 structured_json:
   best_current_models:
     - google/gemma-4-e2b
     - google/gemma-4-e4b
   blocked:
     - google/gemma-4-12b-qat bounded 8192 complex case
+  route_specific:
+    google/gemma-4-12b-qat:
+      native_reasoning_off_blocks: accepted_narrow_at_8192_and_16384
+      native_reasoning_on_blocks: reasoning_dominant_no_rescue_le_4096
+      openai_strict_blocks: blocked_empty_length_at_1024
 cache_session:
   accepted_narrow:
     - google/gemma-4-e4b
@@ -170,6 +213,7 @@ vision:
     - google/gemma-4-e4b one-asset gate
   blocked_reason: native minimal JSON failed malformed without truncation
 next_repair_gates:
-  - redesign 12B output validity without widening the 16k blocks or complex caps
+  - expose and verify an explicit reasoning-off contract for the production structured route, or keep the native reasoning-off path isolated as a narrow fallback
+  - do not broaden 12B complex JSON from the blocks-only L3.37 result
   - repair native minimal JSON before any L3.35 matrix
 ```

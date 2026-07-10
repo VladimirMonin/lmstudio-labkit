@@ -16,6 +16,14 @@ from .benchmarks import (
     run_matrix,
 )
 from .datasets import TaskManifest, load_task_manifest, load_task_manifests, load_task_specs
+from .failure_forensics import (
+    FailureForensicsError,
+    ForensicsRecordHandle,
+    LocalFailureForensics,
+    NativeChatDiagnosticResult,
+    SSEFrame,
+    parse_native_chat_response,
+)
 from .live_bridge import LiveBridgeTransport
 from .managed_executor import (
     LocalLMStudioHostRunner,
@@ -65,10 +73,13 @@ __all__ = [
     "BenchmarkSafetyConfig",
     "ChatMessage",
     "ExecutionOptions",
+    "FailureForensicsError",
     "FakeTransport",
+    "ForensicsRecordHandle",
     "ImageInput",
     "LanguagePolicy",
     "LiveBridgeTransport",
+    "LocalFailureForensics",
     "LocalLMStudioHostRunner",
     "ManagedExecutionResult",
     "ManagedExecutorError",
@@ -79,12 +90,14 @@ __all__ = [
     "MatrixPlan",
     "MatrixTransport",
     "ModelSpec",
+    "NativeChatDiagnosticResult",
     "OutputBudgetDecision",
     "OutputBudgetObservation",
     "RequestEnvelope",
     "RequestPlan",
     "RequestResult",
     "ResponseContract",
+    "SSEFrame",
     "StructuredRuntimeConfig",
     "TaskManifest",
     "TaskSpec",
@@ -101,6 +114,7 @@ __all__ = [
     "load_task_manifests",
     "load_task_specs",
     "observe_output_budget",
+    "parse_native_chat_response",
     "plan_matrix",
     "run_live_small_text_screening",
     "run_matrix",

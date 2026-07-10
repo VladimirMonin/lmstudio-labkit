@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping, Sequence
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -10,6 +11,8 @@ from lmstudio_labkit import (
     AdaptiveOutputBudgetPolicy,
     ChatMessage,
     ExecutionOptions,
+    LocalFailureForensics,
+    ManagedExecutorError,
     ManagedLMStudioExecutor,
     OutputBudgetObservation,
     RequestEnvelope,
@@ -393,3 +396,60 @@ def test_managed_executor_stops_after_last_configured_stage() -> None:
     assert result.output_budgets_used == (256, 512, 1024)
     assert result.output_budget_stop_reason == "incomplete_structure_limit_reached"
     assert host.calls[-1][0] == "cleanup_model"
+
+
+def test_managed_executor_retains_every_adaptive_attempt_in_private_pack(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    forensics = LocalFailureForensics(tmp_path / "private", repo_root=repo, enabled=True)
+    host = ScriptedHostRunner(
+        [
+            completion('{"id":"ok","text":', finish_reason="length", tokens=1024),
+            completion(json.dumps({"id": "ok", "text": "complete"})),
+        ]
+    )
+    executor = ManagedLMStudioExecutor(
+        host_runner=host,
+        allow_model_loads=True,
+        output_budget_policy=AdaptiveOutputBudgetPolicy(stages=(1024, 2048)),
+        failure_forensics=forensics,
+    )
+
+    result = executor.execute(structured_plan())
+
+    private_files = sorted((tmp_path / "private").glob("attempt-*.json"))
+    assert len(private_files) == 2
+    assert [
+        json.loads(path.read_text(encoding="utf-8"))["attempt"]["output_cap"]
+        for path in private_files
+    ] == [1024, 2048]
+    assert all(
+        json.loads(path.read_text(encoding="utf-8"))["cleanup"]["final_loaded_instances"] == 0
+        for path in private_files
+    )
+    assert len(result.failure_forensics_attempts) == 2
+    public_text = json.dumps(result.failure_forensics_attempts)
+    assert '"text":' not in public_text
+    assert str(tmp_path) not in public_text
+
+
+def test_private_pack_retains_envelope_when_compat_content_is_missing(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    forensics = LocalFailureForensics(tmp_path / "private", repo_root=repo, enabled=True)
+    host = ScriptedHostRunner([{"choices": [], "usage": {"completion_tokens": 17}}])
+    executor = ManagedLMStudioExecutor(
+        host_runner=host,
+        allow_model_loads=True,
+        failure_forensics=forensics,
+    )
+
+    with pytest.raises(ManagedExecutorError, match="did not include message content"):
+        executor.execute(structured_plan(max_tokens=1024))
+
+    private_files = list((tmp_path / "private").glob("attempt-*.json"))
+    assert len(private_files) == 1
+    payload = json.loads(private_files[0].read_text(encoding="utf-8"))
+    assert payload["raw"]["envelope"]["choices"] == []
+    assert payload["numeric_stats"] == {"usage.completion_tokens": 17}
+    assert payload["cleanup"]["final_loaded_instances"] == 0
