@@ -5,7 +5,6 @@ description = "Python/uv lab kit for reusable LM Studio request core and benchma
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "cryptography>=45,<46",
     "lmstudio==1.5.0",
     "pyyaml>=6.0.2,<7",
 ]

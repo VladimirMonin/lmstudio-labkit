@@ -14,14 +14,9 @@ import os
 import stat
 from collections.abc import Iterable
 from dataclasses import dataclass
-from datetime import UTC, datetime, timedelta
-from fcntl import LOCK_EX, LOCK_UN, flock
+from datetime import datetime
 from pathlib import Path
 from typing import Any
-
-from cryptography.exceptions import InvalidSignature
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
 
 from .private_benchmark_pack import score_normalization_output, validate_pack
 
@@ -49,7 +44,6 @@ OUTPUT_TOKEN_BUDGETS = {
     "structural_retention": 512,
 }
 SAFETY_MARGIN = 256
-_AUTHORITY_STORE = Path.home() / ".local/share/lmstudio-labkit/tokenizer-authority"
 
 
 def _json(path: Path) -> dict[str, Any]:
@@ -469,69 +463,14 @@ def materialize_request_artifacts(
     return tuple(rows)
 
 
-def _sealed_capture_authority(plan_sha256: str) -> dict[str, Any]:
-    """Load the owner-sealed authority for one immutable plan generation."""
-    if not _hex(plan_sha256):
-        raise ValueError("capture plan digest is invalid")
-    store = _AUTHORITY_STORE
-    generation_path = store / "generations" / f"{plan_sha256}.json"
-    if (
-        not store.is_dir()
-        or store.is_symlink()
-        or store.stat().st_mode & 0o077
-        or not generation_path.is_file()
-        or generation_path.is_symlink()
-        or generation_path.stat().st_mode & 0o077
-    ):
-        raise ValueError("owner-sealed capture authority generation is unavailable")
-    generation = _json(generation_path)
-    expected_keys = {
-        "schema_version",
-        "plan_sha256",
-        "authority_identity_sha256",
-        "authority_public_key_pem",
-        "authority_ledger_path",
-        "private_evidence_root",
-    }
-    if (
-        set(generation) != expected_keys
-        or generation.get("schema_version") != "lmstudio-sdk-capture-authority-generation-v1"
-        or generation.get("plan_sha256") != plan_sha256
-    ):
-        raise ValueError("owner-sealed capture authority generation is invalid")
-    for field in ("authority_ledger_path", "private_evidence_root"):
-        path = Path(str(generation.get(field, "")))
-        if (
-            not path.is_absolute()
-            or not path.exists()
-            or path.is_symlink()
-            or path.stat().st_mode & 0o077
-        ):
-            raise ValueError("owner-sealed capture authority path is invalid")
-    try:
-        public_key = serialization.load_pem_public_key(
-            str(generation["authority_public_key_pem"]).encode("ascii")
-        )
-    except (ValueError, TypeError):
-        public_key = None
-    if not isinstance(public_key, Ed25519PublicKey):
-        raise ValueError("owner-sealed capture authority key is invalid")
-    public_der = public_key.public_bytes(
-        serialization.Encoding.DER, serialization.PublicFormat.SubjectPublicKeyInfo
-    )
-    if _sha(public_der) != generation.get("authority_identity_sha256"):
-        raise ValueError("owner-sealed capture authority identity mismatch")
-    return generation | {"public_key": public_key}
-
-
 def validate_token_map(
     token_map: dict[str, Any],
     requests: Iterable[dict[str, Any]],
     artifact_root: str | Path,
     *,
-    consume: bool = True,
+    private_evidence_root: str | Path,
 ) -> list[str]:
-    """Validate closed evidence emitted by isolated LM Studio SDK capture subprocesses."""
+    """Validate trusted-local SDK capture and owner-only private token evidence."""
     errors: list[str] = []
     request_rows = {row["request_id"]: row for row in requests}
     captures = token_map.get("captures")
@@ -541,13 +480,9 @@ def validate_token_map(
         or len(captures) != len(MODEL_IDS)
     ):
         return ["token map must contain four LM Studio SDK runtime captures"]
-    expected_capture_keys = {
+    capture_keys = {
         "schema_version",
-        "authority",
-        "capture_id",
-        "nonce",
-        "issued_at",
-        "session_id",
+        "runtime",
         "model_key",
         "instance_id",
         "instance_config",
@@ -559,9 +494,8 @@ def validate_token_map(
         "private_evidence_sha256",
         "rows",
         "evidence_sha256",
-        "authority_signature",
     }
-    expected_row_keys = {
+    row_keys = {
         "request_id",
         "model_id",
         "request_sha256",
@@ -586,107 +520,31 @@ def validate_token_map(
         errors.append("captures require globally unique loaded instance identifiers")
     if len(set(plans)) != 1 or not plans or not _hex(plans[0]):
         errors.append("captures do not bind one valid frozen plan digest")
+    private_root = Path(private_evidence_root).resolve()
+    repo = Path(__file__).resolve().parents[2]
+    if private_root == repo or repo in private_root.parents:
+        return ["private tokenizer evidence must be outside the repository"]
+    if (
+        not private_root.is_dir()
+        or private_root.is_symlink()
+        or private_root.stat().st_mode & 0o077
+    ):
+        return ["private tokenizer evidence root is missing or not owner-only"]
     rows: list[dict[str, Any]] = []
-    verified_issuances: list[dict[str, Any]] = []
-    try:
-        capture_plans = {
-            capture.get("plan_sha256") for capture in captures if isinstance(capture, dict)
-        }
-        if len(capture_plans) != 1:
-            raise ValueError("capture set does not bind one plan generation")
-        expected_plan_sha256 = str(next(iter(capture_plans)))
-        authority_generation = _sealed_capture_authority(str(expected_plan_sha256))
-    except ValueError as exc:
-        return [str(exc)]
-    public_key = authority_generation["public_key"]
-    expected_authority_identity_sha256 = authority_generation["authority_identity_sha256"]
-    ledger_path = Path(authority_generation["authority_ledger_path"])
-    private_evidence_root = Path(authority_generation["private_evidence_root"])
-    ledger_records: list[dict[str, Any]] = []
-    if ledger_path.is_file() and not ledger_path.stat().st_mode & 0o077:
-        try:
-            ledger_records = [
-                json.loads(line) for line in ledger_path.read_text().splitlines() if line
-            ]
-        except (json.JSONDecodeError, OSError):
-            ledger_records = []
-    issued = {row.get("capture_id"): row for row in ledger_records if row.get("event") == "issued"}
-    consumed = {row.get("capture_id") for row in ledger_records if row.get("event") == "consumed"}
-    for capture_index, capture in enumerate(captures):
-        if not isinstance(capture, dict) or set(capture) != expected_capture_keys:
-            errors.append(f"captures[{capture_index}] schema is not closed")
+    for index, capture in enumerate(captures):
+        if not isinstance(capture, dict) or set(capture) != capture_keys:
+            errors.append(f"captures[{index}] schema is not closed")
             continue
-        signed = dict(capture)
-        signature = signed.pop("authority_signature")
-        sealed = dict(signed)
-        evidence_sha256 = sealed.pop("evidence_sha256")
-        if evidence_sha256 != _digest(sealed):
-            errors.append(f"captures[{capture_index}] evidence digest mismatch")
-        authority = capture.get("authority")
-        signature_valid = False
-        if isinstance(public_key, Ed25519PublicKey):
-            try:
-                public_key.verify(
-                    base64.b64decode(str(signature), validate=True), _canonical(signed)
-                )
-                signature_valid = True
-            except (InvalidSignature, ValueError):
-                pass
-        if (
-            not signature_valid
-            or not isinstance(authority, dict)
-            or authority
-            != {
-                "package": "lmstudio",
-                "version": "1.5.0",
-                "identity_sha256": expected_authority_identity_sha256,
-                "signature_algorithm": "ed25519-v1",
-            }
-        ):
-            errors.append(f"captures[{capture_index}] SDK authority authentication failed")
-        if not isinstance(authority, dict):
-            authority = {}
-        if capture.get("schema_version") != "lmstudio-sdk-tokenizer-capture-v2":
-            errors.append(f"captures[{capture_index}] schema version mismatch")
-        if capture.get("plan_sha256") != expected_plan_sha256:
-            errors.append(f"captures[{capture_index}] plan replay/binding mismatch")
+        sealed = dict(capture)
+        if sealed.pop("evidence_sha256") != _digest(sealed):
+            errors.append(f"captures[{index}] evidence digest mismatch")
+        if capture.get("schema_version") != "lmstudio-sdk-tokenizer-capture-v3" or capture.get(
+            "runtime"
+        ) != {"package": "lmstudio", "version": "1.5.0"}:
+            errors.append(f"captures[{index}] runtime capture identity mismatch")
         config = capture.get("instance_config")
         if not isinstance(config, dict) or capture.get("instance_config_sha256") != _digest(config):
-            errors.append(f"captures[{capture_index}] instance config mismatch")
-        issuance = issued.get(capture.get("capture_id"))
-        expected_issuance = {
-            "event": "issued",
-            "capture_id": capture.get("capture_id"),
-            "nonce": capture.get("nonce"),
-            "issued_at": capture.get("issued_at"),
-            "session_id": capture.get("session_id"),
-            "authority_identity_sha256": expected_authority_identity_sha256,
-            "plan_sha256": capture.get("plan_sha256"),
-            "model_key": capture.get("model_key"),
-            "instance_id": capture.get("instance_id"),
-            "instance_config_sha256": capture.get("instance_config_sha256"),
-            "request_ids_sha256": _digest(
-                [row.get("request_id") for row in capture.get("rows", [])]
-            ),
-        }
-        try:
-            issued_at = datetime.fromisoformat(str(capture.get("issued_at")))
-            fresh = datetime.now(UTC) - timedelta(hours=1) <= issued_at <= datetime.now(UTC)
-        except ValueError:
-            fresh = False
-        if (
-            issuance != expected_issuance
-            or not isinstance(capture.get("capture_id"), int)
-            or capture.get("capture_id") in consumed
-            or not isinstance(capture.get("nonce"), str)
-            or len(capture["nonce"]) != 64
-            or not isinstance(capture.get("session_id"), str)
-            or len(capture["session_id"]) != 32
-            or not fresh
-        ):
-            errors.append(f"captures[{capture_index}] capture issuance/freshness/replay mismatch")
-        else:
-            verified_issuances.append(expected_issuance)
+            errors.append(f"captures[{index}] instance config mismatch")
         for stage in ("preflight", "post_unload"):
             snapshot = capture.get(stage)
             if (
@@ -696,65 +554,55 @@ def validate_token_map(
                 or not _hex(snapshot.get("instance_bindings_sha256"))
                 or not _hex(snapshot.get("response_sha256"))
             ):
-                errors.append(f"captures[{capture_index}] {stage} is not a sealed zero read-back")
+                errors.append(f"captures[{index}] {stage} is not a zero-loaded read-back")
         capture_rows = capture.get("rows")
         if not isinstance(capture_rows, list):
-            errors.append(f"captures[{capture_index}] rows missing")
+            errors.append(f"captures[{index}] rows missing")
             continue
         for row in capture_rows:
-            if not isinstance(row, dict) or set(row) != expected_row_keys:
-                errors.append(f"captures[{capture_index}] row schema is not closed")
+            if not isinstance(row, dict) or set(row) != row_keys:
+                errors.append(f"captures[{index}] row schema is not closed")
                 continue
             if row.get("model_id") != capture.get("model_key"):
-                errors.append(f"captures[{capture_index}] row model binding mismatch")
+                errors.append(f"captures[{index}] row model binding mismatch")
             rows.append(row)
-        private_path = Path(private_evidence_root) / str(
-            capture.get("private_evidence_relative_path")
-        )
-        if not private_path.is_file() or private_path.stat().st_mode & 0o077:
-            errors.append(f"captures[{capture_index}] private evidence missing or not owner-only")
+        relative = Path(str(capture.get("private_evidence_relative_path", "")))
+        if relative.is_absolute() or ".." in relative.parts:
+            errors.append(f"captures[{index}] private evidence path is invalid")
+            continue
+        private_path = private_root / relative
+        if (
+            not private_path.is_file()
+            or private_path.is_symlink()
+            or private_path.stat().st_mode & 0o077
+        ):
+            errors.append(f"captures[{index}] private evidence missing or not owner-only")
             continue
         private_bytes = private_path.read_bytes().rstrip(b"\n")
         if _sha(private_bytes) != capture.get("private_evidence_sha256"):
-            errors.append(f"captures[{capture_index}] private evidence digest mismatch")
+            errors.append(f"captures[{index}] private evidence digest mismatch")
             continue
         try:
             private = json.loads(private_bytes)
         except json.JSONDecodeError:
-            errors.append(f"captures[{capture_index}] private evidence is invalid JSON")
+            errors.append(f"captures[{index}] private evidence is invalid JSON")
             continue
-        if (
-            private.get("schema_version") != "lmstudio-sdk-tokenizer-private-evidence-v1"
-            or private.get("authority_identity_sha256") != authority.get("identity_sha256")
-            or any(
-                private.get(field) != capture.get(field)
-                for field in (
-                    "capture_id",
-                    "nonce",
-                    "issued_at",
-                    "session_id",
-                    "plan_sha256",
-                    "model_key",
-                    "instance_id",
-                    "instance_config",
-                )
-            )
+        if private.get("schema_version") != "lmstudio-sdk-tokenizer-private-evidence-v2" or any(
+            private.get(field) != capture.get(field)
+            for field in ("plan_sha256", "model_key", "instance_id", "instance_config")
         ):
-            errors.append(f"captures[{capture_index}] private capture binding mismatch")
+            errors.append(f"captures[{index}] private capture binding mismatch")
             continue
         private_rows = {
             row.get("request_id"): row for row in private.get("rows", []) if isinstance(row, dict)
         }
         for public_row in capture_rows:
             private_row = private_rows.get(public_row.get("request_id"))
-            if not isinstance(private_row, dict):
-                errors.append(f"captures[{capture_index}] private row evidence missing")
-                continue
             try:
                 prompt = base64.b64decode(private_row["formatted_prompt_base64"], validate=True)
                 token_ids = private_row["token_ids"]
             except (KeyError, TypeError, ValueError):
-                errors.append(f"captures[{capture_index}] private row evidence missing")
+                errors.append(f"captures[{index}] private row evidence missing")
                 continue
             if (
                 private_row.get("model_id") != public_row.get("model_id")
@@ -764,7 +612,7 @@ def validate_token_map(
                 or len(token_ids) != public_row.get("exact_token_count")
                 or any(type(token) is not int for token in token_ids)
             ):
-                errors.append(f"captures[{capture_index}] private prompt/token replay mismatch")
+                errors.append(f"captures[{index}] private prompt/token replay mismatch")
     observed: set[str] = set()
     root = Path(artifact_root)
     for i, row in enumerate(rows):
@@ -784,85 +632,40 @@ def validate_token_map(
             or len(data) != request["byte_length"]
         ):
             errors.append(f"rows[{i}] request digest/length mismatch")
-        for field in {
+        history = {"messages": [{"role": "user", "content": data.decode("utf-8")}]}
+        if row.get("chat_sha256") != _digest(history) or row.get("model_id") != request["model_id"]:
+            errors.append(f"rows[{i}] chat/model binding mismatch")
+        for field in (
             "request_sha256",
             "chat_sha256",
             "formatted_prompt_sha256",
             "token_ids_sha256",
-        }:
+        ):
             if not _hex(row.get(field)):
                 errors.append(f"rows[{i}].{field} must be SHA-256")
-        history = {
-            "messages": [
-                {
-                    "role": "user",
-                    "content": data.decode("utf-8"),
-                }
-            ]
-        }
-        if row.get("chat_sha256") != _digest(history) or row.get("model_id") != request["model_id"]:
-            errors.append(f"rows[{i}] chat/model binding mismatch")
-        count = row.get("exact_token_count")
-        reserve, margin, effective = (
+        values = (
+            row.get("exact_token_count"),
             row.get("output_token_reserve"),
             row.get("safety_margin"),
             row.get("effective_context"),
         )
         if not all(
-            isinstance(x, int) and not isinstance(x, bool) and x >= 0
-            for x in (count, reserve, margin, effective)
+            isinstance(value, int) and not isinstance(value, bool) and value >= 0
+            for value in values
         ):
             errors.append(f"rows[{i}] invalid token arithmetic")
         elif (
-            reserve != request["max_tokens"]
-            or margin != SAFETY_MARGIN
-            or effective != request["context_tier"]
-            or not context_fits(count, reserve, effective)
+            values[1] != request["max_tokens"]
+            or values[2] != SAFETY_MARGIN
+            or values[3] != request["context_tier"]
+            or not context_fits(values[0], values[1], values[3])
             or row.get("admitted") is not True
         ):
             errors.append(f"rows[{i}] context admission failed")
     missing = set(request_rows) - observed
     if missing:
         errors.append(f"token evidence missing for {len(missing)} requests")
-    if not errors and consume:
-        errors.extend(
-            _consume_capture_issuances(ledger_path, verified_issuances, expected_plan_sha256)
-        )
     return errors
-
-
-def _consume_capture_issuances(
-    ledger_path: Path, issuances: list[dict[str, Any]], expected_plan_sha256: str
-) -> list[str]:
-    """Atomically make authenticated captures single-use for one frozen plan."""
-    fd = os.open(ledger_path, os.O_RDWR | os.O_APPEND)
-    with os.fdopen(fd, "r+b", closefd=True) as stream:
-        flock(stream.fileno(), LOCK_EX)
-        stream.seek(0)
-        records = [json.loads(line) for line in stream if line.strip()]
-        consumed = {row.get("capture_id") for row in records if row.get("event") == "consumed"}
-        ids = [row["capture_id"] for row in issuances]
-        if len(ids) != len(set(ids)) or consumed.intersection(ids):
-            flock(stream.fileno(), LOCK_UN)
-            return ["capture set already consumed or contains duplicate capture IDs"]
-        stream.seek(0, os.SEEK_END)
-        for issuance in issuances:
-            stream.write(
-                _canonical(
-                    {
-                        "event": "consumed",
-                        "capture_id": issuance["capture_id"],
-                        "plan_sha256": expected_plan_sha256,
-                        "session_id": issuance["session_id"],
-                        "consumed_at": datetime.now(UTC).isoformat(),
-                    }
-                )
-                + b"\n"
-            )
-        stream.flush()
-        os.fsync(stream.fileno())
-        flock(stream.fileno(), LOCK_UN)
-    return []
 
 
 def _validate_request_contract(requests: tuple[dict[str, Any], ...]) -> None:
@@ -911,6 +714,7 @@ def build_overlay_plan(
     pack_root: str | Path,
     artifact_root: str | Path,
     frozen_plan_path: str | Path,
+    private_evidence_root: str | Path,
 ) -> OverlayPlan:
     manifest_path, pack_root = Path(manifest_path), Path(pack_root)
     requests = materialize_request_artifacts(manifest_path, pack_root, artifact_root)
@@ -929,6 +733,7 @@ def build_overlay_plan(
         token_map,
         requests,
         artifact_root,
+        private_evidence_root=private_evidence_root,
     )
     if errors:
         raise ValueError("invalid exact token evidence: " + "; ".join(errors))

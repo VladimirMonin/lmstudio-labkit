@@ -15,25 +15,23 @@
         "type": "object",
         "additionalProperties": false,
         "required": [
-          "schema_version", "authority", "capture_id", "model_key", "instance_id",
+          "schema_version", "runtime", "model_key", "instance_id",
           "instance_config", "instance_config_sha256", "plan_sha256",
           "preflight", "post_unload", "private_evidence_relative_path",
-          "private_evidence_sha256", "rows", "evidence_sha256", "authority_signature"
+          "private_evidence_sha256", "rows", "evidence_sha256"
         ],
         "properties": {
-          "schema_version": {"const": "lmstudio-sdk-tokenizer-capture-v2"},
-          "authority": {
+          "schema_version": {"const": "lmstudio-sdk-tokenizer-capture-v3"},
+          "runtime": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["package", "version", "identity_sha256", "signature_algorithm"],
+            "required": ["package", "version"],
             "properties": {
               "package": {"const": "lmstudio"},
-              "version": {"const": "1.5.0"},
-              "identity_sha256": {"$ref": "#/$defs/sha256"},
-              "signature_algorithm": {"const": "hmac-sha256-v1"}
+              "version": {"const": "1.5.0"}
             }
           },
-          "capture_id": {"$ref": "#/$defs/sha256"},
+
           "model_key": {
             "enum": [
               "google/gemma-4-e2b", "google/gemma-4-e4b",
@@ -46,10 +44,9 @@
           "plan_sha256": {"$ref": "#/$defs/sha256"},
           "preflight": {"$ref": "#/$defs/zeroSnapshot"},
           "post_unload": {"$ref": "#/$defs/zeroSnapshot"},
-          "private_evidence_relative_path": {"type": "string", "pattern": "^captures/[0-9a-f]{64}\\.json$"},
+          "private_evidence_relative_path": {"type": "string", "pattern": "^captures/[^/]+\\.json$"},
           "private_evidence_sha256": {"$ref": "#/$defs/sha256"},
           "evidence_sha256": {"$ref": "#/$defs/sha256"},
-          "authority_signature": {"$ref": "#/$defs/sha256"},
           "rows": {
             "type": "array",
             "minItems": 20,

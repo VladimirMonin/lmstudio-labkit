@@ -1,23 +1,13 @@
 {
   "captures": [
     {
-      "authority": {
-        "identity_sha256": "5a757ef4f38add986237dba7d8c6b47d151ed97837236812946aa51e8e350345",
-        "package": "lmstudio",
-        "signature_algorithm": "ed25519-v1",
-        "version": "1.5.0"
-      },
-      "authority_signature": "+6FJSv3hdesEr9KmA5jr1fdyd3GwRLs4Y7F1Lv55rQ1fbQwSxFMiouqt1f43SeAu26VMK0eYybIuR0a8yX5TCg==",
-      "capture_id": 1,
-      "evidence_sha256": "899acef13ead17ee6a24f92cf8f4522f5307c4d6bee97cd7bef4aea786817422",
+      "evidence_sha256": "94fd4cd8d13cdc1fba0c69cd40e1d6fa119a3c11725560d5c55ed9cfcd7cdbaa",
       "instance_config": {
         "context_length": 28672
       },
       "instance_config_sha256": "4b58851a23f8b9a4ab0d77e34b971542ff362637508424a390c92f9ce2d7c2cc",
       "instance_id": "four-model-tokenizer-1",
-      "issued_at": "2026-07-11T19:18:02.999226+00:00",
       "model_key": "google/gemma-4-e2b",
-      "nonce": "50ecbabad066f063785bc772041bbe361d132bf835ea59f341a16f3a92996928",
       "plan_sha256": "cdc9046e0333e0da147908e2135764a366ee7e3184646e396d4d8688452e8825",
       "post_unload": {
         "instance_bindings_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -313,27 +303,20 @@
           "token_ids_sha256": "87f1eebfa602ffb6020c78f25527e76c7d0533bf97ed06e66e2b273bcbc0a9b5"
         }
       ],
-      "schema_version": "lmstudio-sdk-tokenizer-capture-v2",
-      "session_id": "0b4a4820031037853d88f5cc26f26c9c"
-    },
-    {
-      "authority": {
-        "identity_sha256": "5a757ef4f38add986237dba7d8c6b47d151ed97837236812946aa51e8e350345",
+      "runtime": {
         "package": "lmstudio",
-        "signature_algorithm": "ed25519-v1",
         "version": "1.5.0"
       },
-      "authority_signature": "vJlp/HGdNNL+nUrGrJEpm9YBdWc6498W0OZ6iJhF+a+s6HdBao0rj3/heZWzmyaHibvUQW50SXQmfCRHT9atDg==",
-      "capture_id": 2,
-      "evidence_sha256": "97e6181094dffd860e838bfadcff3e4a13ab6ac9282185cbbb5c651e1121f73f",
+      "schema_version": "lmstudio-sdk-tokenizer-capture-v3"
+    },
+    {
+      "evidence_sha256": "84ca60d35614a6ba91ef54d9badacd7a5ef5fa7b7eb0eefe7aa9018516d6241a",
       "instance_config": {
         "context_length": 28672
       },
       "instance_config_sha256": "4b58851a23f8b9a4ab0d77e34b971542ff362637508424a390c92f9ce2d7c2cc",
       "instance_id": "four-model-tokenizer-2",
-      "issued_at": "2026-07-11T19:18:12.393403+00:00",
       "model_key": "google/gemma-4-e4b",
-      "nonce": "c7778cd5024a602bc1975f2da9cf03aa09f8459ef6669d90ed17e6abc11c81f6",
       "plan_sha256": "cdc9046e0333e0da147908e2135764a366ee7e3184646e396d4d8688452e8825",
       "post_unload": {
         "instance_bindings_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -629,27 +612,20 @@
           "token_ids_sha256": "5e73bd1a46ef21c9e5aa7898817ed0f1f36cdfd2e58843b2b9398340854cf966"
         }
       ],
-      "schema_version": "lmstudio-sdk-tokenizer-capture-v2",
-      "session_id": "557ab3c20335f7442e71cef1536e5f07"
-    },
-    {
-      "authority": {
-        "identity_sha256": "5a757ef4f38add986237dba7d8c6b47d151ed97837236812946aa51e8e350345",
+      "runtime": {
         "package": "lmstudio",
-        "signature_algorithm": "ed25519-v1",
         "version": "1.5.0"
       },
-      "authority_signature": "fTvDEVYYp4LJ49wiK7dgJpxQ8Sh75kl7uFsTPjfy8iVftknpPH2x7eQyiG4/VEDGlsMvvIr3mFZqq8t1krJRAA==",
-      "capture_id": 3,
-      "evidence_sha256": "445d5333d22ae6fb87acbfd815bed8fa6780f37b0cc94102729a6a39a568be08",
+      "schema_version": "lmstudio-sdk-tokenizer-capture-v3"
+    },
+    {
+      "evidence_sha256": "7a36033ad7e49e582c91ee9c40855f78e2844f3a0a24837fd2bed7b29941af69",
       "instance_config": {
         "context_length": 28672
       },
       "instance_config_sha256": "4b58851a23f8b9a4ab0d77e34b971542ff362637508424a390c92f9ce2d7c2cc",
       "instance_id": "four-model-tokenizer-3",
-      "issued_at": "2026-07-11T19:18:20.599810+00:00",
       "model_key": "google/gemma-4-12b-qat",
-      "nonce": "f74580682ac4a85f526afe1c3790cd53e033c4da8ce3bfedbe711b936f52fcef",
       "plan_sha256": "cdc9046e0333e0da147908e2135764a366ee7e3184646e396d4d8688452e8825",
       "post_unload": {
         "instance_bindings_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -945,27 +921,20 @@
           "token_ids_sha256": "611c85233ea90e7c0427a65d9c99d4e455b34d433b4ed46ab6f6c7f7b1dfd106"
         }
       ],
-      "schema_version": "lmstudio-sdk-tokenizer-capture-v2",
-      "session_id": "e21549500866c3cd408df7fcd28414f9"
-    },
-    {
-      "authority": {
-        "identity_sha256": "5a757ef4f38add986237dba7d8c6b47d151ed97837236812946aa51e8e350345",
+      "runtime": {
         "package": "lmstudio",
-        "signature_algorithm": "ed25519-v1",
         "version": "1.5.0"
       },
-      "authority_signature": "PepC9f8ACCE8bnTVkcFm6+L0Se3a36MnCUbeN0qqqFn/fYyltlul4ZYA+TxFmgVTVYxgzrGhDxD47Qscxgv3CA==",
-      "capture_id": 4,
-      "evidence_sha256": "03fa56b1224f0feebc1ac5a17a31397fade9b9f2d3603f1573dd879ffd0c8dfc",
+      "schema_version": "lmstudio-sdk-tokenizer-capture-v3"
+    },
+    {
+      "evidence_sha256": "963b85f472710d6b9cc05f54e12a4d4495b7b8ce564e438359f3addc39b04cfe",
       "instance_config": {
         "context_length": 28672
       },
       "instance_config_sha256": "4b58851a23f8b9a4ab0d77e34b971542ff362637508424a390c92f9ce2d7c2cc",
       "instance_id": "four-model-tokenizer-4",
-      "issued_at": "2026-07-11T19:18:39.204924+00:00",
       "model_key": "google/gemma-4-26b-a4b-qat",
-      "nonce": "e7451f336f2f0bd4e32c553b7d8af01ef32a8f2991dd36b927de4dcd6a976cfe",
       "plan_sha256": "cdc9046e0333e0da147908e2135764a366ee7e3184646e396d4d8688452e8825",
       "post_unload": {
         "instance_bindings_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
@@ -1261,8 +1230,11 @@
           "token_ids_sha256": "f274ffb19ea2b7ec6c857612806bf23f7e070d68d936c5d00eb7d8927efce763"
         }
       ],
-      "schema_version": "lmstudio-sdk-tokenizer-capture-v2",
-      "session_id": "dd0d47ffce8001394e74d1569d8af267"
+      "runtime": {
+        "package": "lmstudio",
+        "version": "1.5.0"
+      },
+      "schema_version": "lmstudio-sdk-tokenizer-capture-v3"
     }
   ],
   "schema_version": "lmstudio-sdk-tokenizer-capture-set-v1"

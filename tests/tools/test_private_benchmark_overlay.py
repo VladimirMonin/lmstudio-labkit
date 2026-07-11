@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import base64
 import hashlib
-import inspect
 import json
 import os
 import shutil
@@ -13,7 +12,6 @@ from pathlib import Path
 import pytest
 import tools.lmstudio_lab.private_benchmark_overlay as overlay
 import tools.lmstudio_lab.tokenizer_capture as tokenizer_capture
-from cryptography.hazmat.primitives import serialization
 from tools.lmstudio_lab.private_benchmark_overlay import (
     MODEL_IDS,
     OverlayPlan,
@@ -30,9 +28,7 @@ from tools.lmstudio_lab.private_benchmark_overlay import (
     validate_overlay_manifest,
     validate_resource_admission,
     validate_run_closure,
-)
-from tools.lmstudio_lab.private_benchmark_overlay import (
-    validate_token_map as _validate_token_map,
+    validate_token_map,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -48,56 +44,12 @@ def _digest(value: object) -> str:
     ).hexdigest()
 
 
-@pytest.fixture(autouse=True)
-def _isolated_owner_authority(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    store = tmp_path / "owner-sealed-authority"
-    monkeypatch.setattr(overlay, "_AUTHORITY_STORE", store)
-    monkeypatch.setattr(tokenizer_capture, "_AUTHORITY_STORE", store)
-
-
-def _token_auth_paths(artifact_root: Path) -> tuple[Path, Path, Path, Path]:
-    authority = overlay._AUTHORITY_STORE
-    return (
-        artifact_root.parent / "token-private",
-        authority / "authority.key",
-        authority / "authority.pub",
-        authority / "ledgers" / "issuance.jsonl",
-    )
-
-
-def validate_token_map(token_map: dict, requests, artifact_root: Path) -> list[str]:
-    return _validate_token_map(
-        token_map,
-        requests,
-        artifact_root,
-        consume=False,
-    )
-
-
-def _token_map(requests: tuple[dict, ...], artifact_root: Path, plan_sha256: str = ZERO) -> dict:
-    private_root, key_path, public_path, ledger_path = _token_auth_paths(artifact_root)
+def _token_map(
+    requests: tuple[dict, ...], artifact_root: Path, plan_sha256: str = ZERO
+) -> tuple[dict, Path]:
+    private_root = artifact_root.parent / "token-private"
     private_root.mkdir(parents=True, exist_ok=True, mode=0o700)
     os.chmod(private_root, 0o700)
-    key = tokenizer_capture._authority_key(key_path, public_path)
-    public_der = key.public_key().public_bytes(
-        serialization.Encoding.DER, serialization.PublicFormat.SubjectPublicKeyInfo
-    )
-    identity = hashlib.sha256(public_der).hexdigest()
-    ledger_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
-    os.chmod(ledger_path.parent, 0o700)
-    generation_path = overlay._AUTHORITY_STORE / "generations" / f"{plan_sha256}.json"
-    generation_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
-    os.chmod(generation_path.parent, 0o700)
-    generation = {
-        "schema_version": "lmstudio-sdk-capture-authority-generation-v1",
-        "plan_sha256": plan_sha256,
-        "authority_identity_sha256": identity,
-        "authority_public_key_pem": public_path.read_text(),
-        "authority_ledger_path": str(ledger_path.resolve()),
-        "private_evidence_root": str(private_root.resolve()),
-    }
-    generation_path.write_text(json.dumps(generation), encoding="utf-8")
-    os.chmod(generation_path, 0o600)
     captures = []
     for model_index, model_id in enumerate(MODEL_IDS):
         model_requests = [request for request in requests if request["model_id"] == model_id]
@@ -135,51 +87,26 @@ def _token_map(requests: tuple[dict, ...], artifact_root: Path, plan_sha256: str
             )
         config = {"context_length": 28672}
         instance_id = f"capture-instance-{model_index}"
-        issuance = tokenizer_capture._issue_capture(
-            ledger_path,
-            {
-                "authority_identity_sha256": identity,
-                "plan_sha256": plan_sha256,
-                "model_key": model_id,
-                "instance_id": instance_id,
-                "instance_config_sha256": _digest(config),
-                "request_ids_sha256": _digest([row["request_id"] for row in rows]),
-            },
-        )
-        capture_id = issuance["capture_id"]
         private = {
-            "schema_version": "lmstudio-sdk-tokenizer-private-evidence-v1",
-            "capture_id": capture_id,
-            "nonce": issuance["nonce"],
-            "issued_at": issuance["issued_at"],
-            "session_id": issuance["session_id"],
-            "authority_identity_sha256": identity,
+            "schema_version": "lmstudio-sdk-tokenizer-private-evidence-v2",
             "plan_sha256": plan_sha256,
             "model_key": model_id,
             "instance_id": instance_id,
             "instance_config": config,
             "rows": private_rows,
         }
-        private_payload = json.dumps(
+        payload = json.dumps(
             private, ensure_ascii=False, sort_keys=True, separators=(",", ":")
         ).encode()
-        private_path = private_root / "captures" / f"{capture_id}.json"
-        private_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
-        os.chmod(private_path.parent, 0o700)
-        private_path.write_bytes(private_payload + b"\n")
-        os.chmod(private_path, 0o600)
+        name = f"{model_id.replace('/', '__')}.json"
+        path = private_root / "captures" / name
+        path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        os.chmod(path.parent, 0o700)
+        path.write_bytes(payload + b"\n")
+        os.chmod(path, 0o600)
         capture = {
-            "schema_version": "lmstudio-sdk-tokenizer-capture-v2",
-            "authority": {
-                "package": "lmstudio",
-                "version": "1.5.0",
-                "identity_sha256": identity,
-                "signature_algorithm": "ed25519-v1",
-            },
-            "capture_id": capture_id,
-            "nonce": issuance["nonce"],
-            "issued_at": issuance["issued_at"],
-            "session_id": issuance["session_id"],
+            "schema_version": "lmstudio-sdk-tokenizer-capture-v3",
+            "runtime": {"package": "lmstudio", "version": "1.5.0"},
             "model_key": model_id,
             "instance_id": instance_id,
             "instance_config": config,
@@ -195,20 +122,16 @@ def _token_map(requests: tuple[dict, ...], artifact_root: Path, plan_sha256: str
                 "instance_bindings_sha256": ZERO,
                 "response_sha256": ZERO,
             },
-            "private_evidence_relative_path": f"captures/{capture_id}.json",
-            "private_evidence_sha256": hashlib.sha256(private_payload).hexdigest(),
+            "private_evidence_relative_path": f"captures/{name}",
+            "private_evidence_sha256": hashlib.sha256(payload).hexdigest(),
             "rows": rows,
         }
         capture["evidence_sha256"] = _digest(capture)
-        capture["authority_signature"] = base64.b64encode(
-            key.sign(
-                json.dumps(
-                    capture, ensure_ascii=False, sort_keys=True, separators=(",", ":")
-                ).encode()
-            )
-        ).decode()
         captures.append(capture)
-    return {"schema_version": "lmstudio-sdk-tokenizer-capture-set-v1", "captures": captures}
+    return {
+        "schema_version": "lmstudio-sdk-tokenizer-capture-set-v1",
+        "captures": captures,
+    }, private_root
 
 
 def _plan(tmp_path: Path) -> OverlayPlan:
@@ -441,28 +364,23 @@ def test_build_consumes_exact_frozen_plan_bundle(tmp_path: Path) -> None:
     frozen_path = tmp_path / "plan.json"
     overlay.write_overlay_plan(plan, frozen_path)
     plan_sha256 = capture_plan_digest(json.loads(frozen_path.read_text()))
+    token_map, private_root = _token_map(plan.requests, artifact_root, plan_sha256)
     token_path = tmp_path / "tokens.json"
-    token_path.write_text(
-        json.dumps(_token_map(plan.requests, artifact_root, plan_sha256)), encoding="utf-8"
-    )
-    built = build_overlay_plan(
-        MANIFEST,
-        token_path,
-        PACK,
-        artifact_root,
-        frozen_path,
-    )
+    token_path.write_text(json.dumps(token_map), encoding="utf-8")
+    built = build_overlay_plan(MANIFEST, token_path, PACK, artifact_root, frozen_path, private_root)
     assert len(built.requests) == 80
 
 
-def test_r01_tokenizer_verification_is_mandatory_and_authenticated(tmp_path: Path) -> None:
+def test_trusted_local_tokenizer_capture_binds_private_exact_tokens(tmp_path: Path) -> None:
     artifact_root = tmp_path / "requests"
     requests = materialize_request_artifacts(MANIFEST, PACK, artifact_root)
-    token_map = _token_map(requests, artifact_root)
-    errors = validate_token_map(token_map, requests, artifact_root)
-    assert errors == []
-    assert not hasattr(overlay, "TRUSTED_TOKENIZERS")
-    assert not hasattr(overlay, "_load_production_tokenizer")
+    token_map, private_root = _token_map(requests, artifact_root)
+    assert (
+        validate_token_map(token_map, requests, artifact_root, private_evidence_root=private_root)
+        == []
+    )
+    assert not hasattr(overlay, "_AUTHORITY_STORE")
+    assert not hasattr(tokenizer_capture, "_AUTHORITY_STORE")
 
 
 def test_capture_plan_digest_is_reproducible_and_rejects_stale_plan(tmp_path: Path) -> None:
@@ -475,7 +393,6 @@ def test_capture_plan_digest_is_reproducible_and_rejects_stale_plan(tmp_path: Pa
     assert tokenizer_capture.capture_plan_digest(document) == expected
     assert document["planned_cells"] == 64
     assert document["planned_model_calls"] == 80
-
     stale = deepcopy(document)
     stale["requests"][0]["request_sha256"] = ZERO
     assert capture_plan_digest(stale) != expected
@@ -485,153 +402,29 @@ def test_capture_plan_digest_is_reproducible_and_rejects_stale_plan(tmp_path: Pa
         )
 
 
-def test_authenticated_capture_set_is_single_use_for_same_plan(tmp_path: Path) -> None:
+def test_token_map_rejects_private_evidence_tampering_and_count_forgery(tmp_path: Path) -> None:
     artifact_root = tmp_path / "requests"
     requests = materialize_request_artifacts(MANIFEST, PACK, artifact_root)
-    token_map = _token_map(requests, artifact_root)
-    assert _validate_token_map(token_map, requests, artifact_root) == []
-    assert any(
-        "replay" in error for error in _validate_token_map(token_map, requests, artifact_root)
-    )
-
-
-def test_caller_signed_bundle_from_alternate_authority_is_rejected(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    trusted_root = tmp_path / "trusted" / "requests"
-    trusted_requests = materialize_request_artifacts(MANIFEST, PACK, trusted_root)
-    trusted = _token_map(trusted_requests, trusted_root)
-    trusted_store = overlay._AUTHORITY_STORE
-    alternate_root = tmp_path / "alternate" / "requests"
-    alternate_requests = materialize_request_artifacts(MANIFEST, PACK, alternate_root)
-    alternate_store = tmp_path / "caller-controlled-authority"
-    monkeypatch.setattr(overlay, "_AUTHORITY_STORE", alternate_store)
-    monkeypatch.setattr(tokenizer_capture, "_AUTHORITY_STORE", alternate_store)
-    synthetic = _token_map(alternate_requests, alternate_root)
-    monkeypatch.setattr(overlay, "_AUTHORITY_STORE", trusted_store)
-    monkeypatch.setattr(tokenizer_capture, "_AUTHORITY_STORE", trusted_store)
-    assert trusted["captures"][0]["authority"] != synthetic["captures"][0]["authority"]
-    monkeypatch.setenv("LMSTUDIO_CAPTURE_AUTHORITY_ROOT", str(alternate_store))
-    monkeypatch.setenv(
-        "LMSTUDIO_CAPTURE_AUTHORITY_PUBLIC_KEY", str(alternate_store / "authority.pub")
-    )
-    errors = _validate_token_map(synthetic, alternate_requests, alternate_root, consume=False)
-    assert any("authentication failed" in error for error in errors)
-    assert _validate_token_map(trusted, trusted_requests, trusted_root, consume=False) == []
-
-    for api in (_validate_token_map, build_overlay_plan):
-        parameters = inspect.signature(api).parameters
-        assert "private_evidence_root" not in parameters
-        assert "authority_public_key_path" not in parameters
-        assert "authority_ledger_path" not in parameters
-        assert "expected_authority_identity_sha256" not in parameters
-        assert "verifier" not in parameters
-
-
-def test_token_map_rejects_unsigned_forged_replayed_and_private_evidence_attacks(
-    tmp_path: Path,
-) -> None:
-    artifact_root = tmp_path / "requests"
-    requests = materialize_request_artifacts(MANIFEST, PACK, artifact_root)
-    token_map = _token_map(requests, artifact_root)
-    private_root, _key_path, _public_path, _ledger_path = _token_auth_paths(artifact_root)
-
-    unsigned = deepcopy(token_map)
-    unsigned["captures"][0].pop("authority_signature")
-    assert any(
-        "schema is not closed" in error
-        for error in validate_token_map(unsigned, requests, artifact_root)
-    )
-
-    validation_parameters = inspect.signature(_validate_token_map).parameters
-    assert "authority_public_key_path" not in validation_parameters
-    assert "authority_ledger_path" not in validation_parameters
-    assert "expected_authority_identity_sha256" not in validation_parameters
-    assert any(
-        "generation is unavailable" in error
-        for error in _validate_token_map(
-            deepcopy(token_map)
-            | {
-                "captures": [
-                    capture | {"plan_sha256": "f" * 64} for capture in token_map["captures"]
-                ]
-            },
-            requests,
-            artifact_root,
-            consume=False,
-        )
-    )
-
+    token_map, private_root = _token_map(requests, artifact_root)
     private_path = private_root / token_map["captures"][0]["private_evidence_relative_path"]
-    saved = private_path.read_bytes()
-    private_path.unlink()
-    assert any(
-        "private evidence missing" in error
-        for error in validate_token_map(token_map, requests, artifact_root)
+    private_path.write_bytes(private_path.read_bytes() + b" ")
+    errors = validate_token_map(
+        token_map, requests, artifact_root, private_evidence_root=private_root
     )
-    private_path.write_bytes(saved + b" ")
-    os.chmod(private_path, 0o600)
-    assert any(
-        "private evidence digest mismatch" in error
-        for error in validate_token_map(token_map, requests, artifact_root)
-    )
+    assert any("private evidence digest mismatch" in error for error in errors)
 
-    substituted = deepcopy(token_map)
-    substituted["captures"][0]["instance_id"] = "substituted-instance"
-    assert any(
-        "authentication failed" in error or "capture identity binding" in error
-        for error in validate_token_map(substituted, requests, artifact_root)
-    )
-
-
-def test_token_map_rejects_duplicates_missing_and_count_forgery(tmp_path: Path) -> None:
-    artifact_root = tmp_path / "requests"
-    requests = materialize_request_artifacts(MANIFEST, PACK, artifact_root)
-    token_map = _token_map(requests, artifact_root)
+    token_map, private_root = _token_map(requests, artifact_root)
     rows = token_map["captures"][0]["rows"]
     rows[0].update(request_sha256=ZERO, byte_length=999999, exact_token_count=0, admitted=False)
     rows[1]["request_id"] = rows[0]["request_id"]
     rows.pop()
-    errors = validate_token_map(token_map, requests, artifact_root)
+    errors = validate_token_map(
+        token_map, requests, artifact_root, private_evidence_root=private_root
+    )
     assert any("digest/length" in error for error in errors)
     assert any("duplicate" in error for error in errors)
     assert any("missing" in error for error in errors)
     assert any("context admission" in error for error in errors)
-
-
-def test_r01_rejects_alias_and_coordinated_artifact_substitution(tmp_path: Path) -> None:
-    artifact_root = tmp_path / "requests"
-    request = deepcopy(materialize_request_artifacts(MANIFEST, PACK, artifact_root)[0])
-    request["model_revision"] = "attacker-revision"
-    fake_record = {
-        "status": "available",
-        "model_revision": "attacker-revision",
-        "model_artifact_path": str(tmp_path / "model.gguf"),
-        "model_artifact_sha256": hashlib.sha256(b"fake-model").hexdigest(),
-        "tokenizer_artifact_path": str(tmp_path / "tokenizer.json"),
-        "tokenizer_artifact_sha256": hashlib.sha256(b"fake-tokenizer").hexdigest(),
-        "tokenizer_version": "attacker-version",
-        "tokenize": lambda _path, payload: list(payload),
-    }
-    Path(fake_record["model_artifact_path"]).write_bytes(b"fake-model")
-    Path(fake_record["tokenizer_artifact_path"]).write_bytes(b"fake-tokenizer")
-    token_map = _token_map((request,), artifact_root)
-    token_map["captures"][0]["rows"][0]["token_ids_sha256"] = ZERO
-    errors = validate_token_map(token_map, (request,), artifact_root)
-    assert any("evidence digest mismatch" in error for error in errors)
-    with pytest.raises(TypeError):
-        validate_token_map(  # type: ignore[call-arg]
-            token_map,
-            (request,),
-            artifact_root,
-            trusted_tokenizers={request["model_id"]: fake_record},
-        )
-
-    request["model_id"] = "google/gemma-4-e2b-alias"
-    assert any(
-        "chat/model binding mismatch" in error
-        for error in validate_token_map(token_map, (request,), artifact_root)
-    )
 
 
 def test_r02_trace_requires_ordered_unique_cold_cycles(tmp_path: Path) -> None:
@@ -834,19 +627,23 @@ def test_private_record_is_immutable_and_outside_repository(tmp_path: Path) -> N
 def test_coordinated_forgery_regressions(tmp_path: Path) -> None:
     artifact_root = tmp_path / "requests"
     requests = list(materialize_request_artifacts(MANIFEST, PACK, artifact_root))
-    token_map = _token_map(tuple(requests), artifact_root)
+    token_map, private_root = _token_map(tuple(requests), artifact_root)
     token_map["captures"][0]["rows"][0].update(output_token_reserve=0, safety_margin=0)
     assert any(
         "context admission" in error
-        for error in validate_token_map(token_map, requests, artifact_root)
+        for error in validate_token_map(
+            token_map, requests, artifact_root, private_evidence_root=private_root
+        )
     )
 
-    token_map = _token_map(tuple(requests), artifact_root)
+    token_map, private_root = _token_map(tuple(requests), artifact_root)
     requests[0]["model_revision"] = "coordinated-forgery"
     token_map["captures"][0]["model_key"] = "google/gemma-4-e2b-alias"
     assert any(
         "aliases are forbidden" in error
-        for error in validate_token_map(token_map, requests, artifact_root)
+        for error in validate_token_map(
+            token_map, requests, artifact_root, private_evidence_root=private_root
+        )
     )
 
     plan = _plan(tmp_path / "trace")
@@ -972,15 +769,14 @@ def test_sdk_capture_binds_exact_instance_template_tokens_and_zero_cleanup(
     monkeypatch.setattr(tokenizer_capture.lms, "Client", Client)
     monkeypatch.setattr(tokenizer_capture, "_rest_models", lambda: next(snapshots))
     plan_sha256 = tokenizer_capture.capture_plan_digest(plan.as_dict())
-    generation = tokenizer_capture.create_capture_authority_generation(
-        plan_path, tmp_path / "private-tokenizer"
-    )
+    private_root = tmp_path / "private-tokenizer"
     evidence = tokenizer_capture.capture_runtime_tokenizer(
         model_key=model_key,
         instance_id=instance_id,
         load_config_path=config_path,
         plan_path=plan_path,
         artifact_root=artifact_root,
+        private_evidence_root=private_root,
         expected_plan_sha256=plan_sha256,
     )
     assert lifecycle[0] == "load"
@@ -989,12 +785,8 @@ def test_sdk_capture_binds_exact_instance_template_tokens_and_zero_cleanup(
     assert all(row["exact_token_count"] == 3 for row in evidence["rows"])
     assert evidence["preflight"]["loaded_count"] == 0
     assert evidence["post_unload"]["loaded_count"] == 0
-    assert isinstance(evidence["capture_id"], int)
-    assert len(evidence["nonce"]) == 64
-    assert len(evidence["session_id"]) == 32
-    assert evidence["authority"]["signature_algorithm"] == "ed25519-v1"
-    assert stat.S_IMODE(Path(generation["authority_ledger_path"]).stat().st_mode) == 0o600
-    private_path = tmp_path / "private-tokenizer" / evidence["private_evidence_relative_path"]
+    assert evidence["runtime"] == {"package": "lmstudio", "version": "1.5.0"}
+    private_path = private_root / evidence["private_evidence_relative_path"]
     private = json.loads(private_path.read_text())
     assert stat.S_IMODE(private_path.stat().st_mode) == 0o600
     assert stat.S_IMODE(private_path.parent.stat().st_mode) == 0o700
