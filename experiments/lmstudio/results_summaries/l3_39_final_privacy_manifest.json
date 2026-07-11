@@ -1,0 +1,20 @@
+{
+  "schema_version": "lmstudio-labkit-l339-final-privacy-v1",
+  "public_artifacts": [
+    "l3_39_final_synthesis.md",
+    "l3_39_final_synthesis.sanitized.json",
+    "l3_39_final_privacy_manifest.json"
+  ],
+  "private_artifacts_in_repository": false,
+  "raw_prompt_or_response_published": false,
+  "reasoning_text_published": false,
+  "private_paths_published": false,
+  "credentials_or_tokens_published": false,
+  "qualitative_private_records_verified": 18,
+  "qualitative_private_records_republished": 0,
+  "tracked_raw_count": 0,
+  "cleanup_verified": true,
+  "final_loaded_count_zero": true,
+  "live_inference_performed_by_synthesis": false,
+  "model_load_or_download_performed_by_synthesis": false
+}

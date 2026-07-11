@@ -6,6 +6,7 @@ Current code includes extracted managed LM Studio backend contracts, lab runners
 
 ## Docs
 
+- [Agent and instruction workflow](docs/agent-workflow.md)
 - [Development plan](docs/development_plan.md)
 - [Structured matrix benchmark design](docs/structured_matrix_design.md)
 - [Public API design](docs/public_api_design.md)

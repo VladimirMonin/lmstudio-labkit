@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from difflib import SequenceMatcher
 from typing import Any, Literal
 
+from .json_normalization import JsonNormalizationPolicy, parse_json_response
 from .requests import ResponseContract
 
 ValidationStatus = Literal["pass", "fail", "warning", "skip"]
@@ -47,20 +48,32 @@ def validate_response(
     finish_reason: str | None = None,
     input_char_count: int | None = None,
     input_text: str | None = None,
+    json_normalization_policy: JsonNormalizationPolicy = "strict",
 ) -> ValidationSummary:
     parsed: Any | None = None
     results: list[ValidationResult] = []
+    validation_text = raw_response
 
     results.append(validate_finish_reason(finish_reason))
-    results.append(validate_markdown_fence_leak(raw_response))
 
     if contract.mode == "json":
-        try:
-            parsed = json.loads(raw_response)
-            results.append(ValidationResult("json_parse", "pass"))
-        except json.JSONDecodeError:
+        normalized = parse_json_response(raw_response, policy=json_normalization_policy)
+        parsed = normalized.parsed
+        results.append(
+            ValidationResult(
+                "json_normalization",
+                "pass" if normalized.parse_succeeded else "fail",
+                None if normalized.parse_succeeded else "invalid_json",
+                normalized.safe_diagnostics(),
+            )
+        )
+        if parsed is None:
+            results.append(validate_markdown_fence_leak(raw_response))
             results.append(ValidationResult("json_parse", "fail", "invalid_json"))
             return ValidationSummary("fail", tuple(results))
+        validation_text = normalized.normalized_text or raw_response
+        results.append(validate_markdown_fence_leak(validation_text))
+        results.append(ValidationResult("json_parse", "pass"))
 
         if contract.schema is not None:
             results.append(validate_json_schema(parsed, contract.schema))
@@ -101,6 +114,7 @@ def validate_response(
         else:
             results.append(ValidationResult("image_ground_truth", "skip"))
     else:
+        results.append(validate_markdown_fence_leak(raw_response))
         results.append(ValidationResult("json_parse", "skip"))
         results.append(validate_no_placeholder_text(raw_response))
         results.append(validate_no_reasoning_leak(raw_response))
@@ -119,14 +133,14 @@ def validate_response(
         results.extend(_postprocessing_validation_results(raw_response, contract, input_text))
 
     if input_char_count is not None:
-        results.append(validate_empty_text_for_non_empty_input(raw_response, input_char_count))
+        results.append(validate_empty_text_for_non_empty_input(validation_text, input_char_count))
     else:
         results.append(ValidationResult("empty_text_for_non_empty_input", "skip"))
 
     if contract.min_length_ratio is not None or contract.max_length_ratio is not None:
         results.append(
             validate_length_ratio(
-                raw_response,
+                validation_text,
                 contract.expected_output,
                 contract.min_length_ratio,
                 contract.max_length_ratio,

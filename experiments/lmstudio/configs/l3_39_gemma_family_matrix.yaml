@@ -1,0 +1,148 @@
+schema_version: lmstudio-labkit-l339-family-matrix-v1
+experiment_id: l3_39_gemma_family_matrix
+execution:
+  serial_only: true
+  parallel: 1
+  retries: "off"
+  temperature: 0
+  route: /api/v1/chat
+  stream: true
+  private_forensics_required: true
+  private_forensics_must_be_external: true
+  allow_model_downloads: false
+  allow_raw_artifacts_in_git: false
+  global_loaded_count_required_between_phases: 0
+  immutable_phase_summaries: true
+  resume_requires_verified_summary: true
+normalization:
+  policy: single_complete_json_fence
+  strict_first: true
+  allowed_transformations: [single_complete_json_fence]
+  semantic_repair: false
+models:
+  - model_id: google/gemma-4-e2b
+    exact_variant: google/gemma-4-e2b@q4_k_m
+    quantization: Q4_K_M
+    quantization_bits: 4
+    architecture: gemma4
+    publisher: google
+    format: gguf
+    capabilities: {vision: true, trained_for_tool_use: true, reasoning: {allowed_options: ["off", "on"], default: "on"}}
+    prompt_template_compatibility: {family: gemma-4, architecture: gemma4, verification_basis: official_family_architecture_contract}
+    reasoning_classes: ["off", "on"]
+    model_order: 1
+  - model_id: google/gemma-4-e4b
+    exact_variant: google/gemma-4-e4b@q4_k_m
+    quantization: Q4_K_M
+    quantization_bits: 4
+    architecture: gemma4
+    publisher: google
+    format: gguf
+    capabilities: {vision: true, trained_for_tool_use: true, reasoning: {allowed_options: ["off", "on"], default: "on"}}
+    prompt_template_compatibility: {family: gemma-4, architecture: gemma4, verification_basis: official_family_architecture_contract}
+    reasoning_classes: ["off", "on"]
+    model_order: 2
+  - model_id: google/gemma-4-12b-qat
+    exact_variant: google/gemma-4-12b-qat@q4_0
+    quantization: Q4_0
+    quantization_bits: 4
+    architecture: gemma4
+    publisher: google
+    format: gguf
+    capabilities: {vision: true, trained_for_tool_use: true, reasoning: {allowed_options: ["off", "on"], default: "on"}}
+    prompt_template_compatibility: {family: gemma-4, architecture: gemma4, verification_basis: official_family_architecture_contract}
+    reasoning_classes: ["off", "on"]
+    model_order: 3
+  - model_id: google/gemma-4-26b-a4b-qat
+    exact_variant: google/gemma-4-26b-a4b-qat@q4_0
+    quantization: Q4_0
+    quantization_bits: 4
+    architecture: gemma4
+    publisher: google
+    format: gguf
+    capabilities: {vision: true, trained_for_tool_use: true, reasoning: {allowed_options: ["off", "on"], default: "on"}}
+    prompt_template_compatibility: {family: gemma-4, architecture: gemma4, verification_basis: official_family_architecture_contract}
+    reasoning_classes: ["off", "on"]
+    model_order: 4
+  - model_id: gemma-4-31b-it
+    exact_variant: unsloth/gemma-4-31B-it-GGUF/gemma-4-31B-it-UD-IQ3_XXS.gguf
+    quantization: IQ3_XXS
+    quantization_bits: 3
+    architecture: gemma4
+    publisher: unsloth
+    format: gguf
+    size_bytes: 14140782782
+    params_string: 31B
+    artifact_identity_required: true
+    capabilities: {vision: true, trained_for_tool_use: true}
+    prompt_template_compatibility: {family: gemma-4, architecture: gemma4, verification_basis: official_family_architecture_contract}
+    reasoning_classes: [reasoning_omitted_unknown]
+    model_order: 5
+    forbidden_substitute: google/gemma-4-31b-qat
+axes:
+  phase_order: [text_structure, vision, one_shot_context, session]
+  statuses: [planned, accepted, blocked_by_prior_gate, unsupported, unknown_capability, not_run, research_only, cap_exhausted_unresolved, runtime_failed, cleanup_failed]
+  text_structure:
+    complexities: [simple, blocks, complex]
+    caps:
+      "off": {simple: 1024, blocks: 2048, complex: 4096}
+      "on": {simple: 4096, blocks: 6144, complex: 8192}
+      reasoning_omitted_unknown: {simple: 4096, blocks: 6144, complex: 8192}
+  vision:
+    fixture_id: ui_settings_ru_001
+    fixture_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/fixtures/ui_settings_ru_001.png
+    expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_settings_ru_001.expected.yaml
+    image_sha256: 0f6e1ca808d055e754806fdfd328aa081804e7d208e6efac9b81bb5e89ee72c9
+    stages: [perception, simple, medium, complex]
+    caps:
+      "off": {perception: 2048, simple: 1024, medium: 2048, complex: 4096}
+      "on": {perception: 6144, simple: 4096, medium: 6144, complex: 8192}
+      reasoning_omitted_unknown: {perception: 6144, simple: 4096, medium: 6144, complex: 8192}
+  one_shot_context:
+    tiers:
+      - {name: 4k, nominal_input_tokens: 4096, context_length: 8192}
+      - {name: 12k, nominal_input_tokens: 12288, context_length: 16384}
+      - {name: 28k, nominal_input_tokens: 28672, context_length: 32768}
+    max_output_tokens: 1024
+    framing_reserve_tokens: 512
+  session:
+    context_length: 16384
+    stable_message_1_nominal_tokens: 10240
+    changing_message_2_chunks: [chunk_1, chunk_2, chunk_3]
+    modes: [cold_full_prefix, loaded_stable_message_1]
+    max_output_tokens: 1024
+    store: false
+    previous_response_id: null
+    accumulating_history: false
+row_budget:
+  text_structure: 27
+  vision_perception: 9
+  vision_structured: 27
+  one_shot_context: 15
+  session_cold: 15
+  session_loaded: 15
+  maximum_live_calls: 108
+  offline_replay_records: 6
+  total_matrix_records: 114
+stop_gates:
+  global:
+    - exact model or variant substitution
+    - starting global loaded count is not zero
+    - private capture unavailable
+    - more than one loaded instance
+    - applied context or parallelism mismatch
+    - HTTP or runtime failure
+    - cleanup not verified
+    - ending global loaded count is not zero
+  lane:
+    - unsupported reasoning or vision metadata creates zero calls
+    - simple syntax or schema failure without cap evidence blocks higher complexity
+    - failed perception or grounding blocks structured vision expansion
+    - failed lower context blocks higher context
+    - session requires accepted 16k load and valid simple text contract
+non_claims:
+  - no physical KV reuse claim
+  - no cache benefit claim
+  - no remote memory attribution
+  - no quality claim without private-answer review
+  - no strict-route reasoning comparison

@@ -1,0 +1,810 @@
+{
+  "all_replays_match_prior_schema_outcome": true,
+  "cache_benefit_claimed": false,
+  "cache_session_evidence_included": false,
+  "kv_reuse_claimed": false,
+  "memory_attribution_claimed": false,
+  "model_count": 5,
+  "normalized_parse_status_counts": {
+    "pass": 24
+  },
+  "private_paths_exposed": false,
+  "raw_parse_status_counts": {
+    "fail": 24
+  },
+  "raw_text_exposed": false,
+  "record_count": 24,
+  "records": [
+    {
+      "evidence_id": "l339-33e498b939721450a12d",
+      "exact_variant": "unsloth/gemma-4-31B-it-GGUF/gemma-4-31B-it-UD-IQ3_XXS.gguf",
+      "fence_eligible": true,
+      "model_id": "gemma-4-31b-it",
+      "normalized_char_count": 168,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "154a5fdfb7dd2e4271df84ddf5cba3b5deec9915ad792d51ab377d223d67af92",
+      "prior_schema_status": "fail",
+      "private_path_exposed": false,
+      "raw_char_count": 180,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "1c16494e958d9edb4bbced49972c462dc1c3882174d849e93e8eabda17b0246e",
+      "reasoning_class": "reasoning_omitted_unknown",
+      "replay_matches_prior": true,
+      "row_id": "gemma-4-31b-it--text-structure--blocks--reasoning-omitted-unknown--8192--6144",
+      "schema_status": "fail",
+      "semantic_repair": false,
+      "task": "blocks",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-efee3579234c4bdcb2b5",
+      "exact_variant": "unsloth/gemma-4-31B-it-GGUF/gemma-4-31B-it-UD-IQ3_XXS.gguf",
+      "fence_eligible": true,
+      "model_id": "gemma-4-31b-it",
+      "normalized_char_count": 157,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "4ded2372f83138ef7573b73e76754c50d8afbf69536eb584bb36067a89ea60bc",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 169,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "afa2df40793c41efb46aea26d11159be4355895698adedfd822adc72c0aac53d",
+      "reasoning_class": "reasoning_omitted_unknown",
+      "replay_matches_prior": true,
+      "row_id": "gemma-4-31b-it--text-structure--simple--reasoning-omitted-unknown--8192--4096",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "simple",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-644abfa8268590b9483f",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_char_count": 90,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "10a9bbb3aa4d674537df8724e6d93d172de65cb204570a33500bf9b637ba3654",
+      "prior_schema_status": "fail",
+      "private_path_exposed": false,
+      "raw_char_count": 102,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "1e5b16e7e6065bdd9479f3ea3fcb6bf245b269cb80a7b956f307e680e0fcf7d9",
+      "reasoning_class": "off",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-12b-qat--text-structure--blocks--off--8192--2048",
+      "schema_status": "fail",
+      "semantic_repair": false,
+      "task": "blocks",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-2d7070e8e5372e87dc26",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_char_count": 90,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "10a9bbb3aa4d674537df8724e6d93d172de65cb204570a33500bf9b637ba3654",
+      "prior_schema_status": "fail",
+      "private_path_exposed": false,
+      "raw_char_count": 102,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "1e5b16e7e6065bdd9479f3ea3fcb6bf245b269cb80a7b956f307e680e0fcf7d9",
+      "reasoning_class": "on",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-12b-qat--text-structure--blocks--on--8192--6144",
+      "schema_status": "fail",
+      "semantic_repair": false,
+      "task": "blocks",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-f91746a5cacaff80212d",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_char_count": 136,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "6dbb937e3cd7c6313fc7d27ee5734c564c42442203d5addc1bc404f760f44ab3",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 148,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "948cedcb2688dc7c8d44a94f976f7c098991016efb28eb4f5c2d40fdea96e0a4",
+      "reasoning_class": "off",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-12b-qat--text-structure--simple--off--8192--1024",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "simple",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-b6dd5bc8d4c4275b02e9",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_char_count": 157,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "88d44b355285a9e934abf9a770b10a326548d8ede80089e051130aca7b9db08a",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 169,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "6037f8dd1b93ec6fa13e57eb1b628a728e6b68904a64e6c54b650cb97d9bf9a3",
+      "reasoning_class": "on",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-12b-qat--text-structure--simple--on--8192--4096",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "simple",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-replay-ac2baf31227544bf4276",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_char_count": 59,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "b2494be946e5e3384a4659c2028c665ec25cae25ca6bccf518c8034bf927c67a",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 71,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "message": "Expecting value",
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "b67403f275469abe7f75518f6b65ec34582149cdbb4b8e80c99c34632b050219",
+      "reasoning_class": "off",
+      "replay_matches_prior": true,
+      "row_id": "replay-l338-12b-01",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "repeated_context_fenced_replay",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-replay-8b1cfeb14bcc4a6f9fea",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_char_count": 59,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "63a69798355484a4f3968d3f82aad5e10c666f23cdd2e01c0a83bf1938e78f27",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 71,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "message": "Expecting value",
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "e60549a025c1926013162809a7f3a1c74d4fd10d4c80b8ae8fa60a10667855eb",
+      "reasoning_class": "off",
+      "replay_matches_prior": true,
+      "row_id": "replay-l338-12b-02",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "repeated_context_fenced_replay",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-replay-a91adf8dcfc4e6e9fa8e",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_char_count": 59,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "b2494be946e5e3384a4659c2028c665ec25cae25ca6bccf518c8034bf927c67a",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 71,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "message": "Expecting value",
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "b67403f275469abe7f75518f6b65ec34582149cdbb4b8e80c99c34632b050219",
+      "reasoning_class": "off",
+      "replay_matches_prior": true,
+      "row_id": "replay-l338-12b-03",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "repeated_context_fenced_replay",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-replay-04d7afdcd00d10ae4327",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_char_count": 59,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "655a7e4350226c87b4c74b045a0628906b4e11cc701adcf0200c0ff31ee50b84",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 71,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "message": "Expecting value",
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "b36b386874e5404d05db7ed2fa2c94ddef1135772a8503f10f27bbf844b4ca51",
+      "reasoning_class": "off",
+      "replay_matches_prior": true,
+      "row_id": "replay-l338-12b-04",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "repeated_context_fenced_replay",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-replay-afdf17abc6f6dcdee75a",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_char_count": 59,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "b2494be946e5e3384a4659c2028c665ec25cae25ca6bccf518c8034bf927c67a",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 71,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "message": "Expecting value",
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "b67403f275469abe7f75518f6b65ec34582149cdbb4b8e80c99c34632b050219",
+      "reasoning_class": "off",
+      "replay_matches_prior": true,
+      "row_id": "replay-l338-12b-05",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "repeated_context_fenced_replay",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-replay-defc6e626ce0389e260e",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_char_count": 59,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "9bd39f3f0573713214527e8ea997b2e9b2cb14564d95865f60241bd62bf02032",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 71,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "message": "Expecting value",
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "7e1b6fd90613da59242cbc896e38dff3670d7ac62505cb7c2038220a725aca75",
+      "reasoning_class": "off",
+      "replay_matches_prior": true,
+      "row_id": "replay-l338-12b-06",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "repeated_context_fenced_replay",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-22e233bbe830a307edef",
+      "exact_variant": "google/gemma-4-26b-a4b-qat@q4_0",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "normalized_char_count": 90,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "10a9bbb3aa4d674537df8724e6d93d172de65cb204570a33500bf9b637ba3654",
+      "prior_schema_status": "fail",
+      "private_path_exposed": false,
+      "raw_char_count": 102,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "1e5b16e7e6065bdd9479f3ea3fcb6bf245b269cb80a7b956f307e680e0fcf7d9",
+      "reasoning_class": "off",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-26b-a4b-qat--text-structure--blocks--off--8192--2048",
+      "schema_status": "fail",
+      "semantic_repair": false,
+      "task": "blocks",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-3917788a47827664ac59",
+      "exact_variant": "google/gemma-4-26b-a4b-qat@q4_0",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "normalized_char_count": 90,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "10a9bbb3aa4d674537df8724e6d93d172de65cb204570a33500bf9b637ba3654",
+      "prior_schema_status": "fail",
+      "private_path_exposed": false,
+      "raw_char_count": 102,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "1e5b16e7e6065bdd9479f3ea3fcb6bf245b269cb80a7b956f307e680e0fcf7d9",
+      "reasoning_class": "on",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-26b-a4b-qat--text-structure--blocks--on--8192--6144",
+      "schema_status": "fail",
+      "semantic_repair": false,
+      "task": "blocks",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-75e69ed0ca3bf5281ce1",
+      "exact_variant": "google/gemma-4-26b-a4b-qat@q4_0",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "normalized_char_count": 153,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "d1b97079f92114778e8bed8f3d622316cd8a70607382d8bda213060ada9ed6ea",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 165,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "7bc1d467325697b3c140e01df4a9a1c0f294abbaa6cb4aa6dc93731373c06b1f",
+      "reasoning_class": "off",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-26b-a4b-qat--text-structure--simple--off--8192--1024",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "simple",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-e852107437602a8038da",
+      "exact_variant": "google/gemma-4-26b-a4b-qat@q4_0",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "normalized_char_count": 153,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "d1b97079f92114778e8bed8f3d622316cd8a70607382d8bda213060ada9ed6ea",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 165,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "7bc1d467325697b3c140e01df4a9a1c0f294abbaa6cb4aa6dc93731373c06b1f",
+      "reasoning_class": "on",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-26b-a4b-qat--text-structure--simple--on--8192--4096",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "simple",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-c254d357e880e8824eed",
+      "exact_variant": "google/gemma-4-e2b@q4_k_m",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-e2b",
+      "normalized_char_count": 83,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "143ceea9bf41a7cb1386e5debc4d8bc156f20e583629f46d8918d43f7cd70d53",
+      "prior_schema_status": "fail",
+      "private_path_exposed": false,
+      "raw_char_count": 95,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "4897a357eb28247a7d85786a0e5c2bce9420a480a8e7596860b6ce3675575b09",
+      "reasoning_class": "off",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-e2b--text-structure--blocks--off--8192--2048",
+      "schema_status": "fail",
+      "semantic_repair": false,
+      "task": "blocks",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-d43ea95414b4eba829a5",
+      "exact_variant": "google/gemma-4-e2b@q4_k_m",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-e2b",
+      "normalized_char_count": 168,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "154a5fdfb7dd2e4271df84ddf5cba3b5deec9915ad792d51ab377d223d67af92",
+      "prior_schema_status": "fail",
+      "private_path_exposed": false,
+      "raw_char_count": 180,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "1c16494e958d9edb4bbced49972c462dc1c3882174d849e93e8eabda17b0246e",
+      "reasoning_class": "on",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-e2b--text-structure--blocks--on--8192--6144",
+      "schema_status": "fail",
+      "semantic_repair": false,
+      "task": "blocks",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-956183ef6bfe6323b810",
+      "exact_variant": "google/gemma-4-e2b@q4_k_m",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-e2b",
+      "normalized_char_count": 134,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "f951c1746bc89f01e50fdb53791daeddd59ddb673a7c5e192cc390eb24682dcf",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 146,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "c19e588330ece9e98d78074184ea4b0c0910ee1787f272c776089facc7180030",
+      "reasoning_class": "off",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-e2b--text-structure--simple--off--8192--1024",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "simple",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-e5bccf418157326876a3",
+      "exact_variant": "google/gemma-4-e2b@q4_k_m",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-e2b",
+      "normalized_char_count": 156,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "fe904b7ad268ec91e05e5ef90c39657b4e05eb70dff21aa12bf3bf9e0ab2516e",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 168,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "b2dd60d638e39905413ea81bdb46d80e0e2f78d9f902565a6ec5a9cb8133cc94",
+      "reasoning_class": "on",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-e2b--text-structure--simple--on--8192--4096",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "simple",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-1836c0c79406d5d882d4",
+      "exact_variant": "google/gemma-4-e4b@q4_k_m",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-e4b",
+      "normalized_char_count": 174,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "5687ea3857f456a1c95cf356e01701e3c450f51d4136198050c6f4685b33cb85",
+      "prior_schema_status": "fail",
+      "private_path_exposed": false,
+      "raw_char_count": 186,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "629786627b4ede39b7a16bbcd2799c6a40133fdad5814eccb7904f0a60a82e11",
+      "reasoning_class": "off",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-e4b--text-structure--blocks--off--8192--2048",
+      "schema_status": "fail",
+      "semantic_repair": false,
+      "task": "blocks",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-985b59a481a19a13469a",
+      "exact_variant": "google/gemma-4-e4b@q4_k_m",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-e4b",
+      "normalized_char_count": 219,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "ef0806f2fa892a55eac55116b808000c4ca9215035bf24de62de09578304ea0b",
+      "prior_schema_status": "fail",
+      "private_path_exposed": false,
+      "raw_char_count": 231,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "1bdd568a29a727c753c0791338a8c65171b5bdc1a519e9971d071d1b8f27b98e",
+      "reasoning_class": "on",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-e4b--text-structure--blocks--on--8192--6144",
+      "schema_status": "fail",
+      "semantic_repair": false,
+      "task": "blocks",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-98ee87015c048de8a417",
+      "exact_variant": "google/gemma-4-e4b@q4_k_m",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-e4b",
+      "normalized_char_count": 156,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "fe904b7ad268ec91e05e5ef90c39657b4e05eb70dff21aa12bf3bf9e0ab2516e",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 168,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "b2dd60d638e39905413ea81bdb46d80e0e2f78d9f902565a6ec5a9cb8133cc94",
+      "reasoning_class": "off",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-e4b--text-structure--simple--off--8192--1024",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "simple",
+      "transformation": "single_complete_json_fence"
+    },
+    {
+      "evidence_id": "l339-0207b0dab816950517b1",
+      "exact_variant": "google/gemma-4-e4b@q4_k_m",
+      "fence_eligible": true,
+      "model_id": "google/gemma-4-e4b",
+      "normalized_char_count": 170,
+      "normalized_parse": {
+        "error": null,
+        "status": "pass"
+      },
+      "normalized_sha256": "41be7bdf7d6e73ec3ceaefc671048ae83a91ef86e390e26ad4e9a15368693ceb",
+      "prior_schema_status": "pass",
+      "private_path_exposed": false,
+      "raw_char_count": 182,
+      "raw_parse": {
+        "error": {
+          "category": "invalid_json",
+          "column": 1,
+          "line": 1,
+          "offset": 0
+        },
+        "status": "fail"
+      },
+      "raw_sha256": "05b47dc372e1a2619f61691701b7c554015b5b4b8dea46782a9eecc06b12cfae",
+      "reasoning_class": "on",
+      "replay_matches_prior": true,
+      "row_id": "google-gemma-4-e4b--text-structure--simple--on--8192--4096",
+      "schema_status": "pass",
+      "semantic_repair": false,
+      "task": "simple",
+      "transformation": "single_complete_json_fence"
+    }
+  ],
+  "records_by_model": {
+    "gemma-4-31b-it": 2,
+    "google/gemma-4-12b-qat": 10,
+    "google/gemma-4-26b-a4b-qat": 4,
+    "google/gemma-4-e2b": 4,
+    "google/gemma-4-e4b": 4
+  },
+  "regeneration_calls": 0,
+  "schema_status_counts": {
+    "fail": 9,
+    "pass": 15
+  },
+  "schema_version": "lmstudio-labkit-l339-cross-model-fenced-replay-v1",
+  "semantic_repairs": 0,
+  "transformation_counts": {
+    "single_complete_json_fence": 24
+  }
+}

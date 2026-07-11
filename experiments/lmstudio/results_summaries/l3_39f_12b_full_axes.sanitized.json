@@ -1,0 +1,73 @@
+{
+  "schema_version": "lmstudio-labkit-l339f-12b-results-v1",
+  "model_id": "google/gemma-4-12b-qat",
+  "exact_variant": "google/gemma-4-12b-qat@q4_0",
+  "status": "terminal_stop_gated",
+  "matrix_cells": 23,
+  "new_live_calls": 10,
+  "zero_call_cells": 13,
+  "protocol": {
+    "route": "/api/v1/chat",
+    "serial_only": true,
+    "parallel": 1,
+    "retries": 0,
+    "temperature": 0,
+    "private_capture_external": true,
+    "raw_content_in_git": false
+  },
+  "phases": {
+    "text_structure": {
+      "cells": 6,
+      "executed": 4,
+      "accepted_after_fence_normalization": 2,
+      "schema_failed": 2,
+      "blocked_zero_call": 2,
+      "rows": [
+        {"task":"simple","reasoning":"off","status":"accepted","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":true,"reasoning_tokens":0,"review":"correct and complete Russian summary"},
+        {"task":"blocks","reasoning":"off","status":"blocked_by_contract_failure","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":false,"reasoning_tokens":0,"review":"three source steps preserved in order, but output shape used numeric keys instead of the fixed blocks array"},
+        {"task":"complex","reasoning":"off","status":"not_run","reason":"failed prior blocks schema gate"},
+        {"task":"simple","reasoning":"on","status":"accepted","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":true,"reasoning_tokens":324,"review":"correct and complete; no quality advantage over reasoning off"},
+        {"task":"blocks","reasoning":"on","status":"blocked_by_contract_failure","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":false,"reasoning_tokens":295,"review":"same semantically ordered numeric-key object as reasoning off; reasoning did not rescue the fixed schema"},
+        {"task":"complex","reasoning":"on","status":"not_run","reason":"failed prior blocks schema gate"}
+      ]
+    },
+    "vision": {
+      "cells": 8,
+      "executed_reviewed": 6,
+      "accepted_after_rubric": 1,
+      "blocked_or_rejected": 5,
+      "blocked_zero_call": 2,
+      "rows": [
+        {"task":"perception","reasoning":"off","status":"rejected_fixture_contradiction","grounding_valid":false,"review":"layout and most visible text were grounded, but the model identifier contradicted the fixture"},
+        {"task":"simple","reasoning":"off","status":"accepted","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":true,"grounding_valid":true,"review":"correct fixture model identifier and sufficient visible-text grounding"},
+        {"task":"medium","reasoning":"off","status":"blocked_by_contract_failure","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":false,"grounding_valid":true,"review":"controls and values were grounded, but the response used ordered_controls while the fixed executable schema requires controls"},
+        {"task":"complex","reasoning":"off","status":"not_run","reason":"failed prior medium schema gate"},
+        {"task":"perception","reasoning":"on","status":"rejected_fixture_contradiction","grounding_valid":false,"review":"detailed grounded layout, but the model identifier contradicted the fixture"},
+        {"task":"simple","reasoning":"on","status":"rejected_fixture_contradiction","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":true,"grounding_valid":false,"review":"schema-valid but wrong fixture model identifier"},
+        {"task":"medium","reasoning":"on","status":"blocked_by_contract_and_grounding_failure","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":false,"grounding_valid":false,"review":"controls and layout were mostly grounded, but the model identifier contradicted the fixture and ordered_controls violated the fixed controls schema"},
+        {"task":"complex","reasoning":"on","status":"not_run","reason":"failed prior medium schema gate"}
+      ]
+    },
+    "one_shot_context": {
+      "cells": 3,
+      "executed": 0,
+      "status": "not_run",
+      "reason": "approved runner requires an external exact per-row tokenizer count map; none exists, and approximate counts are forbidden",
+      "tiers": ["4k", "12k", "28k"]
+    },
+    "session": {
+      "cells": 6,
+      "executed": 0,
+      "status": "blocked_by_prior_gate",
+      "reason": "session requires an accepted 16k one-shot context row; context phase remained zero-call",
+      "modes": ["cold_full_prefix", "loaded_stable_message_1"],
+      "chunks": ["chunk_1", "chunk_2", "chunk_3"]
+    }
+  },
+  "comparators": {
+    "fenced_json_regression": "reproduced: all eight executed structured text/image rows required the permitted single-complete-fence normalization; no semantic repair was applied",
+    "reasoning_budget_regression": "not reproduced at the reviewed 4096/6144 caps: reasoning-on rows returned final messages with 295-1823 reasoning tokens; failures were schema or grounding failures, not cap exhaustion"
+  },
+  "cleanup": {"verified": true, "final_loaded_global_count": 0, "incidents": []},
+  "non_claims": ["no complex text admission", "no broad 12B vision admission", "no complex vision result", "no one-shot context result", "no session/cache/KV reuse result", "no model download", "no commit", "no push"]
+}

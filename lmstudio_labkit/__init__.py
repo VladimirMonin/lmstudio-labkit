@@ -24,6 +24,11 @@ from .failure_forensics import (
     SSEFrame,
     parse_native_chat_response,
 )
+from .json_normalization import (
+    JsonNormalizationResult,
+    JsonParseStage,
+    parse_json_response,
+)
 from .live_bridge import LiveBridgeTransport
 from .managed_executor import (
     LocalLMStudioHostRunner,
@@ -77,6 +82,8 @@ __all__ = [
     "FakeTransport",
     "ForensicsRecordHandle",
     "ImageInput",
+    "JsonNormalizationResult",
+    "JsonParseStage",
     "LanguagePolicy",
     "LiveBridgeTransport",
     "LocalFailureForensics",
@@ -115,6 +122,7 @@ __all__ = [
     "load_task_specs",
     "observe_output_budget",
     "parse_native_chat_response",
+    "parse_json_response",
     "plan_matrix",
     "run_live_small_text_screening",
     "run_matrix",

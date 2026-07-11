@@ -1,0 +1,32 @@
+{
+  "schema_version": "lmstudio-labkit-l339-privacy-manifest-v1",
+  "experiment_id": "l3_39_gemma_family_matrix",
+  "public_artifacts": [
+    "l3_39_gemma_family_matrix.sanitized.json",
+    "l3_39_gemma_family_matrix_review.csv",
+    "l3_39_gemma_family_matrix_launch_gate.md",
+    "l3_39_gemma_family_matrix_results.md",
+    "l3_39_12b_fenced_replay.sanitized.json",
+    "l3_39_12b_fenced_replay_addendum.md"
+  ],
+  "private_artifacts_in_repository": false,
+  "raw_prompt_or_response_published": false,
+  "reasoning_text_published": false,
+  "private_paths_published": false,
+  "credentials_or_tokens_published": false,
+  "allowed_public_fields": [
+    "exact model and variant identifiers",
+    "request and evidence identifiers",
+    "dataset, prompt, schema, image, and ground-truth hashes",
+    "raw and normalized lengths and hashes",
+    "reasoning and message token counts",
+    "transport and finish status",
+    "parse stages and parser error locations",
+    "schema, business, grounding, and sanitized review verdicts",
+    "cleanup and global-zero proof"
+  ],
+  "private_review_required_before_quality_claim": true,
+  "semantic_repair_allowed": false,
+  "live_inference_performed": false,
+  "model_load_or_download_performed": false
+}

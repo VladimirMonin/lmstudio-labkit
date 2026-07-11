@@ -1,0 +1,357 @@
+{
+  "cache_benefit_claimed": false,
+  "kv_reuse_claimed": false,
+  "memory_attribution_claimed": false,
+  "normalized_contract_valid": 6,
+  "private_paths_exposed": false,
+  "raw_strict_invalid": 6,
+  "record_count": 6,
+  "records": [
+    {
+      "context_length": 16384,
+      "dataset_id": "l3_38_reasoning_off_followup",
+      "dataset_sha256": null,
+      "evidence_id": "l339-replay-ac2baf31227544bf4276",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "finish_reason": null,
+      "ground_truth_id": null,
+      "ground_truth_sha256": null,
+      "image_id": null,
+      "image_sha256": null,
+      "message_tokens": 32,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_json_valid": true,
+      "normalized_message": {
+        "char_count": 59,
+        "parse": {
+          "error": null,
+          "status": "pass"
+        },
+        "present": true,
+        "sha256": "b2494be946e5e3384a4659c2028c665ec25cae25ca6bccf518c8034bf927c67a"
+      },
+      "private_path_exposed": false,
+      "private_record_exists": true,
+      "prompt_id": "private_hash_only",
+      "prompt_sha256": "9edad6851739d207e392e5de7e1ca0fb77217ab3ca2c982a8b1240fa6387903c",
+      "raw_json_valid": false,
+      "raw_message": {
+        "char_count": 71,
+        "parse": {
+          "error": {
+            "category": "invalid_json",
+            "column": 1,
+            "line": 1,
+            "message": "Expecting value",
+            "offset": 0
+          },
+          "status": "fail"
+        },
+        "sha256": "b67403f275469abe7f75518f6b65ec34582149cdbb4b8e80c99c34632b050219"
+      },
+      "reasoning_class": "off",
+      "reasoning_tokens": 0,
+      "request_id": "replay-l338-12b-01",
+      "request_id_hash": "9edad6851739d207e392e5de7e1ca0fb77217ab3ca2c982a8b1240fa6387903c",
+      "route": "/api/v1/chat",
+      "row_id": "replay-l338-12b-01",
+      "schema_id": "l339-marker-status-warnings",
+      "schema_sha256": "dfb8ed08562c4b331bed013f18ea50b80e4d8b80bbe14e46aebe583f02ead12c",
+      "schema_valid": true,
+      "semantic_repair": false,
+      "status": "replayed",
+      "transformation": "single_complete_json_fence",
+      "verdict": "normalized_contract_valid"
+    },
+    {
+      "context_length": 16384,
+      "dataset_id": "l3_38_reasoning_off_followup",
+      "dataset_sha256": null,
+      "evidence_id": "l339-replay-8b1cfeb14bcc4a6f9fea",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "finish_reason": null,
+      "ground_truth_id": null,
+      "ground_truth_sha256": null,
+      "image_id": null,
+      "image_sha256": null,
+      "message_tokens": 33,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_json_valid": true,
+      "normalized_message": {
+        "char_count": 59,
+        "parse": {
+          "error": null,
+          "status": "pass"
+        },
+        "present": true,
+        "sha256": "63a69798355484a4f3968d3f82aad5e10c666f23cdd2e01c0a83bf1938e78f27"
+      },
+      "private_path_exposed": false,
+      "private_record_exists": true,
+      "prompt_id": "private_hash_only",
+      "prompt_sha256": "b29412e5cfe730bc259031fac038c971f32e54fe90190bdfc728ae0827b74a40",
+      "raw_json_valid": false,
+      "raw_message": {
+        "char_count": 71,
+        "parse": {
+          "error": {
+            "category": "invalid_json",
+            "column": 1,
+            "line": 1,
+            "message": "Expecting value",
+            "offset": 0
+          },
+          "status": "fail"
+        },
+        "sha256": "e60549a025c1926013162809a7f3a1c74d4fd10d4c80b8ae8fa60a10667855eb"
+      },
+      "reasoning_class": "off",
+      "reasoning_tokens": 0,
+      "request_id": "replay-l338-12b-02",
+      "request_id_hash": "b29412e5cfe730bc259031fac038c971f32e54fe90190bdfc728ae0827b74a40",
+      "route": "/api/v1/chat",
+      "row_id": "replay-l338-12b-02",
+      "schema_id": "l339-marker-status-warnings",
+      "schema_sha256": "dfb8ed08562c4b331bed013f18ea50b80e4d8b80bbe14e46aebe583f02ead12c",
+      "schema_valid": true,
+      "semantic_repair": false,
+      "status": "replayed",
+      "transformation": "single_complete_json_fence",
+      "verdict": "normalized_contract_valid"
+    },
+    {
+      "context_length": 16384,
+      "dataset_id": "l3_38_reasoning_off_followup",
+      "dataset_sha256": null,
+      "evidence_id": "l339-replay-a91adf8dcfc4e6e9fa8e",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "finish_reason": null,
+      "ground_truth_id": null,
+      "ground_truth_sha256": null,
+      "image_id": null,
+      "image_sha256": null,
+      "message_tokens": 32,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_json_valid": true,
+      "normalized_message": {
+        "char_count": 59,
+        "parse": {
+          "error": null,
+          "status": "pass"
+        },
+        "present": true,
+        "sha256": "b2494be946e5e3384a4659c2028c665ec25cae25ca6bccf518c8034bf927c67a"
+      },
+      "private_path_exposed": false,
+      "private_record_exists": true,
+      "prompt_id": "private_hash_only",
+      "prompt_sha256": "ebc08635167d920853a317cec321b234fc64d00987eb782a59947e41dd93ef64",
+      "raw_json_valid": false,
+      "raw_message": {
+        "char_count": 71,
+        "parse": {
+          "error": {
+            "category": "invalid_json",
+            "column": 1,
+            "line": 1,
+            "message": "Expecting value",
+            "offset": 0
+          },
+          "status": "fail"
+        },
+        "sha256": "b67403f275469abe7f75518f6b65ec34582149cdbb4b8e80c99c34632b050219"
+      },
+      "reasoning_class": "off",
+      "reasoning_tokens": 0,
+      "request_id": "replay-l338-12b-03",
+      "request_id_hash": "ebc08635167d920853a317cec321b234fc64d00987eb782a59947e41dd93ef64",
+      "route": "/api/v1/chat",
+      "row_id": "replay-l338-12b-03",
+      "schema_id": "l339-marker-status-warnings",
+      "schema_sha256": "dfb8ed08562c4b331bed013f18ea50b80e4d8b80bbe14e46aebe583f02ead12c",
+      "schema_valid": true,
+      "semantic_repair": false,
+      "status": "replayed",
+      "transformation": "single_complete_json_fence",
+      "verdict": "normalized_contract_valid"
+    },
+    {
+      "context_length": 16384,
+      "dataset_id": "l3_38_reasoning_off_followup",
+      "dataset_sha256": null,
+      "evidence_id": "l339-replay-04d7afdcd00d10ae4327",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "finish_reason": null,
+      "ground_truth_id": null,
+      "ground_truth_sha256": null,
+      "image_id": null,
+      "image_sha256": null,
+      "message_tokens": 33,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_json_valid": true,
+      "normalized_message": {
+        "char_count": 59,
+        "parse": {
+          "error": null,
+          "status": "pass"
+        },
+        "present": true,
+        "sha256": "655a7e4350226c87b4c74b045a0628906b4e11cc701adcf0200c0ff31ee50b84"
+      },
+      "private_path_exposed": false,
+      "private_record_exists": true,
+      "prompt_id": "private_hash_only",
+      "prompt_sha256": "85fc0d92bf4086179375b599a949d473478f2a9ffb62327af68d88635be74c94",
+      "raw_json_valid": false,
+      "raw_message": {
+        "char_count": 71,
+        "parse": {
+          "error": {
+            "category": "invalid_json",
+            "column": 1,
+            "line": 1,
+            "message": "Expecting value",
+            "offset": 0
+          },
+          "status": "fail"
+        },
+        "sha256": "b36b386874e5404d05db7ed2fa2c94ddef1135772a8503f10f27bbf844b4ca51"
+      },
+      "reasoning_class": "off",
+      "reasoning_tokens": 0,
+      "request_id": "replay-l338-12b-04",
+      "request_id_hash": "85fc0d92bf4086179375b599a949d473478f2a9ffb62327af68d88635be74c94",
+      "route": "/api/v1/chat",
+      "row_id": "replay-l338-12b-04",
+      "schema_id": "l339-marker-status-warnings",
+      "schema_sha256": "dfb8ed08562c4b331bed013f18ea50b80e4d8b80bbe14e46aebe583f02ead12c",
+      "schema_valid": true,
+      "semantic_repair": false,
+      "status": "replayed",
+      "transformation": "single_complete_json_fence",
+      "verdict": "normalized_contract_valid"
+    },
+    {
+      "context_length": 16384,
+      "dataset_id": "l3_38_reasoning_off_followup",
+      "dataset_sha256": null,
+      "evidence_id": "l339-replay-afdf17abc6f6dcdee75a",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "finish_reason": null,
+      "ground_truth_id": null,
+      "ground_truth_sha256": null,
+      "image_id": null,
+      "image_sha256": null,
+      "message_tokens": 32,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_json_valid": true,
+      "normalized_message": {
+        "char_count": 59,
+        "parse": {
+          "error": null,
+          "status": "pass"
+        },
+        "present": true,
+        "sha256": "b2494be946e5e3384a4659c2028c665ec25cae25ca6bccf518c8034bf927c67a"
+      },
+      "private_path_exposed": false,
+      "private_record_exists": true,
+      "prompt_id": "private_hash_only",
+      "prompt_sha256": "54f3379d00725b6570f47b28a090ac21d292680b8f5dbe79c784118a3d37b282",
+      "raw_json_valid": false,
+      "raw_message": {
+        "char_count": 71,
+        "parse": {
+          "error": {
+            "category": "invalid_json",
+            "column": 1,
+            "line": 1,
+            "message": "Expecting value",
+            "offset": 0
+          },
+          "status": "fail"
+        },
+        "sha256": "b67403f275469abe7f75518f6b65ec34582149cdbb4b8e80c99c34632b050219"
+      },
+      "reasoning_class": "off",
+      "reasoning_tokens": 0,
+      "request_id": "replay-l338-12b-05",
+      "request_id_hash": "54f3379d00725b6570f47b28a090ac21d292680b8f5dbe79c784118a3d37b282",
+      "route": "/api/v1/chat",
+      "row_id": "replay-l338-12b-05",
+      "schema_id": "l339-marker-status-warnings",
+      "schema_sha256": "dfb8ed08562c4b331bed013f18ea50b80e4d8b80bbe14e46aebe583f02ead12c",
+      "schema_valid": true,
+      "semantic_repair": false,
+      "status": "replayed",
+      "transformation": "single_complete_json_fence",
+      "verdict": "normalized_contract_valid"
+    },
+    {
+      "context_length": 16384,
+      "dataset_id": "l3_38_reasoning_off_followup",
+      "dataset_sha256": null,
+      "evidence_id": "l339-replay-defc6e626ce0389e260e",
+      "exact_variant": "google/gemma-4-12b-qat@q4_0",
+      "fence_eligible": true,
+      "finish_reason": null,
+      "ground_truth_id": null,
+      "ground_truth_sha256": null,
+      "image_id": null,
+      "image_sha256": null,
+      "message_tokens": 33,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_json_valid": true,
+      "normalized_message": {
+        "char_count": 59,
+        "parse": {
+          "error": null,
+          "status": "pass"
+        },
+        "present": true,
+        "sha256": "9bd39f3f0573713214527e8ea997b2e9b2cb14564d95865f60241bd62bf02032"
+      },
+      "private_path_exposed": false,
+      "private_record_exists": true,
+      "prompt_id": "private_hash_only",
+      "prompt_sha256": "23456e29d48407d57bef8a6133049d6aa2d2ba5ded2bacff0642f223fdebd926",
+      "raw_json_valid": false,
+      "raw_message": {
+        "char_count": 71,
+        "parse": {
+          "error": {
+            "category": "invalid_json",
+            "column": 1,
+            "line": 1,
+            "message": "Expecting value",
+            "offset": 0
+          },
+          "status": "fail"
+        },
+        "sha256": "7e1b6fd90613da59242cbc896e38dff3670d7ac62505cb7c2038220a725aca75"
+      },
+      "reasoning_class": "off",
+      "reasoning_tokens": 0,
+      "request_id": "replay-l338-12b-06",
+      "request_id_hash": "23456e29d48407d57bef8a6133049d6aa2d2ba5ded2bacff0642f223fdebd926",
+      "route": "/api/v1/chat",
+      "row_id": "replay-l338-12b-06",
+      "schema_id": "l339-marker-status-warnings",
+      "schema_sha256": "dfb8ed08562c4b331bed013f18ea50b80e4d8b80bbe14e46aebe583f02ead12c",
+      "schema_valid": true,
+      "semantic_repair": false,
+      "status": "replayed",
+      "transformation": "single_complete_json_fence",
+      "verdict": "normalized_contract_valid"
+    }
+  ],
+  "regeneration_calls": 0,
+  "schema_version": "lmstudio-labkit-l339-replay-summary-v1",
+  "semantic_repairs": 0,
+  "source_experiment": "l3_38_reasoning_off_followup"
+}

@@ -1,0 +1,113 @@
+{
+  "schema_version": "lmstudio-labkit-l339a-sanitized-results-v1",
+  "status": "completed_reviewed",
+  "scope": "bounded_e2b_e4b_vision_calibration",
+  "evidence_ids": [
+    "manifest-e72ccadf",
+    "phase-e2b-20260711",
+    "phase-e4b-20260711",
+    "review-a1e5715e"
+  ],
+  "protocol": {
+    "planned_lanes": 4,
+    "planned_requests": 16,
+    "executed_requests": 11,
+    "blocked_zero_call_requests": 5,
+    "serial_only": true,
+    "parallel": 1,
+    "cold_model_instance_per_lane": true,
+    "retries": 0,
+    "temperature": 0.0,
+    "stream": true,
+    "downloads_allowed": false,
+    "prompt_changes_allowed": false,
+    "private_capture_required": true,
+    "reasoning_modes": ["off", "on"],
+    "tested_output_token_caps": [1024, 2048, 4096, 6144],
+    "planned_but_not_executed_output_token_caps": [8192]
+  },
+  "aggregate": {
+    "perception_rows": 4,
+    "structured_rows": 7,
+    "grounding_valid": 9,
+    "raw_json_valid": 0,
+    "normalized_json_valid": 7,
+    "schema_valid": 3,
+    "rubric_accepted": 5
+  },
+  "lanes": [
+    {
+      "lane_id": "e2b-reasoning-off",
+      "executed": 3,
+      "planned": 4,
+      "grounding_valid": 3,
+      "grounding_denominator": 3,
+      "raw_json_valid": 0,
+      "normalized_json_valid": 2,
+      "schema_valid": 1,
+      "structured_denominator": 2,
+      "rubric_accepted": 2,
+      "rubric_denominator": 3,
+      "blocked_stages": ["complex"]
+    },
+    {
+      "lane_id": "e2b-reasoning-on",
+      "executed": 3,
+      "planned": 4,
+      "grounding_valid": 3,
+      "grounding_denominator": 3,
+      "raw_json_valid": 0,
+      "normalized_json_valid": 2,
+      "schema_valid": 1,
+      "structured_denominator": 2,
+      "rubric_accepted": 2,
+      "rubric_denominator": 3,
+      "blocked_stages": ["complex"]
+    },
+    {
+      "lane_id": "e4b-reasoning-off",
+      "executed": 3,
+      "planned": 4,
+      "grounding_valid": 1,
+      "grounding_denominator": 3,
+      "raw_json_valid": 0,
+      "normalized_json_valid": 2,
+      "schema_valid": 1,
+      "structured_denominator": 2,
+      "rubric_accepted": 0,
+      "rubric_denominator": 3,
+      "blocked_stages": ["complex"]
+    },
+    {
+      "lane_id": "e4b-reasoning-on",
+      "executed": 2,
+      "planned": 4,
+      "grounding_valid": 2,
+      "grounding_denominator": 2,
+      "raw_json_valid": 0,
+      "normalized_json_valid": 1,
+      "schema_valid": 0,
+      "structured_denominator": 1,
+      "rubric_accepted": 1,
+      "rubric_denominator": 2,
+      "blocked_stages": ["medium", "complex"]
+    }
+  ],
+  "blocked_orders": [4, 8, 12, 15, 16],
+  "cleanup": {
+    "verified_for_all_rows": true,
+    "final_loaded_global_count": 0,
+    "incidents": []
+  },
+  "deviations": [
+    "The first perception canary was completed under the preceding authorization and carried forward without retry; the remaining orders used the frozen remaining-scope manifest.",
+    "Independent rubric review supersedes provisional execution-time business verdicts for semantic claims."
+  ],
+  "limitations": [
+    "One pinned fixture and one request per executed order do not support a broad statistical ranking.",
+    "All structured outputs required permitted fence-only normalization; normalized validity is not raw JSON validity.",
+    "No complex-stage request executed because lane stop rules fired.",
+    "The report makes no text, context, session, cache, or broad family-admission claim."
+  ],
+  "private_content_included": false
+}

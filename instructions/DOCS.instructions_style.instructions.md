@@ -1,7 +1,7 @@
 ---
 applyTo: "instructions/*.instructions.md"
 name: "DOCS.InstructionsStyle"
-description: "Use when creating or updating instruction files: filename pattern, YAML metadata, trigger descriptions, single-responsibility scope, and publication-safe wording."
+description: "Use when creating or updating AGENTS.md, docs/agent-workflow.md, or instructions/*.instructions.md: filename pattern, YAML metadata, routing, single-responsibility scope, and publication-safe wording."
 ---
 
 # DOCS — Style for Instructions
@@ -29,11 +29,13 @@ Bad: "LM Studio notes."
 - `TEST` — pytest, fixtures, live/offline gates.
 - `DOCS` — instructions, plans, commit messages, documentation hygiene.
 - `SEC` — publication safety, privacy, sensitive-data cleanup.
+- `AGENT` — Kanban identity, card lifecycle, dispatch, sleep, and review boundaries.
 
 ## What to avoid
 
 - Mixing independent subsystems in one file.
 - Long release-history narratives.
+- Card IDs, current-front snapshots, transient progress, test counts, or wave/report history.
 - Private project names, private support workflows, forum/marketplace names, build-protection details, secrets, or local private paths.
 - Rules copied from another project without adapting paths and commands.
 

@@ -1,0 +1,28 @@
+schema_version: lmstudio-labkit-l339-replay-v1
+experiment_id: l3_39_12b_fenced_replay
+source_experiment: l3_38_reasoning_off_followup
+source_phase: repeated_context_12b
+expected_records: 6
+model_id: google/gemma-4-12b-qat
+exact_variant: google/gemma-4-12b-qat@q4_0
+route: /api/v1/chat
+context_length: 16384
+reasoning: "off"
+max_output_tokens: 1024
+normalization_policy: single_complete_json_fence
+strict_first: true
+semantic_repair: false
+expected_contract:
+  type: object
+  required: [marker, status, warnings]
+  additionalProperties: false
+  properties:
+    marker: {type: string, minLength: 1}
+    status: {type: string, const: ok}
+    warnings: {type: array, maxItems: 0, items: {type: string}}
+public_output:
+  raw_text: false
+  private_path: false
+  parser_errors: true
+  hashes_and_lengths: true
+non_claims: [kv_reuse, cache_benefit, memory_attribution, regeneration]

@@ -87,7 +87,7 @@ forbidden_in_committed_metadata:
 - private product/user names unless explicitly public-safe
 assets:
 - image_id: ui_settings_ru_001
-  fixture_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/fixtures/ui_settings_ru_001.webp
+  fixture_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/fixtures/ui_settings_ru_001.png
   expected_path: experiments/lmstudio/structured_matrix/datasets/image/gemma_vision/expected/ui_settings_ru_001.expected.yaml
   image_type: ui_screenshot
   public_safe: true
@@ -105,9 +105,9 @@ assets:
     primary_max_side: 1024
     fallback_max_side: 512
     jpeg_quality: 85
-  original_width: 1536
-  original_height: 1024
-  image_hash: sha256:8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d
+  original_width: 1024
+  original_height: 682
+  image_hash: sha256:0f6e1ca808d055e754806fdfd328aa081804e7d208e6efac9b81bb5e89ee72c9
   allowed_task_intents:
   - image_description
   - ocr_visible_text

@@ -1,0 +1,70 @@
+{
+  "schema_version": "lmstudio-labkit-l339e-e4b-results-v1",
+  "model_id": "google/gemma-4-e4b",
+  "exact_variant": "google/gemma-4-e4b@q4_k_m",
+  "status": "terminal_stop_gated",
+  "matrix_cells": 23,
+  "new_live_calls": 4,
+  "reused_reviewed_vision_calls": 5,
+  "zero_call_cells": 14,
+  "protocol": {
+    "route": "/api/v1/chat",
+    "serial_only": true,
+    "parallel": 1,
+    "retries": 0,
+    "temperature": 0,
+    "private_capture_external": true,
+    "raw_content_in_git": false
+  },
+  "phases": {
+    "text_structure": {
+      "cells": 6,
+      "executed": 4,
+      "accepted_after_fence_normalization": 2,
+      "schema_failed": 2,
+      "blocked_zero_call": 2,
+      "rows": [
+        {"task":"simple","reasoning":"off","status":"accepted","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":true,"review":"correct, complete Russian summary with required status and empty warnings"},
+        {"task":"blocks","reasoning":"off","status":"blocked_by_contract_failure","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":false,"review":"three concepts preserved in order, but returned a top-level array with string ids and extra text fields"},
+        {"task":"complex","reasoning":"off","status":"not_run","reason":"failed prior blocks schema gate"},
+        {"task":"simple","reasoning":"on","status":"accepted","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":true,"review":"correct and complete; reasoning added 344 tokens"},
+        {"task":"blocks","reasoning":"on","status":"blocked_by_contract_failure","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":false,"review":"correct object and ordered integer ids, but extra content fields violated the fixed exact schema; reasoning added 312 tokens"},
+        {"task":"complex","reasoning":"on","status":"not_run","reason":"failed prior blocks schema gate"}
+      ]
+    },
+    "vision": {
+      "cells": 8,
+      "evidence_reused_from": "l3_39a_e2b_e4b_vision_results",
+      "executed_reviewed": 5,
+      "blocked_zero_call": 3,
+      "reason":"exact model, variant, native route, fixture hash, prompts, caps, reasoning modes and rubric are identical; no duplicate calls",
+      "rows": [
+        {"task":"perception","reasoning":"off","status":"rejected_grounding","grounding_valid":false},
+        {"task":"simple","reasoning":"off","status":"rejected_grounding","normalized_json_valid":true,"schema_valid":true,"grounding_valid":false},
+        {"task":"medium","reasoning":"off","status":"blocked_by_contract_failure","normalized_json_valid":true,"schema_valid":false,"grounding_valid":true},
+        {"task":"complex","reasoning":"off","status":"not_run","reason":"failed prior medium lane gate"},
+        {"task":"perception","reasoning":"on","status":"accepted","grounding_valid":true},
+        {"task":"simple","reasoning":"on","status":"blocked_by_contract_failure","normalized_json_valid":true,"schema_valid":false,"grounding_valid":true},
+        {"task":"medium","reasoning":"on","status":"not_run","reason":"failed prior simple schema gate"},
+        {"task":"complex","reasoning":"on","status":"not_run","reason":"failed prior simple schema gate"}
+      ]
+    },
+    "one_shot_context": {
+      "cells": 3,
+      "executed": 0,
+      "status": "not_run",
+      "reason": "approved runner requires an external exact per-row tokenizer count map; none exists, and approximate counts are forbidden",
+      "tiers": ["4k", "12k", "28k"]
+    },
+    "session": {
+      "cells": 6,
+      "executed": 0,
+      "status": "blocked_by_prior_gate",
+      "reason": "session requires an accepted 16k one-shot context row; context phase remained zero-call",
+      "modes": ["cold_full_prefix", "loaded_stable_message_1"],
+      "chunks": ["chunk_1", "chunk_2", "chunk_3"]
+    }
+  },
+  "cleanup": {"verified": true, "final_loaded_global_count": 0, "incidents": []},
+  "non_claims": ["no complex text admission", "no broad E4B vision admission", "no complex vision result", "no one-shot context result", "no session/cache/KV reuse result", "no model download", "no commit", "no push"]
+}

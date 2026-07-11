@@ -1,5 +1,5 @@
 ---
-applyTo: "libs/**,tools/**,experiments/**,tests/**,docs/**,instructions/**,pyproject.toml,README.md,AGENTS.MD"
+applyTo: "lmstudio_labkit/**,libs/**,tools/**,experiments/**,tests/**,docs/**,instructions/**,pyproject.toml,README.md,AGENTS.md"
 name: "CORE.ProjectStructure"
 description: "Use when changing repository layout, moving LM Studio managed modules, lab tools, experiment assets, docs, tests, or agent instructions."
 ---

@@ -1,5 +1,5 @@
 ---
-applyTo: "libs/lmstudio_managed/**,tools/lmstudio_lab/**,tools/lmstudio_benchmark.py,experiments/lmstudio/**"
+applyTo: "lmstudio_labkit/**,libs/lmstudio_managed/**,tools/lmstudio_lab/**,tools/lmstudio_benchmark.py,experiments/lmstudio/**"
 name: "INFRA.LMStudioManaged"
 description: "Use when changing managed LM Studio clients, endpoint contracts, lifecycle load/unload, registry identity, structured validation, cache contracts, metrics, or lab probes."
 ---

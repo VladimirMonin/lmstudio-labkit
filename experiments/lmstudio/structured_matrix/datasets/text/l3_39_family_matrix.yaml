@@ -1,0 +1,40 @@
+schema_version: lmstudio-labkit-l339-dataset-v1
+dataset_id: l3_39_family_matrix_public_safe
+language: ru_ru
+public_safe: true
+text_structure:
+  source_id: l339-structure-control
+  source: >-
+    Три шага проверки: загрузить конфигурацию, выполнить запрос, проверить очистку.
+  simple_prompt: >-
+    Return JSON only with keys summary, status, warnings. Summarize the source in Russian;
+    status must be ok and warnings must be an empty array.
+  blocks_prompt: >-
+    Return JSON only with blocks ids 0, 1, 2 in order, one block for each source step.
+    Do not merge, duplicate, delete, or reorder ids.
+  complex_prompt: >-
+    Return JSON only with report metadata, ordered stages, per-stage checks, and summary.
+    Preserve all three stages and use only facts present in the source.
+context:
+  corpus_seed: l339-context-control-v1
+  line_template: 'SYNTHETIC-{index:05d}: alpha beta gamma delta; control number {index}; no private data.'
+  marker_prompt: Return JSON only with marker, status=ok, and warnings=[]. Do not repeat the corpus.
+session:
+  stable_message_1_seed: l339-stable-chat-context-v1
+  stable_line_template: 'REFERENCE-{index:05d}: public synthetic reference fact {index}.'
+  changing_chunks:
+    - {id: chunk_1, marker: CHUNK-1, question: Return the marker for chunk 1.}
+    - {id: chunk_2, marker: CHUNK-2, question: Return the marker for chunk 2.}
+    - {id: chunk_3, marker: CHUNK-3, question: Return the marker for chunk 3.}
+vision:
+  fixture_id: ui_settings_ru_001
+  perception_prompt: >-
+    Describe the visible interface, layout, controls, and readable text. Report uncertainty.
+    Do not infer hidden state or use JSON.
+  simple_prompt: >-
+    Return JSON only with screen_type, visible_text, and warnings using only visible evidence.
+  medium_prompt: >-
+    Return JSON only with screen_type, ordered controls, visible_text, and warnings.
+  complex_prompt: >-
+    Return JSON only with screen_type, layout_regions, ordered controls, visible_text,
+    model_settings, uncertainty, and warnings. Do not invent hidden values.

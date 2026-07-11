@@ -14,7 +14,7 @@ Run:
 python scripts/audit_publication_safety.py
 ```
 
-The audit must cover `README.md`, `AGENTS.MD`, `instructions/`, `docs/`, `experiments/`, `libs/`, `tools/`, and `tests/`.
+The audit must cover `README.md`, `AGENTS.md`, `instructions/`, `docs/`, `experiments/`, `lmstudio_labkit/`, `libs/`, `tools/`, and `tests/`.
 
 ## Remove or generalize
 

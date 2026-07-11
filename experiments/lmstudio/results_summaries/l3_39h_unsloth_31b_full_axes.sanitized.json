@@ -1,0 +1,113 @@
+{
+  "schema_version": "lmstudio-labkit-l339h-unsloth-31b-results-v1",
+  "model_id": "gemma-4-31b-it",
+  "exact_variant": "unsloth/gemma-4-31B-it-GGUF/gemma-4-31B-it-UD-IQ3_XXS.gguf",
+  "status": "terminal_stop_gated",
+  "matrix_cells": 16,
+  "new_live_calls": 5,
+  "zero_call_cells": 11,
+  "protocol": {
+    "route": "/api/v1/chat",
+    "serial_only": true,
+    "parallel": 1,
+    "retries": 0,
+    "temperature": 0,
+    "private_capture_external": true,
+    "raw_content_in_git": false
+  },
+  "capability": {
+    "reasoning_advertised": false,
+    "reasoning_control_status": "unknown_unsupported",
+    "executed_reasoning_class": "reasoning_omitted_unknown",
+    "off_on_comparison_calls": 0,
+    "vision_advertised": true
+  },
+  "private_review": {
+    "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+    "reviewed_private_outputs": 5,
+    "score_range": [0, 2],
+    "reviewer_id_hash": "sol-main-local-review",
+    "raw_prose_in_report": false
+  },
+  "phases": {
+    "text_structure": {
+      "cells": 3,
+      "executed_reviewed": 2,
+      "accepted_after_fence_normalization": 1,
+      "schema_failed": 1,
+      "blocked_zero_call": 1,
+      "rows": [
+        {
+          "task": "simple",
+          "reasoning": "reasoning_omitted_unknown",
+          "status": "accepted",
+          "raw_json_valid": false,
+          "normalized_json_valid": true,
+          "schema_valid": true,
+          "reasoning_tokens": 226,
+          "dimension_scores": {"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":1,"unsupported_claim_control":2,"uncertainty_calibration":2},
+          "review": "correct Russian summary and fixed fields; only contract violation was the complete JSON fence"
+        },
+        {
+          "task": "blocks",
+          "reasoning": "reasoning_omitted_unknown",
+          "status": "blocked_by_contract_failure",
+          "raw_json_valid": false,
+          "normalized_json_valid": true,
+          "schema_valid": false,
+          "reasoning_tokens": 600,
+          "dimension_scores": {"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":0,"unsupported_claim_control":2,"uncertainty_calibration":1},
+          "review": "all three source steps and ids were preserved in order, but a bare array with extra text fields replaced the required blocks object"
+        },
+        {"task":"complex","reasoning":"reasoning_omitted_unknown","status":"not_run","reason":"failed prior blocks schema gate"}
+      ]
+    },
+    "vision": {
+      "cells": 4,
+      "executed_reviewed": 3,
+      "accepted_after_rubric": 2,
+      "blocked_by_schema": 1,
+      "blocked_zero_call": 1,
+      "rows": [
+        {
+          "task":"perception","reasoning":"reasoning_omitted_unknown","status":"accepted","grounding_valid":true,"visible_text_recall":1.0,"reasoning_tokens":533,
+          "dimension_scores":{"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":2,"unsupported_claim_control":2,"uncertainty_calibration":2,"visible_object_layout_grounding":2,"ocr_visible_text_grounding":2,"fixture_truth_contradiction_control":2},
+          "review":"accurately described the Russian settings window, navigation, controls, values, enabled state, warning, actions, and layout"
+        },
+        {
+          "task":"simple","reasoning":"reasoning_omitted_unknown","status":"accepted","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":true,"grounding_valid":true,"reasoning_tokens":668,
+          "dimension_scores":{"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":1,"unsupported_claim_control":2,"uncertainty_calibration":2,"visible_object_layout_grounding":2,"ocr_visible_text_grounding":2,"fixture_truth_contradiction_control":2},
+          "review":"fully grounded and schema-valid after fence-only normalization"
+        },
+        {
+          "task":"medium","reasoning":"reasoning_omitted_unknown","status":"blocked_by_contract_failure","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":false,"grounding_valid":true,"reasoning_tokens":871,
+          "dimension_scores":{"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":0,"unsupported_claim_control":2,"uncertainty_calibration":2,"visible_object_layout_grounding":2,"ocr_visible_text_grounding":2,"fixture_truth_contradiction_control":2},
+          "review":"content and control order were grounded, but ordered_controls replaced the fixed controls field"
+        },
+        {"task":"complex","reasoning":"reasoning_omitted_unknown","status":"not_run","reason":"failed prior medium schema gate"}
+      ]
+    },
+    "one_shot_context": {
+      "cells": 3,
+      "executed": 0,
+      "status": "not_run",
+      "reason": "approved runner requires an external exact per-row tokenizer count map; none exists, and approximate counts are forbidden",
+      "tiers": ["4k", "12k", "28k"]
+    },
+    "session": {
+      "cells": 6,
+      "executed": 0,
+      "status": "blocked_by_prior_gate",
+      "reason": "session requires an accepted 16k one-shot context row; context phase remained zero-call",
+      "modes": ["cold_full_prefix", "loaded_stable_message_1"],
+      "chunks": ["chunk_1", "chunk_2", "chunk_3"]
+    }
+  },
+  "comparators": {
+    "fenced_json_regression": "reproduced: all four executed structured text/image rows required permitted single-complete-fence normalization; no semantic repair was applied",
+    "reasoning_quality": "not comparable: the exact installed model advertises no reasoning control, so off/on rows were zero-call; omitted-mode responses exposed 226-871 reasoning tokens",
+    "vision_transport": "accepted PNG transport metadata: text then image, 1024x682 RGB PNG, hash pinned"
+  },
+  "cleanup": {"verified":true,"final_loaded_counts":{"/api/v1/models":0,"/api/v0/models":0},"incidents":[]},
+  "non_claims": ["no reasoning off/on comparison","no complex text admission","no complex vision result","no one-shot context result","no session/cache/KV reuse result","no memory attribution","no model download","no commit","no push"]
+}

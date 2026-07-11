@@ -1,0 +1,807 @@
+{
+  "comparisons": [
+    {
+      "model_id": "google/gemma-4-e2b",
+      "off_latency_ms": 681.438,
+      "off_score": 11,
+      "on_latency_ms": 2818.165,
+      "on_score": 11,
+      "preferred": "off",
+      "quality_relation": "equivalent",
+      "task": "text_structure/simple"
+    },
+    {
+      "model_id": "google/gemma-4-e2b",
+      "off_latency_ms": 4738.434,
+      "off_score": 15,
+      "on_latency_ms": 7820.146,
+      "on_score": 18,
+      "preferred": "on",
+      "quality_relation": "on_better",
+      "task": "vision/perception"
+    },
+    {
+      "model_id": "google/gemma-4-e4b",
+      "off_latency_ms": 903.0,
+      "off_score": 11,
+      "on_latency_ms": 4644.096,
+      "on_score": 11,
+      "preferred": "off",
+      "quality_relation": "equivalent",
+      "task": "text_structure/simple"
+    },
+    {
+      "model_id": "google/gemma-4-e4b",
+      "off_latency_ms": 8388.626,
+      "off_score": 16,
+      "on_latency_ms": 14537.405,
+      "on_score": 18,
+      "preferred": "on",
+      "quality_relation": "on_better",
+      "task": "vision/perception"
+    },
+    {
+      "model_id": "google/gemma-4-12b-qat",
+      "off_latency_ms": 1051.582,
+      "off_score": 11,
+      "on_latency_ms": 7598.526,
+      "on_score": 11,
+      "preferred": "off",
+      "quality_relation": "equivalent",
+      "task": "text_structure/simple"
+    },
+    {
+      "model_id": "google/gemma-4-12b-qat",
+      "off_latency_ms": 13058.802,
+      "off_score": 14,
+      "on_latency_ms": 24828.17,
+      "on_score": 14,
+      "preferred": "off",
+      "quality_relation": "equivalent",
+      "task": "vision/perception"
+    },
+    {
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "off_latency_ms": 2779.096,
+      "off_score": 11,
+      "on_latency_ms": 15323.97,
+      "on_score": 11,
+      "preferred": "off",
+      "quality_relation": "equivalent",
+      "task": "text_structure/simple"
+    },
+    {
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "off_latency_ms": 21476.743,
+      "off_score": 18,
+      "on_latency_ms": 57549.748,
+      "on_score": 18,
+      "preferred": "off",
+      "quality_relation": "equivalent",
+      "task": "vision/perception"
+    },
+    {
+      "comparison": "unsupported_unknown",
+      "model_id": "gemma-4-31b-it",
+      "reason": "reasoning_control_not_advertised; omitted baseline only"
+    }
+  ],
+  "execution": {
+    "downloads": 0,
+    "final_loaded_global_count": 0,
+    "initial_e2b_forensics_finalize_wiring_error": true,
+    "private_records": 18,
+    "retries": 0,
+    "serial_only": true
+  },
+  "matrix_scope": {
+    "calls": 18,
+    "models": 5,
+    "supported_pairs": 8,
+    "tasks": [
+      "text_structure/simple",
+      "vision/perception"
+    ],
+    "unknown_reasoning_baselines": 2
+  },
+  "privacy": {
+    "private_paths_published": false,
+    "raw_answers_published": false,
+    "reasoning_text_published": false
+  },
+  "reviews": [
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 2,
+        "final_answer_presence": 2,
+        "instruction_adherence": 1,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 2
+      },
+      "evidence_category_ids": [
+        "complete_correct_payload",
+        "markdown_fence_only"
+      ],
+      "evidence_id": "l339c-efee3579234c4bdcb2b5",
+      "factual_categories": [
+        "correct",
+        "instruction_violation"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": null,
+      "http_status": 200,
+      "latency_ms": 30785.098,
+      "max_output_tokens": 4096,
+      "message_tokens": 56,
+      "model_id": "gemma-4-31b-it",
+      "normalized_json_valid": true,
+      "raw_json_valid": false,
+      "reasoning_class": "reasoning_omitted_unknown",
+      "reasoning_tokens": 226,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "gemma-4-31b-it--text-structure--simple--reasoning-omitted-unknown--8192--4096",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": true,
+      "task": "text_structure/simple",
+      "verdict": "correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 2,
+        "final_answer_presence": 2,
+        "fixture_truth_contradiction_control": 2,
+        "instruction_adherence": 2,
+        "ocr_visible_text_grounding": 2,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 2,
+        "visible_object_layout_grounding": 2
+      },
+      "evidence_category_ids": [],
+      "evidence_id": "l339c-14c24a8c56167be79a9b",
+      "factual_categories": [
+        "grounded",
+        "correct"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": true,
+      "http_status": 200,
+      "latency_ms": 180313.394,
+      "max_output_tokens": 6144,
+      "message_tokens": 361,
+      "model_id": "gemma-4-31b-it",
+      "normalized_json_valid": null,
+      "raw_json_valid": null,
+      "reasoning_class": "reasoning_omitted_unknown",
+      "reasoning_tokens": 521,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "gemma-4-31b-it--vision--perception--reasoning-omitted-unknown--8192--6144",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": null,
+      "task": "vision/perception",
+      "verdict": "correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 2,
+        "final_answer_presence": 2,
+        "instruction_adherence": 1,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 2
+      },
+      "evidence_category_ids": [
+        "complete_correct_payload",
+        "markdown_fence_only"
+      ],
+      "evidence_id": "l339c-f91746a5cacaff80212d",
+      "factual_categories": [
+        "correct",
+        "instruction_violation"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": null,
+      "http_status": 200,
+      "latency_ms": 1051.582,
+      "max_output_tokens": 1024,
+      "message_tokens": 47,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_json_valid": true,
+      "raw_json_valid": false,
+      "reasoning_class": "off",
+      "reasoning_tokens": 0,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-12b-qat--text-structure--simple--off--8192--1024",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": true,
+      "task": "text_structure/simple",
+      "verdict": "correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 2,
+        "final_answer_presence": 2,
+        "instruction_adherence": 1,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 2
+      },
+      "evidence_category_ids": [
+        "complete_correct_payload",
+        "markdown_fence_only"
+      ],
+      "evidence_id": "l339c-b6dd5bc8d4c4275b02e9",
+      "factual_categories": [
+        "correct",
+        "instruction_violation"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": null,
+      "http_status": 200,
+      "latency_ms": 7598.526,
+      "max_output_tokens": 4096,
+      "message_tokens": 56,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_json_valid": true,
+      "raw_json_valid": false,
+      "reasoning_class": "on",
+      "reasoning_tokens": 319,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-12b-qat--text-structure--simple--on--8192--4096",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": true,
+      "task": "text_structure/simple",
+      "verdict": "correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 1,
+        "final_answer_presence": 2,
+        "fixture_truth_contradiction_control": 1,
+        "instruction_adherence": 2,
+        "ocr_visible_text_grounding": 1,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 1,
+        "visible_object_layout_grounding": 2
+      },
+      "evidence_category_ids": [
+        "incorrect_visible_model_id"
+      ],
+      "evidence_id": "l339c-774a26e37de3f2077f39",
+      "factual_categories": [
+        "ungrounded",
+        "partially_correct"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": false,
+      "http_status": 200,
+      "latency_ms": 13058.802,
+      "max_output_tokens": 2048,
+      "message_tokens": 620,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_json_valid": null,
+      "raw_json_valid": null,
+      "reasoning_class": "off",
+      "reasoning_tokens": 0,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-12b-qat--vision--perception--off--8192--2048",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": null,
+      "task": "vision/perception",
+      "verdict": "partially_correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 1,
+        "final_answer_presence": 2,
+        "fixture_truth_contradiction_control": 1,
+        "instruction_adherence": 2,
+        "ocr_visible_text_grounding": 1,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 1,
+        "visible_object_layout_grounding": 2
+      },
+      "evidence_category_ids": [
+        "incorrect_visible_model_id"
+      ],
+      "evidence_id": "l339c-b43a2afb5e3aa93b70fa",
+      "factual_categories": [
+        "ungrounded",
+        "partially_correct"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": false,
+      "http_status": 200,
+      "latency_ms": 24828.17,
+      "max_output_tokens": 6144,
+      "message_tokens": 624,
+      "model_id": "google/gemma-4-12b-qat",
+      "normalized_json_valid": null,
+      "raw_json_valid": null,
+      "reasoning_class": "on",
+      "reasoning_tokens": 570,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-12b-qat--vision--perception--on--8192--6144",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": null,
+      "task": "vision/perception",
+      "verdict": "partially_correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 2,
+        "final_answer_presence": 2,
+        "instruction_adherence": 1,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 2
+      },
+      "evidence_category_ids": [
+        "complete_correct_payload",
+        "markdown_fence_only"
+      ],
+      "evidence_id": "l339c-75e69ed0ca3bf5281ce1",
+      "factual_categories": [
+        "correct",
+        "instruction_violation"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": null,
+      "http_status": 200,
+      "latency_ms": 2779.096,
+      "max_output_tokens": 1024,
+      "message_tokens": 52,
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "normalized_json_valid": true,
+      "raw_json_valid": false,
+      "reasoning_class": "off",
+      "reasoning_tokens": 0,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-26b-a4b-qat--text-structure--simple--off--8192--1024",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": true,
+      "task": "text_structure/simple",
+      "verdict": "correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 2,
+        "final_answer_presence": 2,
+        "instruction_adherence": 1,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 2
+      },
+      "evidence_category_ids": [
+        "complete_correct_payload",
+        "markdown_fence_only"
+      ],
+      "evidence_id": "l339c-e852107437602a8038da",
+      "factual_categories": [
+        "correct",
+        "instruction_violation"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": null,
+      "http_status": 200,
+      "latency_ms": 15323.97,
+      "max_output_tokens": 4096,
+      "message_tokens": 56,
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "normalized_json_valid": true,
+      "raw_json_valid": false,
+      "reasoning_class": "on",
+      "reasoning_tokens": 363,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-26b-a4b-qat--text-structure--simple--on--8192--4096",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": true,
+      "task": "text_structure/simple",
+      "verdict": "correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 2,
+        "final_answer_presence": 2,
+        "fixture_truth_contradiction_control": 2,
+        "instruction_adherence": 2,
+        "ocr_visible_text_grounding": 2,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 2,
+        "visible_object_layout_grounding": 2
+      },
+      "evidence_category_ids": [],
+      "evidence_id": "l339c-d517bf1d9557cec7a433",
+      "factual_categories": [
+        "grounded",
+        "correct"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": true,
+      "http_status": 200,
+      "latency_ms": 21476.743,
+      "max_output_tokens": 2048,
+      "message_tokens": 567,
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "normalized_json_valid": null,
+      "raw_json_valid": null,
+      "reasoning_class": "off",
+      "reasoning_tokens": 0,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-26b-a4b-qat--vision--perception--off--8192--2048",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": null,
+      "task": "vision/perception",
+      "verdict": "correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 2,
+        "final_answer_presence": 2,
+        "fixture_truth_contradiction_control": 2,
+        "instruction_adherence": 2,
+        "ocr_visible_text_grounding": 2,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 2,
+        "visible_object_layout_grounding": 2
+      },
+      "evidence_category_ids": [],
+      "evidence_id": "l339c-9b7124b9647a6c40e59c",
+      "factual_categories": [
+        "grounded",
+        "correct"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": true,
+      "http_status": 200,
+      "latency_ms": 57549.748,
+      "max_output_tokens": 6144,
+      "message_tokens": 467,
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "normalized_json_valid": null,
+      "raw_json_valid": null,
+      "reasoning_class": "on",
+      "reasoning_tokens": 1131,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-26b-a4b-qat--vision--perception--on--8192--6144",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": null,
+      "task": "vision/perception",
+      "verdict": "correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 2,
+        "final_answer_presence": 2,
+        "instruction_adherence": 1,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 2
+      },
+      "evidence_category_ids": [
+        "complete_correct_payload",
+        "markdown_fence_only"
+      ],
+      "evidence_id": "l339c-956183ef6bfe6323b810",
+      "factual_categories": [
+        "correct",
+        "instruction_violation"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": null,
+      "http_status": 200,
+      "latency_ms": 681.438,
+      "max_output_tokens": 1024,
+      "message_tokens": 47,
+      "model_id": "google/gemma-4-e2b",
+      "normalized_json_valid": true,
+      "raw_json_valid": false,
+      "reasoning_class": "off",
+      "reasoning_tokens": 0,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-e2b--text-structure--simple--off--8192--1024",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": true,
+      "task": "text_structure/simple",
+      "verdict": "correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 2,
+        "final_answer_presence": 2,
+        "instruction_adherence": 1,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 2
+      },
+      "evidence_category_ids": [
+        "complete_correct_payload",
+        "markdown_fence_only"
+      ],
+      "evidence_id": "l339c-e5bccf418157326876a3",
+      "factual_categories": [
+        "correct",
+        "instruction_violation"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": null,
+      "http_status": 200,
+      "latency_ms": 2818.165,
+      "max_output_tokens": 4096,
+      "message_tokens": 56,
+      "model_id": "google/gemma-4-e2b",
+      "normalized_json_valid": true,
+      "raw_json_valid": false,
+      "reasoning_class": "on",
+      "reasoning_tokens": 312,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-e2b--text-structure--simple--on--8192--4096",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": true,
+      "task": "text_structure/simple",
+      "verdict": "correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 1,
+        "final_answer_presence": 2,
+        "fixture_truth_contradiction_control": 2,
+        "instruction_adherence": 2,
+        "ocr_visible_text_grounding": 2,
+        "uncertainty_calibration": 1,
+        "unsupported_claim_control": 1,
+        "visible_object_layout_grounding": 2
+      },
+      "evidence_category_ids": [
+        "unsupported_minor_controls"
+      ],
+      "evidence_id": "l339c-507eda742a55d87d1b6b",
+      "factual_categories": [
+        "ungrounded",
+        "partially_correct"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": false,
+      "http_status": 200,
+      "latency_ms": 4738.434,
+      "max_output_tokens": 2048,
+      "message_tokens": 599,
+      "model_id": "google/gemma-4-e2b",
+      "normalized_json_valid": null,
+      "raw_json_valid": null,
+      "reasoning_class": "off",
+      "reasoning_tokens": 0,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-e2b--vision--perception--off--8192--2048",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": null,
+      "task": "vision/perception",
+      "verdict": "partially_correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 2,
+        "final_answer_presence": 2,
+        "fixture_truth_contradiction_control": 2,
+        "instruction_adherence": 2,
+        "ocr_visible_text_grounding": 2,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 2,
+        "visible_object_layout_grounding": 2
+      },
+      "evidence_category_ids": [],
+      "evidence_id": "l339c-9962efc8ab421f42abe6",
+      "factual_categories": [
+        "grounded",
+        "correct"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": true,
+      "http_status": 200,
+      "latency_ms": 7820.146,
+      "max_output_tokens": 6144,
+      "message_tokens": 415,
+      "model_id": "google/gemma-4-e2b",
+      "normalized_json_valid": null,
+      "raw_json_valid": null,
+      "reasoning_class": "on",
+      "reasoning_tokens": 604,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-e2b--vision--perception--on--8192--6144",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": null,
+      "task": "vision/perception",
+      "verdict": "correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 2,
+        "final_answer_presence": 2,
+        "instruction_adherence": 1,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 2
+      },
+      "evidence_category_ids": [
+        "complete_correct_payload",
+        "markdown_fence_only"
+      ],
+      "evidence_id": "l339c-98ee87015c048de8a417",
+      "factual_categories": [
+        "correct",
+        "instruction_violation"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": null,
+      "http_status": 200,
+      "latency_ms": 903.0,
+      "max_output_tokens": 1024,
+      "message_tokens": 52,
+      "model_id": "google/gemma-4-e4b",
+      "normalized_json_valid": true,
+      "raw_json_valid": false,
+      "reasoning_class": "off",
+      "reasoning_tokens": 0,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-e4b--text-structure--simple--off--8192--1024",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": true,
+      "task": "text_structure/simple",
+      "verdict": "correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 2,
+        "final_answer_presence": 2,
+        "instruction_adherence": 1,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 2
+      },
+      "evidence_category_ids": [
+        "complete_correct_payload",
+        "markdown_fence_only"
+      ],
+      "evidence_id": "l339c-0207b0dab816950517b1",
+      "factual_categories": [
+        "correct",
+        "instruction_violation"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": null,
+      "http_status": 200,
+      "latency_ms": 4644.096,
+      "max_output_tokens": 4096,
+      "message_tokens": 59,
+      "model_id": "google/gemma-4-e4b",
+      "normalized_json_valid": true,
+      "raw_json_valid": false,
+      "reasoning_class": "on",
+      "reasoning_tokens": 344,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-e4b--text-structure--simple--on--8192--4096",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": true,
+      "task": "text_structure/simple",
+      "verdict": "correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 1,
+        "final_answer_presence": 2,
+        "fixture_truth_contradiction_control": 2,
+        "instruction_adherence": 2,
+        "ocr_visible_text_grounding": 2,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 1,
+        "visible_object_layout_grounding": 2
+      },
+      "evidence_category_ids": [
+        "unsupported_duplicate_warning"
+      ],
+      "evidence_id": "l339c-2aa308592954cdf6b4b8",
+      "factual_categories": [
+        "ungrounded",
+        "partially_correct"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": false,
+      "http_status": 200,
+      "latency_ms": 8388.626,
+      "max_output_tokens": 2048,
+      "message_tokens": 716,
+      "model_id": "google/gemma-4-e4b",
+      "normalized_json_valid": null,
+      "raw_json_valid": null,
+      "reasoning_class": "off",
+      "reasoning_tokens": 0,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-e4b--vision--perception--off--8192--2048",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": null,
+      "task": "vision/perception",
+      "verdict": "partially_correct"
+    },
+    {
+      "dimension_scores": {
+        "completeness": 2,
+        "factual_correctness": 2,
+        "final_answer_presence": 2,
+        "fixture_truth_contradiction_control": 2,
+        "instruction_adherence": 2,
+        "ocr_visible_text_grounding": 2,
+        "uncertainty_calibration": 2,
+        "unsupported_claim_control": 2,
+        "visible_object_layout_grounding": 2
+      },
+      "evidence_category_ids": [],
+      "evidence_id": "l339c-07505dc61a5668a4733f",
+      "factual_categories": [
+        "grounded",
+        "correct"
+      ],
+      "final_answer_present": true,
+      "finish_reason": null,
+      "grounding_valid": true,
+      "http_status": 200,
+      "latency_ms": 14537.405,
+      "max_output_tokens": 6144,
+      "message_tokens": 476,
+      "model_id": "google/gemma-4-e4b",
+      "normalized_json_valid": null,
+      "raw_json_valid": null,
+      "reasoning_class": "on",
+      "reasoning_tokens": 787,
+      "reviewed_private_output": true,
+      "reviewer_id_hash": "3efe6efcbb6d31948477140f219169c9fb183f189ca773fba1212f0017853883",
+      "row_id": "google-gemma-4-e4b--vision--perception--on--8192--6144",
+      "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+      "schema_valid": null,
+      "task": "vision/perception",
+      "verdict": "correct"
+    }
+  ],
+  "schema_version": "lmstudio-labkit-l339c-reasoning-quality-v1"
+}

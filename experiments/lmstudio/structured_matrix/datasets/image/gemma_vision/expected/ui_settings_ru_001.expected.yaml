@@ -51,15 +51,21 @@ expected_ui:
   - type: menu
     label: left navigation
   - type: input
-    label: '8192'
+    label: model field
+    value: google/gemma-4-e4b
   - type: input
-    label: '8192'
+    label: context field
+    value: '8192'
   - type: input
-    label: '8192'
+    label: temperature field
+    value: '0.0'
+  - type: switch
+    label: JSON-схема
+    value: Включена
   - type: button
     label: Сохранить
   - type: button
-    label: Сохранить
+    label: Отмена
   screen_purpose: Synthetic Russian model settings dialog with fields for model id,
     context length, temperature, JSON Schema state, and save/cancel actions.
 visible_text_policy: preserve_original_visible_text

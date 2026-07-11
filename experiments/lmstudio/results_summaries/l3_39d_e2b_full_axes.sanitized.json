@@ -1,0 +1,70 @@
+{
+  "schema_version": "lmstudio-labkit-l339d-e2b-results-v1",
+  "model_id": "google/gemma-4-e2b",
+  "exact_variant": "google/gemma-4-e2b@q4_k_m",
+  "status": "terminal_stop_gated",
+  "matrix_cells": 23,
+  "new_live_calls": 4,
+  "reused_reviewed_vision_calls": 6,
+  "zero_call_cells": 13,
+  "protocol": {
+    "route": "/api/v1/chat",
+    "serial_only": true,
+    "parallel": 1,
+    "retries": 0,
+    "temperature": 0,
+    "private_capture_external": true,
+    "raw_content_in_git": false
+  },
+  "phases": {
+    "text_structure": {
+      "cells": 6,
+      "executed": 4,
+      "accepted_after_fence_normalization": 2,
+      "schema_failed": 2,
+      "blocked_zero_call": 2,
+      "rows": [
+        {"task":"simple","reasoning":"off","status":"accepted","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":true,"review":"correct and complete"},
+        {"task":"blocks","reasoning":"off","status":"blocked_by_contract_failure","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":false,"review":"correct ordered concepts but wrong top-level array and block_id shape"},
+        {"task":"complex","reasoning":"off","status":"not_run","reason":"failed prior blocks schema gate"},
+        {"task":"simple","reasoning":"on","status":"accepted","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":true,"review":"correct and complete; reasoning added cost without quality rescue need"},
+        {"task":"blocks","reasoning":"on","status":"blocked_by_contract_failure","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":false,"review":"semantically correct ordered stages but wrong top-level array shape"},
+        {"task":"complex","reasoning":"on","status":"not_run","reason":"failed prior blocks schema gate"}
+      ]
+    },
+    "vision": {
+      "cells": 8,
+      "evidence_reused_from": "l3_39a_e2b_e4b_vision_results",
+      "executed_reviewed": 6,
+      "blocked_zero_call": 2,
+      "reason":"exact model, variant, route, fixture hash, prompts, caps, reasoning modes and rubric are identical; no duplicate calls",
+      "rows": [
+        {"task":"perception","reasoning":"off","status":"accepted","grounding_valid":true},
+        {"task":"simple","reasoning":"off","status":"accepted","normalized_json_valid":true,"schema_valid":true,"grounding_valid":true},
+        {"task":"medium","reasoning":"off","status":"blocked_by_contract_failure","normalized_json_valid":true,"schema_valid":false,"grounding_valid":true},
+        {"task":"complex","reasoning":"off","status":"not_run","reason":"failed prior medium schema gate"},
+        {"task":"perception","reasoning":"on","status":"accepted","grounding_valid":true},
+        {"task":"simple","reasoning":"on","status":"accepted","normalized_json_valid":true,"schema_valid":true,"grounding_valid":true},
+        {"task":"medium","reasoning":"on","status":"blocked_by_contract_failure","normalized_json_valid":true,"schema_valid":false,"grounding_valid":true},
+        {"task":"complex","reasoning":"on","status":"not_run","reason":"failed prior medium schema gate"}
+      ]
+    },
+    "one_shot_context": {
+      "cells": 3,
+      "executed": 0,
+      "status": "not_run",
+      "reason": "approved runner requires an external exact per-row tokenizer count map; none exists, and approximate counts are forbidden",
+      "tiers": ["4k", "12k", "28k"]
+    },
+    "session": {
+      "cells": 6,
+      "executed": 0,
+      "status": "blocked_by_prior_gate",
+      "reason": "session requires an accepted 16k one-shot context row; context phase remained zero-call",
+      "modes": ["cold_full_prefix", "loaded_stable_message_1"],
+      "chunks": ["chunk_1", "chunk_2", "chunk_3"]
+    }
+  },
+  "cleanup": {"verified": true, "final_loaded_global_count": 0, "incidents": []},
+  "non_claims": ["no complex text admission", "no complex vision admission", "no one-shot context result", "no session/cache/KV reuse result", "no model download", "no commit", "no push"]
+}

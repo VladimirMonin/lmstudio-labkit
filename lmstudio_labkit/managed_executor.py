@@ -838,7 +838,7 @@ class LocalLMStudioHostRunner:
         *,
         model_id: str,
         messages: Sequence[Mapping[str, str]],
-        reasoning: str,
+        reasoning: str | None,
         max_output_tokens: int,
         timeout_s: float,
         stream: bool = True,
@@ -856,14 +856,15 @@ class LocalLMStudioHostRunner:
 
         if not self.allow_native_diagnostics:
             raise ManagedExecutorError("native diagnostics require allow_native_diagnostics=true")
-        allowed_caps = (1024, 2048, 3072, 4096)
+        allowed_caps = (1024, 2048, 3072, 4096, 6144, 8192)
         if max_output_tokens not in allowed_caps:
             raise ManagedExecutorError(
-                "native diagnostic max_output_tokens must be one of 1024, 2048, 3072, 4096"
+                "native diagnostic max_output_tokens must be one of "
+                "1024, 2048, 3072, 4096, 6144, 8192"
             )
-        if reasoning not in {"off", "on", "low", "medium", "high"}:
+        if reasoning not in {None, "off", "on", "low", "medium", "high"}:
             raise ManagedExecutorError(
-                "native diagnostic reasoning must be one of off, on, low, medium, high"
+                "native diagnostic reasoning must be omitted or one of off, on, low, medium, high"
             )
         if attempt_index < 1:
             raise ManagedExecutorError("native diagnostic attempt_index must be positive")
@@ -873,27 +874,27 @@ class LocalLMStudioHostRunner:
             raise ManagedExecutorError(
                 "native diagnostics require enabled local failure forensics before request"
             )
-        reasoning_allowed_options, reasoning_default = self._preflight_native_reasoning(
-            model_id=model_id,
-            reasoning=reasoning,
-        )
+        reasoning_allowed_options: tuple[str, ...] = ()
+        reasoning_default: str | None = None
+        if reasoning is not None:
+            reasoning_allowed_options, reasoning_default = self._preflight_native_reasoning(
+                model_id=model_id,
+                reasoning=reasoning,
+            )
         native_input, system_prompt = _native_input_from_messages(messages)
         if image_data_url is not None:
-            if not image_data_url.startswith("data:image/"):
-                raise ManagedExecutorError("native diagnostic image must be an image data URL")
-            native_input = [
-                {"type": "text", "content": native_input},
-                {"type": "image", "data_url": image_data_url},
-            ]
+            native_input = _native_image_input(native_input, image_data_url)
+            _validate_native_image_input(native_input)
         payload: dict[str, object] = {
             "model": model_id,
             "input": native_input,
-            "reasoning": reasoning,
             "max_output_tokens": max_output_tokens,
             "temperature": 0.0,
             "stream": stream,
             "store": False,
         }
+        if reasoning is not None:
+            payload["reasoning"] = reasoning
         if system_prompt is not None:
             payload["system_prompt"] = system_prompt
         started_at = datetime.now(UTC).isoformat()
@@ -1182,6 +1183,62 @@ def _native_input_from_messages(
     else:
         native_input = [{"type": "text", "content": content} for content in inputs]
     return native_input, system_prompts[0] if system_prompts else None
+
+
+def _native_image_input(
+    native_input: str | list[dict[str, str]], image_data_url: str
+) -> list[dict[str, object]]:
+    if not isinstance(native_input, str) or not native_input:
+        raise ManagedExecutorError(
+            "native diagnostic image requests require exactly one non-empty user prompt"
+        )
+    result: list[dict[str, object]] = [
+        {"type": "text", "content": native_input},
+        {"type": "image", "data_url": image_data_url},
+    ]
+    _validate_native_image_input(result)
+    return result
+
+
+def _validate_native_image_input(native_input: object) -> tuple[str, str]:
+    import base64
+    import binascii
+
+    if not isinstance(native_input, Sequence) or isinstance(native_input, (str, bytes, bytearray)):
+        raise ManagedExecutorError("native diagnostic image input must be an ordered array")
+    if len(native_input) != 2:
+        raise ManagedExecutorError(
+            "native diagnostic image input requires text then exactly one image"
+        )
+    text_item, image_item = native_input
+    if not isinstance(text_item, Mapping) or set(text_item) != {"type", "content"}:
+        raise ManagedExecutorError("native diagnostic image input requires an exact text item")
+    if text_item.get("type") != "text" or not isinstance(text_item.get("content"), str):
+        raise ManagedExecutorError("native diagnostic image input requires text first")
+    if not text_item["content"]:
+        raise ManagedExecutorError("native diagnostic image input requires non-empty text")
+    if not isinstance(image_item, Mapping) or set(image_item) != {"type", "data_url"}:
+        raise ManagedExecutorError("native diagnostic image input requires an exact image item")
+    data_url = image_item.get("data_url")
+    prefix = "data:image/png;base64,"
+    if image_item.get("type") != "image" or not isinstance(data_url, str):
+        raise ManagedExecutorError("native diagnostic image input requires image second")
+    if not data_url.startswith(prefix):
+        raise ManagedExecutorError("native diagnostic image must be a PNG data URL")
+    encoded = data_url[len(prefix) :]
+    if not encoded or any(character.isspace() for character in encoded):
+        raise ManagedExecutorError(
+            "native diagnostic PNG base64 must be non-empty and whitespace-free"
+        )
+    try:
+        decoded = base64.b64decode(encoded, validate=True)
+    except (ValueError, binascii.Error) as error:
+        raise ManagedExecutorError("native diagnostic PNG base64 is invalid") from error
+    if base64.b64encode(decoded).decode("ascii") != encoded:
+        raise ManagedExecutorError("native diagnostic PNG base64 round-trip mismatch")
+    if not decoded.startswith(b"\x89PNG\r\n\x1a\n"):
+        raise ManagedExecutorError("native diagnostic image bytes are not PNG")
+    return "text", "image"
 
 
 def _safe_http_error_detail(error: object) -> str:

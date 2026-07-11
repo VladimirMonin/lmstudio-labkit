@@ -1,0 +1,1 @@
+row_id,evidence_id,rubric_version,reviewer_id_hash,reviewed_private_output,dimension_scores_json,factual_categories_json,evidence_category_ids_json,final_answer_present,raw_json_valid,normalized_json_valid,schema_valid,grounding_valid,verdict

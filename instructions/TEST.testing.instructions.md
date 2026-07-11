@@ -1,5 +1,5 @@
 ---
-applyTo: "tests/**,libs/**,tools/**,pyproject.toml"
+applyTo: "tests/**,lmstudio_labkit/**,libs/**,tools/**,pyproject.toml"
 name: "TEST.Testing"
 description: "Use before adding or running tests for managed backend contracts, lab tools, architecture boundaries, offline fixtures, and live LM Studio gates."
 ---

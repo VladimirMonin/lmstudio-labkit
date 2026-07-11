@@ -1,7 +1,7 @@
 ---
 applyTo: "**"
 name: "DOCS.CommitMessages"
-description: "Use before preparing git commits: message format, allowed prefixes, logical grouping, verification gates, and destructive-operation limits."
+description: "Use when staging, reviewing, committing, or pushing changes: staged-diff truth, message format, logical grouping, verification gates, authorization, and destructive-operation limits."
 ---
 
 # DOCS — Commit Messages
@@ -28,6 +28,12 @@ description: "Use before preparing git commits: message format, allowed prefixes
 ## Grouping rule
 
 Group commits by logical change, not by file type. Do not mix unrelated code, documentation, and generated artifacts unless the same acceptance gate requires them together.
+
+## Staged-diff truth
+
+Before writing a commit message, inspect `git status --short --branch`, unstaged changes, untracked files, and `git diff --cached`. The staged diff is the only source of truth for what the commit contains. Do not infer commit contents from a card, working-tree summary, or earlier test report, and do not stage unrelated dirty work.
+
+Commit and push are separate actions. Perform either only when the user explicitly requests it; authorization to commit does not imply authorization to push.
 
 ## Required checks before commit
 

@@ -1,0 +1,81 @@
+{
+  "schema_version": "lmstudio-labkit-l339g-26b-results-v1",
+  "model_id": "google/gemma-4-26b-a4b-qat",
+  "exact_variant": "google/gemma-4-26b-a4b-qat@q4_0",
+  "status": "terminal_stop_gated",
+  "matrix_cells": 23,
+  "new_live_calls": 10,
+  "zero_call_cells": 13,
+  "protocol": {
+    "route": "/api/v1/chat",
+    "serial_only": true,
+    "parallel": 1,
+    "retries": 0,
+    "temperature": 0,
+    "private_capture_external": true,
+    "raw_content_in_git": false
+  },
+  "private_review": {
+    "rubric_version": "lmstudio-labkit-l339-private-review-v1",
+    "reviewed_private_outputs": 10,
+    "score_range": [0, 2],
+    "reviewer_id_hash": "sol-main-local-review",
+    "raw_prose_in_report": false
+  },
+  "phases": {
+    "text_structure": {
+      "cells": 6,
+      "executed_reviewed": 4,
+      "accepted_after_fence_normalization": 2,
+      "schema_failed": 2,
+      "blocked_zero_call": 2,
+      "rows": [
+        {"task":"simple","reasoning":"off","status":"accepted","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":true,"reasoning_tokens":0,"dimension_scores":{"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":1,"unsupported_claim_control":2,"uncertainty_calibration":2},"review":"correct and complete Russian summary; only violation was the JSON fence"},
+        {"task":"blocks","reasoning":"off","status":"blocked_by_contract_failure","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":false,"reasoning_tokens":0,"dimension_scores":{"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":0,"unsupported_claim_control":2,"uncertainty_calibration":1},"review":"all three steps preserved in order, but numeric object keys replaced the required blocks array"},
+        {"task":"complex","reasoning":"off","status":"not_run","reason":"failed prior blocks schema gate"},
+        {"task":"simple","reasoning":"on","status":"accepted","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":true,"reasoning_tokens":363,"dimension_scores":{"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":1,"unsupported_claim_control":2,"uncertainty_calibration":2},"review":"same correct final answer as reasoning off; no quality advantage"},
+        {"task":"blocks","reasoning":"on","status":"blocked_by_contract_failure","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":false,"reasoning_tokens":947,"dimension_scores":{"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":0,"unsupported_claim_control":2,"uncertainty_calibration":0},"review":"reasoning explicitly considered the array form but chose the wrong numeric-key object; no rescue"},
+        {"task":"complex","reasoning":"on","status":"not_run","reason":"failed prior blocks schema gate"}
+      ]
+    },
+    "vision": {
+      "cells": 8,
+      "executed_reviewed": 6,
+      "accepted_after_rubric": 4,
+      "blocked_by_schema": 2,
+      "blocked_zero_call": 2,
+      "rows": [
+        {"task":"perception","reasoning":"off","status":"accepted","grounding_valid":true,"visible_text_recall":1.0,"dimension_scores":{"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":2,"unsupported_claim_control":2,"uncertainty_calibration":2,"visible_object_layout_grounding":2,"ocr_visible_text_grounding":2,"fixture_truth_contradiction_control":2},"review":"layout, controls, values, state, warning and actions were accurately grounded"},
+        {"task":"simple","reasoning":"off","status":"accepted","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":true,"grounding_valid":true,"dimension_scores":{"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":1,"unsupported_claim_control":2,"uncertainty_calibration":2,"visible_object_layout_grounding":2,"ocr_visible_text_grounding":2,"fixture_truth_contradiction_control":2},"review":"schema-valid after fence-only normalization and fully grounded"},
+        {"task":"medium","reasoning":"off","status":"blocked_by_contract_failure","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":false,"grounding_valid":true,"dimension_scores":{"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":0,"unsupported_claim_control":2,"uncertainty_calibration":2,"visible_object_layout_grounding":2,"ocr_visible_text_grounding":2,"fixture_truth_contradiction_control":2},"review":"grounded controls and values, but ordered_controls violated the fixed controls schema"},
+        {"task":"complex","reasoning":"off","status":"not_run","reason":"failed prior medium schema gate"},
+        {"task":"perception","reasoning":"on","status":"accepted","grounding_valid":true,"visible_text_recall":1.0,"dimension_scores":{"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":2,"unsupported_claim_control":2,"uncertainty_calibration":2,"visible_object_layout_grounding":2,"ocr_visible_text_grounding":2,"fixture_truth_contradiction_control":2},"review":"accurate detailed perception; no factual improvement over reasoning off"},
+        {"task":"simple","reasoning":"on","status":"accepted","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":true,"grounding_valid":true,"dimension_scores":{"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":1,"unsupported_claim_control":2,"uncertainty_calibration":2,"visible_object_layout_grounding":2,"ocr_visible_text_grounding":2,"fixture_truth_contradiction_control":2},"review":"schema-valid after fence-only normalization and fully grounded; no advantage over off"},
+        {"task":"medium","reasoning":"on","status":"blocked_by_contract_failure","raw_json_valid":false,"normalized_json_valid":true,"schema_valid":false,"grounding_valid":true,"dimension_scores":{"final_answer_presence":2,"factual_correctness":2,"completeness":2,"instruction_adherence":0,"unsupported_claim_control":2,"uncertainty_calibration":2,"visible_object_layout_grounding":2,"ocr_visible_text_grounding":2,"fixture_truth_contradiction_control":2},"review":"grounded content, but alternate ordered controls key violated the fixed controls schema"},
+        {"task":"complex","reasoning":"on","status":"not_run","reason":"failed prior medium schema gate"}
+      ]
+    },
+    "one_shot_context": {
+      "cells": 3,
+      "executed": 0,
+      "status": "not_run",
+      "reason": "approved runner requires an external exact per-row tokenizer count map; none exists, and approximate counts are forbidden",
+      "tiers": ["4k", "12k", "28k"]
+    },
+    "session": {
+      "cells": 6,
+      "executed": 0,
+      "status": "blocked_by_prior_gate",
+      "reason": "session requires an accepted 16k one-shot context row; context phase remained zero-call",
+      "modes": ["cold_full_prefix", "loaded_stable_message_1"],
+      "chunks": ["chunk_1", "chunk_2", "chunk_3"]
+    }
+  },
+  "comparators": {
+    "fenced_json_regression": "reproduced: all eight executed structured text/image rows required permitted single-complete-fence normalization; no semantic repair was applied",
+    "reasoning_quality": "reasoning on did not improve any paired accepted row and did not rescue either fixed-schema failure; it added 363-2125 reasoning tokens",
+    "vision_transport": "accepted PNG transport metadata: text then image, 1024x682 RGB PNG, hash pinned"
+  },
+  "cleanup": {"verified": true, "final_loaded_counts":{"/api/v1/models":0,"/api/v0/models":0},"incidents":[]},
+  "non_claims": ["no complex text admission","no complex vision result","no one-shot context result","no session/cache/KV reuse result","no memory attribution","no model download","no commit","no push"]
+}

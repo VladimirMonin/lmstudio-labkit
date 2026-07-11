@@ -1,0 +1,51 @@
+schema_version: lmstudio-labkit-l339-private-review-v1
+rubric_id: l3_39_private_qualitative_review
+private_answer_must_be_read: true
+raw_prose_allowed_in_sanitized_review: false
+score_range: {minimum: 0, maximum: 2}
+required_common_dimensions:
+  - final_answer_presence
+  - factual_correctness
+  - completeness
+  - instruction_adherence
+  - unsupported_claim_control
+  - uncertainty_calibration
+required_vision_dimensions:
+  - visible_object_layout_grounding
+  - ocr_visible_text_grounding
+  - fixture_truth_contradiction_control
+sanitized_categories:
+  - correct
+  - partially_correct
+  - incorrect
+  - incomplete
+  - unsupported_claim
+  - instruction_violation
+  - grounded
+  - ungrounded
+  - uncertain_appropriately
+  - uncertainty_missing
+required_sanitized_fields:
+  - row_id
+  - evidence_id
+  - rubric_version
+  - reviewer_id_hash
+  - reviewed_private_output
+  - dimension_scores
+  - factual_categories
+  - evidence_category_ids
+  - final_answer_present
+  - raw_json_valid
+  - normalized_json_valid
+  - schema_valid
+  - grounding_valid
+  - verdict
+forbidden_sanitized_fields:
+  - raw_answer
+  - answer_quote
+  - reasoning_text
+  - private_path
+  - prompt_text
+comparison_rule: >-
+  Prefer reasoning off only when private review demonstrates equivalent or better quality
+  for the exact model, task, route, and context row while latency or token cost is lower.

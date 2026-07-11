@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from itertools import pairwise
 from typing import Any, Literal
 
+from .json_normalization import JsonNormalizationPolicy, parse_json_response
 from .requests import ResponseContract
 from .validation import validate_json_schema, validate_response
 
@@ -122,15 +123,19 @@ def observe_output_budget(
     budget: int,
     finish_reason: str | None,
     completion_tokens: int | None,
+    json_normalization_policy: JsonNormalizationPolicy = "strict",
 ) -> OutputBudgetObservation:
     structure_status: StructureStatus = "not_applicable"
     if contract.mode == "json":
-        try:
-            parsed = json.loads(raw_response)
-        except json.JSONDecodeError as error:
+        normalized = parse_json_response(raw_response, policy=json_normalization_policy)
+        parsed = normalized.parsed
+        if parsed is None:
             structure_status = (
                 "parse_incomplete"
-                if _looks_like_incomplete_json(raw_response, error)
+                if _looks_like_incomplete_json(
+                    raw_response,
+                    normalized.raw_parse.error or {},
+                )
                 else "parse_invalid"
             )
         else:
@@ -150,6 +155,7 @@ def observe_output_budget(
                         len(contract.source_text) if contract.source_text is not None else None
                     ),
                     input_text=contract.source_text,
+                    json_normalization_policy=json_normalization_policy,
                 )
                 structure_status = "valid" if quality.status == "pass" else "quality_invalid"
     else:
@@ -226,13 +232,15 @@ def decide_output_budget(
     )
 
 
-def _looks_like_incomplete_json(raw_response: str, error: json.JSONDecodeError) -> bool:
+def _looks_like_incomplete_json(raw_response: str, error: Mapping[str, object]) -> bool:
     stripped = raw_response.rstrip()
     if not stripped:
         return True
-    if error.msg.startswith("Unterminated string"):
+    message = error.get("message")
+    if isinstance(message, str) and message.startswith("Unterminated string"):
         return True
-    if error.pos < len(stripped) - 1:
+    position = error.get("offset")
+    if isinstance(position, int) and position < len(stripped) - 1:
         return False
 
     stack: list[str] = []
