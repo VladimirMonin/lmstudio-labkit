@@ -1,0 +1,3014 @@
+{
+  "canonical_accounting": {
+    "accepted_calls": 0,
+    "all_cells_reconciled": true,
+    "executed_calls": 80,
+    "executed_cells": 64,
+    "planned_calls": 80,
+    "planned_cells": 64,
+    "reviewed_calls": 80,
+    "zero_call_rows": 0
+  },
+  "cells": [
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-01"
+      ],
+      "cell_id": "overlay_001",
+      "cell_wall_seconds": 2.9905824661254883,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 8192,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 2.9905824661254883,
+        "median": 2.9905824661254883,
+        "min": 2.9905824661254883
+      },
+      "mode": "normalization_simple",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.3343830211428916,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "simple",
+      "task_axis": "short_semantic_normalization",
+      "view_label": "M01",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-02"
+      ],
+      "cell_id": "overlay_002",
+      "cell_wall_seconds": 4.5610129833221436,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 8192,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 4.5610129833221436,
+        "median": 4.5610129833221436,
+        "min": 4.5610129833221436
+      },
+      "mode": "blocks_stress",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.2192495403228652,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-03"
+      ],
+      "cell_id": "overlay_003",
+      "cell_wall_seconds": 2.968080759048462,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 2.968080759048462,
+        "median": 2.968080759048462,
+        "min": 2.968080759048462
+      },
+      "mode": "normalization_simple",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.3369180562056507,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "simple",
+      "task_axis": "short_semantic_normalization",
+      "view_label": "M01",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-04"
+      ],
+      "cell_id": "overlay_004",
+      "cell_wall_seconds": 4.630782604217529,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 4.630782604217529,
+        "median": 4.630782604217529,
+        "min": 4.630782604217529
+      },
+      "mode": "blocks_stress",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.21594622021108062,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-05"
+      ],
+      "cell_id": "overlay_005",
+      "cell_wall_seconds": 3.057910680770874,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 28672,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 3.057910680770874,
+        "median": 3.057910680770874,
+        "min": 3.057910680770874
+      },
+      "mode": "normalization_simple",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.32702067012235564,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "simple",
+      "task_axis": "short_semantic_normalization",
+      "view_label": "M01",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-06"
+      ],
+      "cell_id": "overlay_006",
+      "cell_wall_seconds": 4.607569217681885,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 28672,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 4.607569217681885,
+        "median": 4.607569217681885,
+        "min": 4.607569217681885
+      },
+      "mode": "blocks_stress",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.2170341784909984,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-07"
+      ],
+      "cell_id": "overlay_007",
+      "cell_wall_seconds": 3.145611047744751,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 3.145611047744751,
+        "median": 3.145611047744751,
+        "min": 3.145611047744751
+      },
+      "mode": "cold_full_prefix",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.31790325784777207,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-08"
+      ],
+      "cell_id": "overlay_008",
+      "cell_wall_seconds": 1.378434419631958,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 1.378434419631958,
+        "median": 1.378434419631958,
+        "min": 1.378434419631958
+      },
+      "mode": "loaded_first",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.7254607007470112,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-09"
+      ],
+      "cell_id": "overlay_009",
+      "cell_wall_seconds": 1.3280301094055176,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 1.3280301094055176,
+        "median": 1.3280301094055176,
+        "min": 1.3280301094055176
+      },
+      "mode": "loaded_changing_1",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.7529949757296107,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-10"
+      ],
+      "cell_id": "overlay_010",
+      "cell_wall_seconds": 1.341670274734497,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 1.341670274734497,
+        "median": 1.341670274734497,
+        "min": 1.341670274734497
+      },
+      "mode": "loaded_changing_2",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.745339610507425,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-11"
+      ],
+      "cell_id": "overlay_011",
+      "cell_wall_seconds": 1.3848719596862793,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 1.3848719596862793,
+        "median": 1.3848719596862793,
+        "min": 1.3848719596862793
+      },
+      "mode": "loaded_changing_3",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.7220884161930278,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-12"
+      ],
+      "cell_id": "overlay_012",
+      "cell_wall_seconds": 1.3061742782592773,
+      "contamination_checks_failed": 1,
+      "contamination_checks_passed": 0,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 1.3061742782592773,
+        "median": 1.3061742782592773,
+        "min": 1.3061742782592773
+      },
+      "mode": "loaded_exact_repeat_1",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.765594619833341,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-13"
+      ],
+      "cell_id": "overlay_013",
+      "cell_wall_seconds": 1.2698681354522705,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 1.2698681354522705,
+        "median": 1.2698681354522705,
+        "min": 1.2698681354522705
+      },
+      "mode": "loaded_exact_repeat_2",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.7874833394759091,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-14"
+      ],
+      "cell_id": "overlay_014",
+      "cell_wall_seconds": 5.841123580932617,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 5.841123580932617,
+        "median": 5.841123580932617,
+        "min": 5.841123580932617
+      },
+      "mode": "parallel_fanout_p1",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.17119993887209214,
+      "parallelism": 1,
+      "phase": "parallelism",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-15",
+        "call-01-16"
+      ],
+      "cell_id": "overlay_015",
+      "cell_wall_seconds": 6.577401399612427,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 2,
+      "context_tier": 16384,
+      "executed_calls": 2,
+      "latency_seconds": {
+        "max": 6.5748512744903564,
+        "median": 6.3468581438064575,
+        "min": 6.118865013122559
+      },
+      "mode": "parallel_fanout_p2",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.30407145291723414,
+      "parallelism": 2,
+      "phase": "parallelism",
+      "planned_calls": 2,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 2,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-01-17",
+        "call-01-18",
+        "call-01-19",
+        "call-01-20"
+      ],
+      "cell_id": "overlay_016",
+      "cell_wall_seconds": 11.574869394302368,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 4,
+      "context_tier": 16384,
+      "executed_calls": 4,
+      "latency_seconds": {
+        "max": 11.574869394302368,
+        "median": 10.978689551353455,
+        "min": 9.765711545944214
+      },
+      "mode": "parallel_fanout_p4",
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "observed_throughput_calls_per_second": 0.34557625349699117,
+      "parallelism": 4,
+      "phase": "parallelism",
+      "planned_calls": 4,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 4,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-01"
+      ],
+      "cell_id": "overlay_017",
+      "cell_wall_seconds": 3.5195813179016113,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 8192,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 3.5195813179016113,
+        "median": 3.5195813179016113,
+        "min": 3.5195813179016113
+      },
+      "mode": "normalization_simple",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.284124703956607,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "simple",
+      "task_axis": "short_semantic_normalization",
+      "view_label": "M01",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-02"
+      ],
+      "cell_id": "overlay_018",
+      "cell_wall_seconds": 23.602867126464844,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 8192,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 23.602867126464844,
+        "median": 23.602867126464844,
+        "min": 23.602867126464844
+      },
+      "mode": "blocks_stress",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.04236773416729295,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-03"
+      ],
+      "cell_id": "overlay_019",
+      "cell_wall_seconds": 3.4199633598327637,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 3.4199633598327637,
+        "median": 3.4199633598327637,
+        "min": 3.4199633598327637
+      },
+      "mode": "normalization_simple",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.29240079345437786,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "simple",
+      "task_axis": "short_semantic_normalization",
+      "view_label": "M01",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-04"
+      ],
+      "cell_id": "overlay_020",
+      "cell_wall_seconds": 23.514756441116333,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 23.514756441116333,
+        "median": 23.514756441116333,
+        "min": 23.514756441116333
+      },
+      "mode": "blocks_stress",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.042526487676115866,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-05"
+      ],
+      "cell_id": "overlay_021",
+      "cell_wall_seconds": 3.424825429916382,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 28672,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 3.424825429916382,
+        "median": 3.424825429916382,
+        "min": 3.424825429916382
+      },
+      "mode": "normalization_simple",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.29198568524539814,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "simple",
+      "task_axis": "short_semantic_normalization",
+      "view_label": "M01",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-06"
+      ],
+      "cell_id": "overlay_022",
+      "cell_wall_seconds": 23.42577028274536,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 28672,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 23.42577028274536,
+        "median": 23.42577028274536,
+        "min": 23.42577028274536
+      },
+      "mode": "blocks_stress",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.04268803065727007,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-07"
+      ],
+      "cell_id": "overlay_023",
+      "cell_wall_seconds": 5.606357097625732,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 5.606357097625732,
+        "median": 5.606357097625732,
+        "min": 5.606357097625732
+      },
+      "mode": "cold_full_prefix",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.17836894485788207,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-08"
+      ],
+      "cell_id": "overlay_024",
+      "cell_wall_seconds": 2.876359462738037,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 2.876359462738037,
+        "median": 2.876359462738037,
+        "min": 2.876359462738037
+      },
+      "mode": "loaded_first",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.3476616928289239,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-09"
+      ],
+      "cell_id": "overlay_025",
+      "cell_wall_seconds": 2.7370128631591797,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 2.7370128631591797,
+        "median": 2.7370128631591797,
+        "min": 2.7370128631591797
+      },
+      "mode": "loaded_changing_1",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.36536181961737524,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-10"
+      ],
+      "cell_id": "overlay_026",
+      "cell_wall_seconds": 2.9694881439208984,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 2.9694881439208984,
+        "median": 2.9694881439208984,
+        "min": 2.9694881439208984
+      },
+      "mode": "loaded_changing_2",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.3367583743505386,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-11"
+      ],
+      "cell_id": "overlay_027",
+      "cell_wall_seconds": 2.781343698501587,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 2.781343698501587,
+        "median": 2.781343698501587,
+        "min": 2.781343698501587
+      },
+      "mode": "loaded_changing_3",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.3595384491815007,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-12"
+      ],
+      "cell_id": "overlay_028",
+      "cell_wall_seconds": 2.6832613945007324,
+      "contamination_checks_failed": 1,
+      "contamination_checks_passed": 0,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 2.6832613945007324,
+        "median": 2.6832613945007324,
+        "min": 2.6832613945007324
+      },
+      "mode": "loaded_exact_repeat_1",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.3726807988403483,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-13"
+      ],
+      "cell_id": "overlay_029",
+      "cell_wall_seconds": 2.70465350151062,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 2.70465350151062,
+        "median": 2.70465350151062,
+        "min": 2.70465350151062
+      },
+      "mode": "loaded_exact_repeat_2",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.3697331282700256,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-14"
+      ],
+      "cell_id": "overlay_030",
+      "cell_wall_seconds": 23.498632669448853,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 23.498632669448853,
+        "median": 23.498632669448853,
+        "min": 23.498632669448853
+      },
+      "mode": "parallel_fanout_p1",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.04255566756018636,
+      "parallelism": 1,
+      "phase": "parallelism",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-15",
+        "call-02-16"
+      ],
+      "cell_id": "overlay_031",
+      "cell_wall_seconds": 10.448769330978394,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 2,
+      "context_tier": 16384,
+      "executed_calls": 2,
+      "latency_seconds": {
+        "max": 10.446775913238525,
+        "median": 9.370927929878235,
+        "min": 8.295079946517944
+      },
+      "mode": "parallel_fanout_p2",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.19141010167297143,
+      "parallelism": 2,
+      "phase": "parallelism",
+      "planned_calls": 2,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 2,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-02-17",
+        "call-02-18",
+        "call-02-19",
+        "call-02-20"
+      ],
+      "cell_id": "overlay_032",
+      "cell_wall_seconds": 33.7688992023468,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 4,
+      "context_tier": 16384,
+      "executed_calls": 4,
+      "latency_seconds": {
+        "max": 33.7688992023468,
+        "median": 17.032676696777344,
+        "min": 16.786126375198364
+      },
+      "mode": "parallel_fanout_p4",
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "observed_throughput_calls_per_second": 0.11845218809270562,
+      "parallelism": 4,
+      "phase": "parallelism",
+      "planned_calls": 4,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 4,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-01"
+      ],
+      "cell_id": "overlay_033",
+      "cell_wall_seconds": 6.387468576431274,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 8192,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 6.387468576431274,
+        "median": 6.387468576431274,
+        "min": 6.387468576431274
+      },
+      "mode": "normalization_simple",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.15655654318047657,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "simple",
+      "task_axis": "short_semantic_normalization",
+      "view_label": "M01",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-02"
+      ],
+      "cell_id": "overlay_034",
+      "cell_wall_seconds": 9.881669521331787,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 8192,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 9.881669521331787,
+        "median": 9.881669521331787,
+        "min": 9.881669521331787
+      },
+      "mode": "blocks_stress",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.10119747456047554,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-03"
+      ],
+      "cell_id": "overlay_035",
+      "cell_wall_seconds": 6.352433443069458,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 6.352433443069458,
+        "median": 6.352433443069458,
+        "min": 6.352433443069458
+      },
+      "mode": "normalization_simple",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.1574199885700504,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "simple",
+      "task_axis": "short_semantic_normalization",
+      "view_label": "M01",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-04"
+      ],
+      "cell_id": "overlay_036",
+      "cell_wall_seconds": 9.858622789382935,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 9.858622789382935,
+        "median": 9.858622789382935,
+        "min": 9.858622789382935
+      },
+      "mode": "blocks_stress",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.10143404625207203,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-05"
+      ],
+      "cell_id": "overlay_037",
+      "cell_wall_seconds": 6.381774663925171,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 28672,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 6.381774663925171,
+        "median": 6.381774663925171,
+        "min": 6.381774663925171
+      },
+      "mode": "normalization_simple",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.15669622521346446,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "simple",
+      "task_axis": "short_semantic_normalization",
+      "view_label": "M01",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-06"
+      ],
+      "cell_id": "overlay_038",
+      "cell_wall_seconds": 9.897130727767944,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 28672,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 9.897130727767944,
+        "median": 9.897130727767944,
+        "min": 9.897130727767944
+      },
+      "mode": "blocks_stress",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.10103938479809547,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-07"
+      ],
+      "cell_id": "overlay_039",
+      "cell_wall_seconds": 9.436436414718628,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 9.436436414718628,
+        "median": 9.436436414718628,
+        "min": 9.436436414718628
+      },
+      "mode": "cold_full_prefix",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.10597220773302032,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-08"
+      ],
+      "cell_id": "overlay_040",
+      "cell_wall_seconds": 3.9079837799072266,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 3.9079837799072266,
+        "median": 3.9079837799072266,
+        "min": 3.9079837799072266
+      },
+      "mode": "loaded_first",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.25588642540981565,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-09"
+      ],
+      "cell_id": "overlay_041",
+      "cell_wall_seconds": 4.332749366760254,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 4.332749366760254,
+        "median": 4.332749366760254,
+        "min": 4.332749366760254
+      },
+      "mode": "loaded_changing_1",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.23080033377230275,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-10"
+      ],
+      "cell_id": "overlay_042",
+      "cell_wall_seconds": 4.306198835372925,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 4.306198835372925,
+        "median": 4.306198835372925,
+        "min": 4.306198835372925
+      },
+      "mode": "loaded_changing_2",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.2322233687366176,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-11"
+      ],
+      "cell_id": "overlay_043",
+      "cell_wall_seconds": 2.828268051147461,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 2.828268051147461,
+        "median": 2.828268051147461,
+        "min": 2.828268051147461
+      },
+      "mode": "loaded_changing_3",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.3535732759114853,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-12"
+      ],
+      "cell_id": "overlay_044",
+      "cell_wall_seconds": 3.766753673553467,
+      "contamination_checks_failed": 1,
+      "contamination_checks_passed": 0,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 3.766753673553467,
+        "median": 3.766753673553467,
+        "min": 3.766753673553467
+      },
+      "mode": "loaded_exact_repeat_1",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.26548059328143525,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-13"
+      ],
+      "cell_id": "overlay_045",
+      "cell_wall_seconds": 3.6537959575653076,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 3.6537959575653076,
+        "median": 3.6537959575653076,
+        "min": 3.6537959575653076
+      },
+      "mode": "loaded_exact_repeat_2",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.27368797043235715,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-14"
+      ],
+      "cell_id": "overlay_046",
+      "cell_wall_seconds": 10.027003288269043,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 10.027003288269043,
+        "median": 10.027003288269043,
+        "min": 10.027003288269043
+      },
+      "mode": "parallel_fanout_p1",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.09973069433117036,
+      "parallelism": 1,
+      "phase": "parallelism",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-15",
+        "call-03-16"
+      ],
+      "cell_id": "overlay_047",
+      "cell_wall_seconds": 45.78781270980835,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 2,
+      "context_tier": 16384,
+      "executed_calls": 2,
+      "latency_seconds": {
+        "max": 45.78486919403076,
+        "median": 28.711329340934753,
+        "min": 11.637789487838745
+      },
+      "mode": "parallel_fanout_p2",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.04367974536533329,
+      "parallelism": 2,
+      "phase": "parallelism",
+      "planned_calls": 2,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 2,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-03-17",
+        "call-03-18",
+        "call-03-19",
+        "call-03-20"
+      ],
+      "cell_id": "overlay_048",
+      "cell_wall_seconds": 14.586309909820557,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 4,
+      "context_tier": 16384,
+      "executed_calls": 4,
+      "latency_seconds": {
+        "max": 14.585253238677979,
+        "median": 14.577996850013733,
+        "min": 14.518322706222534
+      },
+      "mode": "parallel_fanout_p4",
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "observed_throughput_calls_per_second": 0.27422974177361414,
+      "parallelism": 4,
+      "phase": "parallelism",
+      "planned_calls": 4,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 4,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-01"
+      ],
+      "cell_id": "overlay_049",
+      "cell_wall_seconds": 12.332087755203247,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 8192,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 12.332087755203247,
+        "median": 12.332087755203247,
+        "min": 12.332087755203247
+      },
+      "mode": "normalization_simple",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.08108927051529231,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "simple",
+      "task_axis": "short_semantic_normalization",
+      "view_label": "M01",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-02"
+      ],
+      "cell_id": "overlay_050",
+      "cell_wall_seconds": 18.341548919677734,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 8192,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 18.341548919677734,
+        "median": 18.341548919677734,
+        "min": 18.341548919677734
+      },
+      "mode": "blocks_stress",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.05452102242723622,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-03"
+      ],
+      "cell_id": "overlay_051",
+      "cell_wall_seconds": 12.277374982833862,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 12.277374982833862,
+        "median": 12.277374982833862,
+        "min": 12.277374982833862
+      },
+      "mode": "normalization_simple",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.08145063593790959,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "simple",
+      "task_axis": "short_semantic_normalization",
+      "view_label": "M01",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-04"
+      ],
+      "cell_id": "overlay_052",
+      "cell_wall_seconds": 18.663707494735718,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 18.663707494735718,
+        "median": 18.663707494735718,
+        "min": 18.663707494735718
+      },
+      "mode": "blocks_stress",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.05357992243942206,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-05"
+      ],
+      "cell_id": "overlay_053",
+      "cell_wall_seconds": 12.304767370223999,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 28672,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 12.304767370223999,
+        "median": 12.304767370223999,
+        "min": 12.304767370223999
+      },
+      "mode": "normalization_simple",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.0812693137474403,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "simple",
+      "task_axis": "short_semantic_normalization",
+      "view_label": "M01",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-06"
+      ],
+      "cell_id": "overlay_054",
+      "cell_wall_seconds": 18.303319454193115,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 28672,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 18.303319454193115,
+        "median": 18.303319454193115,
+        "min": 18.303319454193115
+      },
+      "mode": "blocks_stress",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.05463489846760608,
+      "parallelism": 1,
+      "phase": "one_shot",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-07"
+      ],
+      "cell_id": "overlay_055",
+      "cell_wall_seconds": 34.75757193565369,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 34.75757193565369,
+        "median": 34.75757193565369,
+        "min": 34.75757193565369
+      },
+      "mode": "cold_full_prefix",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.02877070935367088,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-08"
+      ],
+      "cell_id": "overlay_056",
+      "cell_wall_seconds": 8.807846546173096,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 8.807846546173096,
+        "median": 8.807846546173096,
+        "min": 8.807846546173096
+      },
+      "mode": "loaded_first",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.11353512970028844,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-09"
+      ],
+      "cell_id": "overlay_057",
+      "cell_wall_seconds": 9.515177488327026,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 9.515177488327026,
+        "median": 9.515177488327026,
+        "min": 9.515177488327026
+      },
+      "mode": "loaded_changing_1",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.105095254526442,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-10"
+      ],
+      "cell_id": "overlay_058",
+      "cell_wall_seconds": 10.316468715667725,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 10.316468715667725,
+        "median": 10.316468715667725,
+        "min": 10.316468715667725
+      },
+      "mode": "loaded_changing_2",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.09693239300782155,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-11"
+      ],
+      "cell_id": "overlay_059",
+      "cell_wall_seconds": 9.529423713684082,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 9.529423713684082,
+        "median": 9.529423713684082,
+        "min": 9.529423713684082
+      },
+      "mode": "loaded_changing_3",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.10493814002246725,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-12"
+      ],
+      "cell_id": "overlay_060",
+      "cell_wall_seconds": 8.658829927444458,
+      "contamination_checks_failed": 1,
+      "contamination_checks_passed": 0,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 8.658829927444458,
+        "median": 8.658829927444458,
+        "min": 8.658829927444458
+      },
+      "mode": "loaded_exact_repeat_1",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.11548904509955389,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-13"
+      ],
+      "cell_id": "overlay_061",
+      "cell_wall_seconds": 8.830973863601685,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 8.830973863601685,
+        "median": 8.830973863601685,
+        "min": 8.830973863601685
+      },
+      "mode": "loaded_exact_repeat_2",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.11323779409218557,
+      "parallelism": 1,
+      "phase": "loaded_session",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "long_structural",
+      "task_axis": "structural_retention",
+      "view_label": "L02-L",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-14"
+      ],
+      "cell_id": "overlay_062",
+      "cell_wall_seconds": 17.07407283782959,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 1,
+      "context_tier": 16384,
+      "executed_calls": 1,
+      "latency_seconds": {
+        "max": 17.07407283782959,
+        "median": 17.07407283782959,
+        "min": 17.07407283782959
+      },
+      "mode": "parallel_fanout_p1",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.058568333958631355,
+      "parallelism": 1,
+      "phase": "parallelism",
+      "planned_calls": 1,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 1,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-15",
+        "call-04-16"
+      ],
+      "cell_id": "overlay_063",
+      "cell_wall_seconds": 28.228273153305054,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 2,
+      "context_tier": 16384,
+      "executed_calls": 2,
+      "latency_seconds": {
+        "max": 28.226093769073486,
+        "median": 27.492957711219788,
+        "min": 26.75982165336609
+      },
+      "mode": "parallel_fanout_p2",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.07085095107087108,
+      "parallelism": 2,
+      "phase": "parallelism",
+      "planned_calls": 2,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 2,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    },
+    {
+      "accepted_calls": 0,
+      "call_ids": [
+        "call-04-17",
+        "call-04-18",
+        "call-04-19",
+        "call-04-20"
+      ],
+      "cell_id": "overlay_064",
+      "cell_wall_seconds": 42.27780246734619,
+      "contamination_checks_failed": 0,
+      "contamination_checks_passed": 4,
+      "context_tier": 16384,
+      "executed_calls": 4,
+      "latency_seconds": {
+        "max": 42.27619457244873,
+        "median": 42.21505403518677,
+        "min": 40.33582401275635
+      },
+      "mode": "parallel_fanout_p4",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "observed_throughput_calls_per_second": 0.09461229691608147,
+      "parallelism": 4,
+      "phase": "parallelism",
+      "planned_calls": 4,
+      "quality_admitted_for_operations": false,
+      "reviewed_calls": 4,
+      "status": {
+        "accepted": false,
+        "executed": true,
+        "planned": true,
+        "reviewed": true
+      },
+      "structure_complexity": "stress",
+      "task_axis": "long_whisper_normalization",
+      "view_label": "M05",
+      "zero_call": false,
+      "zero_call_reason": null
+    }
+  ],
+  "claim_boundary": {
+    "loaded_session_speedup": "observed timing signal only",
+    "parallel_throughput": "observed timing signal only; no model has a quality-accepted call",
+    "physical_kv_reuse": "not proven; no server telemetry was captured",
+    "runtime_recommendation": "no model or P1/P2/P4 level is operationally admitted",
+    "semantic_quality": "M01 uses semantic gold; M05 is reference-relative; L02-L is structural-only"
+  },
+  "cleanup": {
+    "final_loaded_total": 0,
+    "per_model_loaded_total": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "source": "recorded post-run read-backs; no live model call made during review"
+  },
+  "context_tiers": [
+    8192,
+    16384,
+    28672
+  ],
+  "models": [
+    {
+      "accepted_calls": 0,
+      "contamination": {
+        "failed": 1,
+        "forbidden_sentinel_hits": 0,
+        "passed": 19,
+        "repeat_equal_values": [
+          false,
+          true
+        ]
+      },
+      "context_tiers_executed": [
+        8192,
+        16384,
+        28672
+      ],
+      "executed_calls": 20,
+      "executed_cells": 16,
+      "loaded_session_timing_signal": {
+        "cold_full_prefix_seconds": 3.145611047744751,
+        "loaded_followup_median_seconds": 1.3348501920700073,
+        "observed_cold_to_loaded_speedup_ratio": 2.3565273964314466,
+        "operationally_admitted": false,
+        "physical_kv_reuse_proven": false
+      },
+      "model_id": "google/gemma-4-e2b",
+      "model_label": "E2B",
+      "parallelism_timing_signal": {
+        "P1": {
+          "calls": 1,
+          "cell_wall_seconds": 5.841123580932617,
+          "median_call_latency_seconds": 5.841123580932617,
+          "observed_throughput_calls_per_second": 0.17119993887209214,
+          "quality_admitted_for_operations": false
+        },
+        "P2": {
+          "calls": 2,
+          "cell_wall_seconds": 6.577401399612427,
+          "median_call_latency_seconds": 6.3468581438064575,
+          "observed_throughput_calls_per_second": 0.30407145291723414,
+          "quality_admitted_for_operations": false
+        },
+        "P4": {
+          "calls": 4,
+          "cell_wall_seconds": 11.574869394302368,
+          "median_call_latency_seconds": 10.978689551353455,
+          "observed_throughput_calls_per_second": 0.34557625349699117,
+          "quality_admitted_for_operations": false
+        }
+      },
+      "planned_calls": 20,
+      "planned_cells": 16,
+      "quality_by_view": {
+        "L02-L": {
+          "accepted": 0,
+          "calls": 7,
+          "exact_schema_valid": 0,
+          "hard_failure_counts": {},
+          "json_object": 0,
+          "raw_json_valid": 0,
+          "transport_normalized_json_valid": 0
+        },
+        "M01": {
+          "accepted": 0,
+          "calls": 3,
+          "exact_schema_valid": 3,
+          "hard_failure_counts": {
+            "placeholder_corruption": 3,
+            "target_text_mismatch": 3
+          },
+          "json_object": 0,
+          "raw_json_valid": 3,
+          "transport_normalized_json_valid": 3
+        },
+        "M05": {
+          "accepted": 0,
+          "calls": 10,
+          "exact_schema_valid": 7,
+          "hard_failure_counts": {
+            "json_invalid": 5,
+            "placeholder_corruption": 7,
+            "schema_invalid": 3,
+            "target_text_mismatch": 7
+          },
+          "json_object": 0,
+          "raw_json_valid": 5,
+          "transport_normalized_json_valid": 10
+        }
+      },
+      "recommendation": {
+        "observed_role_if_repaired": "lowest latency candidate; repair semantic and placeholder fidelity first",
+        "production_admission": "reject_current_prompt_and_scoring_contract"
+      },
+      "reviewed_calls": 20,
+      "structural_retention_observed": [
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 318
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 395
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 395
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 427
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 318
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 318
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 318
+        }
+      ],
+      "structure_profiles": [
+        "long_structural",
+        "simple",
+        "stress"
+      ],
+      "zero_call_rows": 0
+    },
+    {
+      "accepted_calls": 0,
+      "contamination": {
+        "failed": 1,
+        "forbidden_sentinel_hits": 0,
+        "passed": 19,
+        "repeat_equal_values": [
+          false,
+          true
+        ]
+      },
+      "context_tiers_executed": [
+        8192,
+        16384,
+        28672
+      ],
+      "executed_calls": 20,
+      "executed_cells": 16,
+      "loaded_session_timing_signal": {
+        "cold_full_prefix_seconds": 5.606357097625732,
+        "loaded_followup_median_seconds": 2.7591782808303833,
+        "observed_cold_to_loaded_speedup_ratio": 2.031893747706104,
+        "operationally_admitted": false,
+        "physical_kv_reuse_proven": false
+      },
+      "model_id": "google/gemma-4-e4b",
+      "model_label": "E4B",
+      "parallelism_timing_signal": {
+        "P1": {
+          "calls": 1,
+          "cell_wall_seconds": 23.498632669448853,
+          "median_call_latency_seconds": 23.498632669448853,
+          "observed_throughput_calls_per_second": 0.04255566756018636,
+          "quality_admitted_for_operations": false
+        },
+        "P2": {
+          "calls": 2,
+          "cell_wall_seconds": 10.448769330978394,
+          "median_call_latency_seconds": 9.370927929878235,
+          "observed_throughput_calls_per_second": 0.19141010167297143,
+          "quality_admitted_for_operations": false
+        },
+        "P4": {
+          "calls": 4,
+          "cell_wall_seconds": 33.7688992023468,
+          "median_call_latency_seconds": 17.032676696777344,
+          "observed_throughput_calls_per_second": 0.11845218809270562,
+          "quality_admitted_for_operations": false
+        }
+      },
+      "planned_calls": 20,
+      "planned_cells": 16,
+      "quality_by_view": {
+        "L02-L": {
+          "accepted": 0,
+          "calls": 7,
+          "exact_schema_valid": 0,
+          "hard_failure_counts": {},
+          "json_object": 0,
+          "raw_json_valid": 0,
+          "transport_normalized_json_valid": 0
+        },
+        "M01": {
+          "accepted": 0,
+          "calls": 3,
+          "exact_schema_valid": 3,
+          "hard_failure_counts": {
+            "json_invalid": 3,
+            "placeholder_corruption": 3,
+            "target_text_mismatch": 3
+          },
+          "json_object": 0,
+          "raw_json_valid": 0,
+          "transport_normalized_json_valid": 3
+        },
+        "M05": {
+          "accepted": 0,
+          "calls": 10,
+          "exact_schema_valid": 3,
+          "hard_failure_counts": {
+            "json_invalid": 5,
+            "placeholder_corruption": 3,
+            "schema_invalid": 7,
+            "target_text_mismatch": 3
+          },
+          "json_object": 0,
+          "raw_json_valid": 5,
+          "transport_normalized_json_valid": 5
+        }
+      },
+      "recommendation": {
+        "observed_role_if_repaired": "no advantage over E2B on current quality or timing evidence; investigate output-limit behavior before reuse",
+        "production_admission": "reject_current_prompt_and_scoring_contract"
+      },
+      "reviewed_calls": 20,
+      "structural_retention_observed": [
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 43
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 427
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 43
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 427
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 396
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 396
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 396
+        }
+      ],
+      "structure_profiles": [
+        "long_structural",
+        "simple",
+        "stress"
+      ],
+      "zero_call_rows": 0
+    },
+    {
+      "accepted_calls": 0,
+      "contamination": {
+        "failed": 1,
+        "forbidden_sentinel_hits": 0,
+        "passed": 19,
+        "repeat_equal_values": [
+          false,
+          true
+        ]
+      },
+      "context_tiers_executed": [
+        8192,
+        16384,
+        28672
+      ],
+      "executed_calls": 20,
+      "executed_cells": 16,
+      "loaded_session_timing_signal": {
+        "cold_full_prefix_seconds": 9.436436414718628,
+        "loaded_followup_median_seconds": 3.8373687267303467,
+        "observed_cold_to_loaded_speedup_ratio": 2.4590903524559136,
+        "operationally_admitted": false,
+        "physical_kv_reuse_proven": false
+      },
+      "model_id": "google/gemma-4-12b-qat",
+      "model_label": "12B QAT",
+      "parallelism_timing_signal": {
+        "P1": {
+          "calls": 1,
+          "cell_wall_seconds": 10.027003288269043,
+          "median_call_latency_seconds": 10.027003288269043,
+          "observed_throughput_calls_per_second": 0.09973069433117036,
+          "quality_admitted_for_operations": false
+        },
+        "P2": {
+          "calls": 2,
+          "cell_wall_seconds": 45.78781270980835,
+          "median_call_latency_seconds": 28.711329340934753,
+          "observed_throughput_calls_per_second": 0.04367974536533329,
+          "quality_admitted_for_operations": false
+        },
+        "P4": {
+          "calls": 4,
+          "cell_wall_seconds": 14.586309909820557,
+          "median_call_latency_seconds": 14.577996850013733,
+          "observed_throughput_calls_per_second": 0.27422974177361414,
+          "quality_admitted_for_operations": false
+        }
+      },
+      "planned_calls": 20,
+      "planned_cells": 16,
+      "quality_by_view": {
+        "L02-L": {
+          "accepted": 0,
+          "calls": 7,
+          "exact_schema_valid": 0,
+          "hard_failure_counts": {},
+          "json_object": 0,
+          "raw_json_valid": 0,
+          "transport_normalized_json_valid": 0
+        },
+        "M01": {
+          "accepted": 0,
+          "calls": 3,
+          "exact_schema_valid": 0,
+          "hard_failure_counts": {
+            "json_invalid": 3,
+            "schema_invalid": 3
+          },
+          "json_object": 0,
+          "raw_json_valid": 0,
+          "transport_normalized_json_valid": 3
+        },
+        "M05": {
+          "accepted": 0,
+          "calls": 10,
+          "exact_schema_valid": 9,
+          "hard_failure_counts": {
+            "json_invalid": 10,
+            "placeholder_corruption": 9,
+            "schema_invalid": 1,
+            "target_text_mismatch": 9
+          },
+          "json_object": 0,
+          "raw_json_valid": 0,
+          "transport_normalized_json_valid": 9
+        }
+      },
+      "recommendation": {
+        "observed_role_if_repaired": "strongest structural retention candidate; repair fenced JSON and placeholder fidelity first",
+        "production_admission": "reject_current_prompt_and_scoring_contract"
+      },
+      "reviewed_calls": 20,
+      "structural_retention_observed": [
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 428
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 428
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 428
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 428
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 428
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 428
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 428
+        }
+      ],
+      "structure_profiles": [
+        "long_structural",
+        "simple",
+        "stress"
+      ],
+      "zero_call_rows": 0
+    },
+    {
+      "accepted_calls": 0,
+      "contamination": {
+        "failed": 1,
+        "forbidden_sentinel_hits": 0,
+        "passed": 19,
+        "repeat_equal_values": [
+          false,
+          true
+        ]
+      },
+      "context_tiers_executed": [
+        8192,
+        16384,
+        28672
+      ],
+      "executed_calls": 20,
+      "executed_cells": 16,
+      "loaded_session_timing_signal": {
+        "cold_full_prefix_seconds": 34.75757193565369,
+        "loaded_followup_median_seconds": 9.173075675964355,
+        "observed_cold_to_loaded_speedup_ratio": 3.7890859253158466,
+        "operationally_admitted": false,
+        "physical_kv_reuse_proven": false
+      },
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_label": "26B MoE",
+      "parallelism_timing_signal": {
+        "P1": {
+          "calls": 1,
+          "cell_wall_seconds": 17.07407283782959,
+          "median_call_latency_seconds": 17.07407283782959,
+          "observed_throughput_calls_per_second": 0.058568333958631355,
+          "quality_admitted_for_operations": false
+        },
+        "P2": {
+          "calls": 2,
+          "cell_wall_seconds": 28.228273153305054,
+          "median_call_latency_seconds": 27.492957711219788,
+          "observed_throughput_calls_per_second": 0.07085095107087108,
+          "quality_admitted_for_operations": false
+        },
+        "P4": {
+          "calls": 4,
+          "cell_wall_seconds": 42.27780246734619,
+          "median_call_latency_seconds": 42.21505403518677,
+          "observed_throughput_calls_per_second": 0.09461229691608147,
+          "quality_admitted_for_operations": false
+        }
+      },
+      "planned_calls": 20,
+      "planned_cells": 16,
+      "quality_by_view": {
+        "L02-L": {
+          "accepted": 0,
+          "calls": 7,
+          "exact_schema_valid": 0,
+          "hard_failure_counts": {},
+          "json_object": 0,
+          "raw_json_valid": 0,
+          "transport_normalized_json_valid": 0
+        },
+        "M01": {
+          "accepted": 0,
+          "calls": 3,
+          "exact_schema_valid": 0,
+          "hard_failure_counts": {
+            "json_invalid": 3,
+            "schema_invalid": 3
+          },
+          "json_object": 0,
+          "raw_json_valid": 0,
+          "transport_normalized_json_valid": 3
+        },
+        "M05": {
+          "accepted": 0,
+          "calls": 10,
+          "exact_schema_valid": 7,
+          "hard_failure_counts": {
+            "json_invalid": 7,
+            "placeholder_corruption": 7,
+            "schema_invalid": 3,
+            "target_text_mismatch": 7
+          },
+          "json_object": 0,
+          "raw_json_valid": 3,
+          "transport_normalized_json_valid": 10
+        }
+      },
+      "recommendation": {
+        "observed_role_if_repaired": "coherent but slower and not more accurate under current contract; do not select for quality ceiling from this run",
+        "production_admission": "reject_current_prompt_and_scoring_contract"
+      },
+      "reviewed_calls": 20,
+      "structural_retention_observed": [
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 427
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 427
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 427
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 427
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 387
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 427
+        },
+        {
+          "first_unit_index": 0,
+          "last_unit_index": 427,
+          "retained_unit_count": 427
+        }
+      ],
+      "structure_profiles": [
+        "long_structural",
+        "simple",
+        "stress"
+      ],
+      "zero_call_rows": 0
+    }
+  ],
+  "non_claims": [
+    "No physical KV-cache reuse is claimed.",
+    "No timing result is operationally admitted because all 80 quality verdicts were rejected.",
+    "No model is recommended for production under the current prompt, schema, and scoring contract.",
+    "No semantic truth is claimed for M05 reference-relative scores or L02-L structural-only rows.",
+    "All 64 cells executed; therefore there are no blocked, stop-gated, unsupported, or other zero-call rows in this matrix.",
+    "No new model call, commit, or push was performed for this synthesis."
+  ],
+  "privacy": {
+    "all_private_roots_0700": true,
+    "all_raw_and_envelope_files_0600": true,
+    "sanitized_report_contains_private_paths": false,
+    "sanitized_report_contains_private_text": false
+  },
+  "schema_version": 1,
+  "scope": "four_model_real_asset_benchmark_synthesis",
+  "sources": {
+    "frozen_plan": "experiments/lmstudio/four_model_overlay/v1/execution_bundle/frozen-plan.json",
+    "independent_forensic_review": "experiments/lmstudio/live_runs/t_7253d368/sanitized_cross_model_forensic_review.json",
+    "ledger_count": 4
+  },
+  "structure_profiles": [
+    {
+      "acceptance_scope": "semantic_gold",
+      "complexity": "simple",
+      "view_label": "M01"
+    },
+    {
+      "acceptance_scope": "reference_relative",
+      "complexity": "stress",
+      "view_label": "M05"
+    },
+    {
+      "acceptance_scope": "structural_only",
+      "complexity": "long_structural",
+      "view_label": "L02-L"
+    }
+  ],
+  "task_id": "t_9e7a4b50"
+}

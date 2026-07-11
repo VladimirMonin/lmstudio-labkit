@@ -1,0 +1,29 @@
+{
+  "schema_version": "four-model-overlay-v2",
+  "overlay_version": "v1",
+  "pack_tree_sha256": "90e4c56abe0b184e10f8ea60d5d13749881055c1b7ef2dea48015c64c45bf1c9",
+  "models": [
+    {"model_id": "google/gemma-4-e2b", "model_revision": null, "admission_status": "unavailable", "admission_reason": "exact local model revision and production tokenizer artifact not installed", "variant_role": "fast_preprocessing"},
+    {"model_id": "google/gemma-4-e4b", "model_revision": null, "admission_status": "unavailable", "admission_reason": "exact local model revision and production tokenizer artifact not installed", "variant_role": "fast_preprocessing"},
+    {"model_id": "google/gemma-4-12b-qat", "model_revision": null, "admission_status": "unavailable", "admission_reason": "exact local model revision and production tokenizer artifact not installed", "variant_role": "quality_throughput_balance"},
+    {"model_id": "google/gemma-4-26b-a4b-qat", "model_revision": null, "admission_status": "unavailable", "admission_reason": "exact local model revision and production tokenizer artifact not installed", "variant_role": "quality_ceiling"}
+  ],
+  "context_tiers": [8192, 16384, 28672],
+  "parallelism_levels": [1, 2, 4],
+  "structure_profiles": [
+    {"complexity": "simple", "view_label": "M01", "task": "normalization"},
+    {"complexity": "stress", "view_label": "M05", "task": "blocks"},
+    {"complexity": "long_structural", "view_label": "L02-L", "task": "structural_context_retention"}
+  ],
+  "phases": {
+    "one_shot": {"calls_per_model": 6, "tasks": ["normalization_simple", "blocks_stress"]},
+    "loaded_session": {"calls_per_model": 7, "context_tier": 16384, "stable_prefix": true},
+    "parallelism": {"calls_per_model": 7, "context_tier": 16384, "cells_per_level": 1, "calls_per_cell": "parallelism"}
+  },
+  "contamination_controls": ["stable_prefix_digest_constant", "unique_chunk_markers", "cross_chunk_entity_exclusion", "exact_repeat_output_comparison"],
+  "max_model_calls": 80,
+  "live": false,
+  "requires_exact_token_map": true,
+  "raw_output_policy": "private_outside_repository",
+  "claims": ["cold_per_request", "compatible_loaded_session", "first_to_warm_timing_signal", "no_physical_kv_reuse_claim"]
+}
