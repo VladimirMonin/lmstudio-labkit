@@ -1,189 +1,120 @@
 # L3.33b — Cache Evidence Import from Source Application
 
-Status: source-architecture import complete from the active source-application branch.
+Status: reviewed static and deterministic evidence import; `research_only`.
 
-Timestamp: 2026-07-10T10:27:39+05:00
+Timestamp: 2026-07-11T13:05:58+05:00
 
-Source evidence:
+This report imports a sanitized cache/session architecture contract from a pinned
+source-application revision. It changes no Gemma admission verdict and makes no
+runtime claim about physical KV reuse or cache benefit. No live inference, model
+operation, application run, network call, or source-application mutation was
+performed for this publication slice.
+
+## Pinned source and evidence level
+
+```yaml
+source_label: source_application
+branch: next/modular-backend-lab
+commit: b9ead955af6c1a9e27c74c18a8ecac7fc58ae214
+evidence_level:
+  - static_source_review
+  - deterministic_unit_and_owner_path_tests
+runtime_cache_or_kv_proof: false
+```
+
+The independent review verified that the inspected files were byte-identical to
+the pinned commit.
+
+## Exact source references
+
+| contract | source path and symbols | code-proven fact |
+|---|---|---|
+| Runtime ownership and compatible reuse | `src/services/model_orchestrator.py:308-461` — `ModelOrchestrator.ensure_model`, `_ensure_model_locked` | Lifecycle decisions are serialized. Reuse requires the same model and server plus sufficient context and parallelism; otherwise the owner unloads and loads. |
+| Ownership-safe load, unload, and cleanup | `src/services/model_orchestrator.py:471-551,690-768,770-982` — `_do_load`, `_do_unload`, `cleanup` | Successful loads record model, instance, context, server, parallelism, purpose, and ownership. External or preloaded instances remain non-owned and are not unloaded as source-application-owned state. |
+| Idle cleanup | `src/services/model_runtime_lifecycle_coordinator.py:202-260` — `ModelRuntimeLifecycleCoordinator.unload_all_if_idle`; `src/services/model_lifecycle_targets.py:171-243` — `LMStudioManagedTarget.request_unload` | Active work blocks idle unload. An unconfirmed unload is reported as failure rather than cleanup success. |
+| LM Studio configuration | `src/domain/llm_providers.py:211-271` — `LMStudioConfig` | Application-level explicit caching is disabled for LM Studio: `caching_enabled=false`, threshold `0`, warmup delay `0.0`. Defaults include context `8192`, max output `2048`, and concurrency `1`. |
+| First-request sequencing | `src/application/services/postprocessing_service.py:514-589` — `PostProcessingService.improve_text` | Request 1 is awaited before remaining requests. The named cache delay runs only when `use_cache=true`; that explicit-cache branch is false for LM Studio. |
+| Final message and payload shape | `src/application/services/postprocessing_service.py:914-980` — `_process_chunk`; `src/infrastructure/llm/payload_builders/lmstudio.py:30-79` — `LMStudioPayloadBuilder.build_messages`, `build_payload` | LM Studio receives ordinary ordered system/user messages, an explicit `max_tokens` value when supplied, and `cache_prompt=true`. The builder ignores `cacheable_user_prefix` and provider-style `cache_control`. |
+| Token telemetry | `src/infrastructure/llm/openai_compatible_client.py:929-975,1128-1176` — `OpenAICompatibleClient._do_complete` | Provider-reported prompt, completion, total, and nullable cached-token counts are parsed, aggregated, and logged as counts. Persistence was not established by this review. |
+| Per-slot budget | `src/application/services/token_warning_calculator.py:70-155` — token budget calculation | The static input budget uses `context_length // max_concurrent`, then reserves output tokens and a safety buffer. |
+
+## Deterministic test evidence
+
+The pinned source review executed these tests without starting the application or
+making a model/API call:
 
 ```text
-active source-application branch: next/modular-backend-lab
-source commit: b9ead955
+uv run pytest -q tests/test_model_orchestrator.py tests/test_model_orchestrator_lock.py tests/test_model_lifecycle_targets.py tests/test_postprocessing_service.py
+134 passed
+
+uv run pytest -q tests/test_e2e_cloud_providers.py::TestT8PayloadBuilders::test_lmstudio_payload_has_cache_prompt tests/test_e2e_cloud_providers.py::TestT8PayloadBuilders::test_lmstudio_messages_no_cache_control
+2 passed
 ```
 
-This report imports design evidence only. No source-application files were modified.
+Named owner-path checks include:
 
-## Files inspected
+- `TestConcurrentEnsureModel.test_concurrent_ensure_model_serialized`;
+- `TestNParallelPassthrough.test_ensure_model_passes_n_parallel`;
+- `test_lmstudio_external_preloaded_snapshot_is_loaded_but_not_unloadable`;
+- `TestT8PayloadBuilders.test_lmstudio_payload_has_cache_prompt`;
+- `TestT8PayloadBuilders.test_lmstudio_messages_no_cache_control`.
 
-```text
-src/application/services/postprocessing_service.py
-src/application/services/blocks_post_processor.py
-src/application/services/postprocessing_coordinator.py
-src/services/model_orchestrator.py
-src/application/services/token_warning_calculator.py
-src/infrastructure/llm/prompt_loader.py
-src/infrastructure/llm/payload_builders/lmstudio.py
-src/infrastructure/llm/openai_compatible_client.py
-```
+The source checkout ended clean at the pinned full commit.
 
-## What source application already solved
+## Corrected interpretation
 
-### 1. Cache is an application-level request ordering strategy, not a separate benchmark axis
+The earlier import overstated three properties. The corrected contract is:
 
-source application enables cache only when chunk count exceeds a threshold:
+1. `cache_prompt=true` is emitted independently by the LM Studio payload builder;
+   it is not enabled by the application-level chunk-threshold cache branch.
+2. The source application's `split_user_for_cache` and
+   `cacheable_user_prefix` path does not establish an LM Studio byte-stable
+   prefix. LabKit must derive prefix fingerprints and lengths from its own final
+   serialized request seam, without publishing prompt content.
+3. Awaiting request 1 establishes ordering only. It is not a cache-materialization
+   barrier and does not prove that later requests reused physical KV state.
+
+`cold_per_request` remains a valid LabKit comparator, but it is not parity with
+the source application's compatible loaded-session lifecycle and intentionally
+destroys cross-request session/KV continuity.
+
+## Minimal LabKit import contract
 
 ```yaml
-use_cache: pipeline.caching_enabled and chunks > pipeline.cache_threshold
+source_ref:
+  label: source_application
+  branch: next/modular-backend-lab
+  commit: b9ead955af6c1a9e27c74c18a8ecac7fc58ae214
+  evidence: static_plus_136_deterministic_tests
+lifecycle:
+  record: [selected_model, live_instance_id, purpose, server_identity, context_length, parallelism, ownership]
+  ownership_values: [lab_owned, external_preloaded]
+  compatible_loaded_runtime_reuse: required_for_source_parity
+  unload_external_preloaded: forbidden
+request_shape:
+  execution_mode: session_loaded
+  request_1: serialized_ordering_marker
+  messages: ordered_system_then_user
+  max_output_tokens: explicit_and_bounded
+  cache_prompt_requested: record_boolean
+  stable_prefix_evidence: hash_and_lengths_from_final_labkit_request_seam
+telemetry:
+  record: [request_index, is_warmup_request, input_tokens, output_tokens, total_tokens, cached_tokens_nullable, latency_ms, quality_or_schema_result]
+  cache_materialized: false_or_unknown_without_runtime_signal
+cleanup:
+  record: [unload_requested, ownership_scope, unload_confirmed, read_back_confirmed, final_loaded_state]
+  external_preloaded_is_failure: false
 ```
 
-The first chunk is sent synchronously as warmup. Only after that does source application dispatch remaining chunks with controlled concurrency and staggered starts.
+For LabKit, `warmup_first` means only that the first request is serialized before
+the measured remainder. Any cache-materialized verdict needs a separate runtime
+signal. Missing or zero `cached_tokens` is telemetry, not proof that caching is
+disabled; latency differences are research signals, not physical-KV proof.
 
-Architecture shape:
+## Admission reconciliation
 
-```text
-load/ensure LM Studio model
-→ chunk 1 synchronously with full_text/stable prefix
-→ optional warmup delay
-→ remaining chunks with same stable prefix and dynamic suffix
-→ aggregate usage.cached_tokens as telemetry
-```
-
-LabKit implication:
-
-```yaml
-cache_session_strategy:
-  do_not_mix_with: [parallel_matrix, broad_model_matrix, context_sweep]
-  required_shape: session_loaded_or_owner_loaded_model
-  warmup_shape: first_request_then_measured_followups
-  acceptance_signal: quality_pass_plus_cleanup_zero
-  cache_signal: cached_tokens_if_runtime_reports_it
-```
-
-### 2. LM Studio cache in source application is not implemented through `cache_control` blocks
-
-the source application's LM Studio payload builder explicitly does not use provider-style cache-control blocks:
-
-```text
-LM Studio does not use cache_control; LM Studio caches through llama.cpp/runtime KV cache behavior.
-```
-
-The `cacheable_user_prefix` is meaningful for providers that support explicit cache blocks, but for LM Studio the effective strategy is stable messages + same loaded runtime + request ordering.
-
-LabKit implication:
-
-```yaml
-lmstudio_cache_control_blocks: unsupported_or_ignored
-lmstudio_cache_evidence_source: runtime_usage_cached_tokens_if_reported
-kv_reuse_proven_by_prompt_shape_alone: false
-```
-
-### 3. Prompt split still matters
-
-source application still computes a stable cacheable prefix by splitting the prompt at `{full_text}`:
-
-```text
-prefix = everything through {full_text}
-suffix = dynamic chunk / clipboard / context / blocks_json
-```
-
-For LM Studio this does not become explicit `cache_control`, but it gives a stable request prefix across chunk requests. That is the right shape for llama.cpp-style prefix/KV cache reuse if the runtime supports/report it.
-
-LabKit implication:
-
-```yaml
-prompt_prefix_reuse_axis:
-  useful: true
-  must_use_same_loaded_model: true
-  must_keep_prefix_byte_stable: true
-  must_measure_cached_tokens_or_latency_only_as_signal: true
-```
-
-### 4. Lifecycle ownership is mandatory
-
-source application has a single `ModelOrchestrator` owner for LM Studio lifecycle. It implements context-aware LRU:
-
-```text
-same model + same server + current context >= requested + current parallel >= requested → no-op / LRU hit
-same model + context too small → reload upward
-model/server changed → unload old, load new
-cleanup unloads source-application-owned models
-```
-
-LabKit implication:
-
-```yaml
-cache_session_probe_requires:
-  pre_loaded_count: 0_or_known_compatible_owner_loaded
-  load_once: true
-  dirty_external_loaded_state: reject_or_record_external_preloaded
-  cleanup_final_zero: required_for_lab_runs
-```
-
-The previous LabKit `cold_per_request + warmup_first` combination was invalid because it destroys the loaded runtime between requests. source application confirms the fix: warmup evidence only makes sense under an owner-loaded/session-loaded model.
-
-### 5. Token budgeting must include output cap and per-slot context
-
-the source application's token warning calculator treats the usable budget as per-slot:
-
-```text
-per_slot_context = context_length // max_concurrent
-available_input = per_slot_context - max_tokens - safety_buffer
-```
-
-LabKit implication:
-
-```yaml
-max_tokens_must_be_explicit: true
-parallel_reduces_effective_context: true
-cache_probe_parallelism: 1
-session_probe_context_budget: input + max_tokens + safety_buffer <= context_tier
-```
-
-This directly explains why unbounded/implicit generation caps are dangerous for LabKit structured probes: finish-length can consume the context-side generation budget and produce no useful JSON.
-
-### 6. Cached-token telemetry is tracked, but not treated as proof by itself
-
-source application logs and persists:
-
-```text
-prompt_tokens
-completion_tokens
-cached_tokens
-total_tokens
-```
-
-LabKit should import this as an evidence field, not as automatic acceptance.
-
-```yaml
-kv_reuse_proven:
-  true_only_if: runtime_reports_cached_tokens_or_equivalent_and_quality_passes
-cache_benefit_claimed:
-  false_if: timing_only_or_mixed_failures
-```
-
-## Answer: what was wrong in LabKit L3.33a before repair
-
-The bad shape was:
-
-```yaml
-execution_mode: [cold_per_request, session_loaded]
-cache_mode: [none, warmup_first]
-```
-
-`warmup_first` under `cold_per_request` is semantically invalid. It cannot preserve a warm runtime or stable KV state across requests.
-
-The corrected LabKit L3.33a shape:
-
-```yaml
-execution_mode: session_loaded
-cache_mode:
-  - none
-  - warmup_first
-context_tier: 8192
-parallel: 1
-```
-
-This matches the source application's architecture more closely, but the L3.33a result remains only partial:
+The imported architecture evidence is `research_only`. It does not alter the
+L3.33a model outcomes:
 
 ```yaml
 google/gemma-4-e4b: accepted_narrow_12_of_12
@@ -192,27 +123,22 @@ kv_reuse_proven: false
 cache_benefit_claimed: false
 ```
 
-## Imported rules for future LabKit cache work
+The prepared `matrix.l3_33b_gemma_prompt_prefix_reuse.yaml` remains a LabKit
+`cold_per_request` comparator and is not relabeled as source-application parity.
+L3.31b context forensics and the superseding L3.34.1/L3.39 vision findings are
+outside this cache-only import and remain unchanged.
 
-```yaml
-l3_33b_imported_rules:
-  - cache/session probes must use session_loaded or explicit owner-loaded model lifecycle
-  - warmup_first is invalid with cold_per_request
-  - do not mix cache probes with parallelism, broad model sweeps, context sweeps, or image probes
-  - keep max_tokens explicit and bounded
-  - keep stable prefix byte-identical across warmup and measured requests
-  - record cached_tokens when runtime reports them
-  - timing-only differences are signal, not proof
-  - acceptance requires quality pass and cleanup final zero
-  - dirty loaded state must be rejected or classified as external_preloaded, not silently reused
-```
+## Non-claims
 
-## LabKit action items
+This report does not claim:
 
-```yaml
-recommended_changes:
-  - add an explicit max_tokens axis to managed text probes
-  - record max_tokens in planner/result artifacts
-  - add cache/session docs that cite session_loaded-only semantics
-  - keep L3.33 accepted only for E4B narrow scope until 12B finish_length is repaired
-```
+- that LM Studio physically reused KV state or produced a cache benefit;
+- that first-request serialization materialized a cache;
+- that prefix reuse was proven from the source application's LM Studio path;
+- that cache state persists across unload/reload;
+- parity across llama.cpp, MLX, LM Studio versions, or API routes;
+- that the source application implements a cold-per-request mode;
+- that cached-token counts are persisted by the inspected path;
+- that cleanup requires unloading external/preloaded instances or reaching a
+  global loaded count of zero;
+- any model admission change from architecture evidence alone.

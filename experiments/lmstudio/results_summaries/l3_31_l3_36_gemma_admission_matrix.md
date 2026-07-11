@@ -138,14 +138,27 @@ kv_reuse_proven: false
 cache_benefit_claimed: false
 ```
 
-L3.33b source application import changes the interpretation, not the model result:
+L3.33b source-application architecture import is `research_only` and changes the
+interpretation, not the model result. The pinned evidence and corrected contract
+are documented in [L3.33b cache evidence import](l3_33b_cache_evidence_import_from_source_application.md):
 
 ```yaml
-warmup_first_requires: session_loaded_or_owner_loaded_model
-cold_per_request_plus_warmup_first: invalid_shape
-cached_tokens: telemetry_if_reported_not_proof_by_itself
-max_tokens: must_be_explicit_for_repair_or_admission_runs
+source_evidence: static_plus_deterministic_owner_path_tests
+source_parity_execution_mode: session_loaded
+warmup_first: first_request_serialized_not_cache_materialization
+stable_prefix: labkit_final_request_seam_requirement_not_source_application_proof
+cache_prompt: requested_by_lmstudio_payload_builder
+cached_tokens: nullable_provider_telemetry_not_proof_by_itself
+max_output_tokens: explicit_and_bounded
+cold_per_request: labkit_comparator_not_source_application_parity
+kv_reuse_proven: false
+cache_benefit_claimed: false
 ```
+
+The imported lifecycle contract requires ownership-scoped cleanup: LabKit-owned
+instances require unload and read-back confirmation, while classified
+`external_preloaded` instances are neither removed nor treated as cleanup failure.
+Architecture import alone does not change any cache/session admission cell.
 
 The L3.38 focused 12B repeated-context follow-up at 16384 also remained blocked.
 With native reasoning off and a 1024-token cap, exact-repeat and stable-prefix
