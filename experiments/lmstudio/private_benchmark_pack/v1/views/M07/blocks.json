@@ -1,0 +1,13 @@
+{
+  "schema_version": "sanitized-blocks-v1",
+  "view_label": "M07",
+  "blocks": [
+    {
+      "block_index": 0,
+      "source_unit_start": 0,
+      "source_unit_end": 2,
+      "raw_text": "Там есть специальные логи для активации приложения, их видно сразу под полем активация, есть прям специальная кнопочка показать логи ENTITY_002, ну отправлю робота анализировать логи, покушаем, посмотрим",
+      "reference_candidate_text": null
+    }
+  ]
+}

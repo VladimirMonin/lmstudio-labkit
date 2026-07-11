@@ -1,0 +1,99 @@
+{
+  "schema_version": "semantic-review-v1",
+  "pack_version": "v1",
+  "review_method": "two_independent_manual_source_reviews_with_private_adjudication",
+  "review_scope": "normalized_and_block_expected_outputs",
+  "counts": {
+    "approved": 1,
+    "reference": 12,
+    "unsupported": 3
+  },
+  "verdicts": [
+    {
+      "view_label": "M01",
+      "verdict": "approved",
+      "reason": "two independent source reviews found only faithful grammar, punctuation, and casing normalization; meaning and placeholders are preserved"
+    },
+    {
+      "view_label": "M02",
+      "verdict": "reference",
+      "reason": "stored postprocessing contains unsupported additions and placeholder inventory drift"
+    },
+    {
+      "view_label": "M03",
+      "verdict": "reference",
+      "reason": "second review found an unresolved lexical deletion/substitution: source wording containing 'email' is normalized to a different phrase without media evidence"
+    },
+    {
+      "view_label": "M04",
+      "verdict": "reference",
+      "reason": "second review found an unresolved lexical reconstruction of a malformed source term as 'TODO list' without media evidence"
+    },
+    {
+      "view_label": "M05",
+      "verdict": "reference",
+      "reason": "substantial omission and placeholder additions require further adjudication"
+    },
+    {
+      "view_label": "M07",
+      "verdict": "reference",
+      "reason": "candidate invents placeholders absent from the source view"
+    },
+    {
+      "view_label": "M08",
+      "verdict": "reference",
+      "reason": "large reconstruction drift and numerous added placeholders"
+    },
+    {
+      "view_label": "M09",
+      "verdict": "reference",
+      "reason": "substantial omission and placeholder substitution"
+    },
+    {
+      "view_label": "M10",
+      "verdict": "reference",
+      "reason": "placeholder loss/substitution prevents semantic admission"
+    },
+    {
+      "view_label": "M11",
+      "verdict": "reference",
+      "reason": "blind manual candidate preserves intent but reconstructs several malformed technical terms without media evidence; textual fidelity remains ambiguous"
+    },
+    {
+      "view_label": "V10",
+      "verdict": "reference",
+      "reason": "material additions/omissions and placeholder drift"
+    },
+    {
+      "view_label": "V20",
+      "verdict": "reference",
+      "reason": "high textual overlap but unsupported placeholder additions remain"
+    },
+    {
+      "view_label": "V30",
+      "verdict": "reference",
+      "reason": "material omission/addition and placeholder drift"
+    },
+    {
+      "view_label": "L02-E",
+      "verdict": "unsupported",
+      "reason": "full-record candidate is not scoped to the excerpt view and adds foreign ranges"
+    },
+    {
+      "view_label": "L02-M",
+      "verdict": "unsupported",
+      "reason": "full-record candidate is not scoped to the middle view and adds foreign ranges"
+    },
+    {
+      "view_label": "L02-L",
+      "verdict": "unsupported",
+      "reason": "full-record candidate is not scoped to the late view and adds foreign ranges"
+    }
+  ],
+  "non_claims": [
+    "reference candidates are not semantic truth",
+    "no audio-grounded accuracy claim",
+    "no model output was used as review authority",
+    "media-unresolved lexical reconstructions are not approved semantic gold"
+  ]
+}

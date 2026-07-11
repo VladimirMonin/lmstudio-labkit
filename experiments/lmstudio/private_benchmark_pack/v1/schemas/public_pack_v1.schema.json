@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "public_pack_v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "pack_version",
+    "view_count",
+    "view_labels",
+    "prompt_versions",
+    "schema_versions",
+    "privacy_review",
+    "semantic_review",
+    "media_resolution",
+    "claims",
+    "public_tree_sha256"
+  ],
+  "properties": {
+    "schema_version": {"enum": ["public-pack-v1"]},
+    "pack_version": {"enum": ["v1"]},
+    "view_count": {"type": "integer", "minimum": 1},
+    "view_labels": {"type": "array", "items": {"type": "string"}},
+    "prompt_versions": {"type": "array", "items": {"type": "string"}},
+    "schema_versions": {"type": "array", "items": {"type": "string"}},
+    "privacy_review": {"enum": ["approved"]},
+    "semantic_review": {"enum": ["complete", "partial"]},
+    "media_resolution": {"enum": ["unresolved", "partially_resolved", "resolved"]},
+    "claims": {"type": "array", "items": {"type": "string"}},
+    "public_tree_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "normalization_output_v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "normalized_text", "preserved_placeholders", "uncertain_spans", "input_digest"],
+  "properties": {
+    "schema_version": {"type": "string", "enum": ["normalization-v1"]},
+    "normalized_text": {"type": "string"},
+    "preserved_placeholders": {"type": "array", "items": {"type": "string", "pattern": "^(PERSON|CONTACT|ACCOUNT|LOCATION|ORG|PRODUCT|ENTITY|DATE|PATH|SECRET|RARE)_[0-9]{3}$"}},
+    "uncertain_spans": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["source_unit_start", "source_unit_end", "category"], "properties": {"source_unit_start": {"type": "integer", "minimum": 0}, "source_unit_end": {"type": "integer", "minimum": 1}, "category": {"type": "string", "enum": ["unclear", "possible_omission", "possible_repetition", "possible_entity_issue"]}}}},
+    "input_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

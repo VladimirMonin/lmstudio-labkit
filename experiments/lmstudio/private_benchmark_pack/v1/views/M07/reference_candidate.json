@@ -1,0 +1,8 @@
+{
+  "schema_version": "reference-candidate-v1",
+  "view_label": "M07",
+  "status": "reference_candidate",
+  "basis": "stored_postprocessing",
+  "text": "Там есть специальные логи для активации приложения, их видно сразу под полем [B]активация[PATH_001 ENTITY_001 прям специальная кнопочка [I]показать логи[PATH_002\n\nОтправлю робота анализировать логи. Покушаем, посмотрим. :)",
+  "review_required": true
+}

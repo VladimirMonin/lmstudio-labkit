@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Private replay sanitized evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "replay_status",
+    "private_root_outside_repository",
+    "manifest_digest_verified",
+    "owner_restricted_immutable_entries",
+    "view_count",
+    "span_instances_verified",
+    "model_calls",
+    "private_locators_published"
+  ],
+  "properties": {
+    "schema_version": {"const": "private-replay-evidence-v1"},
+    "replay_status": {"const": "passed"},
+    "private_root_outside_repository": {"const": true},
+    "manifest_digest_verified": {"const": true},
+    "owner_restricted_immutable_entries": {"const": true},
+    "view_count": {"const": 16},
+    "span_instances_verified": {"const": 6366},
+    "model_calls": {"const": 0},
+    "private_locators_published": {"const": false}
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "schema_version": "reference-candidate-v1",
+  "view_label": "M04",
+  "status": "reference_candidate",
+  "basis": "stored_postprocessing",
+  "text": "Подскажи, пожалуйста, насколько эффективно здесь использована логика перемещения карточек, насколько это правильно? ENTITY_004 быть, есть альтернативные каноничные практики в лучших традициях JavaScript? ENTITY_003 альтернативные решения есть у этой задачки с TODO list? ENTITY_002 ли простой способ сделать анимацию появления карточки без JavaScript? Вот так.",
+  "review_required": true
+}

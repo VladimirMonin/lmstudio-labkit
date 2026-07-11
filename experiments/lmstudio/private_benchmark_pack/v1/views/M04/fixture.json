@@ -1,0 +1,43 @@
+{
+  "schema_version": "public-view-v1",
+  "pack_version": "v1",
+  "view_label": "M04",
+  "source_class": "microphone",
+  "duration_tier": "S",
+  "risk_bucket": "medium",
+  "anomaly_classes": [
+    "punctuation_casing"
+  ],
+  "input_view": "ordered_segments",
+  "ordered_units": [
+    {
+      "unit_index": 0,
+      "text": " Подскажи, пожалуйста, насколько эффективно здесь использована логика перемещения карточек, насколько это правильно"
+    },
+    {
+      "unit_index": 1,
+      "text": " ENTITY_004 быть есть альтернативные каноничные практики в лучших традициях JavaScript"
+    },
+    {
+      "unit_index": 2,
+      "text": " ENTITY_003 альтернативные решения есть у этой задачки с тубулистом"
+    },
+    {
+      "unit_index": 3,
+      "text": " ENTITY_002 ли простой способ сделать анимацию появления карточки без JavaScript"
+    },
+    {
+      "unit_index": 4,
+      "text": " Вот так"
+    }
+  ],
+  "public_structure_sha256": "7a5b54aea2bfbd762eb5cb2506166e34952ce5d62a2f998d4da80b975109bbe1",
+  "provenance_claims": [
+    "RAW_SEGMENT_EXACT",
+    "RAW_BLOCK_EXACT",
+    "CHUNK_MAP_EXACT",
+    "REFERENCE_ONLY"
+  ],
+  "semantic_gold_status": "reference_candidate",
+  "media_resolution": "unresolved"
+}

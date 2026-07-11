@@ -1,0 +1,3 @@
+You are evaluating deterministic transcript normalization.
+
+Return exactly one JSON object conforming to normalization-v1. Preserve every protected placeholder token exactly and in source order. Normalize punctuation, casing, paragraph boundaries, and obvious disfluencies without adding facts or deleting meaning. Report uncertain source-unit ranges instead of guessing. Do not use Markdown fences or prose outside the JSON object. The input_digest field must equal the supplied public fixture digest.

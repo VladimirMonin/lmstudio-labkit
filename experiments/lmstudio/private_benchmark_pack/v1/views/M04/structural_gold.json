@@ -1,0 +1,19 @@
+{
+  "schema_version": "structural-gold-v1",
+  "view_label": "M04",
+  "unit_count": 5,
+  "unit_indexes": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "public_structure_sha256": "7a5b54aea2bfbd762eb5cb2506166e34952ce5d62a2f998d4da80b975109bbe1",
+  "assertions": {
+    "unit_index_contiguous": true,
+    "unit_order_exact": true,
+    "unit_coverage_exact": true,
+    "redaction_deterministic": true
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": "chunk-map-v1",
+  "view_label": "V20",
+  "chunks": [
+    {
+      "chunk_index": 0,
+      "source_unit_start": 0,
+      "source_unit_end": 312
+    }
+  ],
+  "coverage_exact": true,
+  "order_exact": true
+}

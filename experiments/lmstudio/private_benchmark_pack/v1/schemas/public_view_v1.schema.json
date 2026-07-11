@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "pack_version",
+    "view_label",
+    "source_class",
+    "duration_tier",
+    "risk_bucket",
+    "anomaly_classes",
+    "input_view",
+    "ordered_units",
+    "public_structure_sha256",
+    "provenance_claims",
+    "semantic_gold_status",
+    "media_resolution"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "pack_version": {
+      "type": "string"
+    },
+    "view_label": {
+      "type": "string"
+    },
+    "source_class": {
+      "enum": [
+        "microphone",
+        "processed_recording",
+        "long_recording"
+      ]
+    },
+    "duration_tier": {
+      "enum": [
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ]
+    },
+    "risk_bucket": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "anomaly_classes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "input_view": {
+      "enum": [
+        "raw_record",
+        "ordered_segments",
+        "ordered_blocks",
+        "chunk_sequence"
+      ]
+    },
+    "ordered_units": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "unit_index",
+          "text"
+        ],
+        "properties": {
+          "unit_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "text": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "public_structure_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "provenance_claims": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "semantic_gold_status": {
+      "enum": [
+        "absent",
+        "reference_candidate",
+        "approved"
+      ]
+    },
+    "media_resolution": {
+      "enum": [
+        "unresolved",
+        "partially_resolved",
+        "resolved"
+      ]
+    }
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Chunk map v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "view_label",
+    "chunks",
+    "coverage_exact",
+    "order_exact"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "chunk-map-v1"
+    },
+    "view_label": {
+      "type": "string",
+      "pattern": "^(?:M(?:0[1-9]|10|11)|V(?:10|20|30)|L02-(?:E|M|L))$"
+    },
+    "chunks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "chunk_index",
+          "source_unit_start",
+          "source_unit_end"
+        ],
+        "properties": {
+          "chunk_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "source_unit_start": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "source_unit_end": {
+            "type": "integer",
+            "minimum": 1
+          }
+        }
+      }
+    },
+    "coverage_exact": {
+      "const": true
+    },
+    "order_exact": {
+      "const": true
+    }
+  }
+}

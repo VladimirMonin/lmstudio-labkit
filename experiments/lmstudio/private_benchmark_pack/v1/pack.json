@@ -1,0 +1,54 @@
+{
+  "schema_version": "public-pack-v1",
+  "pack_version": "v1",
+  "view_count": 16,
+  "view_labels": [
+    "M01",
+    "M02",
+    "M03",
+    "M04",
+    "M05",
+    "M07",
+    "M08",
+    "M09",
+    "M10",
+    "M11",
+    "V10",
+    "V20",
+    "V30",
+    "L02-E",
+    "L02-M",
+    "L02-L"
+  ],
+  "prompt_versions": [
+    "normalization-v1"
+  ],
+  "schema_versions": [
+    "public-pack-v1",
+    "public-view-v1",
+    "task-bindings-v1",
+    "structural-gold-v1",
+    "chunk-map-v1",
+    "sanitized-blocks-v1",
+    "reference-candidate-v1",
+    "rubric-v1",
+    "semantic-gold-v1",
+    "aggregate-v1",
+    "semantic-review-v1",
+    "private-replay-evidence-v1",
+    "normalization-v1",
+    "blocks-v1",
+    "stitch-v1",
+    "probe-v1",
+    "scorecard-v1"
+  ],
+  "privacy_review": "approved",
+  "semantic_review": "partial",
+  "media_resolution": "partially_resolved",
+  "claims": [
+    "text_structure_only_for_unresolved_views",
+    "stored_postprocessing_is_reference_only",
+    "approved_semantic_gold_is_text_source_relative"
+  ],
+  "public_tree_sha256": "90e4c56abe0b184e10f8ea60d5d13749881055c1b7ef2dea48015c64c45bf1c9"
+}

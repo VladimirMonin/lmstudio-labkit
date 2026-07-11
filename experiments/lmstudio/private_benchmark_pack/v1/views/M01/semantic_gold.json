@@ -1,0 +1,31 @@
+{
+  "schema_version": "semantic-gold-v1",
+  "view_label": "M01",
+  "status": "approved",
+  "review_basis": "two_independent_manual_source_reviews",
+  "normalized_text": "Следующая твоя задача — сделать домашнее задание для группы ENTITY_001 ACCOUNT_002 на основе домашнего задания ENTITY_001 ACCOUNT_001 под номером 11.\n\nТы возьмёшь это домашнее задание, а также будешь использовать шаблон для создания домашних заданий и правила домашних заданий. Просто возьми это задание и сделай для ребят из группы ACCOUNT_002 домашнее задание под номером 11 от DATE_001.",
+  "blocks": [
+    {
+      "block_index": 0,
+      "source_unit_start": 0,
+      "source_unit_end": 1,
+      "normalized_text": "Следующая твоя задача — сделать домашнее задание для группы ENTITY_001 ACCOUNT_002 на основе домашнего задания ENTITY_001 ACCOUNT_001 под номером 11."
+    },
+    {
+      "block_index": 1,
+      "source_unit_start": 1,
+      "source_unit_end": 3,
+      "normalized_text": "Ты возьмёшь это домашнее задание, а также будешь использовать шаблон для создания домашних заданий и правила домашних заданий. Просто возьми это задание и сделай для ребят из группы ACCOUNT_002 домашнее задание под номером 11 от DATE_001."
+    }
+  ],
+  "preserved_placeholders": [
+    "ENTITY_001",
+    "ACCOUNT_002",
+    "ENTITY_001",
+    "ACCOUNT_001",
+    "ACCOUNT_002",
+    "DATE_001"
+  ],
+  "uncertain_spans": [],
+  "output_sha256": "371b922036b5fe2f9461b16c302a6bcd0d2313c14f2a6d552268653aa54fc05a"
+}

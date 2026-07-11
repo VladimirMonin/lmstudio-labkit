@@ -1,0 +1,2096 @@
+{
+  "schema_version": "public-view-v1",
+  "pack_version": "v1",
+  "view_label": "V30",
+  "source_class": "processed_recording",
+  "duration_tier": "L",
+  "risk_bucket": "low",
+  "anomaly_classes": [
+    "repetition_reference"
+  ],
+  "input_view": "ordered_segments",
+  "ordered_units": [
+    {
+      "unit_index": 0,
+      "text": " Welcome back everyone to the VS ENTITY_008 ENTITY_024 ENTITY_037, the behind-the-scenes look at your favorite code editor, VS ENTITY_008."
+    },
+    {
+      "unit_index": 1,
+      "text": " I have with me yet again, ENTITY_021 from the VS ENTITY_008 team. How's it going, ENTITY_021?"
+    },
+    {
+      "unit_index": 2,
+      "text": " Hi, ENTITY_025. Thanks for having me back."
+    },
+    {
+      "unit_index": 3,
+      "text": " It's good to have you back. And I think there's been so much new change and so many new things that probably since the last time you were on, the team has added about 5,000 new features."
+    },
+    {
+      "unit_index": 4,
+      "text": " Yes, there's really so it's just showing it in a live stream. Just scroll through is like endless, endless goodies and a lot of really powerful new features and the UX on top of it is amazing too. So it's been amazing how it's all coming together and how we can move so much faster now on the VS ENTITY_008 side too. So it's a lot."
+    },
+    {
+      "unit_index": 5,
+      "text": " It's a lot, but I feel like one thing that I've really appreciated is that things feel a little"
+    },
+    {
+      "unit_index": 6,
+      "text": " bit more or do feel pretty natural in their evolution. So some of the things that are new"
+    },
+    {
+      "unit_index": 7,
+      "text": " features just end up lighting up, right? So for example, if I have MCP servers and now all of a"
+    },
+    {
+      "unit_index": 8,
+      "text": " sudden have MCP apps built into them for UI, they just show up, right? If I have different agents"
+    },
+    {
+      "unit_index": 9,
+      "text": " or different things like the UI is pretty much still all there, but a little bit more cleaner,"
+    },
+    {
+      "unit_index": 10,
+      "text": " a little bit more based on the feedback coming in,"
+    },
+    {
+      "unit_index": 11,
+      "text": " the tasks are coming in a little bit more."
+    },
+    {
+      "unit_index": 12,
+      "text": " And one of the topics today"
+    },
+    {
+      "unit_index": 13,
+      "text": " that we're going to talk about sub-agents"
+    },
+    {
+      "unit_index": 14,
+      "text": " kind of just happened automatically."
+    },
+    {
+      "unit_index": 15,
+      "text": " I think that's kind of cool"
+    },
+    {
+      "unit_index": 16,
+      "text": " about this point in time with AI development"
+    },
+    {
+      "unit_index": 17,
+      "text": " is that there are a lot of things"
+    },
+    {
+      "unit_index": 18,
+      "text": " you can go crazy deep on and really customize,"
+    },
+    {
+      "unit_index": 19,
+      "text": " but now more than ever,"
+    },
+    {
+      "unit_index": 20,
+      "text": " a lot of things just happen out of the box."
+    },
+    {
+      "unit_index": 21,
+      "text": " ENTITY_051, totally."
+    },
+    {
+      "unit_index": 22,
+      "text": " I think we have this plan agent now for a few days."
+    },
+    {
+      "unit_index": 23,
+      "text": " I think we announced it at ENTITY_048 last year"
+    },
+    {
+      "unit_index": 24,
+      "text": " was like the big, big thing."
+    },
+    {
+      "unit_index": 25,
+      "text": " And it's one of these key elements"
+    },
+    {
+      "unit_index": 26,
+      "text": " that you don't have to customize much."
+    },
+    {
+      "unit_index": 27,
+      "text": " Just use plan mode and you get better results."
+    },
+    {
+      "unit_index": 28,
+      "text": " ENTITY_027 you can iterate,"
+    },
+    {
+      "unit_index": 29,
+      "text": " you spend more time upfront"
+    },
+    {
+      "unit_index": 30,
+      "text": " to gather context and align"
+    },
+    {
+      "unit_index": 31,
+      "text": " and discuss"
+    },
+    {
+      "unit_index": 32,
+      "text": " and maybe let your assumptions be challenged."
+    },
+    {
+      "unit_index": 33,
+      "text": " And if you don't have to create your own,"
+    },
+    {
+      "unit_index": 34,
+      "text": " like eventually if you really want to,"
+    },
+    {
+      "unit_index": 35,
+      "text": " you can make your own plan mode."
+    },
+    {
+      "unit_index": 36,
+      "text": " Maybe you want to read"
+    },
+    {
+      "unit_index": 37,
+      "text": " like more context from some MCP servers."
+    },
+    {
+      "unit_index": 38,
+      "text": " maybe your plan has to be super short"
+    },
+    {
+      "unit_index": 39,
+      "text": " maybe your plan has to be extremely long"
+    },
+    {
+      "unit_index": 40,
+      "text": " so everybody wants to customize it"
+    },
+    {
+      "unit_index": 41,
+      "text": " but like the out-of-the-box experience"
+    },
+    {
+      "unit_index": 42,
+      "text": " like it's just a really nice experience"
+    },
+    {
+      "unit_index": 43,
+      "text": " plan mode"
+    },
+    {
+      "unit_index": 44,
+      "text": " and now with the latest experience"
+    },
+    {
+      "unit_index": 45,
+      "text": " is even better"
+    },
+    {
+      "unit_index": 46,
+      "text": " but also where subagents"
+    },
+    {
+      "unit_index": 47,
+      "text": " really help with that context"
+    },
+    {
+      "unit_index": 48,
+      "text": " to bring it into the right places"
+    },
+    {
+      "unit_index": 49,
+      "text": " without overloading"
+    },
+    {
+      "unit_index": 50,
+      "text": " where it just works"
+    },
+    {
+      "unit_index": 51,
+      "text": " you don't have to think about subagents"
+    },
+    {
+      "unit_index": 52,
+      "text": " it's just doing a really nice job"
+    },
+    {
+      "unit_index": 53,
+      "text": " context engineering for you well let's talk about that a little bit first and let's first start with"
+    },
+    {
+      "unit_index": 54,
+      "text": " just agents right i'm inside of agent you know agent mode but the agent agent or the plan agent"
+    },
+    {
+      "unit_index": 55,
+      "text": " and this is the mode of the thinking that the agent is there and a lot of people hear a few"
+    },
+    {
+      "unit_index": 56,
+      "text": " words which is like what is an agent and what is context that it has so removing anything about"
+    },
+    {
+      "unit_index": 57,
+      "text": " sub-agents or anything like that just kind of break down what an agent is how it works and"
+    },
+    {
+      "unit_index": 58,
+      "text": " what sort of that context engineering"
+    },
+    {
+      "unit_index": 59,
+      "text": " and context window things are, basically."
+    },
+    {
+      "unit_index": 60,
+      "text": " ENTITY_051, I think it's really important to understand."
+    },
+    {
+      "unit_index": 61,
+      "text": " And if you understand it,"
+    },
+    {
+      "unit_index": 62,
+      "text": " you can use it more effectively"
+    },
+    {
+      "unit_index": 63,
+      "text": " as part of this kind of unraveling the black box."
+    },
+    {
+      "unit_index": 64,
+      "text": " So the agentic loop that runs inside VS ENTITY_008"
+    },
+    {
+      "unit_index": 65,
+      "text": " or copilot CLI basically all starts"
+    },
+    {
+      "unit_index": 66,
+      "text": " with you giving a question."
+    },
+    {
+      "unit_index": 67,
+      "text": " ENTITY_043 the agent loop takes that question,"
+    },
+    {
+      "unit_index": 68,
+      "text": " takes its system prompt, which basically gives it some idea"
+    },
+    {
+      "unit_index": 69,
+      "text": " of how it's supposed to act, how it's supposed to talk,"
+    },
+    {
+      "unit_index": 70,
+      "text": " how it's supposed to reason about what it's solving,"
+    },
+    {
+      "unit_index": 71,
+      "text": " which also depends on different models."
+    },
+    {
+      "unit_index": 72,
+      "text": " So there's a lot of tweaking in that area usually that we do."
+    },
+    {
+      "unit_index": 73,
+      "text": " And then it has access to tools."
+    },
+    {
+      "unit_index": 74,
+      "text": " In a way, it calls tools, and you see that if you open up your code,"
+    },
+    {
+      "unit_index": 75,
+      "text": " it will start to do thinking about what it's supposed to do."
+    },
+    {
+      "unit_index": 76,
+      "text": " Now those thinking blocks move into reasoning blocks"
+    },
+    {
+      "unit_index": 77,
+      "text": " that you see kind of open and close as it does that."
+    },
+    {
+      "unit_index": 78,
+      "text": " And that's one loop."
+    },
+    {
+      "unit_index": 79,
+      "text": " And then it starts calling tools."
+    },
+    {
+      "unit_index": 80,
+      "text": " ENTITY_043 all of that kind of is accumulating in a conversation."
+    },
+    {
+      "unit_index": 81,
+      "text": " So you see the agent thinking,"
+    },
+    {
+      "unit_index": 82,
+      "text": " oh, the user asked me to explain something in the code base."
+    },
+    {
+      "unit_index": 83,
+      "text": " ENTITY_043 it will start like,"
+    },
+    {
+      "unit_index": 84,
+      "text": " oh, I should probably look at the code base."
+    },
+    {
+      "unit_index": 85,
+      "text": " And then it leads to the first tool call"
+    },
+    {
+      "unit_index": 86,
+      "text": " where it starts to do a grab search maybe to find that term."
+    },
+    {
+      "unit_index": 87,
+      "text": " and that's and that's where the agent that's like the first turn where it stops that's a tool call"
+    },
+    {
+      "unit_index": 88,
+      "text": " so that that gets handed to the editor and what's cool is vs code has a bunch of really powerful"
+    },
+    {
+      "unit_index": 89,
+      "text": " search tools that are exposed to the agent so vs code will basically do that search if it's"
+    },
+    {
+      "unit_index": 90,
+      "text": " grab or semantic search it will return that result to the agent and then continue the loop"
+    },
+    {
+      "unit_index": 91,
+      "text": " so the loop pauses for a moment to search and then continue on then the agent continues with"
+    },
+    {
+      "unit_index": 92,
+      "text": " that new information like it ran the tool it got the result and that's added to the conversation"
+    },
+    {
+      "unit_index": 93,
+      "text": " so now the agent has the system prompt the user question the thinking it did the tool call it"
+    },
+    {
+      "unit_index": 94,
+      "text": " where i wanted to grab and then the response and it can continue from there what's cool as well"
+    },
+    {
+      "unit_index": 95,
+      "text": " though that the agent can actually run parallel two calls it could say like grab for this grab"
+    },
+    {
+      "unit_index": 96,
+      "text": " for that grab for this and then the all these two calls come in at once and all the responses will"
+    },
+    {
+      "unit_index": 97,
+      "text": " be done by we'll put into vs code and then it continues on so pool calling is really powerful"
+    },
+    {
+      "unit_index": 98,
+      "text": " in a way that can scale but as you busy as you continue doing that um the agent gathers like"
+    },
+    {
+      "unit_index": 99,
+      "text": " which files and then can read the files that's another tool call and all that builds up in a"
+    },
+    {
+      "unit_index": 100,
+      "text": " large conversation basically and that's that's your context window so once the agent has done"
+    },
+    {
+      "unit_index": 101,
+      "text": " done a few of the tool calls it will have it has a few file paths of where to look it will have"
+    },
+    {
+      "unit_index": 102,
+      "text": " looked at the files maybe grab like the first few lines to understand the file for any files"
+    },
+    {
+      "unit_index": 103,
+      "text": " it found really useful it started to read the full file and all of that is building up context"
+    },
+    {
+      "unit_index": 104,
+      "text": " to eventually answer a question like okay now i understand how this feature works um here's my"
+    },
+    {
+      "unit_index": 105,
+      "text": " explainer maybe it gives you a murmur diagram because that just shipped and it can do interesting"
+    },
+    {
+      "unit_index": 106,
+      "text": " things with that context and maybe implement the feature right but that that um context build up"
+    },
+    {
+      "unit_index": 107,
+      "text": " especially as it explores and learns about a topic um is is a really interesting part to understand"
+    },
+    {
+      "unit_index": 108,
+      "text": " and now we also in vs code we have a little context indicator so you see in a conversation"
+    },
+    {
+      "unit_index": 109,
+      "text": " how much context the agent has built up so it's less you reasoning about how long it takes so"
+    },
+    {
+      "unit_index": 110,
+      "text": " So it's much easier to understand how that agent loop works now, aside from all the tool calls, but also the context that's being added."
+    },
+    {
+      "unit_index": 111,
+      "text": " ENTITY_051, and the interesting part of that that I'm thinking is as this sort of context flows in and out and it builds up and these tools are being called,"
+    },
+    {
+      "unit_index": 112,
+      "text": " I think you made an interesting point, which is certain select parts of that information are important, but other ones aren't."
+    },
+    {
+      "unit_index": 113,
+      "text": " And I think this is where that sort of idea of sub-agents comes from, which is, hey, if"
+    },
+    {
+      "unit_index": 114,
+      "text": " I'm having a long planning running session, how much of what actually was researched and"
+    },
+    {
+      "unit_index": 115,
+      "text": " added to the context window is important, right?"
+    },
+    {
+      "unit_index": 116,
+      "text": " Is it all that deep research?"
+    },
+    {
+      "unit_index": 117,
+      "text": " Is it aggrubbing all this other stuff?"
+    },
+    {
+      "unit_index": 118,
+      "text": " What's the actual return?"
+    },
+    {
+      "unit_index": 119,
+      "text": " So I think this is the case where how much context isn't needed in the main agent, like"
+    },
+    {
+      "unit_index": 120,
+      "text": " in the main agent to actually get the job done."
+    },
+    {
+      "unit_index": 121,
+      "text": " And then I think this is sort of where sub-agents come in."
+    },
+    {
+      "unit_index": 122,
+      "text": " And people are going to start seeing this"
+    },
+    {
+      "unit_index": 123,
+      "text": " and why we wanted to talk about it."
+    },
+    {
+      "unit_index": 124,
+      "text": " ENTITY_045're probably already seeing it inside of VS ENTITY_008"
+    },
+    {
+      "unit_index": 125,
+      "text": " and they see, it literally will say"
+    },
+    {
+      "unit_index": 126,
+      "text": " sub-agent running these things, right?"
+    },
+    {
+      "unit_index": 127,
+      "text": " ENTITY_006 you would just see all the tool calls"
+    },
+    {
+      "unit_index": 128,
+      "text": " which is cool to see."
+    },
+    {
+      "unit_index": 129,
+      "text": " Now you're seeing sub-agent doing this thing."
+    },
+    {
+      "unit_index": 130,
+      "text": " So how is that different than the main agent running"
+    },
+    {
+      "unit_index": 131,
+      "text": " and like when does that sub-agent kick in?"
+    },
+    {
+      "unit_index": 132,
+      "text": " ENTITY_051, so the sub-agent basically"
+    },
+    {
+      "unit_index": 133,
+      "text": " is its own agent loop with its own context."
+    },
+    {
+      "unit_index": 134,
+      "text": " And most often, I think the best way to describe it"
+    },
+    {
+      "unit_index": 135,
+      "text": " is you want to delegate something."
+    },
+    {
+      "unit_index": 136,
+      "text": " ENTITY_027 if I get asked a lot by engineers like,"
+    },
+    {
+      "unit_index": 137,
+      "text": " hey, how, like from this issue,"
+    },
+    {
+      "unit_index": 138,
+      "text": " like find out like why people actually want this feature?"
+    },
+    {
+      "unit_index": 139,
+      "text": " ENTITY_027 do we need to do this feature?"
+    },
+    {
+      "unit_index": 140,
+      "text": " And that's them offloading it."
+    },
+    {
+      "unit_index": 141,
+      "text": " ENTITY_027 here's a feature we might wanna do."
+    },
+    {
+      "unit_index": 142,
+      "text": " ENTITY_027 here's a ENTITY_038 thread, some people commented,"
+    },
+    {
+      "unit_index": 143,
+      "text": " maybe just some customers to talk to."
+    },
+    {
+      "unit_index": 144,
+      "text": " And then I come back and like,"
+    },
+    {
+      "unit_index": 145,
+      "text": " here's the reason why people like this."
+    },
+    {
+      "unit_index": 146,
+      "text": " It's a problem they are aware of."
+    },
+    {
+      "unit_index": 147,
+      "text": " It's a problem that blocks them to do these other jobs."
+    },
+    {
+      "unit_index": 148,
+      "text": " These are the kind of customers I talk to."
+    },
+    {
+      "unit_index": 149,
+      "text": " These are the kind of users."
+    },
+    {
+      "unit_index": 150,
+      "text": " So basically you don't need all the context"
+    },
+    {
+      "unit_index": 151,
+      "text": " of all the things I read."
+    },
+    {
+      "unit_index": 152,
+      "text": " ENTITY_027 you just wanna know the summary"
+    },
+    {
+      "unit_index": 153,
+      "text": " and that's what sub-agents are really good at."
+    },
+    {
+      "unit_index": 154,
+      "text": " So sub-agent planning for example"
+    },
+    {
+      "unit_index": 155,
+      "text": " is just being handed like look at how authentication is implemented um and how we would add a new"
+    },
+    {
+      "unit_index": 156,
+      "text": " provider to it and then the sub-agent gets that task and it has all in case of planning"
+    },
+    {
+      "unit_index": 157,
+      "text": " it has only read only access to tools so it can look at the code base find files it doesn't do"
+    },
+    {
+      "unit_index": 158,
+      "text": " any edits because it's plan mode but i can do these things really efficiently you can look"
+    },
+    {
+      "unit_index": 159,
+      "text": " at a lot of files run this agent loop isolate it from the main load so its own little agent loop"
+    },
+    {
+      "unit_index": 160,
+      "text": " that just runs on this one task and once it's done with the task it just returns all the things"
+    },
+    {
+      "unit_index": 161,
+      "text": " it found to in a nicely brief summarized way to that planning agent main loop so it means"
+    },
+    {
+      "unit_index": 162,
+      "text": " that that the all the planning agent does it gives the task so that's one piece of context"
+    },
+    {
+      "unit_index": 163,
+      "text": " like the tool call to the sub-agent tool like do this research and then all it gets back is"
+    },
+    {
+      "unit_index": 164,
+      "text": " like this is what i found so all that file reading and directory listing and uh like testing"
+    },
+    {
+      "unit_index": 165,
+      "text": " hypotheses like oh off might be here no it's not over here like that's a different author"
+    },
+    {
+      "unit_index": 166,
+      "text": " or is that the right author i have two authors now which one should i pick like need more research"
+    },
+    {
+      "unit_index": 167,
+      "text": " so there's a lot of divergent and converging exploration these agents do but all you get back"
+    },
+    {
+      "unit_index": 168,
+      "text": " is like this is what i found and then maybe some confidence with it as well so that's that's the"
+    },
+    {
+      "unit_index": 169,
+      "text": " the sub-agent solution, that context isolation"
+    },
+    {
+      "unit_index": 170,
+      "text": " to do a specific task."
+    },
+    {
+      "unit_index": 171,
+      "text": " And the example here is the easiest."
+    },
+    {
+      "unit_index": 172,
+      "text": " It's read only."
+    },
+    {
+      "unit_index": 173,
+      "text": " You can really easily parallelize"
+    },
+    {
+      "unit_index": 174,
+      "text": " to different sub-agents because you"
+    },
+    {
+      "unit_index": 175,
+      "text": " can give them different areas to research."
+    },
+    {
+      "unit_index": 176,
+      "text": " Great for code review, for example."
+    },
+    {
+      "unit_index": 177,
+      "text": " ENTITY_042's another topic."
+    },
+    {
+      "unit_index": 178,
+      "text": " You don't want to read all the files."
+    },
+    {
+      "unit_index": 179,
+      "text": " If you do one code review on the main loop,"
+    },
+    {
+      "unit_index": 180,
+      "text": " You just run out of everything you might want to look at."
+    },
+    {
+      "unit_index": 181,
+      "text": " But if you say, okay, one subagent for security,"
+    },
+    {
+      "unit_index": 182,
+      "text": " one subagent for architecture,"
+    },
+    {
+      "unit_index": 183,
+      "text": " one subagent checking code reviews,"
+    },
+    {
+      "unit_index": 184,
+      "text": " like checking the slop that AI potentially generates"
+    },
+    {
+      "unit_index": 185,
+      "text": " where it doesn't use existing functionality,"
+    },
+    {
+      "unit_index": 186,
+      "text": " maybe that's a whole new utility"
+    },
+    {
+      "unit_index": 187,
+      "text": " for something you already had."
+    },
+    {
+      "unit_index": 188,
+      "text": " And they can all do their thing"
+    },
+    {
+      "unit_index": 189,
+      "text": " and it's different focus areas."
+    },
+    {
+      "unit_index": 190,
+      "text": " So it's different ways how you would look for it"
+    },
+    {
+      "unit_index": 191,
+      "text": " and then return, like security looks good."
+    },
+    {
+      "unit_index": 192,
+      "text": " You might want to check this out."
+    },
+    {
+      "unit_index": 193,
+      "text": " And then slop, there's a new function here"
+    },
+    {
+      "unit_index": 194,
+      "text": " you don't need to create."
+    },
+    {
+      "unit_index": 195,
+      "text": " ENTITY_027 they all just return their review findings."
+    },
+    {
+      "unit_index": 196,
+      "text": " And which means A, you can run those isolated"
+    },
+    {
+      "unit_index": 197,
+      "text": " and B, you can run them in parallel."
+    },
+    {
+      "unit_index": 198,
+      "text": " And I think the important aspect here too"
+    },
+    {
+      "unit_index": 199,
+      "text": " and why subagents are so important"
+    },
+    {
+      "unit_index": 200,
+      "text": " besides the isolation, running them in parallel,"
+    },
+    {
+      "unit_index": 201,
+      "text": " specialized task execution"
+    },
+    {
+      "unit_index": 202,
+      "text": " is that each have their own context window, right?"
+    },
+    {
+      "unit_index": 203,
+      "text": " like you were saying, is me as developer,"
+    },
+    {
+      "unit_index": 204,
+      "text": " I want to care about that main circle"
+    },
+    {
+      "unit_index": 205,
+      "text": " that's being filled up, the main context as it's going."
+    },
+    {
+      "unit_index": 206,
+      "text": " But these sub-agents, like you said,"
+    },
+    {
+      "unit_index": 207,
+      "text": " just return back the results, right?"
+    },
+    {
+      "unit_index": 208,
+      "text": " ENTITY_022's the important thing back to the main agent."
+    },
+    {
+      "unit_index": 209,
+      "text": " So those sub-agents, and you can correct me if I'm wrong,"
+    },
+    {
+      "unit_index": 210,
+      "text": " have isolated context windows as well"
+    },
+    {
+      "unit_index": 211,
+      "text": " that are sort of either just thrown away"
+    },
+    {
+      "unit_index": 212,
+      "text": " at the end of the day or how do those work?"
+    },
+    {
+      "unit_index": 213,
+      "text": " Yes, that's a key aspect"
+    },
+    {
+      "unit_index": 214,
+      "text": " which somewhat makes them challenging to use potentially"
+    },
+    {
+      "unit_index": 215,
+      "text": " that they start with zero context all the context that they have is coming from either the custom"
+    },
+    {
+      "unit_index": 216,
+      "text": " agent definition if you use one or from the parent basically telling them the ud or the"
+    },
+    {
+      "unit_index": 217,
+      "text": " agent orchestrator kind of the main agent to like this is your task and then they start from scratch"
+    },
+    {
+      "unit_index": 218,
+      "text": " and then try to do that task and then they answer and then they go away so that's the kind of"
+    },
+    {
+      "unit_index": 219,
+      "text": " isolated one-shot way that these agents work."
+    },
+    {
+      "unit_index": 220,
+      "text": " ENTITY_044's no user interaction, they won't ask you."
+    },
+    {
+      "unit_index": 221,
+      "text": " ENTITY_044's some tool permissions that could pop up"
+    },
+    {
+      "unit_index": 222,
+      "text": " if they don't have all the permissions yet."
+    },
+    {
+      "unit_index": 223,
+      "text": " But that's something to keep in mind as well,"
+    },
+    {
+      "unit_index": 224,
+      "text": " the very ephemeral memory."
+    },
+    {
+      "unit_index": 225,
+      "text": " It's like a new conversation"
+    },
+    {
+      "unit_index": 226,
+      "text": " that you open in your agent window."
+    },
+    {
+      "unit_index": 227,
+      "text": " ENTITY_044 is no context from what the other window was"
+    },
+    {
+      "unit_index": 228,
+      "text": " that you just did, it's a new day for the AI."
+    },
+    {
+      "unit_index": 229,
+      "text": " Hopefully your instructions are good"
+    },
+    {
+      "unit_index": 230,
+      "text": " and there's access to ENTITY_019 memory"
+    },
+    {
+      "unit_index": 231,
+      "text": " to understand what it should and shouldn't do."
+    },
+    {
+      "unit_index": 232,
+      "text": " But other than that, it's fresh."
+    },
+    {
+      "unit_index": 233,
+      "text": " It makes a lot of sense"
+    },
+    {
+      "unit_index": 234,
+      "text": " and I think like that's a good context for people to have"
+    },
+    {
+      "unit_index": 235,
+      "text": " especially if you start to go further with sub-agents"
+    },
+    {
+      "unit_index": 236,
+      "text": " or to create agents that you kind of outline"
+    },
+    {
+      "unit_index": 237,
+      "text": " in delegating tasks out to sub-agents."
+    },
+    {
+      "unit_index": 238,
+      "text": " I think before we even move on to that"
+    },
+    {
+      "unit_index": 239,
+      "text": " ENTITY_027 I think from a day-to-day,"
+    },
+    {
+      "unit_index": 240,
+      "text": " I'm inside of VS ENTITY_008."
+    },
+    {
+      "unit_index": 241,
+      "text": " I'm using plan agent,"
+    },
+    {
+      "unit_index": 242,
+      "text": " the main agent, ask agent."
+    },
+    {
+      "unit_index": 243,
+      "text": " Are there any things"
+    },
+    {
+      "unit_index": 244,
+      "text": " that I should just be aware of"
+    },
+    {
+      "unit_index": 245,
+      "text": " from like a prompting standpoint"
+    },
+    {
+      "unit_index": 246,
+      "text": " or what's being shown?"
+    },
+    {
+      "unit_index": 247,
+      "text": " ENTITY_027 should I think about things differently now"
+    },
+    {
+      "unit_index": 248,
+      "text": " with these subagents getting spun up?"
+    },
+    {
+      "unit_index": 249,
+      "text": " Should I change my terminology"
+    },
+    {
+      "unit_index": 250,
+      "text": " in some how I write?"
+    },
+    {
+      "unit_index": 251,
+      "text": " ENTITY_027 if I tell it to use subagents?"
+    },
+    {
+      "unit_index": 252,
+      "text": " ENTITY_027 are there things"
+    },
+    {
+      "unit_index": 253,
+      "text": " just in my normal day-to-day development"
+    },
+    {
+      "unit_index": 254,
+      "text": " that I should be thinking about, you know, just in like the main loop."
+    },
+    {
+      "unit_index": 255,
+      "text": " ENTITY_051, so I think the goal is everything you do"
+    },
+    {
+      "unit_index": 256,
+      "text": " will already be isolated and run in parallel as much as possible."
+    },
+    {
+      "unit_index": 257,
+      "text": " Right now, you can fall into the pit of success by using plan mode"
+    },
+    {
+      "unit_index": 258,
+      "text": " where the exploration that the agent's already doing"
+    },
+    {
+      "unit_index": 259,
+      "text": " will be already run in a sub-agent"
+    },
+    {
+      "unit_index": 260,
+      "text": " so you get the benefit of context isolation so that's already an existing area so plan mode is"
+    },
+    {
+      "unit_index": 261,
+      "text": " like if you're already not if you're not doing it yet uh start doing it and you already get"
+    },
+    {
+      "unit_index": 262,
+      "text": " the sub-agent benefit the other way is like we once you ask the agent to do things in peril"
+    },
+    {
+      "unit_index": 263,
+      "text": " and give it guidance on like then you don't need us you need to mention sub-agents or do any"
+    },
+    {
+      "unit_index": 264,
+      "text": " context engineering around it just mention oh like look at these things maybe you know"
+    },
+    {
+      "unit_index": 265,
+      "text": " runs parallel searches and we'll already start doing that as well uh eventually i think what"
+    },
+    {
+      "unit_index": 266,
+      "text": " we want to get and what we're having in our uh when working on right now is it like out of the"
+    },
+    {
+      "unit_index": 267,
+      "text": " box if you have a larger more complex plan which multiple multiple phases that can run parallel"
+    },
+    {
+      "unit_index": 268,
+      "text": " then right now if you do it you probably already get parallel sub-agents but it still requires"
+    },
+    {
+      "unit_index": 269,
+      "text": " you to like write out the plan in a way like annotating what can be run in parallel so that's"
+    },
+    {
+      "unit_index": 270,
+      "text": " something you can do in your planning as well as you maybe write specs or something else"
+    },
+    {
+      "unit_index": 271,
+      "text": " that is longer lift and executed through multiple iterations uh calling out what can be run parallel"
+    },
+    {
+      "unit_index": 272,
+      "text": " and the agent will will do that um as well very likely it's always indeterministic so there's"
+    },
+    {
+      "unit_index": 273,
+      "text": " never like like the shortfire way and that's that's on us too like it's one of my goals like"
+    },
+    {
+      "unit_index": 274,
+      "text": " I want to see everybody benefiting from sub-agents heavily in the day-to-day"
+    },
+    {
+      "unit_index": 275,
+      "text": " that they run as parallel as possible."
+    },
+    {
+      "unit_index": 276,
+      "text": " So you'll see a lot of improvements over the coming weeks and months"
+    },
+    {
+      "unit_index": 277,
+      "text": " in that area that will just do it out of the box, like magically."
+    },
+    {
+      "unit_index": 278,
+      "text": " ENTITY_027, oh, there's a back end and a front end"
+    },
+    {
+      "unit_index": 279,
+      "text": " and I can implement it independently."
+    },
+    {
+      "unit_index": 280,
+      "text": " ENTITY_022's my front end sub-agent implementer."
+    },
+    {
+      "unit_index": 281,
+      "text": " ENTITY_022's my back end implementer."
+    },
+    {
+      "unit_index": 282,
+      "text": " And in the end, they make sure it all aligns"
+    },
+    {
+      "unit_index": 283,
+      "text": " because they have a good plan to start with."
+    },
+    {
+      "unit_index": 284,
+      "text": " and that's really where it all starts that's how work can run in parallel once you have a solid"
+    },
+    {
+      "unit_index": 285,
+      "text": " plan that has all the nitty-gritty details because otherwise parallel implementation is a really hard"
+    },
+    {
+      "unit_index": 286,
+      "text": " problem right because like like just how you ask one team member like implement the front end and"
+    },
+    {
+      "unit_index": 287,
+      "text": " the other team member implant the back end and when they don't talk to each other you probably"
+    },
+    {
+      "unit_index": 288,
+      "text": " don't end up with a product that works so they and subagents cannot really orchestrate that much"
+    },
+    {
+      "unit_index": 289,
+      "text": " they still end up writing something and then they probably just send it back to the main agent like"
+    },
+    {
+      "unit_index": 290,
+      "text": " i did it and then the main agent can say like yeah but i have two sub-agents who did something very"
+    },
+    {
+      "unit_index": 291,
+      "text": " differently so that orchestration bit needs a lot of upfront context building and planning"
+    },
+    {
+      "unit_index": 292,
+      "text": " that makes a lot of sense well let's get a little bit deeper here too that we have sort of like the"
+    },
+    {
+      "unit_index": 293,
+      "text": " the base layer down of agents and sub-agents in context windows because i get a lot of questions"
+    },
+    {
+      "unit_index": 294,
+      "text": " necks around, hey, like inherently there's built in the main agent, your ask agent,"
+    },
+    {
+      "unit_index": 295,
+      "text": " your plan agents. But I'm thinking about creating my own custom agents. I think what's interesting"
+    },
+    {
+      "unit_index": 296,
+      "text": " as I've been talking to a lot of developers is like, there's a lot of new tools in our toolbox,"
+    },
+    {
+      "unit_index": 297,
+      "text": " right? We have instructions, we got prompts, we got MCP servers, we got skills, we got"
+    },
+    {
+      "unit_index": 298,
+      "text": " custom agents, we have all these things and they all were built to solve a problem and they're a"
+    },
+    {
+      "unit_index": 299,
+      "text": " solution and sometimes those things in the solutions start to overlap a little bit too"
+    },
+    {
+      "unit_index": 300,
+      "text": " but i want to talk about specifically custom agents because now that we have the ability"
+    },
+    {
+      "unit_index": 301,
+      "text": " to start to like think about orchestrating these agents like the main agent is doing one way and"
+    },
+    {
+      "unit_index": 302,
+      "text": " plan agent is doing another way but me as a team i may want to inherently think about sort of almost"
+    },
+    {
+      "unit_index": 303,
+      "text": " replacing that system prompt right and that's where those custom agents come in so you talk a"
+    },
+    {
+      "unit_index": 304,
+      "text": " bit about in our our year february of DATE_001 how should developers be looking at custom agents"
+    },
+    {
+      "unit_index": 305,
+      "text": " and how does that change actually with sub-agents yeah so there's an evolution here so one"
+    },
+    {
+      "unit_index": 306,
+      "text": " is in beginning we had chat modes which allowed you to customize like change the persona on the"
+    },
+    {
+      "unit_index": 307,
+      "text": " workflow of how the agent works so plan mode easiest example code review another one like"
+    },
+    {
+      "unit_index": 308,
+      "text": " It's like distinctive workflows that you want to spend more time in"
+    },
+    {
+      "unit_index": 309,
+      "text": " that you maybe have multiple turns."
+    },
+    {
+      "unit_index": 310,
+      "text": " ENTITY_008 review is not a one-shot."
+    },
+    {
+      "unit_index": 311,
+      "text": " You want to also look at this or take a deeper look into this."
+    },
+    {
+      "unit_index": 312,
+      "text": " So they have been there to reduce the amount of tools"
+    },
+    {
+      "unit_index": 313,
+      "text": " the agent has access to and give it a more specific workflow and goal."
+    },
+    {
+      "unit_index": 314,
+      "text": " ENTITY_045 have developed into custom agents, same thing, new name,"
+    },
+    {
+      "unit_index": 315,
+      "text": " but has kind of come out of the ecosystem"
+    },
+    {
+      "unit_index": 316,
+      "text": " of what we call things."
+    },
+    {
+      "unit_index": 317,
+      "text": " And now with this release,"
+    },
+    {
+      "unit_index": 318,
+      "text": " custom agents can be used for sub-agents."
+    },
+    {
+      "unit_index": 319,
+      "text": " And what this means is that if you create a custom agent"
+    },
+    {
+      "unit_index": 320,
+      "text": " like ENTITY_012 ENTITY_039,"
+    },
+    {
+      "unit_index": 321,
+      "text": " which has like the way you want to look at a repo,"
+    },
+    {
+      "unit_index": 322,
+      "text": " like I want to start broad"
+    },
+    {
+      "unit_index": 323,
+      "text": " but also look at other repos."
+    },
+    {
+      "unit_index": 324,
+      "text": " Maybe it has like a cross-repo awareness as well"
+    },
+    {
+      "unit_index": 325,
+      "text": " that you're enforcing"
+    },
+    {
+      "unit_index": 326,
+      "text": " to resolve more of the dependencies, right?"
+    },
+    {
+      "unit_index": 327,
+      "text": " Maybe there's like a specific thing"
+    },
+    {
+      "unit_index": 328,
+      "text": " like how you would look at your repo"
+    },
+    {
+      "unit_index": 329,
+      "text": " to better understand it."
+    },
+    {
+      "unit_index": 330,
+      "text": " ENTITY_027 look at this dependency folder first"
+    },
+    {
+      "unit_index": 331,
+      "text": " and then maybe it's a monorepo."
+    },
+    {
+      "unit_index": 332,
+      "text": " So you could bring this into a custom agent"
+    },
+    {
+      "unit_index": 333,
+      "text": " and then with subagents now"
+    },
+    {
+      "unit_index": 334,
+      "text": " you have a description in that custom agent"
+    },
+    {
+      "unit_index": 335,
+      "text": " used when trying to understand"
+    },
+    {
+      "unit_index": 336,
+      "text": " cross-repo dependencies."
+    },
+    {
+      "unit_index": 337,
+      "text": " ENTITY_042's your cross-repo agent that you can then reuse."
+    },
+    {
+      "unit_index": 338,
+      "text": " So a cross-repo agent with that description"
+    },
+    {
+      "unit_index": 339,
+      "text": " will then be invoked by your main agent,"
+    },
+    {
+      "unit_index": 340,
+      "text": " just the agent in VS ENTITY_008,"
+    },
+    {
+      "unit_index": 341,
+      "text": " once a problem needs cross-repo understanding."
+    },
+    {
+      "unit_index": 342,
+      "text": " So you can see basically what happens."
+    },
+    {
+      "unit_index": 343,
+      "text": " ENTITY_027, oh, explain how auth works across these repos."
+    },
+    {
+      "unit_index": 344,
+      "text": " ENTITY_043 the agent has a list of all the custom sub-agents"
+    },
+    {
+      "unit_index": 345,
+      "text": " that are available, and then it can call them"
+    },
+    {
+      "unit_index": 346,
+      "text": " in a sub-agent way."
+    },
+    {
+      "unit_index": 347,
+      "text": " You could do the same thing in a skill,"
+    },
+    {
+      "unit_index": 348,
+      "text": " in an agent skill, which we should,"
+    },
+    {
+      "unit_index": 349,
+      "text": " but then you would need to handle"
+    },
+    {
+      "unit_index": 350,
+      "text": " that orchestration yourself."
+    },
+    {
+      "unit_index": 351,
+      "text": " Maybe the agent skill says, oh, like use a sub-agent"
+    },
+    {
+      "unit_index": 352,
+      "text": " and then query these things."
+    },
+    {
+      "unit_index": 353,
+      "text": " And then maybe in that workflow,"
+    },
+    {
+      "unit_index": 354,
+      "text": " the agent also has other tools available"
+    },
+    {
+      "unit_index": 355,
+      "text": " because the skill cannot constrain tools."
+    },
+    {
+      "unit_index": 356,
+      "text": " So suddenly it might get confused or distracted,"
+    },
+    {
+      "unit_index": 357,
+      "text": " by what you're trying to do."
+    },
+    {
+      "unit_index": 358,
+      "text": " So a custom agent is a very single-purpose thing."
+    },
+    {
+      "unit_index": 359,
+      "text": " All it will return is based on its workflow,"
+    },
+    {
+      "unit_index": 360,
+      "text": " based on its input, and based on what you tell it,"
+    },
+    {
+      "unit_index": 361,
+      "text": " how its output is."
+    },
+    {
+      "unit_index": 362,
+      "text": " So that's what makes it so composable."
+    },
+    {
+      "unit_index": 363,
+      "text": " And skills are composable too,"
+    },
+    {
+      "unit_index": 364,
+      "text": " but skills will end up in your main context."
+    },
+    {
+      "unit_index": 365,
+      "text": " And when they describe a very strict workflow,"
+    },
+    {
+      "unit_index": 366,
+      "text": " then there might be less adherence"
+    },
+    {
+      "unit_index": 367,
+      "text": " because they're in your context with all the other stuff"
+    },
+    {
+      "unit_index": 368,
+      "text": " that might be there."
+    },
+    {
+      "unit_index": 369,
+      "text": " So it might be multiple skills."
+    },
+    {
+      "unit_index": 370,
+      "text": " ENTITY_044 might be like other custom instructions"
+    },
+    {
+      "unit_index": 371,
+      "text": " in the repo,"
+    },
+    {
+      "unit_index": 372,
+      "text": " but just more noise and less likely."
+    },
+    {
+      "unit_index": 373,
+      "text": " ENTITY_044's some bug posts I could share a lot"
+    },
+    {
+      "unit_index": 374,
+      "text": " from ENTITY_050 and skills versus agents.md."
+    },
+    {
+      "unit_index": 375,
+      "text": " So skill still has to be discovered"
+    },
+    {
+      "unit_index": 376,
+      "text": " by the main agent."
+    },
+    {
+      "unit_index": 377,
+      "text": " ENTITY_027, oh, I'm working on,"
+    },
+    {
+      "unit_index": 378,
+      "text": " the user is asking me about this kind of file type."
+    },
+    {
+      "unit_index": 379,
+      "text": " Maybe it's like a ENTITY_026 notebook"
+    },
+    {
+      "unit_index": 380,
+      "text": " and there's a skill for ENTITY_026 notebooks so it has to realize like that mapping like oh I need"
+    },
+    {
+      "unit_index": 381,
+      "text": " to look at the skill and then it needs to be the skill and then hopefully you have some strict"
+    },
+    {
+      "unit_index": 382,
+      "text": " adherence to whatever is in the skill how to work with ENTITY_026 notebooks and then the counterpart"
+    },
+    {
+      "unit_index": 383,
+      "text": " what they compared is like what if you put it into agents.md which is always in context"
+    },
+    {
+      "unit_index": 384,
+      "text": " if it's in the root of your workspace agents.md is always top of mind"
+    },
+    {
+      "unit_index": 385,
+      "text": " for uh for the agent when it does any task so they found a lot more adherence of course because"
+    },
+    {
+      "unit_index": 386,
+      "text": " there's like a context bit that's always"
+    },
+    {
+      "unit_index": 387,
+      "text": " injected in the agent versus"
+    },
+    {
+      "unit_index": 388,
+      "text": " another file it finds along"
+    },
+    {
+      "unit_index": 389,
+      "text": " the way as it works on the task."
+    },
+    {
+      "unit_index": 390,
+      "text": " And then the same"
+    },
+    {
+      "unit_index": 391,
+      "text": " is with custom agents. ENTITY_011 agents, once you"
+    },
+    {
+      "unit_index": 392,
+      "text": " write them, that's their persona."
+    },
+    {
+      "unit_index": 393,
+      "text": " ENTITY_042's all they think about. So"
+    },
+    {
+      "unit_index": 394,
+      "text": " if you have something that has to be rock solid"
+    },
+    {
+      "unit_index": 395,
+      "text": " and really deterministic"
+    },
+    {
+      "unit_index": 396,
+      "text": " and a workflow, you really want to"
+    },
+    {
+      "unit_index": 397,
+      "text": " get down to"
+    },
+    {
+      "unit_index": 398,
+      "text": " the right"
+    },
+    {
+      "unit_index": 399,
+      "text": " steps, then that would be a custom agent."
+    },
+    {
+      "unit_index": 400,
+      "text": " If it's"
+    },
+    {
+      "unit_index": 401,
+      "text": " something more composable, where it's more guidance"
+    },
+    {
+      "unit_index": 402,
+      "text": " for the agent, then that's more skill."
+    },
+    {
+      "unit_index": 403,
+      "text": " And maybe over time skills will become stronger."
+    },
+    {
+      "unit_index": 404,
+      "text": " We'll always work on making sure the agent follows it."
+    },
+    {
+      "unit_index": 405,
+      "text": " Hopefully people write good skills,"
+    },
+    {
+      "unit_index": 406,
+      "text": " because otherwise that can."
+    },
+    {
+      "unit_index": 407,
+      "text": " The stronger adherence there is, the more likelihood"
+    },
+    {
+      "unit_index": 408,
+      "text": " it is to be a foot gun."
+    },
+    {
+      "unit_index": 409,
+      "text": " MARK MIRCHANDANI- ENTITY_042's pretty cool."
+    },
+    {
+      "unit_index": 410,
+      "text": " Now one thing also that I want to point out too"
+    },
+    {
+      "unit_index": 411,
+      "text": " is that custom agents can also have specific models"
+    },
+    {
+      "unit_index": 412,
+      "text": " assigned to them."
+    },
+    {
+      "unit_index": 413,
+      "text": " So in that file, I think that's also really unique is you might say okay these models whether it's"
+    },
+    {
+      "unit_index": 414,
+      "text": " ENTITY_017 or GPT or a ENTITY_007 model is how like the speed, the performance, like the context"
+    },
+    {
+      "unit_index": 415,
+      "text": " that it needs might be a little bit different. And I've actually found this a little bit I was"
+    },
+    {
+      "unit_index": 416,
+      "text": " I did some video on the new the plan agent updates where you can actually assign"
+    },
+    {
+      "unit_index": 417,
+      "text": " like a default model for the plan agent and then when you go to implement back to agent"
+    },
+    {
+      "unit_index": 418,
+      "text": " you can have a different model so for example you might be doing research and say i want"
+    },
+    {
+      "unit_index": 419,
+      "text": " to use something like maybe gbt52 but maybe i want to switch over to an implement model that's"
+    },
+    {
+      "unit_index": 420,
+      "text": " like an opus or a codex model for example or a gemini model so i can use those small ones so"
+    },
+    {
+      "unit_index": 421,
+      "text": " for example in these small custom agents maybe use like a flash model for example because they"
+    },
+    {
+      "unit_index": 422,
+      "text": " can run super fast on a specific task that you have is that like a real world use case there for"
+    },
+    {
+      "unit_index": 423,
+      "text": " specific models for specific use cases or how do you see that oh totally i think that's that's one"
+    },
+    {
+      "unit_index": 424,
+      "text": " of the key things like why you want to have a customization too it's like that how much you"
+    },
+    {
+      "unit_index": 425,
+      "text": " control you have over that agentic loop and which model it runs in and yeah there's multiple it's"
+    },
+    {
+      "unit_index": 426,
+      "text": " like the three categories of models i think about is like one really fast mini models that are just"
+    },
+    {
+      "unit_index": 427,
+      "text": " good at automating tasks where you don't have to reason like here's a workflow like just"
+    },
+    {
+      "unit_index": 428,
+      "text": " write a commit like i have like a git git commit push like just all the good stuff i do is all in"
+    },
+    {
+      "unit_index": 429,
+      "text": " in my in my problems and it's all switching to really fast models like they don't want"
+    },
+    {
+      "unit_index": 430,
+      "text": " and then they're waiting for cicd to finish and then they report back right it's just like simple"
+    },
+    {
+      "unit_index": 431,
+      "text": " things like just like something i would probably put in the script in the past but now they're way"
+    },
+    {
+      "unit_index": 432,
+      "text": " more adaptive by just running an agent that runs a terminal for me so that'll be like a really fast"
+    },
+    {
+      "unit_index": 433,
+      "text": " one then the other ones um we do have more specialized like in in the middle ground where"
+    },
+    {
+      "unit_index": 434,
+      "text": " they're faster and but still doing a little bit more reasoning behind it and that's like"
+    },
+    {
+      "unit_index": 435,
+      "text": " for code research is a great one like if you want to look at many files and figure out which ones"
+    },
+    {
+      "unit_index": 436,
+      "text": " are important for a task like what we talked about before that's a that's good models also"
+    },
+    {
+      "unit_index": 437,
+      "text": " where you could maybe even have some fine-tuned models um running eventually for on our site"
+    },
+    {
+      "unit_index": 438,
+      "text": " um and then it's like the really heavy planning task and i for example have i'm experimenting"
+    },
+    {
+      "unit_index": 439,
+      "text": " with a workflow that's been really nice where i have a custom agent as an orchestrator"
+    },
+    {
+      "unit_index": 440,
+      "text": " so you can switch to to this customization which is called loop because i ran out of names"
+    },
+    {
+      "unit_index": 441,
+      "text": " um didn't give it a cool name uh but then loop as an orchestrator will have one really fast"
+    },
+    {
+      "unit_index": 442,
+      "text": " sub-agent to gather context so again like offloading that context of the main context"
+    },
+    {
+      "unit_index": 443,
+      "text": " loop for better name um to another agent who just writes it to a file and that file becomes then"
+    },
+    {
+      "unit_index": 444,
+      "text": " the the memory for all the other follow-up stuff then there's a planning one which uses a larger"
+    },
+    {
+      "unit_index": 445,
+      "text": " model because for planning i want to look at kind of the scratch pad that the first agent created"
+    },
+    {
+      "unit_index": 446,
+      "text": " which might have a lot of interesting information that was gathered really fast and then planning"
+    },
+    {
+      "unit_index": 447,
+      "text": " will look at that and do some more reasoning about it because that's the larger model with"
+    },
+    {
+      "unit_index": 448,
+      "text": " opus or 5.2 codex and and the next up is the implementation which runs because the plan is so"
+    },
+    {
+      "unit_index": 449,
+      "text": " detailed at this point i can take a really fast model that's really good at writing code"
+    },
+    {
+      "unit_index": 450,
+      "text": " and just churns through it, writes everything."
+    },
+    {
+      "unit_index": 451,
+      "text": " And they're actually running parallel"
+    },
+    {
+      "unit_index": 452,
+      "text": " because the plan already is outlined."
+    },
+    {
+      "unit_index": 453,
+      "text": " You can run these in parallel then"
+    },
+    {
+      "unit_index": 454,
+      "text": " because the orchestrator then says,"
+    },
+    {
+      "unit_index": 455,
+      "text": " okay, I can run things in parallel."
+    },
+    {
+      "unit_index": 456,
+      "text": " ENTITY_022 are five implement agents doing the work."
+    },
+    {
+      "unit_index": 457,
+      "text": " And then I'm going to run the code review agent,"
+    },
+    {
+      "unit_index": 458,
+      "text": " which again runs a more expensive model"
+    },
+    {
+      "unit_index": 459,
+      "text": " to look at all the code changes in context."
+    },
+    {
+      "unit_index": 460,
+      "text": " So that's what I see right now where it's like,"
+    },
+    {
+      "unit_index": 461,
+      "text": " and I see it happening."
+    },
+    {
+      "unit_index": 462,
+      "text": " i think the review takes a bit more time but then it's it's better at finding the edge cases and"
+    },
+    {
+      "unit_index": 463,
+      "text": " sending things back like where things diverge from the plan because as soon as you run things in"
+    },
+    {
+      "unit_index": 464,
+      "text": " parallel things might diverge um so that's that's been really interesting so that's something to"
+    },
+    {
+      "unit_index": 465,
+      "text": " play around with also you can optimize speed and cost and really balance like that quality"
+    },
+    {
+      "unit_index": 466,
+      "text": " because like right now if it's like every hour and everything in opus because it's the best model"
+    },
+    {
+      "unit_index": 467,
+      "text": " like it's not the right strategy uh you can with customs up agents you can be more efficient and"
+    },
+    {
+      "unit_index": 468,
+      "text": " spend less time waiting especially in moments where you want to iterate fast and that's what"
+    },
+    {
+      "unit_index": 469,
+      "text": " i see i do in ds code i just want to i'm in this messy headspace like i don't know what i'm really"
+    },
+    {
+      "unit_index": 470,
+      "text": " solving for then i just want to see it happening i don't want opus building a beautiful"
+    },
+    {
+      "unit_index": 471,
+      "text": " via coded UI."
+    },
+    {
+      "unit_index": 472,
+      "text": " I just want to figure out"
+    },
+    {
+      "unit_index": 473,
+      "text": " what is that critical thing"
+    },
+    {
+      "unit_index": 474,
+      "text": " I'm missing"
+    },
+    {
+      "unit_index": 475,
+      "text": " and iterate fast."
+    },
+    {
+      "unit_index": 476,
+      "text": " ENTITY_051,"
+    },
+    {
+      "unit_index": 477,
+      "text": " that's awesome."
+    },
+    {
+      "unit_index": 478,
+      "text": " I love that sort of use case"
+    },
+    {
+      "unit_index": 479,
+      "text": " I think talking about it."
+    },
+    {
+      "unit_index": 480,
+      "text": " It's about real world"
+    },
+    {
+      "unit_index": 481,
+      "text": " about how you're developing"
+    },
+    {
+      "unit_index": 482,
+      "text": " and I'm the same way"
+    },
+    {
+      "unit_index": 483,
+      "text": " like really changing"
+    },
+    {
+      "unit_index": 484,
+      "text": " and thinking about"
+    },
+    {
+      "unit_index": 485,
+      "text": " the best model,"
+    },
+    {
+      "unit_index": 486,
+      "text": " the best tool,"
+    },
+    {
+      "unit_index": 487,
+      "text": " the best ability"
+    },
+    {
+      "unit_index": 488,
+      "text": " that VS ENTITY_008 has"
+    },
+    {
+      "unit_index": 489,
+      "text": " for that job."
+    },
+    {
+      "unit_index": 490,
+      "text": " ENTITY_021,"
+    },
+    {
+      "unit_index": 491,
+      "text": " this has been awesome."
+    },
+    {
+      "unit_index": 492,
+      "text": " I love going from"
+    },
+    {
+      "unit_index": 493,
+      "text": " the beginner"
+    },
+    {
+      "unit_index": 494,
+      "text": " all the way"
+    },
+    {
+      "unit_index": 495,
+      "text": " to this advanced scenario."
+    },
+    {
+      "unit_index": 496,
+      "text": " We'll put links"
+    },
+    {
+      "unit_index": 497,
+      "text": " to everything in the show notes."
+    },
+    {
+      "unit_index": 498,
+      "text": " I really appreciate you"
+    },
+    {
+      "unit_index": 499,
+      "text": " coming on"
+    },
+    {
+      "unit_index": 500,
+      "text": " and talking about sub agents"
+    },
+    {
+      "unit_index": 501,
+      "text": " because people are gonna start seeing them every single day."
+    },
+    {
+      "unit_index": 502,
+      "text": " So let us know, give the team feedback"
+    },
+    {
+      "unit_index": 503,
+      "text": " on the VS ENTITY_008 ENTITY_019."
+    },
+    {
+      "unit_index": 504,
+      "text": " ENTITY_051, and really appreciate it ENTITY_021."
+    },
+    {
+      "unit_index": 505,
+      "text": " Thanks so much ENTITY_025, thanks everybody."
+    },
+    {
+      "unit_index": 506,
+      "text": " ENTITY_005, well don't forget you can subscribe"
+    },
+    {
+      "unit_index": 507,
+      "text": " to the VS ENTITY_008 ENTITY_024 podcast"
+    },
+    {
+      "unit_index": 508,
+      "text": " on your favorite podcast application"
+    },
+    {
+      "unit_index": 509,
+      "text": " and of course you can go to vscodepodcast.com"
+    },
+    {
+      "unit_index": 510,
+      "text": " check out all the things"
+    },
+    {
+      "unit_index": 511,
+      "text": " make sure you follow us on ENTITY_053,"
+    },
+    {
+      "unit_index": 512,
+      "text": " on ENTITY_047, on your favorite socials"
+    },
+    {
+      "unit_index": 513,
+      "text": " for all the updates on VS ENTITY_008 every single day"
+    },
+    {
+      "unit_index": 514,
+      "text": " because insider ships every single day with all goodies for"
+    },
+    {
+      "unit_index": 515,
+      "text": " your favorite code editor that's going to do it for this VS ENTITY_008"
+    },
+    {
+      "unit_index": 516,
+      "text": " ENTITY_024 podcast. So until next time, I'm ENTITY_025 and happy"
+    },
+    {
+      "unit_index": 517,
+      "text": " coding"
+    }
+  ],
+  "public_structure_sha256": "5b030e26ff741a2609c7d0009522f651e8a3c77892cd422061a15bf7059515be",
+  "provenance_claims": [
+    "RAW_SEGMENT_EXACT",
+    "RAW_BLOCK_EXACT",
+    "CHUNK_MAP_EXACT",
+    "REFERENCE_ONLY",
+    "PROCESSED_BLOCK_EXACT"
+  ],
+  "semantic_gold_status": "reference_candidate",
+  "media_resolution": "unresolved"
+}

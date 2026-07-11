@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Task bindings v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "pack_version",
+    "bindings"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "task-bindings-v1"
+    },
+    "pack_version": {
+      "const": "v1"
+    },
+    "bindings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "view_label",
+          "task_family",
+          "prompt_version",
+          "prompt_path",
+          "prompt_sha256",
+          "output_schema_version",
+          "rubric_version",
+          "scoring_tier",
+          "target_path",
+          "normalization_acceptance",
+          "capabilities"
+        ],
+        "properties": {
+          "view_label": {
+            "type": "string",
+            "pattern": "^(?:M(?:0[1-9]|10|11)|V(?:10|20|30)|L02-(?:E|M|L))$"
+          },
+          "task_family": {
+            "type": "string",
+            "enum": [
+              "normalization",
+              "structural_context_retention"
+            ]
+          },
+          "prompt_version": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "normalization-v1",
+              null
+            ]
+          },
+          "prompt_path": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "prompts/normalization-v1.txt",
+              null
+            ]
+          },
+          "prompt_sha256": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "output_schema_version": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "enum": [
+              "normalization-v1",
+              null
+            ]
+          },
+          "rubric_version": {
+            "const": "rubric-v1"
+          },
+          "scoring_tier": {
+            "type": "string",
+            "enum": [
+              "semantic_gold",
+              "reference_relative",
+              "structural_only"
+            ]
+          },
+          "target_path": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "pattern": "^views/(?:M(?:0[1-9]|10|11)|V(?:10|20|30))/((?:semantic_gold|reference_candidate)\\.json)$"
+          },
+          "normalization_acceptance": {
+            "type": "boolean"
+          },
+          "capabilities": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "normalization",
+                "structure",
+                "context",
+                "retention"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

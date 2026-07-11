@@ -1,0 +1,33 @@
+{
+  "schema_version": "rubric-v1",
+  "view_label": "M11",
+  "gold_basis": "structural",
+  "hard_failures": [
+    "json_invalid",
+    "schema_invalid",
+    "placeholder_corruption",
+    "input_digest_mismatch",
+    "unit_order_violation",
+    "unit_coverage_violation",
+    "private_content_exposure"
+  ],
+  "thresholds": {
+    "placeholder_preservation": 1.0
+  },
+  "task_family": "structural_context_retention",
+  "prompt_version": null,
+  "output_schema_version": null,
+  "ordinal_thresholds": {
+    "punctuation_casing": 0,
+    "disfluency_handling": 0
+  },
+  "matching_policy": {
+    "version": "normalized-token-lcs-v1",
+    "tokenization": "unicode-word-or-protected-placeholder",
+    "case_sensitive": false,
+    "boundary_tolerance_source_units": 1
+  },
+  "scoring_tier": "structural_only",
+  "acceptance_scope": "structural_context_retention",
+  "scoring_policy_version": "exact-target-v1"
+}

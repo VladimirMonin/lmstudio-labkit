@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "stitch_output_v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "stitched_text", "duplicate_ranges", "missing_ranges", "order_errors", "structure_digest"],
+  "properties": {
+    "schema_version": {"type": "string", "enum": ["stitch-v1"]},
+    "stitched_text": {"type": "string"},
+    "duplicate_ranges": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["start", "end"], "properties": {"start": {"type": "integer", "minimum": 0}, "end": {"type": "integer", "minimum": 1}}}},
+    "missing_ranges": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["start", "end"], "properties": {"start": {"type": "integer", "minimum": 0}, "end": {"type": "integer", "minimum": 1}}}},
+    "order_errors": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["left", "right"], "properties": {"left": {"type": "integer", "minimum": 0}, "right": {"type": "integer", "minimum": 0}}}},
+    "structure_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

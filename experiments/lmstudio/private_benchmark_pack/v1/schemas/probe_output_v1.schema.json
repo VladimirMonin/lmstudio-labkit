@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "probe_output_v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "probe_id", "answer", "cited_unit_ranges", "unknown"],
+  "properties": {
+    "schema_version": {"type": "string", "enum": ["probe-v1"]},
+    "probe_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]+$"},
+    "answer": {"type": "string"},
+    "cited_unit_ranges": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["start", "end"], "properties": {"start": {"type": "integer", "minimum": 0}, "end": {"type": "integer", "minimum": 1}}}},
+    "unknown": {"type": "boolean"}
+  }
+}

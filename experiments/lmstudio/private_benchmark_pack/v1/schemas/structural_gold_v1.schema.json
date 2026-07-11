@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Structural gold v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "view_label",
+    "unit_count",
+    "unit_indexes",
+    "public_structure_sha256",
+    "assertions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "structural-gold-v1"
+    },
+    "view_label": {
+      "type": "string",
+      "pattern": "^(?:M(?:0[1-9]|10|11)|V(?:10|20|30)|L02-(?:E|M|L))$"
+    },
+    "unit_count": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "unit_indexes": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "public_structure_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "assertions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unit_index_contiguous",
+        "unit_order_exact",
+        "unit_coverage_exact",
+        "redaction_deterministic"
+      ],
+      "properties": {
+        "unit_index_contiguous": {
+          "const": true
+        },
+        "unit_order_exact": {
+          "const": true
+        },
+        "unit_coverage_exact": {
+          "const": true
+        },
+        "redaction_deterministic": {
+          "const": true
+        }
+      }
+    }
+  }
+}

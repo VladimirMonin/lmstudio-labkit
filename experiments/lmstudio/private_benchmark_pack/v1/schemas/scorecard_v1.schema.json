@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Deterministic scorecard v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "view_label",
+    "task_family",
+    "raw_json_valid",
+    "transport_normalized_json_valid",
+    "exact_schema_valid",
+    "hard_failures",
+    "metrics",
+    "ordinal_scores",
+    "gold_basis",
+    "accepted",
+    "scoring_tier",
+    "acceptance_scope"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "scorecard-v1"
+    },
+    "view_label": {
+      "type": "string",
+      "pattern": "^(?:M(?:0[1-9]|10|11)|V(?:10|20|30)|L02-(?:E|M|L))$"
+    },
+    "task_family": {
+      "const": "normalization"
+    },
+    "raw_json_valid": {
+      "type": "boolean"
+    },
+    "transport_normalized_json_valid": {
+      "type": "boolean"
+    },
+    "exact_schema_valid": {
+      "type": "boolean"
+    },
+    "hard_failures": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "json_invalid",
+          "schema_invalid",
+          "placeholder_corruption",
+          "input_digest_mismatch",
+          "unit_order_violation",
+          "unit_coverage_violation",
+          "private_content_exposure",
+          "target_text_mismatch"
+        ]
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "placeholder_preservation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "text_token_precision": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "text_token_recall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "boundary_f1": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "omission_span_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "addition_span_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "retention_early": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "retention_middle": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "retention_late": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "citation_range_validity": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "unknown_calibration": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "exact_text_match": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "ordinal_scores": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "punctuation_casing",
+        "disfluency_handling"
+      ],
+      "properties": {
+        "punctuation_casing": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "disfluency_handling": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        }
+      }
+    },
+    "gold_basis": {
+      "type": "string",
+      "enum": [
+        "semantic",
+        "reference_only",
+        "structural"
+      ]
+    },
+    "accepted": {
+      "type": "boolean"
+    },
+    "scoring_tier": {
+      "type": "string",
+      "enum": [
+        "semantic_gold",
+        "reference_relative"
+      ]
+    },
+    "acceptance_scope": {
+      "type": "string",
+      "enum": [
+        "semantic_normalization",
+        "reference_relative_normalization"
+      ]
+    }
+  }
+}

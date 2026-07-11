@@ -1,0 +1,15 @@
+{
+  "schema_version": "aggregate-v1",
+  "view_count": 16,
+  "media_backed_views": 3,
+  "media_unresolved_views": 13,
+  "semantic_gold_approved": 1,
+  "reference_candidates": 11,
+  "unsupported_reference_candidates": 4,
+  "model_calls": 0,
+  "claims": [
+    "text_structure_only_for_unresolved_views",
+    "stored_postprocessing_is_reference_only",
+    "semantic_scoring_is_limited_to_the_single_approved_view"
+  ]
+}

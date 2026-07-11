@@ -1,0 +1,31 @@
+{
+  "schema_version": "public-view-v1",
+  "pack_version": "v1",
+  "view_label": "M07",
+  "source_class": "microphone",
+  "duration_tier": "S",
+  "risk_bucket": "high",
+  "anomaly_classes": [
+    "entity_mismatch_reference"
+  ],
+  "input_view": "ordered_segments",
+  "ordered_units": [
+    {
+      "unit_index": 0,
+      "text": " Там есть специальные логи для активации приложения, их видно сразу под полем активация, есть прям специальная кнопочка показать логи"
+    },
+    {
+      "unit_index": 1,
+      "text": " Так, ну отправлю робота анализировать логи, покушаем, посмотрим"
+    }
+  ],
+  "public_structure_sha256": "0dc2902eef2eea6072a89df867a616228fbe8e2609db43cf0116e22cee1bd76f",
+  "provenance_claims": [
+    "RAW_SEGMENT_EXACT",
+    "RAW_BLOCK_EXACT",
+    "CHUNK_MAP_EXACT",
+    "REFERENCE_ONLY"
+  ],
+  "semantic_gold_status": "reference_candidate",
+  "media_resolution": "unresolved"
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": "sanitized-blocks-v1",
+  "view_label": "M04",
+  "blocks": [
+    {
+      "block_index": 0,
+      "source_unit_start": 0,
+      "source_unit_end": 5,
+      "raw_text": "Подскажи, пожалуйста, насколько эффективно здесь использована логика перемещения карточек, насколько это правильно ENTITY_004 быть есть альтернативные каноничные практики в лучших традициях JavaScript ENTITY_003 альтернативные решения есть у этой задачки с тубулистом ENTITY_002 ли простой способ сделать анимацию появления карточки без JavaScript ENTITY_001 так",
+      "reference_candidate_text": null
+    }
+  ]
+}

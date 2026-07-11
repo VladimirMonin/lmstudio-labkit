@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Reference candidate v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "view_label",
+    "status",
+    "basis",
+    "text",
+    "review_required"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "reference-candidate-v1"
+    },
+    "view_label": {
+      "type": "string",
+      "pattern": "^(?:M(?:0[1-9]|10|11)|V(?:10|20|30)|L02-(?:E|M|L))$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "reference_candidate",
+        "unsupported",
+        "absent"
+      ]
+    },
+    "basis": {
+      "type": "string",
+      "enum": [
+        "stored_postprocessing",
+        "none"
+      ]
+    },
+    "text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "review_required": {
+      "const": true
+    }
+  }
+}

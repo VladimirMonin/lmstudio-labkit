@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "blocks_output_v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "blocks", "warnings", "input_digest", "output_digest"],
+  "properties": {
+    "schema_version": {"type": "string", "enum": ["blocks-v1"]},
+    "blocks": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["block_index", "source_unit_start", "source_unit_end", "normalized_text", "labels"], "properties": {"block_index": {"type": "integer", "minimum": 0}, "source_unit_start": {"type": "integer", "minimum": 0}, "source_unit_end": {"type": "integer", "minimum": 1}, "normalized_text": {"type": "string"}, "labels": {"type": "array", "items": {"type": "string"}}}}},
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "input_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "output_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

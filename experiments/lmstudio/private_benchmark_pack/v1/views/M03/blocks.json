@@ -1,0 +1,34 @@
+{
+  "schema_version": "sanitized-blocks-v1",
+  "view_label": "M03",
+  "blocks": [
+    {
+      "block_index": 0,
+      "source_unit_start": 0,
+      "source_unit_end": 1,
+      "raw_text": "ENTITY_004 день! К сожалению, я не властен над шалостьми ENTITY_005 и проблемами соединения в ENTITY_006, но я добавил в версию 0.995 возможность установить ENTITY_002, через которые будут идти все загрузки, а также обращение к ENTITY_001.",
+      "reference_candidate_text": null
+    },
+    {
+      "block_index": 1,
+      "source_unit_start": 1,
+      "source_unit_end": 3,
+      "raw_text": "А также я добавил в гайды инструкцию о том, как вручную установить модель ENTITY_003 в приложении. ENTITY_007 гайд появился в папке с руководствами, а также я добавил в библиотеку сами модели. Я думаю, что скачать их с email облака не должно быть проблемой.",
+      "reference_candidate_text": null
+    },
+    {
+      "block_index": 2,
+      "source_unit_start": 3,
+      "source_unit_end": 4,
+      "raw_text": "Очень жаль, что вы столкнулись с таким большим количеством трудностей. Я постараюсь вам помочь, если будут вопросы, чтобы вы смогли установить эту модель и попробовать ее работу в приложении.",
+      "reference_candidate_text": null
+    },
+    {
+      "block_index": 3,
+      "source_unit_start": 4,
+      "source_unit_end": 5,
+      "raw_text": "Сам ресурс HuggingFace не объявлял санкции к ENTITY_006, так что это исключительно внутренние региональные проблемы, к моему сожалению.",
+      "reference_candidate_text": null
+    }
+  ]
+}

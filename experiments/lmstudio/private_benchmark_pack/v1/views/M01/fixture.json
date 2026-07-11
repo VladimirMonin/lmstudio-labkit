@@ -1,0 +1,35 @@
+{
+  "schema_version": "public-view-v1",
+  "pack_version": "v1",
+  "view_label": "M01",
+  "source_class": "microphone",
+  "duration_tier": "S",
+  "risk_bucket": "low",
+  "anomaly_classes": [
+    "baseline"
+  ],
+  "input_view": "ordered_segments",
+  "ordered_units": [
+    {
+      "unit_index": 0,
+      "text": " Следующая твоя задача будет сделать домашнее задание для группы ENTITY_001 ACCOUNT_002 на основе домашнего задания ENTITY_001 ACCOUNT_001 под номером 11."
+    },
+    {
+      "unit_index": 1,
+      "text": " Ты возьмешь это домашнее задание, также будешь использовать шаблон для создания домашних заданий, правил домашних заданий."
+    },
+    {
+      "unit_index": 2,
+      "text": " Просто возьми это задание и сделай для ребят из группы ACCOUNT_002 также домашнее задание под номером 11 от DATE_001."
+    }
+  ],
+  "public_structure_sha256": "4144b035ff2b77153846a24e3829b82b1b67067fccda06a12969c47f610f4a62",
+  "provenance_claims": [
+    "RAW_SEGMENT_EXACT",
+    "RAW_BLOCK_EXACT",
+    "CHUNK_MAP_EXACT",
+    "REFERENCE_ONLY"
+  ],
+  "semantic_gold_status": "approved",
+  "media_resolution": "unresolved"
+}

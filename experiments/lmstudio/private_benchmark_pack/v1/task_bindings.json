@@ -1,0 +1,254 @@
+{
+  "schema_version": "task-bindings-v1",
+  "pack_version": "v1",
+  "bindings": [
+    {
+      "view_label": "M01",
+      "task_family": "normalization",
+      "prompt_version": "normalization-v1",
+      "prompt_path": "prompts/normalization-v1.txt",
+      "prompt_sha256": "7014ea67b519241ceb5136aba510be6edf0a5d8f397de4671a878c2a06bf5f1e",
+      "output_schema_version": "normalization-v1",
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "semantic_gold",
+      "target_path": "views/M01/semantic_gold.json",
+      "normalization_acceptance": true,
+      "capabilities": [
+        "normalization"
+      ]
+    },
+    {
+      "view_label": "M02",
+      "task_family": "normalization",
+      "prompt_version": "normalization-v1",
+      "prompt_path": "prompts/normalization-v1.txt",
+      "prompt_sha256": "7014ea67b519241ceb5136aba510be6edf0a5d8f397de4671a878c2a06bf5f1e",
+      "output_schema_version": "normalization-v1",
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "reference_relative",
+      "target_path": "views/M02/reference_candidate.json",
+      "normalization_acceptance": true,
+      "capabilities": [
+        "normalization"
+      ]
+    },
+    {
+      "view_label": "M03",
+      "task_family": "normalization",
+      "prompt_version": "normalization-v1",
+      "prompt_path": "prompts/normalization-v1.txt",
+      "prompt_sha256": "7014ea67b519241ceb5136aba510be6edf0a5d8f397de4671a878c2a06bf5f1e",
+      "output_schema_version": "normalization-v1",
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "reference_relative",
+      "target_path": "views/M03/reference_candidate.json",
+      "normalization_acceptance": true,
+      "capabilities": [
+        "normalization"
+      ]
+    },
+    {
+      "view_label": "M04",
+      "task_family": "normalization",
+      "prompt_version": "normalization-v1",
+      "prompt_path": "prompts/normalization-v1.txt",
+      "prompt_sha256": "7014ea67b519241ceb5136aba510be6edf0a5d8f397de4671a878c2a06bf5f1e",
+      "output_schema_version": "normalization-v1",
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "reference_relative",
+      "target_path": "views/M04/reference_candidate.json",
+      "normalization_acceptance": true,
+      "capabilities": [
+        "normalization"
+      ]
+    },
+    {
+      "view_label": "M05",
+      "task_family": "normalization",
+      "prompt_version": "normalization-v1",
+      "prompt_path": "prompts/normalization-v1.txt",
+      "prompt_sha256": "7014ea67b519241ceb5136aba510be6edf0a5d8f397de4671a878c2a06bf5f1e",
+      "output_schema_version": "normalization-v1",
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "reference_relative",
+      "target_path": "views/M05/reference_candidate.json",
+      "normalization_acceptance": true,
+      "capabilities": [
+        "normalization"
+      ]
+    },
+    {
+      "view_label": "M07",
+      "task_family": "normalization",
+      "prompt_version": "normalization-v1",
+      "prompt_path": "prompts/normalization-v1.txt",
+      "prompt_sha256": "7014ea67b519241ceb5136aba510be6edf0a5d8f397de4671a878c2a06bf5f1e",
+      "output_schema_version": "normalization-v1",
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "reference_relative",
+      "target_path": "views/M07/reference_candidate.json",
+      "normalization_acceptance": true,
+      "capabilities": [
+        "normalization"
+      ]
+    },
+    {
+      "view_label": "M08",
+      "task_family": "normalization",
+      "prompt_version": "normalization-v1",
+      "prompt_path": "prompts/normalization-v1.txt",
+      "prompt_sha256": "7014ea67b519241ceb5136aba510be6edf0a5d8f397de4671a878c2a06bf5f1e",
+      "output_schema_version": "normalization-v1",
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "reference_relative",
+      "target_path": "views/M08/reference_candidate.json",
+      "normalization_acceptance": true,
+      "capabilities": [
+        "normalization"
+      ]
+    },
+    {
+      "view_label": "M09",
+      "task_family": "normalization",
+      "prompt_version": "normalization-v1",
+      "prompt_path": "prompts/normalization-v1.txt",
+      "prompt_sha256": "7014ea67b519241ceb5136aba510be6edf0a5d8f397de4671a878c2a06bf5f1e",
+      "output_schema_version": "normalization-v1",
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "reference_relative",
+      "target_path": "views/M09/reference_candidate.json",
+      "normalization_acceptance": true,
+      "capabilities": [
+        "normalization"
+      ]
+    },
+    {
+      "view_label": "M10",
+      "task_family": "normalization",
+      "prompt_version": "normalization-v1",
+      "prompt_path": "prompts/normalization-v1.txt",
+      "prompt_sha256": "7014ea67b519241ceb5136aba510be6edf0a5d8f397de4671a878c2a06bf5f1e",
+      "output_schema_version": "normalization-v1",
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "reference_relative",
+      "target_path": "views/M10/reference_candidate.json",
+      "normalization_acceptance": true,
+      "capabilities": [
+        "normalization"
+      ]
+    },
+    {
+      "view_label": "M11",
+      "task_family": "structural_context_retention",
+      "prompt_version": null,
+      "prompt_path": null,
+      "prompt_sha256": null,
+      "output_schema_version": null,
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "structural_only",
+      "target_path": null,
+      "normalization_acceptance": false,
+      "capabilities": [
+        "structure",
+        "context",
+        "retention"
+      ]
+    },
+    {
+      "view_label": "V10",
+      "task_family": "normalization",
+      "prompt_version": "normalization-v1",
+      "prompt_path": "prompts/normalization-v1.txt",
+      "prompt_sha256": "7014ea67b519241ceb5136aba510be6edf0a5d8f397de4671a878c2a06bf5f1e",
+      "output_schema_version": "normalization-v1",
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "reference_relative",
+      "target_path": "views/V10/reference_candidate.json",
+      "normalization_acceptance": true,
+      "capabilities": [
+        "normalization"
+      ]
+    },
+    {
+      "view_label": "V20",
+      "task_family": "normalization",
+      "prompt_version": "normalization-v1",
+      "prompt_path": "prompts/normalization-v1.txt",
+      "prompt_sha256": "7014ea67b519241ceb5136aba510be6edf0a5d8f397de4671a878c2a06bf5f1e",
+      "output_schema_version": "normalization-v1",
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "reference_relative",
+      "target_path": "views/V20/reference_candidate.json",
+      "normalization_acceptance": true,
+      "capabilities": [
+        "normalization"
+      ]
+    },
+    {
+      "view_label": "V30",
+      "task_family": "normalization",
+      "prompt_version": "normalization-v1",
+      "prompt_path": "prompts/normalization-v1.txt",
+      "prompt_sha256": "7014ea67b519241ceb5136aba510be6edf0a5d8f397de4671a878c2a06bf5f1e",
+      "output_schema_version": "normalization-v1",
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "reference_relative",
+      "target_path": "views/V30/reference_candidate.json",
+      "normalization_acceptance": true,
+      "capabilities": [
+        "normalization"
+      ]
+    },
+    {
+      "view_label": "L02-E",
+      "task_family": "structural_context_retention",
+      "prompt_version": null,
+      "prompt_path": null,
+      "prompt_sha256": null,
+      "output_schema_version": null,
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "structural_only",
+      "target_path": null,
+      "normalization_acceptance": false,
+      "capabilities": [
+        "structure",
+        "context",
+        "retention"
+      ]
+    },
+    {
+      "view_label": "L02-M",
+      "task_family": "structural_context_retention",
+      "prompt_version": null,
+      "prompt_path": null,
+      "prompt_sha256": null,
+      "output_schema_version": null,
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "structural_only",
+      "target_path": null,
+      "normalization_acceptance": false,
+      "capabilities": [
+        "structure",
+        "context",
+        "retention"
+      ]
+    },
+    {
+      "view_label": "L02-L",
+      "task_family": "structural_context_retention",
+      "prompt_version": null,
+      "prompt_path": null,
+      "prompt_sha256": null,
+      "output_schema_version": null,
+      "rubric_version": "rubric-v1",
+      "scoring_tier": "structural_only",
+      "target_path": null,
+      "normalization_acceptance": false,
+      "capabilities": [
+        "structure",
+        "context",
+        "retention"
+      ]
+    }
+  ]
+}

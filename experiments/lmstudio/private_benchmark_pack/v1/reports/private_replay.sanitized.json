@@ -1,0 +1,11 @@
+{
+  "schema_version": "private-replay-evidence-v1",
+  "replay_status": "passed",
+  "private_root_outside_repository": true,
+  "manifest_digest_verified": true,
+  "owner_restricted_immutable_entries": true,
+  "view_count": 16,
+  "span_instances_verified": 6366,
+  "model_calls": 0,
+  "private_locators_published": false
+}

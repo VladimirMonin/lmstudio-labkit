@@ -1,0 +1,20 @@
+{
+  "schema_version": "sanitized-blocks-v1",
+  "view_label": "M01",
+  "blocks": [
+    {
+      "block_index": 0,
+      "source_unit_start": 0,
+      "source_unit_end": 1,
+      "raw_text": "Следующая твоя задача будет сделать домашнее задание для группы ENTITY_001 ACCOUNT_002 на основе домашнего задания ENTITY_001 ACCOUNT_001 под номером 11.",
+      "reference_candidate_text": null
+    },
+    {
+      "block_index": 1,
+      "source_unit_start": 1,
+      "source_unit_end": 3,
+      "raw_text": "Ты возьмешь это домашнее задание, также будешь использовать шаблон для создания домашних заданий, правил домашних заданий. Просто возьми это задание и сделай для ребят из группы ACCOUNT_002 также домашнее задание под номером 11 от DATE_001.",
+      "reference_candidate_text": null
+    }
+  ]
+}

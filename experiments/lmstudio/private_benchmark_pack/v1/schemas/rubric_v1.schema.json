@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Rubric v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "view_label",
+    "gold_basis",
+    "task_family",
+    "prompt_version",
+    "output_schema_version",
+    "hard_failures",
+    "thresholds",
+    "ordinal_thresholds",
+    "matching_policy",
+    "scoring_tier",
+    "acceptance_scope",
+    "scoring_policy_version"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "rubric-v1"
+    },
+    "view_label": {
+      "type": "string",
+      "pattern": "^(?:M(?:0[1-9]|10|11)|V(?:10|20|30)|L02-(?:E|M|L))$"
+    },
+    "gold_basis": {
+      "type": "string",
+      "enum": [
+        "semantic",
+        "reference_only",
+        "structural"
+      ]
+    },
+    "task_family": {
+      "type": "string",
+      "enum": [
+        "normalization",
+        "structural_context_retention"
+      ]
+    },
+    "prompt_version": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "normalization-v1",
+        null
+      ]
+    },
+    "output_schema_version": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "normalization-v1",
+        null
+      ]
+    },
+    "hard_failures": {
+      "type": "array",
+      "minItems": 7,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "json_invalid",
+          "schema_invalid",
+          "placeholder_corruption",
+          "input_digest_mismatch",
+          "unit_order_violation",
+          "unit_coverage_violation",
+          "private_content_exposure",
+          "target_text_mismatch"
+        ]
+      }
+    },
+    "thresholds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "placeholder_preservation"
+      ],
+      "properties": {
+        "placeholder_preservation": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "text_token_precision": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "text_token_recall": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "exact_text_match": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "ordinal_thresholds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "punctuation_casing",
+        "disfluency_handling"
+      ],
+      "properties": {
+        "punctuation_casing": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        },
+        "disfluency_handling": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2
+        }
+      }
+    },
+    "matching_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version",
+        "tokenization",
+        "case_sensitive",
+        "boundary_tolerance_source_units"
+      ],
+      "properties": {
+        "version": {
+          "const": "normalized-token-lcs-v1"
+        },
+        "tokenization": {
+          "const": "unicode-word-or-protected-placeholder"
+        },
+        "case_sensitive": {
+          "const": false
+        },
+        "boundary_tolerance_source_units": {
+          "const": 1
+        }
+      }
+    },
+    "scoring_tier": {
+      "type": "string",
+      "enum": [
+        "semantic_gold",
+        "reference_relative",
+        "structural_only"
+      ]
+    },
+    "acceptance_scope": {
+      "type": "string",
+      "enum": [
+        "semantic_normalization",
+        "reference_relative_normalization",
+        "structural_context_retention"
+      ]
+    },
+    "scoring_policy_version": {
+      "const": "exact-target-v1"
+    }
+  }
+}
