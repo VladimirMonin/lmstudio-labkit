@@ -18,9 +18,9 @@ See [the statistical closure report](../experiments/lmstudio/results_summaries/2
 Current practical roles:
 
 - **12B QAT:** primary candidate for long transcript cleanup and structured blocks;
-  use an adequate output budget, explicit chunk boundaries, reasoning disabled,
-  P2 by default, and P4 only with compact generic schemas plus strict
-  post-generation ID/order validation.
+  use an adequate output budget, explicit chunk boundaries, and reasoning disabled.
+  Use sequential P1 for the tested approximately 23k full-prefix shape. Bounded 8k
+  P2 and structural P4 results must not be transferred to that larger workload.
 - **E2B:** fast raw-JSON/schema follower, but its five deterministic long/plain
   results preserved words without performing the required punctuation and paragraph
   cleanup.
@@ -32,6 +32,14 @@ P2 passed on all four models. The original P4 positional schema, with 25 per-pos
 `const` ID constraints, failed before generation. A generic 25-item blocks schema
 repaired P4 to 5/5 batches and 20/20 exact-ID requests per model. `--gpu max` did not
 improve the focused 12B P2 run.
+
+The later application-shaped closure qualified those concurrency results. Four
+concurrent middle/late requests with an approximately 23k full prefix were rejected
+before generation, while the same positions completed sequentially. The 12B plain
+merge retained all three chunks and 13/13 exact protected numeric values; the block
+merge retained 24/24 IDs in exact order. E2B long schema-output failed 2/2 through
+reasoning/output-budget exhaustion, while E4B completed one narrow long schema-output
+cell. See [the final bounded recommendations](../experiments/lmstudio/results_summaries/2026-07-12_gemma4_final_practical_recommendations.md).
 
 ## Final evidence boundary
 

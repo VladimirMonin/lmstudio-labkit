@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-07-12",
+  "scope": "parallel_cache_gpu_runtime_audit",
+  "evidence": {
+    "public": [
+      "experiments/lmstudio/results_summaries/2026-07-12_gemma4_whisper_structured_parallel_statistics.json",
+      "experiments/lmstudio/results_summaries/2026-07-12_gemma4_whisper_structured_parallel_statistics.md",
+      "experiments/lmstudio/results_summaries/t_ebbc0256_gemma_12b_session_cache_comparison.md",
+      "experiments/lmstudio/live_runs/t_ebbc0256/sanitized_aggregate.json",
+      "experiments/lmstudio/results_summaries/2026-07-05_l3_4_cache_stateful_vs_prefix_gemma_e2b_live_summary.md",
+      "experiments/lmstudio/results_summaries/2026-07-05_l3_4b_cache_stateful_instrumentation_gemma_e2b_live_summary.md",
+      "experiments/lmstudio/results_summaries/l3_33b_cache_evidence_import_from_source_application.md"
+    ],
+    "private_artifact_classes": [
+      "P2 batch summaries, request metrics, system samples, and structured-error ledgers",
+      "P4 positional-schema batch summaries and request-level error metrics",
+      "twenty compact-schema P4 batch records containing eighty request measurements",
+      "12B automatic-placement and maximum-GPU P2 summaries plus one load read-back"
+    ]
+  },
+  "parallelism": {
+    "overlap_verdict": "PROVEN",
+    "basis": "Applied runtime parallelism and application concurrency match, and measured request-duration totals exceed batch wall time by approximately the admitted concurrency while each direct P2 pair has mean request latency close to pair wall time.",
+    "P1": {
+      "verdict": "PARTIAL",
+      "detail": "Sequential warmups establish single-request viability for the positional P4 workload, but the inspected closure artifacts do not contain a repeated, denominator-matched P1 throughput matrix."
+    },
+    "P2": {
+      "e2b": {"measured_requests": 4, "business_pass": 4, "batch_wall_ms": 30764.3},
+      "e4b": {"measured_requests": 4, "business_pass": 4, "batch_wall_ms": 45511.7},
+      "12b_1875": {"measured_requests": 2, "business_pass": 0, "finish_length": 2, "batch_wall_ms": 43198.2},
+      "12b_4096": {"measured_requests": 2, "business_pass": 2, "finish_length": 0, "batch_wall_ms": 57433.7},
+      "26b_4096": {"measured_requests": 2, "business_pass": 2, "finish_length": 0, "batch_wall_ms": 127531.8}
+    },
+    "P4_positional_const_schema": {
+      "classification": "CONFIGURATION_FAILURE",
+      "measured_requests": 16,
+      "result": "HTTP 400 before useful generation on all four model families",
+      "controls": [
+        "sequential warmup generation passed",
+        "plain P4 passed",
+        "minimal-schema P4 passed",
+        "reducing context did not repair the positional schema"
+      ]
+    },
+    "P4_generic_schema": {
+      "batches": 20,
+      "requests": 80,
+      "structural_pass": 80,
+      "semantic_review": "NOT_PERFORMED",
+      "models": {
+        "e2b": {"requests": 20, "mean_request_latency_s": 15.584, "range_s": [15.368, 15.681]},
+        "e4b": {"requests": 20, "mean_request_latency_s": 18.103, "range_s": [17.683, 18.291]},
+        "12b": {"requests": 20, "mean_request_latency_s": 19.340, "range_s": [18.943, 19.525]},
+        "26b": {"requests": 20, "mean_request_latency_s": 64.725, "range_s": [60.432, 69.234]}
+      },
+      "validated_fields": ["HTTP 200", "finish stop", "zero reasoning tokens", "25 items", "exact IDs and order"],
+      "not_validated": ["text fidelity", "semantic completeness", "harmful deletion", "hallucination", "source alignment"]
+    }
+  },
+  "latency_denominators": {
+    "request_latency": "One measured request; P4 means and ranges use 20 requests per model.",
+    "batch_wall": "Elapsed wall time for one concurrent measured batch; warmup excluded.",
+    "end_to_end": "Sequential warmup plus measured batch where retained by the runner.",
+    "warning": "Request latencies must not be added to batch wall time or compared as if they were serial throughput. No denominator-matched P1 baseline was retained for the repaired P4 repeat-five closure."
+  },
+  "cache_claims": [
+    {"claim": "The source application serializes lifecycle ownership and reuses a compatible loaded runtime.", "classification": "PROVEN", "basis": "Pinned static source review plus deterministic owner-path tests."},
+    {"claim": "The source application sends cache_prompt=true on its LM Studio payload path.", "classification": "PROVEN", "basis": "Pinned payload-builder review and deterministic payload tests."},
+    {"claim": "The source application creates a byte-stable LM Studio prefix or a cache-materialization barrier.", "classification": "UNPROVEN", "basis": "The inspected builder ignores the provider-style cacheable-prefix seam; awaiting request one proves ordering only."},
+    {"claim": "E2B stateful execution is functionally usable in a small loaded-session probe.", "classification": "PROVEN", "basis": "Root and branch requests completed with verified lifecycle cleanup."},
+    {"claim": "E2B stateful branches benefited from reuse.", "classification": "TIMING_SIGNAL", "basis": "One run showed 4.3% lower total latency and another showed lower prompt-processing timing than full-prefix requests, without cached-token telemetry."},
+    {"claim": "12B exact repeats benefited from session/runtime reuse.", "classification": "TIMING_SIGNAL", "basis": "Follow-ups were much faster than the first request, but all outputs were empty length terminations and cached_tokens was unavailable."},
+    {"claim": "12B stable-prefix/changing-suffix requests benefited from reuse.", "classification": "TIMING_SIGNAL", "basis": "Follow-ups were faster than the first request, but all outputs failed validity and no runtime cache counter was exposed."},
+    {"claim": "Physical KV reuse, cache hits, cache persistence, or avoided prefill occurred.", "classification": "UNPROVEN", "basis": "No request-linked cache-hit flag, positive cached-token count, reused-token count, or physical KV trace was retained."}
+  ],
+  "gpu": {
+    "model": "12B QAT",
+    "workload": "P2 structured pair at 4096 maximum output tokens",
+    "auto": {"pass": "2/2", "reported_load_gib": 6.66, "wall_ms": 57433.7, "completion_tokens": 4960},
+    "gpu_max": {"pass": "2/2", "reported_load_gib": 6.66, "process_readback_gb": 7.15, "wall_ms": 66275.5, "completion_tokens": 5396},
+    "verdict": "NO_PROVEN_BENEFIT",
+    "limitations": [
+      "No per-layer placement or physical VRAM telemetry was retained.",
+      "Completion-token totals differ, so wall-time difference is not a controlled placement-only speed comparison.",
+      "The load report did not show a larger model allocation under maximum-GPU placement."
+    ]
+  },
+  "recommendation": {
+    "safe_default_concurrency": "P2",
+    "bounded_option": "P4 only for compact generic schemas with strict post-generation identity/order validation and task-specific semantic review.",
+    "do_not_admit": ["const-heavy positional schemas at P4", "physical-cache claims", "maximum-GPU placement as a performance improvement"],
+    "observability_gaps": [
+      "request start and finish timestamps tied to worker slots",
+      "TTFT and prompt-processing timing for every parallel request",
+      "cached/reused input-token accounting",
+      "denominator-matched P1/P2/P4 useful-throughput comparison",
+      "per-request raw or privacy-safe semantic-review artifact for P4",
+      "per-layer GPU placement, physical VRAM, utilization, and power telemetry",
+      "output-token-normalized GPU comparison"
+    ]
+  },
+  "unresolved_evidence_gaps": [
+    "The repaired P4 outputs were structurally validated but not retained or semantically reviewed.",
+    "The repaired P4 closure has no matched P1 baseline.",
+    "Physical cache reuse remains unproven for every model and route.",
+    "The automatic-versus-maximum-GPU comparison does not isolate placement from generated-token count.",
+    "No comparable cache/session A/B exists for 26B."
+  ]
+}

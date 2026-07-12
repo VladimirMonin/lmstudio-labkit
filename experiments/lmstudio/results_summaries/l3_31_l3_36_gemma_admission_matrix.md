@@ -26,10 +26,22 @@ with E2B:
   footprint.
 
 The recommended bounded configuration is 12B QAT, reasoning disabled, plain or
-JSON-block full context, explicit chunk boundaries, and adequate output budget. P2 is
-the conservative concurrency default; bounded P4 is supported only with compact
-generic schemas. Exact IDs, URLs, commands, placeholders, and critical digits
+compact JSON-block full context, explicit chunk boundaries, and an adequate output
+budget. Concurrency is workload-qualified: the bounded 8k generic-schema lane passed
+P2 and structural P4, while two concurrent approximately 23k full-prefix requests
+were rejected 0/4 before generation in the tested 32k runtime. Use sequential P1 for
+that full-prefix shape. Exact IDs, URLs, commands, placeholders, and critical digits
 must be validated separately from semantic value.
+
+The application-shaped closure added 15 attempts. E2B long schema-output failed
+deterministically 2/2 through hidden reasoning and output-budget exhaustion; E4B
+completed one narrow same-prompt schema-output cell. The 12B plain and block lanes
+both completed all three positions after sequential capacity recovery. Plain semantic
+review retained 13/13 exact protected numeric values; the block merge retained 24/24
+IDs in exact order. These are reviewable-draft and mechanical-merge results, not
+unattended production, persistence, or fallback admission. The authoritative bounded
+interpretation is in
+[Gemma 4 final practical recommendations](2026-07-12_gemma4_final_practical_recommendations.md).
 
 ## Authoritative 2026-07-12 result
 

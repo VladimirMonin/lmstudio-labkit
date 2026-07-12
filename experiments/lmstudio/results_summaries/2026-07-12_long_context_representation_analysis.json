@@ -1,0 +1,151 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-07-12",
+  "scope": "four-model long-context input-representation comparison",
+  "decision": {
+    "default_representation": "plain_text",
+    "conditional_alternative": "json_whisper_blocks",
+    "not_recommended_as_default": "timestamped_paragraphs",
+    "rationale": [
+      "Plain text had the lowest measured input-token cost.",
+      "Plain text preserved chunk isolation in every available controlled output.",
+      "Timestamped paragraphs had the highest overhead and the only observed cross-boundary length failure.",
+      "JSON blocks may support deterministic merge validation, but block-preserving output was not tested."
+    ]
+  },
+  "coverage": {
+    "planned_calls_all_six_models": 54,
+    "controlled_calls_available_for_four_model_question": 27,
+    "complete_three_by_three_models": [
+      "google/gemma-4-e4b",
+      "google/gemma-4-12b-qat",
+      "google/gemma-4-26b-a4b-qat"
+    ],
+    "partial_models": {
+      "google/gemma-4-e2b": {
+        "available": "five independent plain-text early-chunk cold repeats",
+        "missing": [
+          "plain middle",
+          "plain late",
+          "timestamped early/middle/late",
+          "JSON blocks early/middle/late"
+        ],
+        "classification": "missing evidence, not failure"
+      }
+    }
+  },
+  "token_overhead": {
+    "basis": "model-formatted input token counts recorded in 27 private response artifacts",
+    "plain_text": {
+      "calls": 9,
+      "mean_input_tokens": 23419.7,
+      "min_input_tokens": 23263,
+      "max_input_tokens": 23636,
+      "overhead_percent_vs_plain": 0.0
+    },
+    "timestamped_paragraphs": {
+      "calls": 9,
+      "mean_input_tokens": 30344.7,
+      "min_input_tokens": 30188,
+      "max_input_tokens": 30561,
+      "absolute_mean_overhead_vs_plain": 6925.0,
+      "overhead_percent_vs_plain": 29.6
+    },
+    "json_whisper_blocks": {
+      "calls": 9,
+      "mean_input_tokens": 29935.7,
+      "min_input_tokens": 29779,
+      "max_input_tokens": 30152,
+      "absolute_mean_overhead_vs_plain": 6516.0,
+      "overhead_percent_vs_plain": 27.8
+    }
+  },
+  "model_recommendations": {
+    "google/gemma-4-e2b": {
+      "recommendation": "undecided beyond plain-text early-chunk preservation",
+      "facts": [
+        "Five plain-text early outputs were byte-stable, semantically complete, chunk-isolated, and exact on inspected protected values.",
+        "The outputs performed little punctuation or paragraph cleanup."
+      ],
+      "missing_evidence": "No controlled timestamped or JSON representation outputs were recovered."
+    },
+    "google/gemma-4-e4b": {
+      "recommendation": "plain_text",
+      "facts": [
+        "Plain text was complete for early, middle, and late chunks.",
+        "Timestamped and JSON context each silently deleted a substantial tail from the early chunk while transport reported stop.",
+        "JSON context improved punctuation on the late chunk but did not provide a reliable cross-position advantage."
+      ]
+    },
+    "google/gemma-4-12b-qat": {
+      "recommendation": "plain_text or json_whisper_blocks; prefer JSON when exact protected surfaces and future block identity matter",
+      "facts": [
+        "Plain and JSON outputs were complete and chunk-isolated across all three positions.",
+        "The early JSON output preserved inspected digit surfaces exactly while plain and timestamped forms preserved numeric meaning but changed surface form.",
+        "The timestamped late output exhausted 2031 output tokens, ended with finish_reason length, and crossed the requested chunk boundary."
+      ]
+    },
+    "google/gemma-4-26b-a4b-qat": {
+      "recommendation": "plain_text",
+      "facts": [
+        "All nine outputs remained Russian, chunk-isolated, wrapper-free, and free of runaway repetition.",
+        "Plain text provided the strongest early paragraphing.",
+        "Structured context added token cost without a stable semantic advantage, and all late outputs performed little cleanup."
+      ]
+    }
+  },
+  "position_findings": {
+    "early": "Largest representation-sensitive quality differences; two E4B structured-context outputs silently deleted content.",
+    "middle": "Most stable position across representations and models.",
+    "late": "Frequently copied with little cleanup; 12B timestamped context produced the only boundary and length failure."
+  },
+  "cross_cutting": {
+    "chunk_complete_controlled_outputs": 24,
+    "controlled_outputs_total": 27,
+    "chunk_isolated_controlled_outputs": 26,
+    "chunk_isolation_failures": 1,
+    "silent_deletion_outputs": 2,
+    "output_limit_hits": 1,
+    "runaway_repetition_outputs": 0,
+    "non_russian_outputs": 0,
+    "wrapper_violations": 0,
+    "protected_value_note": "Exact and semantic preservation are reported separately; 12B changed some digit surfaces while preserving numeric meaning.",
+    "asr_correction_boundary": "Punctuation and casing edits were reviewed, but no audio truth exists for WER/CER or uncertain technical-name corrections."
+  },
+  "evidence": {
+    "repository": [
+      "experiments/lmstudio/source_shaped_rehearsal/v1/README.md",
+      "experiments/lmstudio/source_shaped_rehearsal/v1/manifest.json",
+      "experiments/lmstudio/results_summaries/2026-07-12_gemma4_whisper_structured_parallel_statistics.md",
+      "experiments/lmstudio/results_summaries/2026-07-12_gemma_whisper_benchmark_retrospective.md"
+    ],
+    "private_artifact_classes_inspected": [
+      "frozen sanitized long Russian Whisper transcript",
+      "three byte-bound early/middle/late chunks",
+      "three full-context representations with bound digests",
+      "frozen request plan",
+      "27 controlled response envelopes and final texts for E4B, 12B QAT, and 26B MoE",
+      "20 independent cold plain/early response envelopes across four models"
+    ],
+    "new_model_calls": 0,
+    "network_requests": 0
+  },
+  "fact_interpretation_hypothesis": {
+    "fact": "Structured context increased model-formatted input tokens by 27.8-29.6 percent and did not provide a general quality win in the recovered controlled outputs.",
+    "interpretation": "Plain text is the safest default for the current plain-output cleanup contract.",
+    "hypothesis": "JSON blocks may outperform plain text in a future block-preserving output and merge contract with exact ID/order validation."
+  },
+  "unresolved_evidence_gaps": [
+    "E2B lacks a controlled timestamped/JSON and middle/late comparison.",
+    "E4B, 12B QAT, and 26B MoE representation cells have one attempt each.",
+    "Block-preserving JSON output and merge validation were not tested.",
+    "No audio truth, WER/CER, timestamp-accuracy, or authoritative technical-name spelling check exists.",
+    "No complete manual source-unit-to-output alignment exists for all controlled cells.",
+    "Cache reuse, production concurrency, translation, and microphone behavior are outside this evidence."
+  ],
+  "privacy": {
+    "contains_private_text": false,
+    "contains_private_paths": false,
+    "contains_source_application_identifier": false
+  }
+}

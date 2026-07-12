@@ -1,0 +1,215 @@
+{
+  "schema_version": "source-application-pipeline-fit-v1",
+  "date": "2026-07-12",
+  "execution": {
+    "mode": "offline_read_only",
+    "model_calls": 0,
+    "model_loads": 0,
+    "network_requests": 0,
+    "source_application_changes": 0
+  },
+  "classification_definitions": {
+    "VERIFIED": "Retained generation evidence matches the material active request shape and validates the stated bounded behavior.",
+    "PARTIAL": "Some request or runtime components match, but a material source-path, merge, retry, direction, or end-to-end boundary is absent.",
+    "NOT_TESTED": "No retained generation traverses the relevant active behavior.",
+    "INVALID": "The retained or configured evidence answers a different contract and cannot support the requested conclusion."
+  },
+  "decision": {
+    "summary": "Long plain-text full-context plus current-chunk requests are the closest verified fit, but no evidence set admits the complete active pipeline end to end.",
+    "strongest_fit": "plain_text_bounded_early_chunk",
+    "primary_missing_contract": "active block-mode full context plus current blocks, retry/fallback, persistence, and merge",
+    "translation_direction": "requested Russian-to-English is unsupported because the inspected active templates implement English-to-Russian"
+  },
+  "active_contract_facts": [
+    "Microphone uses a dedicated coordinator; audio and video use the shared queue tail.",
+    "Microphone has a distinct text pipeline; non-microphone sources normalize to the media pipeline.",
+    "Text mode sends full_text as reference context and requests output for one separately supplied current chunk.",
+    "Chunk 1 is awaited before remaining chunks are launched under bounded concurrency.",
+    "LM Studio compatibility payloads set a prompt-cache hint and disable thinking.",
+    "Block mode sends compact id/text items with native schema, validates expected IDs, retries one invalid parse, and then falls back to original blocks.",
+    "Text merge preserves chunk order; block merge sorts updates by ID and persists per-block updates.",
+    "Transport retry covers bounded timeout, rate-limit, and server failures separately from block parse retry.",
+    "Inspected active translation templates implement English-to-Russian, not Russian-to-English."
+  ],
+  "coverage": [
+    {
+      "surface": "microphone_one_shot",
+      "verdict": "NOT_TESTED",
+      "fact": "No retained call traverses microphone capture, dedicated coordinator/model ensure, source-specific prompt selection, and final application outcome.",
+      "evidence": [
+        "2026-07-12_gemma4_last_day_evidence_inventory.md: explicit microphone gap",
+        "private source code class: dedicated microphone coordinator"
+      ]
+    },
+    {
+      "surface": "long_microphone_chunks",
+      "verdict": "PARTIAL",
+      "fact": "Five cold repeats per model used one frozen long plain early chunk with full context and current-chunk isolation.",
+      "missing": "Dedicated microphone path, later parallel chunks, retry, persistence, and merge."
+    },
+    {
+      "surface": "long_video",
+      "verdict": "NOT_TESTED",
+      "fact": "No retained real-video early/middle/late extraction-to-merge run exists.",
+      "missing": "Media queue ownership, extraction, source-specific configuration, generated chunks, and final merge."
+    },
+    {
+      "surface": "plain_text",
+      "verdict": "VERIFIED",
+      "scope": "one frozen early chunk",
+      "fact": "All four models completed five cold full-context plus current-chunk plain requests.",
+      "non_claim": "This does not admit whole-record or source-owner behavior."
+    },
+    {
+      "surface": "timestamped_context",
+      "verdict": "PARTIAL",
+      "fact": "Controlled timestamped calls exist, but timestamped full context is not the active plain or block request representation.",
+      "risk": "29.6 percent mean token overhead and the only observed boundary/length failure."
+    },
+    {
+      "surface": "json_blocks",
+      "verdict": "PARTIAL",
+      "fact": "Native structured and compact-schema P2/P4 evidence proves component JSON, schema, and ID capability.",
+      "missing": "One active full-context block request sequence including parse retry/fallback, persistence, and merge."
+    },
+    {
+      "surface": "russian_to_english_translation",
+      "verdict": "INVALID",
+      "fact": "No retained translation generation exists and the inspected active templates specify English-to-Russian.",
+      "reason": "Opposite-direction templates cannot validate the requested direction."
+    },
+    {
+      "surface": "warmup",
+      "verdict": "PARTIAL",
+      "fact": "Active code awaits the first chunk and optionally delays before launching the remainder; loaded follow-ups were faster in retained experiments.",
+      "missing": "A source-path sequence binding events, delay, identical stable prefix, later requests, and direct cache telemetry."
+    },
+    {
+      "surface": "p2_p4",
+      "verdict": "PARTIAL",
+      "fact": "True P2 overlap was measured and compact generic-schema P4 passed 80 of 80 requests.",
+      "missing": "Complete active long-transcript request, source-specific path, retry/fallback, persistence, and merge under P2/P4.",
+      "operational_boundary": "P2 is conservative; P4 is conditional on compact grammar and strict post-validation."
+    },
+    {
+      "surface": "merge",
+      "verdict": "NOT_TESTED",
+      "fact": "Active merge algorithms exist, but no retained generated run validates complete early/middle/late ordering, overlap effects or block persistence and semantic completeness."
+    }
+  ],
+  "request_shape_fit": [
+    {
+      "active_behavior": "stable full transcript plus authoritative current chunk",
+      "evidence": "long plain and controlled representation calls",
+      "fit": "strong for one early plain cell; incomplete across chunks and source paths"
+    },
+    {
+      "active_behavior": "source-aware microphone versus media configuration",
+      "evidence": "no source-path generation artifact",
+      "fit": "missing"
+    },
+    {
+      "active_behavior": "block items with exact IDs and native schema",
+      "evidence": "native correction and compact P2/P4",
+      "fit": "component-level only"
+    },
+    {
+      "active_behavior": "first synchronous request then concurrent remainder",
+      "evidence": "loaded-session and separate concurrency probes",
+      "fit": "components measured separately"
+    },
+    {
+      "active_behavior": "prompt-cache hint and stable-prefix construction",
+      "evidence": "product-shaped compatibility requests and loaded timing",
+      "fit": "hint observed; physical reuse unproven"
+    },
+    {
+      "active_behavior": "transport retry plus block parse retry and original fallback",
+      "evidence": "no retained controlled failure/recovery sequence",
+      "fit": "missing"
+    },
+    {
+      "active_behavior": "ordered text merge or ID-sorted block merge with persistence",
+      "evidence": "no complete generated multi-chunk application run",
+      "fit": "missing"
+    }
+  ],
+  "minimal_remaining_calls": [
+    {
+      "experiment": "plain_multi_chunk_application_rehearsal",
+      "base_calls": 3,
+      "conditional_calls": 0,
+      "purpose": "Close active serialization, chunk 1 warmup, P2 remainder, boundary validation, ordered merge, and cleanup on one frozen long source."
+    },
+    {
+      "experiment": "block_mode_application_rehearsal",
+      "base_calls": 3,
+      "conditional_calls": 1,
+      "condition": "Only if one active arm returns invalid parse/schema output.",
+      "purpose": "Close compact block requests, exact IDs, active parse retry/fallback, persistence projection, and final merge."
+    },
+    {
+      "experiment": "microphone_one_shot",
+      "base_calls": 1,
+      "conditional_calls": 0,
+      "authorization": "audio-grounded live authorization required",
+      "purpose": "Validate the dedicated microphone owner path and source-specific prompt."
+    },
+    {
+      "experiment": "long_video_early_middle_late",
+      "base_calls": 3,
+      "conditional_calls": 0,
+      "authorization": "real-video live authorization required",
+      "purpose": "Validate media extraction, source configuration, queue path, chunks, and merge."
+    },
+    {
+      "experiment": "russian_to_english_translation",
+      "base_calls": 0,
+      "conditional_calls": 0,
+      "prerequisite": "Create or select a reviewed Russian-to-English active template first.",
+      "purpose": "Avoid invalid calls against the opposite-direction template."
+    }
+  ],
+  "facts": [
+    "Five cold long/plain calls per model completed on one frozen early chunk.",
+    "The controlled representation set retains 27 E4B, 12B QAT, and 26B MoE calls and lacks 27 other planned rows.",
+    "Compact generic-schema P4 passed 80 of 80 measured requests.",
+    "No retained microphone-audio, real-video, translation, or complete merge generation belongs to this evidence set.",
+    "The active LM Studio payload includes a prompt-cache hint and thinking-disabled setting."
+  ],
+  "interpretations": [
+    "Long plain text is the closest verified request-shape match but is not full application admission.",
+    "JSON and concurrency capabilities are necessary components, not proof of the combined block pipeline.",
+    "Loaded-session timing improvement does not prove physical cache reuse."
+  ],
+  "hypotheses": [
+    "12B QAT is the strongest next application-shaped plain/block rehearsal candidate.",
+    "A three-call P2 rehearsal may close warmup and merge evidence without a larger benchmark if all boundaries are captured fail-closed."
+  ],
+  "repository_evidence": [
+    "experiments/lmstudio/results_summaries/2026-07-12_gemma4_last_day_evidence_inventory.md",
+    "experiments/lmstudio/results_summaries/2026-07-12_long_context_representation_analysis.md",
+    "experiments/lmstudio/results_summaries/2026-07-12_small_gemma_long_context_json_forensics.md",
+    "experiments/lmstudio/results_summaries/2026-07-12_gemma4_whisper_structured_parallel_statistics.md",
+    "experiments/lmstudio/results_summaries/2026-07-12_gemma4_native_structured_output_correction.md",
+    "experiments/lmstudio/source_shaped_rehearsal/v1/README.md",
+    "experiments/lmstudio/source_shaped_rehearsal/v1/manifest.json"
+  ],
+  "owner_only_evidence_classes": [
+    "active source-aware configuration and request-construction code",
+    "active text and block chunk planning, warmup, concurrency, retry/fallback, persistence, and merge code",
+    "active LM Studio compatibility payload construction",
+    "active direction-specific translation templates",
+    "retained long/plain, representation, native structured, and parallel response artifacts described by public reports"
+  ],
+  "unresolved_evidence_gaps": [
+    "No audio-grounded microphone postprocessing result.",
+    "No dedicated microphone owner-path generation artifact.",
+    "No complete active block-mode request with full context, exact IDs, retry/fallback, persistence, and merge.",
+    "No real-video extraction-to-merge result.",
+    "No Russian-to-English active template or generation result.",
+    "No direct physical KV-cache telemetry.",
+    "No application-shaped P4 long-context run.",
+    "No complete generated early/middle/late merge with semantic review."
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "schema_version": "structured-output-and-scorer-audit-v1",
+  "date": "2026-07-12",
+  "status": "offline evidence audit",
+  "scope": {
+    "model_calls": 0,
+    "model_loads": 0,
+    "private_structured_outputs_inspected": 60,
+    "public_reports_reconciled": 7,
+    "code_contracts_inspected": [
+      "native structured-output request and transport parser",
+      "normalization scorer",
+      "bound overlay scorer",
+      "factual-block validator",
+      "normalization and factual-block schemas"
+    ]
+  },
+  "facts": {
+    "historical_prompt_embedded_transport": {
+      "calls": 80,
+      "strict_accepted": 0,
+      "interpretation": "The zero aggregate combines transport, exact schema, exact target, placeholder metadata, and task gates; it is not a JSON-capability verdict."
+    },
+    "native_schema_transport": {
+      "endpoint": "/v1/responses",
+      "binding": "text.format.type=json_schema; strict=true",
+      "focused_calls": 12,
+      "repeated_calls": 60,
+      "reasoning_disabled": true
+    },
+    "private_output_transport_counts": {
+      "M01": {"raw_json": 5, "fenced_json": 15, "invalid": 0},
+      "M05": {"raw_json": 5, "fenced_json": 10, "invalid": 5},
+      "L02-L": {"raw_json": 0, "fenced_json": 20, "invalid": 0}
+    },
+    "exact_schema_failures": {
+      "M01": ["12B QAT added title", "26B MoE added type"],
+      "M05": ["E4B produced malformed runaway output"],
+      "L02-L": ["26B MoE added output_schema"]
+    },
+    "placeholder_metadata": {
+      "declared_count_vs_text_count_mismatches_in_private_repeats": 15,
+      "interpretation": "Placeholder text preservation and the declared placeholder inventory are separate axes."
+    },
+    "output_budget": {
+      "E4B_M05_caps_exhausted": [4096, 8192, 16384],
+      "finish_reason_reported": "stop",
+      "classification_rule_required": "Treat explicit length or output_tokens >= configured cap as a length candidate."
+    },
+    "positional_const_p4": {
+      "result": "HTTP 400 before generation on all four models",
+      "repair": "Generic exactly-25-item schema plus post-generation ID/order validation",
+      "repaired_requests_passed": 80,
+      "repaired_requests_total": 80
+    }
+  },
+  "current_scorer_semantics": {
+    "normalization": {
+      "raw_json_is_hard_gate": true,
+      "fenced_json_is_extractable_but_rejected": true,
+      "exact_schema_is_hard_gate": true,
+      "semantic_fidelity_definition": "byte-exact normalized_text equality to semantic gold or a reference candidate",
+      "placeholder_rule": "placeholder sequence in generated text must equal target sequence and declared metadata sequence",
+      "input_digest_is_hard_gate": true,
+      "ordinal_scores": "punctuation/casing and disfluency are 2 only on exact text equality, otherwise 0",
+      "accepted": "all hard gates, thresholds, and ordinals pass"
+    },
+    "structural_overlay": {
+      "behavior": "non-normalization rows only test whether raw output parses as an object and always set accepted=false",
+      "limit": "This is evidence-preserving structural accounting, not semantic scoring."
+    },
+    "factual_blocks_validator": {
+      "json_transport": "raw JSON only",
+      "schema": "closed minimal shape validation, not full JSON Schema Draft validation",
+      "business_checks": ["exact ID set", "no duplicates", "preserved order", "non-empty text", "success statuses", "no reasoning leakage", "finish reason not length"]
+    }
+  },
+  "interpretations": [
+    "Native schema binding improves structural compliance but does not guarantee raw serialization, semantic correctness, metadata correctness, or bounded generation.",
+    "Fenced JSON is a recoverable serialization defect for application runtime, but must remain separately logged from raw native-schema success.",
+    "The current normalization scorer is suitable for exact-reference conformance, not for broad semantic quality judgments.",
+    "The generic-schema P4 repair is the strongest tested architecture: keep request-specific identities out of the runtime grammar and validate them after generation."
+  ],
+  "recommended_runtime_contract": {
+    "transport": "Native strict JSON Schema when available; prompt-embedded schema is instruction text only and must not be labeled native structured output.",
+    "schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "status", "blocks", "warnings"],
+      "properties": {
+        "schema_version": {"const": "factual_blocks.v1"},
+        "status": {"enum": ["success", "partial", "failed"]},
+        "blocks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["block_id", "normalized_text", "status", "warnings"],
+            "properties": {
+              "block_id": {"type": "integer"},
+              "normalized_text": {"type": "string", "minLength": 1},
+              "status": {"enum": ["success", "unchanged", "uncertain"]},
+              "warnings": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        },
+        "warnings": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "excluded_from_model_output": [
+      "input digest",
+      "request digest",
+      "placeholder inventory duplicated as model-authored metadata",
+      "request-specific positional const constraints"
+    ],
+    "application_owned_metadata": [
+      "request and source digests",
+      "expected block IDs and order",
+      "protected values and placeholder inventory",
+      "retry and fallback state"
+    ]
+  },
+  "post_generation_validator": {
+    "ordered_steps": [
+      "Reject transport errors, missing final text, reasoning content, and empty output.",
+      "Classify length when the native reason is length/max_output_tokens or output-token usage reaches the configured cap.",
+      "Parse raw JSON first; optionally extract exactly one full fenced JSON document and record transport=fenced_recovered.",
+      "Validate the complete closed schema with a full JSON Schema validator in production.",
+      "Compare returned block IDs to application-owned expected IDs for exact set, count, uniqueness, and order.",
+      "Require non-empty block text and allowed status values.",
+      "Validate chunk-only boundaries, protected names/numbers/dates/URLs/commands/placeholders, unsupported additions, omissions, and runaway repetition.",
+      "Keep semantic review and exact-reference score as separate fields; never infer semantic failure from wrapper or metadata failure.",
+      "Accept only if every transport, schema, business, boundary, protected-value, and semantic safety gate passes."
+    ],
+    "fenced_policy": "Recoverable only when one fence fully contains one JSON document with no surrounding prose; preserve raw_json=false and recovered_json=true."
+  },
+  "one_retry_policy": {
+    "maximum_retries": 1,
+    "eligible": ["invalid_json", "fenced_json", "schema_mismatch", "missing_or_duplicate_or_reordered_ids"],
+    "retry_change": "Use the same source and semantic instructions, compact native generic schema, and an explicit terse correction naming only the failed structural gate.",
+    "ineligible": ["length_hit", "runaway_repetition", "semantic_omission", "unsupported_addition", "boundary_leak", "protected_value_change", "transport_5xx_after_instance_loss"],
+    "rule": "A retry is a distinct attempt and never overwrites or reclassifies the first result."
+  },
+  "fallback_policy": {
+    "on_structural_failure_after_retry": "Return the original source blocks unchanged, preserving application-owned IDs; mark fallback_original.",
+    "on_semantic_or_safety_failure": "Do not retry; return original source blocks unchanged and mark the precise safety failure.",
+    "on_partial_validity": "Fail the whole requested batch closed unless the caller explicitly supports per-block partial results and preserves exact ordering.",
+    "never": ["silently strip fences and call the response native-raw success", "silently drop invalid blocks", "silently use malformed model metadata", "hide fallback as model success"]
+  },
+  "logging_taxonomy": {
+    "transport": ["http_error", "missing_final_text", "raw_json", "fenced_recovered", "invalid_json", "reasoning_leak"],
+    "completion": ["stop", "length_explicit", "length_usage_cap", "runaway_repetition", "empty_output"],
+    "schema": ["schema_valid", "schema_missing_field", "schema_extra_field", "schema_wrong_type", "schema_wrong_enum"],
+    "business": ["ids_exact", "ids_missing", "ids_duplicate", "ids_extra", "ids_reordered", "empty_block_text", "status_invalid"],
+    "semantic_safety": ["semantic_pass", "omission", "unsupported_addition", "boundary_leak", "protected_value_change", "placeholder_text_change", "reference_mismatch_only", "review_required"],
+    "control_flow": ["attempt_0", "retry_1", "retry_exhausted", "fallback_original", "accepted"],
+    "provenance": ["model_revision", "request_digest", "schema_digest", "source_digest", "expected_id_digest", "raw_output_digest", "response_envelope_digest", "validator_version"]
+  },
+  "hypotheses": [
+    "Removing model-authored input digests and duplicated placeholder inventories should reduce false rejection without reducing safety because the application can compute both deterministically.",
+    "A compact generic blocks schema should remain more robust at P4 than request-specific positional const grammars, but schema-complexity limits outside the tested 25-item case remain unknown."
+  ],
+  "unresolved_evidence_gaps": [
+    "No controlled product-shaped plain-versus-native-JSON A/B holds the same approximately 23k-token prefix and current chunk constant.",
+    "No block-preserving end-to-end merge result validates early, middle, and late real chunks.",
+    "No retained execution demonstrates the proposed one-retry and fallback policy end to end.",
+    "Semantic completeness is based on direct private review, not exhaustive source-unit alignment or audio truth.",
+    "The current factual-block validator performs minimal shape checks rather than full JSON Schema Draft validation.",
+    "The safe upper bound for generic schema complexity and P4 across other block counts is unknown."
+  ],
+  "evidence": {
+    "repository": [
+      "tools/lmstudio_lab/structured_output_correction.py",
+      "tools/lmstudio_lab/private_benchmark_pack.py",
+      "tools/lmstudio_lab/private_benchmark_overlay.py",
+      "tools/lmstudio_lab/structured.py",
+      "experiments/lmstudio/private_benchmark_pack/v1/schemas/normalization_output_v1.schema.json",
+      "experiments/lmstudio/results_summaries/2026-07-12_gemma4_native_structured_output_correction.md",
+      "experiments/lmstudio/results_summaries/2026-07-12_gemma4_whisper_structured_parallel_statistics.md",
+      "experiments/lmstudio/results_summaries/2026-07-12_gemma_whisper_benchmark_retrospective.md",
+      "experiments/lmstudio/results_summaries/2026-07-12_small_gemma_long_context_json_forensics.md",
+      "experiments/lmstudio/results_summaries/2026-07-12_long_context_representation_analysis.md"
+    ],
+    "private_artifact_classes": [
+      "60 repeated native structured-output raw final texts",
+      "60 matching complete response envelopes",
+      "two extended E4B/M05 boundary raw outputs and envelopes"
+    ]
+  }
+}

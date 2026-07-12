@@ -1,0 +1,172 @@
+{
+  "schema_version": "gemma4-final-practical-recommendations-v2",
+  "date": "2026-07-13",
+  "status": "bounded closure evidence synthesis",
+  "decision": {
+    "production_admission": "not established for any model",
+    "preferred_candidate": "Gemma 4 12B QAT",
+    "default_long_context_representation": "plain text",
+    "conditional_structured_representation": "compact generic JSON blocks with application-owned identity validation",
+    "safe_concurrency": {
+      "full_approximately_23k_prefix_tested_32k_runtime": "P1 sequential",
+      "bounded_8k_compact_generic_schema": "P2 qualified; repaired P4 structural-only until semantic qualification"
+    },
+    "default_gpu_placement": "automatic",
+    "physical_cache_reuse": "unproven"
+  },
+  "closure_denominators": {
+    "all_attempts": 15,
+    "http_200": 11,
+    "http_400": 4,
+    "finish_stop": 9,
+    "finish_length": 2,
+    "response_format_ab": {
+      "attempts": 4,
+      "json_arms": 2,
+      "json_parse_and_schema_success": 1
+    },
+    "e2b_json_with_exact_repeat": {
+      "attempts": 2,
+      "successes": 0,
+      "finish_length": 2,
+      "visible_output_and_usage_outcome_repeated": true
+    },
+    "full_prefix_p2": {
+      "plain_attempts": 2,
+      "block_attempts": 2,
+      "successes": 0,
+      "http_400_capacity_rejections": 4
+    },
+    "eventual_sequential_recovery": {
+      "plain_positions": "3/3",
+      "block_positions": "3/3",
+      "all_attempts_including_p2_failures": "6/10 successful generated responses"
+    }
+  },
+  "model_recommendations": {
+    "E2B": {
+      "position": "speed-first conservative copier or bounded JSON helper",
+      "proven_facts": [
+        "Long plain input at about 23.4k prompt tokens completed and preserved the current chunk, but cleanup gain was weak.",
+        "The long compact schema-output arm failed 2/2 with HTTP 200, finish=length, 1620/1620 completion tokens, and 1227 reasoning tokens; visible JSON was partial and unparseable.",
+        "The failure is a reasoning/output-budget interaction under the tested contract, not a general large-context collapse.",
+        "Bounded M01/M05 raw JSON and repaired generic-schema P4 remain strengths."
+      ],
+      "recommendation": "Do not use the tested 23k compact schema-output contract. Require semantic completeness and cleanup-gain validation.",
+      "unresolved": [
+        "No JSON-input early-middle-late matrix.",
+        "No independently verified zero-reasoning or larger-budget decomposition for the long schema-output arm."
+      ]
+    },
+    "E4B": {
+      "position": "bounded plain-input option with task-specific blocks",
+      "proven_facts": [
+        "One long same-prompt compact schema-output arm completed with stop, zero reasoning, parseable raw JSON, exact narrow schema, and complete current-chunk content.",
+        "This is one syntactic and semantic feasibility cell, not repeatability or admission.",
+        "Separate JSON/timestamped input-representation evidence retained a silent early-tail deletion.",
+        "M05 malformed runaway remains deterministic through 4096, 8192, and 16384 output-token caps."
+      ],
+      "recommendation": "Keep plain input as default. Use schema-output only with semantic and completeness validation. Block M05-like repeated-tail shapes."
+    },
+    "12B QAT": {
+      "position": "preferred quality-oriented integration candidate",
+      "proven_facts": [
+        "Plain closure outputs were complete and chunk-only with 13/13 exact protected numeric values; the ordered merge was complete.",
+        "Block closure outputs mechanically merged 24/24 exact IDs in order with no missing, duplicate, or extra IDs and retained semantic content.",
+        "Initial full-prefix P2 attempts failed 0/4 before generation; all positions succeeded sequentially.",
+        "Individual about-23k requests fit the tested 32k runtime, but two such requests did not fit concurrently.",
+        "Bounded 8k P2 and repaired generic-schema P4 results do not admit full-prefix P2/P4."
+      ],
+      "recommendation": "Use plain input and P1 sequential for the tested full-prefix workload. Use compact blocks when identity and mechanical merge matter. Treat output as a reviewable draft.",
+      "unresolved": [
+        "No second recording or exhaustive source-unit alignment.",
+        "No active-application persistence read-back or original-block fallback merge.",
+        "No generated-output structural-retry validation."
+      ]
+    },
+    "26B MoE": {
+      "position": "high-latency option requiring workload-specific quality proof",
+      "proven_facts": [
+        "No stable quality advantage over 12B was demonstrated.",
+        "Bounded P2 and repaired generic-schema P4 passed structurally, but latency was much higher.",
+        "Controlled outputs included under-editing and occasional damage to critical items or technical names."
+      ],
+      "recommendation": "Use only when review on the exact workload proves a quality gain worth the latency."
+    }
+  },
+  "cross_cutting": {
+    "response_format_ab": {
+      "manipulation": "plain output versus schema-constrained JSON output",
+      "constant_input_representation": "plain full context and the same current chunk",
+      "warning": "Do not cite this as plain-context versus JSON-context evidence."
+    },
+    "long_context_representation": {
+      "default": "plain text",
+      "timestamps": "not default; highest overhead and the only observed 12B cross-boundary continuation",
+      "json_input": "identity-friendly but no stable quality advantage; representation-specific deletion exists for E4B"
+    },
+    "structured_output": {
+      "runtime_schema": "compact generic items array with id and text",
+      "application_validation": [
+        "normal transport and termination",
+        "raw parse or explicitly logged single-fence recovery",
+        "closed schema",
+        "exact item count, ID set, uniqueness, and order",
+        "chunk boundaries, protected values, omissions, additions, and repetition"
+      ],
+      "forbidden": "request-specific 25-position const-heavy grammar at P4"
+    },
+    "concurrency": {
+      "bounded_8k": "P2 passed; repaired P4 passed structurally",
+      "full_approximately_23k": "P2 failed 0/4 before generation; use P1 sequential in the tested runtime",
+      "principle": "Concurrency admission is workload- and allocation-specific, not a global model property."
+    },
+    "retry_and_merge": {
+      "observed": [
+        "sequential capacity recovery after pre-generation HTTP 400",
+        "mechanical ordered plain concatenation",
+        "mechanical 24-item block merge with exact IDs"
+      ],
+      "not_observed": [
+        "retry after generated malformed JSON or schema/ID defects",
+        "original-block fallback merge",
+        "persistence projection and read-back",
+        "merge idempotence"
+      ]
+    },
+    "cache": "Lifecycle reuse and hints exist; physical KV reuse and avoided prefill remain unproven.",
+    "gpu": "Automatic placement remains default; maximum-GPU mode showed no proven benefit without layer-aware, output-normalized telemetry."
+  },
+  "semantic_reviews": {
+    "12b_plain_merge": {
+      "verdict": "semantic pass with editorial caveats",
+      "chunks_complete_and_chunk_only": "3/3",
+      "exact_protected_numeric_values": "13/13",
+      "merge_order": "early-middle-late",
+      "publication_ready": false
+    },
+    "12b_block_merge": {
+      "verdict": "structural and semantic pass for conservative lossless use; cleanup needs improvement",
+      "items": 24,
+      "exact_ids_and_order": true,
+      "missing": 0,
+      "duplicate": 0,
+      "extra": 0,
+      "publication_ready": false
+    }
+  },
+  "remaining_gaps": [
+    "Second recording for generalization.",
+    "Active application persistence and fallback path.",
+    "Audio-grounded microphone path.",
+    "Reviewed Russian-to-English path.",
+    "Controlled capacity change only if full-prefix P2 is operationally required.",
+    "Physical cache and per-layer GPU telemetry."
+  ],
+  "privacy": {
+    "contains_private_text": false,
+    "contains_private_paths": false,
+    "contains_personal_data": false,
+    "contains_source_application_identifier": false
+  }
+}

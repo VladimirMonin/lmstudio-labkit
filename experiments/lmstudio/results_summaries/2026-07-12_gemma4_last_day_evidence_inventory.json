@@ -1,0 +1,185 @@
+{
+  "schema_version": "1.0",
+  "scope": "gemma4_last_day_evidence_inventory",
+  "window": {
+    "basis": "artifact and Git timestamps inspected during the audit",
+    "timezone": "UTC",
+    "note": "The inventory covers the rolling 24-hour evidence window ending on 2026-07-12. It does not infer execution from report publication time alone."
+  },
+  "classification_definitions": {
+    "VALID_MODEL_RESULT": "A generation reached the model and retained enough request, response, or measurement evidence for a bounded result; quality may still fail.",
+    "CONFIGURATION_FAILURE": "The request failed before useful generation because of load, context, timeout, schema-grammar, or request configuration.",
+    "RUNNER_FAILURE": "The runner or supervision path failed independently of model behavior.",
+    "PREFLIGHT_ONLY": "Only readiness, load, token-fit, or cleanup evidence exists; no measured generation was attempted.",
+    "SUPERSEDED_RESULT": "A real retained result was replaced as the current evidentiary authority by a later corrected or canonical run.",
+    "NOT_TESTED": "The relevant generation cell has no retained execution evidence."
+  },
+  "chronology": [
+    {
+      "order": 0,
+      "evidence_set": "frozen_plans_token_fit_and_load_configs",
+      "public_evidence": [
+        "experiments/lmstudio/four_model_overlay/v1/execution_bundle/frozen-plan.json",
+        "experiments/lmstudio/four_model_overlay/v1/execution_bundle/load-configs/",
+        "experiments/lmstudio/source_shaped_rehearsal/v1/manifest.json"
+      ],
+      "private_artifact_class": "four tokenizer-capture records, long-source freeze, representation assets, manual rubric, and process progress markers",
+      "inventory": [
+        {"cell_group": "four-model tokenizer and load-contract preparation", "calls": 0, "classification": "PREFLIGHT_ONLY", "raw_outputs_available": 0, "reason": "Token-fit and load configuration evidence prepares execution but is not generation evidence."},
+        {"cell_group": "source-shaped rehearsal bundle and manual rubric", "calls": 0, "classification": "PREFLIGHT_ONLY", "raw_outputs_available": 0, "reason": "The bundle was prepared, but no rehearsal result exists in this evidence window."}
+      ]
+    },
+    {
+      "order": 1,
+      "evidence_set": "four_model_prompt_embedded_overlay",
+      "public_evidence": [
+        "experiments/lmstudio/four_model_overlay/v1/execution_bundle/frozen-plan.json",
+        "experiments/lmstudio/results_summaries/2026-07-12_four_model_real_asset_benchmark_synthesis.json"
+      ],
+      "private_artifact_class": "owner-only per-call raw text, response envelopes, scorecards, and call ledgers",
+      "inventory": [
+        {"cell_group": "initial E2B 20-call execution", "calls": 20, "classification": "SUPERSEDED_RESULT", "raw_outputs_available": 20, "reason": "Complete retained execution, superseded by the later canonical task-budget E2B slice."},
+        {"cell_group": "E2B reasoning-off 20-call execution", "calls": 20, "classification": "SUPERSEDED_RESULT", "raw_outputs_available": 20, "reason": "Complete retained execution, not the canonical slice used by the published synthesis."},
+        {"cell_group": "canonical E2B slice", "calls": 20, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 20, "reason": "All frozen cells executed; strict acceptance was 0/20 but transport, structure, and timing remain bounded results."},
+        {"cell_group": "canonical E4B slice", "calls": 20, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 20, "reason": "All frozen cells executed; strict acceptance was 0/20."},
+        {"cell_group": "canonical 12B QAT slice", "calls": 20, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 20, "reason": "All frozen cells executed; strict acceptance was 0/20."},
+        {"cell_group": "canonical 26B MoE slice", "calls": 20, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 20, "reason": "All frozen cells executed; strict acceptance was 0/20."}
+      ]
+    },
+    {
+      "order": 2,
+      "evidence_set": "native_structured_output_correction",
+      "public_evidence": [
+        "experiments/lmstudio/results_summaries/2026-07-12_gemma4_native_structured_output_correction.json"
+      ],
+      "private_artifact_class": "owner-only raw text and complete response envelopes for M01, M05, and L02-L",
+      "inventory": [
+        {"cell_group": "earlier non-authoritative 4-model by 3-view transport pass", "calls": 12, "classification": "SUPERSEDED_RESULT", "raw_outputs_available": 12, "reason": "Retained outputs exist, but the Responses API native-schema rerun is authoritative."},
+        {"cell_group": "native-schema M01/M05/L02-L matrix", "calls": 12, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 12, "reason": "One measured call per model/view with native strict schema and reasoning disabled."},
+        {"cell_group": "E4B M05 8192-output boundary", "calls": 1, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 1, "reason": "Runaway malformed generation exhausted the exact output budget; this is a valid negative model result."},
+        {"cell_group": "E4B M05 16384-output boundary", "calls": 1, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 1, "reason": "Context-safe output exhaustion confirmed continued runaway generation."}
+      ]
+    },
+    {
+      "order": 3,
+      "evidence_set": "long_transcript_representation_matrix",
+      "public_evidence": [
+        "experiments/lmstudio/results_summaries/2026-07-12_gemma_whisper_benchmark_retrospective.md"
+      ],
+      "private_artifact_class": "frozen 54-call plan, source freeze, three representation assets, per-call envelopes, watchdog marker, and manual review artifacts",
+      "inventory": [
+        {"cell_group": "three one-call canaries", "calls": 3, "classification": "SUPERSEDED_RESULT", "raw_outputs_available": 3, "reason": "Canaries were followed by the retained phase execution."},
+        {"cell_group": "phase execution calls c10-c36", "calls": 27, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 27, "reason": "Retained per-call envelopes exist; the watchdog interruption was followed by continued output creation and is not itself a model failure."},
+        {"cell_group": "unexecuted portion of frozen 54-call plan", "calls": 27, "classification": "NOT_TESTED", "raw_outputs_available": 0, "reason": "No per-call artifacts exist for half of the frozen plan."}
+      ],
+      "representation_coverage": {
+        "plain_text": "executed in the partial phase matrix and the later repeat-5 cell",
+        "json_blocks": "executed in the partial phase matrix but not in the later repeat-5 closure",
+        "timestamped_paragraphs": "executed in the partial phase matrix; one boundary-crossing result remains a warning",
+        "controlled_plain_vs_json_same_content_repeat5": "NOT_TESTED"
+      }
+    },
+    {
+      "order": 4,
+      "evidence_set": "long_plain_repeat5",
+      "public_evidence": [
+        "experiments/lmstudio/results_summaries/2026-07-12_gemma4_whisper_structured_parallel_statistics.json"
+      ],
+      "private_artifact_class": "20 per-call envelopes plus a 20-row progress ledger",
+      "inventory": [
+        {"cell_group": "one long plain early-chunk cell, five cold repeats per model", "calls": 20, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 20, "reason": "All 20 subprocess rows returned success and every per-call envelope is retained."}
+      ]
+    },
+    {
+      "order": 5,
+      "evidence_set": "native_structured_repeat5",
+      "public_evidence": [
+        "experiments/lmstudio/results_summaries/2026-07-12_gemma4_whisper_structured_parallel_statistics.json"
+      ],
+      "private_artifact_class": "five complete 12-call reports, 60 response envelopes, and 60 extracted raw-text files",
+      "inventory": [
+        {"cell_group": "M01/M05/L02-L, five repeats for four models", "calls": 60, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 60, "reason": "Every model/task/repeat has a retained envelope and raw extraction; quality and schema failures remain valid negative results."}
+      ]
+    },
+    {
+      "order": 6,
+      "evidence_set": "p2_and_gpu_placement",
+      "public_evidence": [
+        "experiments/lmstudio/results_summaries/2026-07-12_gemma4_whisper_structured_parallel_statistics.json"
+      ],
+      "private_artifact_class": "sanitized batch summaries, request metrics, structured-error ledgers, system samples, and one GPU load read-back",
+      "inventory": [
+        {"cell_group": "E2B P2 warmup plus four measured requests", "calls": 5, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 0, "reason": "All four measured requests passed; raw prompt/response storage was disabled."},
+        {"cell_group": "E4B P2 warmup plus four measured requests", "calls": 5, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 0, "reason": "All four measured requests passed; raw prompt/response storage was disabled."},
+        {"cell_group": "three 12B managed-runner attempts ending during warmup", "calls": 3, "classification": "CONFIGURATION_FAILURE", "raw_outputs_available": 0, "reason": "No measured request ran; context verification and inherited timeout configuration prevented the measured phase."},
+        {"cell_group": "12B P2 at 1875 output tokens", "calls": 2, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 0, "reason": "Both requests reached generation and ended in length failure; the result is a valid budget-negative cell."},
+        {"cell_group": "12B P2 at 4096 output tokens", "calls": 2, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 0, "reason": "Both requests passed."},
+        {"cell_group": "26B P2 at 4096 output tokens", "calls": 2, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 0, "reason": "Both requests passed."},
+        {"cell_group": "12B P2 with gpu-max placement", "calls": 2, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 0, "reason": "Both requests passed; the load read-back did not establish layer placement and showed no timing gain."}
+      ]
+    },
+    {
+      "order": 7,
+      "evidence_set": "p4_diagnosis_and_repair",
+      "public_evidence": [
+        "experiments/lmstudio/results_summaries/2026-07-12_gemma4_whisper_structured_parallel_statistics.json"
+      ],
+      "private_artifact_class": "batch summaries and request-level metrics for positional-schema failures, control probes, and 20 repaired batch artifacts",
+      "inventory": [
+        {"cell_group": "positional-schema measured P4 requests across four models", "calls": 16, "classification": "CONFIGURATION_FAILURE", "raw_outputs_available": 0, "reason": "HTTP 400 occurred before useful generation because of request-specific grammar complexity."},
+        {"cell_group": "positional-schema sequential warmups", "calls": 4, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 0, "reason": "Warmup generation passed and isolated the failure to concurrent request grammar handling."},
+        {"cell_group": "26B first P4 attempt ending before measured requests", "calls": 1, "classification": "CONFIGURATION_FAILURE", "raw_outputs_available": 0, "reason": "The retained summary contains no measured request."},
+        {"cell_group": "E2B context-reduction control: warmup", "calls": 1, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 0, "reason": "The sequential warmup completed."},
+        {"cell_group": "E2B context-reduction control: measured P4 requests", "calls": 4, "classification": "CONFIGURATION_FAILURE", "raw_outputs_available": 0, "reason": "Reducing context did not repair the positional-schema HTTP 400 failure."},
+        {"cell_group": "compact generic-schema repaired P4", "calls": 80, "classification": "VALID_MODEL_RESULT", "raw_outputs_available": 0, "reason": "Five four-request batches per model produced 80/80 HTTP 200, stop, zero-reasoning, exact-ID results."}
+      ]
+    }
+  ],
+  "reconciled_denominators": {
+    "historical_overlay": {"planned_cells": 64, "planned_calls": 80, "canonical_executed_calls": 80, "strict_accepted_calls": 0, "additional_superseded_e2b_calls_retained": 40},
+    "native_correction": {"authoritative_matrix_calls": 12, "boundary_follow_up_calls": 2, "superseded_transport_calls_retained": 12},
+    "long_representation_plan": {"planned_calls": 54, "retained_phase_calls": 27, "retained_canary_calls": 3, "not_tested_plan_calls": 27},
+    "long_plain_repeat5": {"calls": 20},
+    "structured_repeat5": {"calls": 60},
+    "repaired_p4": {"batches": 20, "calls": 80},
+    "warning": "These denominators describe different experiments and include superseded retries and diagnostics. They must not be added into a single model-quality success rate."
+  },
+  "raw_output_availability": {
+    "available_call_outputs": 256,
+    "derivation": "120 prompt-embedded overlay outputs (80 canonical plus 40 superseded E2B executions), 26 native-correction outputs including superseded and boundary runs, 30 long-representation canary/phase envelopes, 20 long-repeat envelopes, and 60 structured-repeat raw extracts. The same call may have both envelope and text files but is counted once.",
+    "not_available_by_design": [
+      "P2 and P4 metric-only probes",
+      "repaired P4 repeat-5 requests",
+      "configuration failures before useful generation"
+    ],
+    "caution": "The artifact inventory confirms file presence, not semantic correctness. Private text was not copied into this report."
+  },
+  "coverage_gaps": [
+    {"topic": "microphone", "classification": "NOT_TESTED", "detail": "No new production-shaped microphone call is present in the last-day closure; public text views are not audio-grounded evidence."},
+    {"topic": "video", "classification": "NOT_TESTED", "detail": "No complete real-video early/middle/late chunk, merge, and semantic-review pipeline was executed."},
+    {"topic": "translation", "classification": "NOT_TESTED", "detail": "Fixtures or prompts exist, but no relevant Gemma result artifact closes translation quality."},
+    {"topic": "vision", "classification": "NOT_TESTED", "detail": "No last-day vision generation belongs to the statistical closure. Earlier narrow route evidence remains historical and does not establish broad image understanding."},
+    {"topic": "physical_cache_reuse", "classification": "NOT_TESTED", "detail": "Loaded-session latency signals exist, but request-linked cache-hit or reused-token telemetry does not."},
+    {"topic": "exact_32768_generation", "classification": "NOT_TESTED", "detail": "The last-day authoritative matrices used 28672 or lower contexts; load or fit checks are not exact-32k generation."},
+    {"topic": "controlled_plain_vs_json_repeat5", "classification": "NOT_TESTED", "detail": "No repeat-5 A/B holds source, chunk boundaries, context, budget, and order constant while changing only representation."},
+    {"topic": "gpu_layer_placement", "classification": "NOT_TESTED", "detail": "The gpu-max comparison lacks a reliable per-layer offload read-back."}
+  ],
+  "facts_interpretations_hypotheses": {
+    "facts": [
+      "The canonical prompt-embedded overlay executed 64 cells and 80 calls.",
+      "The native structured correction retained 12 authoritative matrix calls plus two E4B boundary calls.",
+      "The frozen long-representation plan contains 54 calls, while 27 phase call artifacts and three canaries are retained.",
+      "The repeat-5 closures retain 20 long-plain and 60 native-structured calls.",
+      "The compact-schema P4 repair retains 80 successful request summaries."
+    ],
+    "interpretations": [
+      "A strict quality rejection remains a valid model result when generation and evidence are complete.",
+      "The P4 positional-schema failures are configuration failures because the measured requests returned HTTP 400 before useful generation and compact grammar repaired the lane.",
+      "Loaded-session speedup is a timing observation, not proof of physical KV-cache reuse."
+    ],
+    "hypotheses": [
+      "Compact generic schemas reduce runtime grammar pressure enough to make bounded P4 viable on this setup.",
+      "12B QAT is the strongest next rehearsal candidate, but this remains conditional on product-shaped boundary and exact-surface validation."
+    ]
+  }
+}

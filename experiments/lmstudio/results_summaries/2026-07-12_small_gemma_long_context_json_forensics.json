@@ -1,0 +1,231 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-07-12",
+  "status": "offline_evidence_reconciliation",
+  "live_calls_performed": 0,
+  "models": [
+    "google/gemma-4-e2b",
+    "google/gemma-4-e4b"
+  ],
+  "executive_finding": {
+    "general_large_context_failure": false,
+    "e2b_earlier_crash_classification": "zero-call transport_and_runner_lifecycle_failure",
+    "e4b_m05_classification": "deterministic_task_specific_runaway_generation",
+    "controlled_large_prefix_chunk_json_ab_exists": false
+  },
+  "private_artifact_classes_inspected": [
+    "cold long-transcript request envelopes and outputs",
+    "native structured-output envelopes and raw outputs",
+    "E4B M05 output-budget boundary artifacts",
+    "historical process and failure evidence"
+  ],
+  "long_plain": {
+    "load_context_length": 32768,
+    "transport": "/v1/chat/completions",
+    "cache_prompt": true,
+    "reasoning_disabled": true,
+    "calls_per_model": 5,
+    "request": {
+      "driver_input_tokens": 23359,
+      "envelope_prompt_tokens": 23354,
+      "max_output_tokens": 1620,
+      "request_digest_stable": true
+    },
+    "google/gemma-4-e2b": {
+      "completed": 5,
+      "finish_stop": 5,
+      "reasoning_tokens": 0,
+      "output_tokens_each": 874,
+      "unique_output_digests": 1,
+      "semantic_complete": 5,
+      "cleanup_pass": 0
+    },
+    "google/gemma-4-e4b": {
+      "completed": 5,
+      "finish_stop": 5,
+      "reasoning_tokens": 0,
+      "output_tokens_each": 897,
+      "unique_output_digests": 1,
+      "quality_note": "Transport and context passed; separate representation-sensitive cells contain harmful deletions."
+    }
+  },
+  "e2b_initial_failure": {
+    "completed_model_calls": 0,
+    "failure_classes": [
+      "duplicate inventory records miscounted as multiple loaded instances",
+      "/v1/responses HTTP 500 before a completed call",
+      "secondary cleanup exception after server-side instance removal"
+    ],
+    "model_behavior_inference_allowed": false,
+    "reconciled_by": "Later product-shaped /v1/chat/completions calls completed 5/5."
+  },
+  "structured_repeat_5": {
+    "context_length": 28672,
+    "reasoning_tokens_zero": true,
+    "google/gemma-4-e2b": {
+      "M01": {
+        "input_tokens": 737,
+        "max_output_tokens": 512,
+        "output_tokens": 362,
+        "raw_json": 5,
+        "extractable_json": 5,
+        "exact_schema": 5,
+        "text_note": "Useful lexical text; strict target and placeholder-metadata gates failed."
+      },
+      "M05": {
+        "input_tokens": 1170,
+        "max_output_tokens": 4096,
+        "output_tokens": 554,
+        "raw_json": 5,
+        "extractable_json": 5,
+        "exact_schema": 5,
+        "text_note": "Task understood; repeated-tail removal was not consistently complete in inspected outputs."
+      },
+      "L02-L": {
+        "input_tokens": 12060,
+        "max_output_tokens": 512,
+        "output_tokens": 155,
+        "raw_json": 0,
+        "extractable_json": 5,
+        "exact_schema": 5,
+        "reported_retained_units": 318,
+        "source_units": 428,
+        "retention_is_source_aligned_proof": false
+      }
+    },
+    "google/gemma-4-e4b": {
+      "M01": {
+        "input_tokens": 737,
+        "max_output_tokens": 512,
+        "output_tokens": 268,
+        "raw_json": 0,
+        "extractable_json": 5,
+        "exact_schema": 5,
+        "text_note": "Fenced wrapper; useful lexical text while strict metadata and target gates failed."
+      },
+      "M05": {
+        "input_tokens": 1170,
+        "max_output_tokens": 4096,
+        "output_tokens": 4096,
+        "raw_json": 0,
+        "extractable_json": 0,
+        "exact_schema": 0,
+        "length_hit": 5,
+        "classification": "deterministic_runaway"
+      },
+      "L02-L": {
+        "input_tokens": 12060,
+        "max_output_tokens": 512,
+        "output_tokens": 215,
+        "raw_json": 0,
+        "extractable_json": 5,
+        "exact_schema": 5,
+        "reported_retained_units": 43,
+        "source_units": 428,
+        "retention_is_source_aligned_proof": false
+      }
+    }
+  },
+  "e4b_m05_budget_controls": [
+    {
+      "context_length": 28672,
+      "input_tokens": 1170,
+      "max_output_tokens": 4096,
+      "output_tokens": 4096,
+      "reasoning_tokens": 0,
+      "extractable_json": false,
+      "continued_prior_prefix": null
+    },
+    {
+      "context_length": 28672,
+      "input_tokens": 1170,
+      "max_output_tokens": 8192,
+      "output_tokens": 8192,
+      "reasoning_tokens": 0,
+      "extractable_json": false,
+      "continued_prior_prefix": true
+    },
+    {
+      "context_length": 28672,
+      "native_input_tokens": 1170,
+      "sdk_formatted_input_tokens": 1175,
+      "max_output_tokens": 16384,
+      "output_tokens": 16384,
+      "safety_margin_tokens": 2048,
+      "required_tokens": 19607,
+      "remaining_tokens": 9065,
+      "reasoning_tokens": 0,
+      "extractable_json": false,
+      "continued_4096_and_8192_prefixes": true
+    }
+  ],
+  "causal_classification": {
+    "general_large_context_failure": "contradicted",
+    "e2b_load_or_lifecycle_failure": "confirmed_for_early_zero_call_attempts_only",
+    "e2b_wrong_transport": "confirmed",
+    "e4b_m05_output_budget_too_small": "contradicted",
+    "e4b_m05_reasoning_leak": "contradicted",
+    "general_json_schema_inability": "contradicted_for_both_models",
+    "const_heavy_schema_runtime_failure": "confirmed_separate_pre_generation_failure",
+    "e4b_m05_task_specific_behavior": "best_supported_interpretation",
+    "large_prefix_plus_chunk_plus_json_interaction": "not_tested_as_controlled_ab"
+  },
+  "schema_complexity_control": {
+    "positional_contract": "25 per-position const ID constraints",
+    "failure": "HTTP 400 before generation",
+    "context_reduction_repaired": false,
+    "generic_schema_repair": {
+      "google/gemma-4-e2b": "20/20",
+      "google/gemma-4-e4b": "20/20"
+    },
+    "relation_to_e4b_m05": "different failure class"
+  },
+  "smallest_additional_live_experiment": {
+    "required_for_historical_classification": false,
+    "required_for_controlled_product_shaped_interaction": true,
+    "base_calls": 4,
+    "design": [
+      "E2B long-prefix current-chunk plain response",
+      "E2B identical content compact generic JSON response",
+      "E4B long-prefix current-chunk plain response",
+      "E4B identical content compact generic JSON response"
+    ],
+    "controls": {
+      "transport": "/v1/chat/completions",
+      "context_length": 32768,
+      "reasoning": "disabled and verified zero",
+      "temperature": 0,
+      "lifecycle": "one cold load per call with zero-loaded read-back",
+      "output_budget": "same contract-derived cap in both arms; current evidence suggests 1620",
+      "scoring_axes": [
+        "raw_json",
+        "extractable_json",
+        "exact_schema",
+        "text_quality",
+        "finish_and_length",
+        "boundary_isolation"
+      ]
+    },
+    "conditional_repeat_calls": 1,
+    "conditional_repeat_rule": "Repeat only an exact failed JSON arm once to test determinism."
+  },
+  "unresolved_evidence_gaps": [
+    "No controlled response-format A/B on the same 23k-token full-prefix and current chunk.",
+    "The exact trigger inside E4B M05 is not decomposed among prompt wording, source text, and schema fields.",
+    "Long/plain quality evidence is one frozen recording and one early chunk.",
+    "L02-L retention values are model-reported rather than independently source-aligned."
+  ],
+  "public_sources": [
+    "experiments/lmstudio/results_summaries/2026-07-12_gemma4_native_structured_output_correction.md",
+    "experiments/lmstudio/results_summaries/2026-07-12_gemma4_native_structured_output_correction.json",
+    "experiments/lmstudio/results_summaries/2026-07-12_gemma4_whisper_structured_parallel_statistics.md",
+    "experiments/lmstudio/results_summaries/2026-07-12_gemma4_whisper_structured_parallel_statistics.json",
+    "experiments/lmstudio/results_summaries/2026-07-12_gemma_whisper_benchmark_retrospective.md",
+    "experiments/lmstudio/source_shaped_rehearsal/v1/load_config.json"
+  ],
+  "privacy": {
+    "private_text_in_report": false,
+    "private_paths_in_report": false,
+    "pii_in_report": false
+  }
+}

@@ -1,0 +1,236 @@
+{
+  "schema_version": "gemma4-evidence-red-team-v1",
+  "date": "2026-07-12",
+  "execution": {
+    "mode": "offline_adversarial_review",
+    "model_calls": 0,
+    "model_loads": 0,
+    "network_requests": 0
+  },
+  "classification_definitions": {
+    "CONFIRMED": "The bounded claim follows from retained evidence.",
+    "OVERSTATED": "The evidence supports a narrower claim.",
+    "UNDERSTATED": "Retained evidence is stronger or more specific than reported.",
+    "UNSUPPORTED": "The evidence required for the claim is absent.",
+    "CONTRADICTED": "Retained evidence directly conflicts with the claim."
+  },
+  "summary": {
+    "production_admission": "UNSUPPORTED",
+    "safe_rehearsal_default": "P2",
+    "p4_status": "structural_probe_only",
+    "preferred_next_candidate": "12B QAT as a single-recording rehearsal hypothesis, not an admitted model",
+    "physical_cache_reuse": "UNSUPPORTED"
+  },
+  "claims": [
+    {
+      "id": "C01",
+      "claim": "Canonical overlay accounting is 64 cells and 80 calls, excluding 40 superseded E2B calls.",
+      "classification": "CONFIRMED",
+      "evidence": ["frozen overlay plan", "four-model synthesis JSON", "last-day inventory"],
+      "correction": "Keep canonical and superseded denominators separate."
+    },
+    {
+      "id": "C02",
+      "claim": "Native correction accounting is 12 authoritative calls plus two boundary diagnostics.",
+      "classification": "CONFIRMED",
+      "evidence": ["native structured-output correction JSON"],
+      "correction": "Do not mix the superseded 12-call transport pass into this denominator."
+    },
+    {
+      "id": "C03",
+      "claim": "There are 256 retained independent outputs.",
+      "classification": "OVERSTATED",
+      "evidence": ["last-day inventory arithmetic", "repeat-five unique-output fields"],
+      "correction": "Report 256 retained call executions with call-level output artifacts, then report unique outputs and semantic-review counts separately."
+    },
+    {
+      "id": "C04",
+      "claim": "Five cold repeats per model provide five independent semantic confirmations.",
+      "classification": "OVERSTATED",
+      "evidence": ["long-repeat unique_outputs_per_model equals 1"],
+      "correction": "Report five executions, one unique output, one recording, one early chunk, and one prompt per model."
+    },
+    {
+      "id": "C05",
+      "claim": "12B QAT is operationally admitted by 5/5 semantically complete long-cleanup calls.",
+      "classification": "OVERSTATED",
+      "evidence": ["one byte-identical output repeated five times", "no exhaustive alignment", "no audio truth", "no multi-recording replication"],
+      "correction": "Describe 12B QAT as the preferred next rehearsal hypothesis."
+    },
+    {
+      "id": "C06",
+      "claim": "Plain text is verified against the active source pipeline.",
+      "classification": "OVERSTATED",
+      "evidence": ["one bounded laboratory early-chunk request", "missing active owner path, later chunks, retry, persistence, and merge"],
+      "correction": "Use PARTIAL for active-pipeline fit and optionally LAB_REQUEST_SHAPE_VERIFIED for the bounded request."
+    },
+    {
+      "id": "C07",
+      "claim": "The 27-call representation slice establishes a general plain-text default.",
+      "classification": "OVERSTATED",
+      "evidence": ["one recording", "single attempt per complete cell", "incomplete E2B coverage", "plain output for all arms", "no token matching"],
+      "correction": "Call plain text the conservative hypothesis for this recording and output contract."
+    },
+    {
+      "id": "C08",
+      "claim": "JSON blocks have a demonstrated merge advantage.",
+      "classification": "UNSUPPORTED",
+      "evidence": ["JSON was input representation while output remained plain text", "no block-preserving merge"],
+      "correction": "Keep the merge advantage as a hypothesis."
+    },
+    {
+      "id": "C09",
+      "claim": "Compact generic-schema P4 passed 80 of 80 structurally.",
+      "classification": "CONFIRMED",
+      "evidence": ["20 retained batch records", "80 request metrics"],
+      "correction": "Always state that raw text and semantic review are absent."
+    },
+    {
+      "id": "C10",
+      "claim": "True P2/P4 overlap is proven.",
+      "classification": "OVERSTATED",
+      "evidence": ["applied concurrency and wall-time arithmetic", "missing worker-slot request intervals"],
+      "correction": "Use STRONG_TIMING_SIGNAL until interval traces tied to worker slots and instance identity exist."
+    },
+    {
+      "id": "C11",
+      "claim": "Positional const grammar caused the P4 failure.",
+      "classification": "OVERSTATED",
+      "evidence": ["controls localize the failure to the positional-const request/runtime interaction", "no isolation of grammar complexity from concurrency or server implementation"],
+      "correction": "Use bounded association and repair language, not a universal causal threshold."
+    },
+    {
+      "id": "C12",
+      "claim": "Physical KV-cache reuse is proven.",
+      "classification": "UNSUPPORTED",
+      "evidence": ["no validated reuse semantics, avoided-prefill trace, or physical KV trace"],
+      "correction": "Keep physical reuse unproven."
+    },
+    {
+      "id": "C13",
+      "claim": "No positive request-linked cached-token count was retained.",
+      "classification": "CONTRADICTED",
+      "evidence": ["native correction JSON contains usage.input_tokens_details.cached_tokens equal to 1 on multiple rows"],
+      "correction": "Acknowledge the positive provider field but state that its meaning and reliability were not validated and it does not prove physical reuse."
+    },
+    {
+      "id": "C14",
+      "claim": "Maximum-GPU placement has a proven performance benefit.",
+      "classification": "UNSUPPORTED",
+      "evidence": ["same broad load report", "different completion-token totals", "no layer or physical VRAM telemetry"],
+      "correction": "Retain the no-proven-benefit conclusion and do not infer automatic placement is faster."
+    },
+    {
+      "id": "C15",
+      "claim": "Native strict schema guarantees raw JSON and semantic correctness.",
+      "classification": "CONTRADICTED",
+      "evidence": ["raw, fenced, malformed, extra-field, metadata, target, and length failures"],
+      "correction": "Keep transport, extraction, exact schema, identity, and semantics separate."
+    },
+    {
+      "id": "C16",
+      "claim": "Sixty structured repeat calls provide 60 independent semantic outputs.",
+      "classification": "OVERSTATED",
+      "evidence": ["12 model/task cells each have one unique output across five executions"],
+      "correction": "Publish 60 executions and 12 unique outputs; do not duplicate-weight semantic review."
+    },
+    {
+      "id": "C17",
+      "claim": "L02-L model-reported retention proves complete source retention.",
+      "classification": "CONTRADICTED",
+      "evidence": ["retention field is model-authored and no source-unit alignment exists"],
+      "correction": "Treat the field as structural self-report only."
+    },
+    {
+      "id": "C18",
+      "claim": "E4B M05 is a general large-context or JSON failure.",
+      "classification": "CONTRADICTED",
+      "evidence": ["long plain 5/5", "M01 and L02-L exact-schema after extraction", "4k/8k/16k shared-prefix runaway"],
+      "correction": "Localize the failure to the M05 task contract without naming an unisolated internal trigger."
+    },
+    {
+      "id": "C19",
+      "claim": "Retry and fallback are validated end to end.",
+      "classification": "UNSUPPORTED",
+      "evidence": ["policy exists only as recommendation", "no retained attempt-zero/retry/fallback execution"],
+      "correction": "Label the policy proposed."
+    },
+    {
+      "id": "C20",
+      "claim": "Production concurrency up to P4 is admitted.",
+      "classification": "UNSUPPORTED",
+      "evidence": ["metric-only compact-schema P4", "no semantic review", "no application-shaped long request", "no matched useful-throughput P1 baseline"],
+      "correction": "Use P2 as rehearsal default and P4 as structural capability evidence only."
+    },
+    {
+      "id": "C21",
+      "claim": "Microphone, video, requested-direction translation, and merge are closed.",
+      "classification": "UNSUPPORTED",
+      "evidence": ["no audio-grounded microphone result", "no real-video pipeline", "no requested-direction generation", "no generated multi-chunk merge"],
+      "correction": "Keep these surfaces NOT_TESTED; translation remains INVALID for the inspected opposite-direction templates."
+    }
+  ],
+  "markdown_json_inconsistencies": [
+    {
+      "topic": "parallel overlap",
+      "detail": "The verdict is PROVEN while the same artifacts acknowledge missing worker-slot interval traces."
+    },
+    {
+      "topic": "cache counter",
+      "detail": "The cache audit says no positive request-linked count was retained, while native-correction rows contain cached_tokens=1."
+    },
+    {
+      "topic": "plain pipeline fit",
+      "detail": "Plain text is VERIFIED while the active owner path, later chunks, retry, persistence, and merge are explicitly absent."
+    },
+    {
+      "topic": "maximum concurrency",
+      "detail": "The statistics JSON exposes max_concurrency=4 while Markdown limits P4 to bounded compact-schema structural evidence and recommends P2."
+    },
+    {
+      "topic": "repeat denominators",
+      "detail": "Execution counts are prominent while unique-output counts are not colocated with semantic conclusions."
+    }
+  ],
+  "mandatory_corrections": [
+    "Downgrade overlap from PROVEN to STRONG_TIMING_SIGNAL until worker-slot intervals are retained.",
+    "Replace causal P4 grammar wording with bounded association and repair wording.",
+    "Acknowledge positive but uninterpreted cached_tokens provider fields.",
+    "Add unique-output counts beside every repeat execution denominator.",
+    "Downgrade active plain-text pipeline fit from VERIFIED to PARTIAL.",
+    "Describe 12B QAT as the preferred next rehearsal candidate, not an admitted model.",
+    "Represent P4 as structural_probe_only and P2 as the rehearsal default.",
+    "State that the representation slice uses one recording, one attempt per complete cell, plain output, and no token matching.",
+    "State that repaired P4 has no semantic evidence.",
+    "Keep retry/fallback, merge, microphone, video, requested-direction translation, physical cache reuse, GPU layer placement, and full active-path admission explicitly untested."
+  ],
+  "unresolved_evidence_gaps": [
+    "No request interval trace tied to worker slots and instance identity for repaired P4.",
+    "No validated interpretation of the provider cached_tokens field.",
+    "No unique-output-aware semantic review ledger with source-unit alignment.",
+    "No second recording or repeated early/middle/late representation matrix.",
+    "No complete E2B representation matrix.",
+    "No controlled same-content plain-versus-native-JSON response-format A/B.",
+    "No block-preserving output, retry/fallback, persistence, and merge execution.",
+    "No audio truth, microphone owner-path result, real-video pipeline, or requested-direction translation result.",
+    "No application-shaped P1/P2/P4 useful-throughput comparison.",
+    "No physical cache, per-layer GPU placement, or complete VRAM telemetry."
+  ],
+  "evidence": {
+    "repository_reports_reconciled": 11,
+    "private_artifact_classes_cross_checked": [
+      "overlay call ledgers and outputs",
+      "long-representation envelopes and final texts",
+      "cold-repeat envelopes",
+      "repeated native structured-output envelopes and extracts",
+      "P2/P4 batch summaries and request metrics",
+      "GPU load read-back",
+      "active pipeline code"
+    ]
+  },
+  "privacy": {
+    "contains_private_text": false,
+    "contains_private_paths": false,
+    "contains_source_application_identifier": false
+  }
+}
