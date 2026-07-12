@@ -6,6 +6,7 @@ from tools.lmstudio_lab.structured_output_correction import (
     BASE_BUDGETS,
     DEFAULT_PACK,
     build_request,
+    classify_length_candidate,
     focused_content,
     m05_output_budget,
     parse_transport,
@@ -51,6 +52,12 @@ def test_transport_taxonomy_separates_raw_and_fenced_json() -> None:
     assert parse_transport('{"ok":true}') == ({"ok": True}, True, True)
     assert parse_transport('```json\n{"ok":true}\n```') == ({"ok": True}, False, True)
     assert parse_transport("not json") == (None, False, False)
+
+
+def test_length_candidate_includes_exact_budget_despite_stop_reason() -> None:
+    assert classify_length_candidate("stop", {"output_tokens": 4096}, 4096) is True
+    assert classify_length_candidate("stop", {"output_tokens": 4095}, 4096) is False
+    assert classify_length_candidate("max_output_tokens", None, 4096) is True
 
 
 def test_structural_score_reports_each_capability_axis() -> None:

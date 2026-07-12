@@ -159,6 +159,16 @@ def extract_content(envelope: dict[str, Any]) -> tuple[str, str | None, Any]:
     return texts[0], finish_reason, envelope.get("usage")
 
 
+def classify_length_candidate(
+    finish_reason: str | None, usage: Any, max_output_tokens: int
+) -> bool:
+    """Treat an explicit length reason or an exhausted output budget as a candidate hit."""
+    output_tokens = usage.get("output_tokens") if isinstance(usage, dict) else None
+    return finish_reason in {"length", "max_output_tokens"} or (
+        isinstance(output_tokens, int) and output_tokens >= max_output_tokens
+    )
+
+
 def parse_transport(text: str) -> tuple[Any | None, bool, bool]:
     try:
         return json.loads(text), True, True
@@ -369,7 +379,9 @@ def run_correction(
                         "response_envelope_sha256": _sha(_canonical(envelope)),
                         "raw_output_bytes": len(text.encode()),
                         "finish_reason": finish_reason,
-                        "length_hit": finish_reason in {"length", "max_output_tokens"},
+                        "length_hit": classify_length_candidate(
+                            finish_reason, usage, request["max_output_tokens"]
+                        ),
                         "usage": usage,
                         "started_at": started,
                         "ended_at": ended,

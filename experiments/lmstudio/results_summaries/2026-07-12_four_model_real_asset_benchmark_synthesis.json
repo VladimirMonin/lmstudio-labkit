@@ -9,6 +9,15 @@
     "reviewed_calls": 80,
     "zero_call_rows": 0
   },
+  "native_structured_output_correction": {
+    "e4b_m05_forensic_interpretation": "continued_runaway_generation_truncated_at_configured_budget",
+    "forensic_max_output_tokens": 8192,
+    "forensic_output_tokens": 8192,
+    "original_max_output_tokens": 4096,
+    "original_output_tokens": 4096,
+    "report": "2026-07-12_gemma4_native_structured_output_correction.json",
+    "runtime_finish_reason_for_both_calls": "stop"
+  },
   "cells": [
     {
       "accepted_calls": 0,

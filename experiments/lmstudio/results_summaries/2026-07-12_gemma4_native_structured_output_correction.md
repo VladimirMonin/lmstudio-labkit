@@ -9,7 +9,7 @@ The historical 80-call report remains unchanged evidence for its original prompt
 ## Corrected transport and matrix
 
 - Models: the four exact canonical Gemma 4 models; 31B variants excluded.
-- Views: M01, M05, and L02-L; one measured attempt per model/view (12 calls).
+- Views: M01, M05, and L02-L; one measured attempt per model/view (12 matrix calls), plus one explicitly separated E4B/M05 forensic call.
 - Transport: LM Studio Responses API, `/v1/responses`, with `text.format.type=json_schema`, `strict=true`, and the bound JSON schema.
 - Reasoning: `reasoning.effort=none`; all 12 envelopes report zero reasoning tokens.
 - Sampling: temperature 0, non-streaming, no stored response state.
@@ -19,7 +19,9 @@ The historical 80-call report remains unchanged evidence for its original prompt
 - Raw final text and complete response envelopes are owner-only outside the repository with 0600 files under a 0700 root.
 - Every private output was read. All four models were unloaded after their three calls; every post-model read-back and the final read-back reported `loaded_total=0`.
 
-No M05 row hit the output limit. The 4,096-token budget therefore removed output length as an explanation for the corrected M05 results.
+The E4B/M05 row exhausted its 4,096-token budget exactly (`output_tokens=4096`) despite the envelope reporting `finish_reason=stop`. Length classification now treats either an explicit length reason or `output_tokens >= max_output_tokens` as a length candidate. The other three M05 rows did not exhaust their budgets.
+
+One no-retry forensic E4B/M05 call raised the budget to 8,192 tokens while preserving the model, prompt, native strict schema, context, temperature, and disabled-reasoning settings. It again exhausted the exact budget (`8192/8192`) while reporting `finish_reason=stop`, produced 41,316 bytes of malformed non-JSON output, and shared its entire 12,542-character prefix with the prior 4,096-token output before continuing. This identifies continued runaway generation truncated at both configured budgets; it is not evidence of a standalone transport/schema rejection before generation. The runtime finish label alone is therefore unreliable for this case.
 
 ## Capability results
 
@@ -35,7 +37,7 @@ Counts are successful rows out of the three focused views per model. Semantic an
 ### Per-view observations
 
 - M01: E2B produced raw JSON and exact schema; E4B produced fenced but schema-valid JSON; 12B QAT and 26B MoE produced extractable JSON that failed exact schema. No model matched the semantic target or placeholder contract.
-- M05: E2B produced raw exact-schema JSON. 12B QAT and 26B MoE produced fenced exact-schema JSON. E4B produced an overlong malformed object despite stopping before the 4,096-token limit. No model matched the reference-relative target or placeholder contract.
+- M05: E2B produced raw exact-schema JSON. 12B QAT and 26B MoE produced fenced exact-schema JSON. E4B produced runaway malformed output that exhausted both the original 4,096-token budget and the isolated 8,192-token forensic budget despite `finish_reason=stop`. No model matched the reference-relative target or placeholder contract.
 - L02-L: 12B QAT reported all 428 units from index 0 through 427 and passed structural retention after fenced extraction. E2B reported 318 units, E4B 43, and 26B MoE 427; none produced raw JSON, so no L02-L row passed strict end-to-end acceptance.
 
 ## Comparison with the prior matrix
@@ -60,4 +62,4 @@ No production parallelism or model admission should be inferred from this focuse
 
 Machine-readable companion: `2026-07-12_gemma4_native_structured_output_correction.json`.
 
-The JSON report contains request/schema/raw/envelope digests, timing, usage, finish state, per-axis scores, cleanup read-backs, and the prior-report comparison. It contains no prompts, completions, private paths, credentials, or private raw text.
+The JSON report contains request/schema/raw/envelope digests, timing, usage, finish state, per-axis scores, cleanup read-backs, the isolated forensic result, and the prior-report comparison. It contains no prompts, completions, private paths, credentials, or private raw text. The forensic raw output and complete envelope remain owner-only outside the repository with 0600 permissions under a 0700 root; preflight and final read-backs both reported `loaded_total=0`.
