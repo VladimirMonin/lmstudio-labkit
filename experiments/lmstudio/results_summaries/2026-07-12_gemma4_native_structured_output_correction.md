@@ -9,7 +9,7 @@ The historical 80-call report remains unchanged evidence for its original prompt
 ## Corrected transport and matrix
 
 - Models: the four exact canonical Gemma 4 models; 31B variants excluded.
-- Views: M01, M05, and L02-L; one measured attempt per model/view (12 matrix calls), plus one explicitly separated E4B/M05 forensic call.
+- Views: M01, M05, and L02-L; one measured attempt per model/view (12 matrix calls), plus two explicitly separated E4B/M05 boundary calls.
 - Transport: LM Studio Responses API, `/v1/responses`, with `text.format.type=json_schema`, `strict=true`, and the bound JSON schema.
 - Reasoning: `reasoning.effort=none`; all 12 envelopes report zero reasoning tokens.
 - Sampling: temperature 0, non-streaming, no stored response state.
@@ -21,7 +21,9 @@ The historical 80-call report remains unchanged evidence for its original prompt
 
 The E4B/M05 row exhausted its 4,096-token budget exactly (`output_tokens=4096`) despite the envelope reporting `finish_reason=stop`. Length classification now treats either an explicit length reason or `output_tokens >= max_output_tokens` as a length candidate. The other three M05 rows did not exhaust their budgets.
 
-One no-retry forensic E4B/M05 call raised the budget to 8,192 tokens while preserving the model, prompt, native strict schema, context, temperature, and disabled-reasoning settings. It again exhausted the exact budget (`8192/8192`) while reporting `finish_reason=stop`, produced 41,316 bytes of malformed non-JSON output, and shared its entire 12,542-character prefix with the prior 4,096-token output before continuing. This identifies continued runaway generation truncated at both configured budgets; it is not evidence of a standalone transport/schema rejection before generation. The runtime finish label alone is therefore unreliable for this case.
+The first no-retry forensic E4B/M05 call raised the budget to 8,192 tokens while preserving the model, prompt, native strict schema, context, temperature, and disabled-reasoning settings. It again exhausted the exact budget (`8192/8192`) while reporting `finish_reason=stop`, produced 41,316 bytes of malformed non-JSON output, and shared its entire 12,542-character prefix with the prior 4,096-token output before continuing.
+
+A final one-attempt boundary call raised the budget to 16,384 tokens under the same contract. Exact SDK tokenization measured 1,175 formatted input tokens before generation; `1,175 + 16,384 + 2,048 safety = 19,607`, leaving 9,065 tokens inside the 28,672-token context. The native envelope later reported 1,170 input tokens. The response still exhausted exactly `16384/16384` output tokens with `reasoning_tokens=0` and `finish_reason=stop`, grew to 82,274 bytes, and preserved the complete 4,096- and 8,192-run prefixes before continuing. It remained malformed non-JSON and failed schema, placeholder, semantic, and strict acceptance. This closes the output-choking ambiguity: the practical 16K output budget and context headroom were both exhausted by the same runaway repetition, independently of reasoning.
 
 ## Capability results
 
@@ -37,7 +39,7 @@ Counts are successful rows out of the three focused views per model. Semantic an
 ### Per-view observations
 
 - M01: E2B produced raw JSON and exact schema; E4B produced fenced but schema-valid JSON; 12B QAT and 26B MoE produced extractable JSON that failed exact schema. No model matched the semantic target or placeholder contract.
-- M05: E2B produced raw exact-schema JSON. 12B QAT and 26B MoE produced fenced exact-schema JSON. E4B produced runaway malformed output that exhausted both the original 4,096-token budget and the isolated 8,192-token forensic budget despite `finish_reason=stop`. No model matched the reference-relative target or placeholder contract.
+- M05: E2B produced raw exact-schema JSON. 12B QAT and 26B MoE produced fenced exact-schema JSON. E4B produced runaway malformed output that exhausted the 4,096-, 8,192-, and context-safe 16,384-token budgets despite `finish_reason=stop` and zero reasoning tokens. No model matched the reference-relative target or placeholder contract.
 - L02-L: 12B QAT reported all 428 units from index 0 through 427 and passed structural retention after fenced extraction. E2B reported 318 units, E4B 43, and 26B MoE 427; none produced raw JSON, so no L02-L row passed strict end-to-end acceptance.
 
 ## Comparison with the prior matrix
@@ -62,4 +64,4 @@ No production parallelism or model admission should be inferred from this focuse
 
 Machine-readable companion: `2026-07-12_gemma4_native_structured_output_correction.json`.
 
-The JSON report contains request/schema/raw/envelope digests, timing, usage, finish state, per-axis scores, cleanup read-backs, the isolated forensic result, and the prior-report comparison. It contains no prompts, completions, private paths, credentials, or private raw text. The forensic raw output and complete envelope remain owner-only outside the repository with 0600 permissions under a 0700 root; preflight and final read-backs both reported `loaded_total=0`.
+The JSON report contains request/schema/raw/envelope digests, exact token arithmetic, timing, usage, finish state, per-axis scores, cleanup read-backs, both isolated boundary results, and the prior-report comparison. It contains no prompts, completions, private paths, credentials, or private raw text. The boundary requests, raw outputs, complete envelopes, and summaries remain owner-only outside the repository with 0600 permissions under 0700 roots; preflight and final read-backs reported `loaded_total=0`.

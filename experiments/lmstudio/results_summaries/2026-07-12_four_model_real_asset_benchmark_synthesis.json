@@ -11,12 +11,18 @@
   },
   "native_structured_output_correction": {
     "e4b_m05_forensic_interpretation": "continued_runaway_generation_truncated_at_configured_budget",
+    "final_context_length": 28672,
+    "final_input_tokens": 1170,
+    "final_interpretation": "runaway_repetition_independent_of_reasoning_and_practical_output_budget",
+    "final_max_output_tokens": 16384,
+    "final_output_tokens": 16384,
+    "final_reasoning_tokens": 0,
     "forensic_max_output_tokens": 8192,
     "forensic_output_tokens": 8192,
     "original_max_output_tokens": 4096,
     "original_output_tokens": 4096,
     "report": "2026-07-12_gemma4_native_structured_output_correction.json",
-    "runtime_finish_reason_for_both_calls": "stop"
+    "runtime_finish_reason_for_all_three_calls": "stop"
   },
   "cells": [
     {

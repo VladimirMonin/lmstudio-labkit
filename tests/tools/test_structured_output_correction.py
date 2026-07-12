@@ -105,3 +105,24 @@ def test_summary_does_not_collapse_schema_capability_into_strict_acceptance() ->
     assert e2b["exact_schema"] == 1
     assert e2b["strict_end_to_end_acceptance"] == 0
     assert summary["strictly_accepted_calls"] == 0
+
+
+def test_published_final_boundary_closes_output_choking_ambiguity() -> None:
+    report = json.loads(
+        (
+            DEFAULT_PACK.parents[1]
+            / "results_summaries/2026-07-12_gemma4_native_structured_output_correction.json"
+        ).read_text(encoding="utf-8")
+    )
+    boundary = report["final_boundary_test"]
+    arithmetic = boundary["context_arithmetic"]
+    assert report["schema_version"] == "gemma4-native-structured-output-correction-v3"
+    assert arithmetic["context_safe"] is True
+    assert arithmetic["required_tokens"] == 19607
+    assert arithmetic["remaining_tokens"] == 9065
+    assert boundary["output_tokens"] == boundary["max_output_tokens"] == 16384
+    assert boundary["reasoning_tokens"] == 0
+    assert boundary["prior_4096_common_prefix_characters"] == 12542
+    assert boundary["prior_8192_common_prefix_characters"] == 24831
+    assert boundary["scores"]["strict_end_to_end_acceptance"] is False
+    assert boundary["final_loaded_total"] == 0
