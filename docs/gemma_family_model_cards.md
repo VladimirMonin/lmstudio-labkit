@@ -1,6 +1,6 @@
 # Gemma 4 Family Model Cards
 
-Status: final 2026-07-12 documentation reconciliation. No tested model is admitted end to end for the real-Whisper normalization contract.
+Status: statistical closure. 12B QAT is the primary bounded rehearsal candidate; no tested model has unconditional unattended-production admission.
 
 This document records sanitized aggregate evidence only. The benchmark used
 publication-safe M01, M05, and L02-L views derived from real sanitized Whisper
@@ -8,6 +8,27 @@ assets; it does not publish raw private transcripts, prompts, or responses. The
 exact tested family was `google/gemma-4-e2b`, `google/gemma-4-e4b`,
 `google/gemma-4-12b-qat`, and `google/gemma-4-26b-a4b-qat`. Gemma 4 31B variants
 were excluded.
+
+## Statistical closure update
+
+The later closure study executed 20 independent long/plain calls, 60 native
+structured-output calls, true P2/P4 probes, and one 12B GPU-placement comparison.
+See [the statistical closure report](../experiments/lmstudio/results_summaries/2026-07-12_gemma4_whisper_structured_parallel_statistics.md).
+
+Current practical roles:
+
+- **12B QAT:** primary candidate for long transcript cleanup and structured blocks;
+  use an adequate output budget, explicit chunk boundaries, reasoning disabled,
+  and no more than P2 concurrency in the tested runtime.
+- **E2B:** fast raw-JSON/schema follower, but its five deterministic long/plain
+  results preserved words without performing the required punctuation and paragraph
+  cleanup.
+- **E4B:** not recommended for unattended long cleanup because M05 runaway repeated
+  in 5/5 statistical calls and at larger 8k/16k output controls.
+- **26B MoE:** slower and did not show a stable quality/schema advantage over 12B.
+
+P2 passed on all four models. P4 failed at runtime with four HTTP 400 responses per
+model after successful warmup. `--gpu max` did not improve the focused 12B P2 run.
 
 ## Final evidence boundary
 

@@ -1,0 +1,5 @@
+{
+  "context_length": 32768,
+  "flash_attention": true,
+  "offload_kv_cache_to_gpu": false
+}

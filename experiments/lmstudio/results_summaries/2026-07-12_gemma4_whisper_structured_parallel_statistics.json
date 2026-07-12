@@ -1,0 +1,92 @@
+{
+  "schema_version": "1.0",
+  "date": "2026-07-12",
+  "scope": {
+    "models": [
+      "google/gemma-4-e2b",
+      "google/gemma-4-e4b",
+      "google/gemma-4-12b-qat",
+      "google/gemma-4-26b-a4b-qat"
+    ],
+    "excluded": ["31B", "non-Gemma models"],
+    "long_plain_calls": 20,
+    "structured_calls": 60
+  },
+  "long_plain": {
+    "calls_per_model": 5,
+    "transport_pass_per_model": 5,
+    "unique_outputs_per_model": 1,
+    "reasoning_tokens_zero": true,
+    "quality": {
+      "google/gemma-4-e2b": {
+        "semantic_complete": 5,
+        "cleanup_pass": 0,
+        "note": "Deterministic lexical preservation without punctuation or paragraph improvement."
+      },
+      "google/gemma-4-12b-qat": {
+        "semantic_complete": 5,
+        "cleanup_pass": 5,
+        "exact_protected_surface_pass": 0,
+        "note": "Digits were deterministically rendered as words while semantic values remained correct."
+      }
+    }
+  },
+  "structured_n_of_5": {
+    "google/gemma-4-e2b": {
+      "M01": {"raw_json": 5, "extractable_json": 5, "exact_schema": 5, "length": 0},
+      "M05": {"raw_json": 5, "extractable_json": 5, "exact_schema": 5, "length": 0},
+      "L02-L": {"raw_json": 0, "extractable_json": 5, "exact_schema": 5, "retention": 0, "length": 0}
+    },
+    "google/gemma-4-e4b": {
+      "M01": {"raw_json": 0, "extractable_json": 5, "exact_schema": 5, "length": 0},
+      "M05": {"raw_json": 0, "extractable_json": 0, "exact_schema": 0, "length": 5},
+      "L02-L": {"raw_json": 0, "extractable_json": 5, "exact_schema": 5, "retention": 0, "length": 0}
+    },
+    "google/gemma-4-12b-qat": {
+      "M01": {"raw_json": 0, "extractable_json": 5, "exact_schema": 0, "length": 0},
+      "M05": {"raw_json": 0, "extractable_json": 5, "exact_schema": 5, "length": 0},
+      "L02-L": {"raw_json": 0, "extractable_json": 5, "exact_schema": 5, "retention": 5, "length": 0}
+    },
+    "google/gemma-4-26b-a4b-qat": {
+      "M01": {"raw_json": 0, "extractable_json": 5, "exact_schema": 0, "length": 0},
+      "M05": {"raw_json": 0, "extractable_json": 5, "exact_schema": 5, "length": 0},
+      "L02-L": {"raw_json": 0, "extractable_json": 5, "exact_schema": 0, "retention": 0, "length": 0}
+    }
+  },
+  "parallel": {
+    "P2": {
+      "google/gemma-4-e2b": {"pass": true, "requests": 4, "business_pass": 4, "wall_ms": 30764.3},
+      "google/gemma-4-e4b": {"pass": true, "requests": 4, "business_pass": 4, "wall_ms": 45511.7},
+      "google/gemma-4-12b-qat": {"pass": true, "requests": 2, "business_pass": 2, "max_tokens": 4096, "wall_ms": 57433.7},
+      "google/gemma-4-26b-a4b-qat": {"pass": true, "requests": 2, "business_pass": 2, "max_tokens": 4096, "wall_ms": 127531.8}
+    },
+    "P4": {
+      "google/gemma-4-e2b": {"pass": false, "http_400": 4},
+      "google/gemma-4-e4b": {"pass": false, "http_400": 4},
+      "google/gemma-4-12b-qat": {"pass": false, "http_400": 4},
+      "google/gemma-4-26b-a4b-qat": {"pass": false, "http_400": 4, "max_tokens": 4096}
+    },
+    "recommendation": "P2 maximum for the tested runtime and workload."
+  },
+  "gpu_placement": {
+    "model": "google/gemma-4-12b-qat",
+    "workload": "P2 structured pair at 4096 max tokens",
+    "auto": {"reported_load_gib": 6.66, "pass": true, "wall_ms": 57433.7},
+    "gpu_max": {"reported_load_gib": 6.66, "lms_ps_gb": 7.15, "pass": true, "wall_ms": 66275.5},
+    "conclusion": "No observed benefit; physical offloaded-layer placement remains unproven."
+  },
+  "admission": {
+    "primary_candidate": "google/gemma-4-12b-qat",
+    "max_concurrency": 2,
+    "preferred_context_forms": ["plain_text", "json_blocks"],
+    "not_promoted": [
+      "google/gemma-4-e2b",
+      "google/gemma-4-e4b",
+      "google/gemma-4-26b-a4b-qat"
+    ]
+  },
+  "privacy": {
+    "raw_private_evidence_in_git": false,
+    "local_paths_in_report": false
+  }
+}

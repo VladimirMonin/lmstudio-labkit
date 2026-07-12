@@ -1,0 +1,23 @@
+{
+  "schema_version": "long-transcript-representation-v1",
+  "live": false,
+  "models": [
+    "google/gemma-4-e2b",
+    "google/gemma-4-e4b",
+    "google/gemma-4-12b-qat",
+    "google/gemma-4-26b-a4b-qat",
+    "qwen/qwen3.5-4b",
+    "qwen/qwen3.5-9b"
+  ],
+  "representations": ["plain", "timestamped_paragraphs", "json_blocks"],
+  "instruction_path": "prompts/cleanup.txt",
+  "reasoning": "off",
+  "temperature": 0,
+  "retries": 0,
+  "expected_calls_per_model": 9,
+  "expected_total_calls": 54,
+  "execution_order": "models_strictly_serial; calls_serial_within_model",
+  "raw_output_policy": "owner_only_outside_repository",
+  "token_fit_policy": "exact_lmstudio_sdk_tokenize_each_formatted_request",
+  "output_budget_policy": "ceil(exact_current_chunk_tokens * 1.5) + 256"
+}

@@ -1,0 +1,13 @@
+{
+  "schema_version": "long-transcript-confirmation-selector-v1",
+  "model": "google/gemma-4-12b-qat",
+  "calls": [
+    {"representation": "plain", "chunk_label": "early"},
+    {"representation": "timestamped_paragraphs", "chunk_label": "late"},
+    {"representation": "json_blocks", "chunk_label": "middle"}
+  ],
+  "reasoning": "off",
+  "retries": 0,
+  "request_timeout_seconds": 900,
+  "output_budget_policy": "ceil(exact_current_chunk_tokens * 1.5) + 256"
+}

@@ -1,8 +1,33 @@
 # Gemma 4 Admission Matrix
 
-Status: final documentation reconciliation after the 2026-07-12 real-Whisper benchmark and native structured-output correction. No model is admitted end to end for the tested normalization contract.
+Status: statistical closure after real-transcript repeats, native structured-output repeats, and P2/P4 runtime probes. 12B QAT is the primary bounded rehearsal candidate; no model has unconditional unattended-production admission.
 
 Timestamp: 2026-07-12
+
+## Statistical closure addendum
+
+The later closure study adds 20 independent long/plain calls, 60 native
+structured-output calls, true P2/P4 probes, and a focused GPU-placement check.
+Its authoritative report is
+[Gemma 4 Whisper, structured-output, and parallel statistics](2026-07-12_gemma4_whisper_structured_parallel_statistics.md).
+
+The operational result supersedes the older recommendation to begin long cleanup
+with E2B:
+
+- 12B QAT is the primary long-cleanup and structured-block rehearsal candidate;
+- P2 passed on all four models, while P4 returned HTTP 400 for all four measured
+  requests on every model in this runtime;
+- E2B remains the strongest raw-JSON follower but did not perform adequate cleanup
+  in five deterministic long/plain repeats;
+- E4B remains blocked for unattended M05 cleanup by deterministic runaway;
+- 26B did not demonstrate a stable quality or schema advantage over 12B;
+- `--gpu max` did not improve the focused 12B P2 run or increase its reported load
+  footprint.
+
+The recommended bounded configuration is 12B QAT, reasoning disabled, plain or
+JSON-block full context, explicit chunk boundaries, adequate output budget, and P2
+maximum concurrency. Exact IDs, URLs, commands, placeholders, and critical digits
+must be validated separately from semantic value.
 
 ## Authoritative 2026-07-12 result
 

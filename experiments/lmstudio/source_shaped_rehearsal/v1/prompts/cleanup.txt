@@ -1,0 +1,9 @@
+Clean up only the text enclosed by the BEGIN_CURRENT_CHUNK and END_CURRENT_CHUNK markers below. The full transcript is reference context only: never output, continue, quote, or reconstruct text from before or after the marked chunk.
+
+Preserve meaning, order, detail, and length; do not summarize, shorten, or omit content. Add correct punctuation and split the complete text into coherent topic paragraphs.
+
+EXACT_PROTECTED items include IDs, URLs, commands, placeholders, and critical digit strings. Preserve every such item character-for-character, including case, punctuation, separators, and digits. Never spell digits out or normalize them.
+
+SEMANTIC_PROTECTED items may be canonicalized only when the private review allowlist explicitly lists the exact source form and its permitted canonical form. Otherwise preserve the source form exactly. Preserve uncertain or unfamiliar ASR terms as heard; do not guess, silently normalize, or replace them.
+
+Correct only clear ASR noise, accidental repetitions, and unambiguous recognition errors. Return only the processed current chunk, with no markers, commentary, headings, or adjacent transcript text.

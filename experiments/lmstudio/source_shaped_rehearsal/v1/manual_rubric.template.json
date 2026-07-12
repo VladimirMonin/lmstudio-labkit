@@ -1,0 +1,35 @@
+{
+  "schema_version": "long-transcript-manual-gold-v2",
+  "scope": "owner_only",
+  "source_sha256": null,
+  "chunks": [
+    {"chunk_number": 1, "label": "early", "exact_protected": [], "semantic_protected_allowlist": [], "uncertain_asr_terms": []},
+    {"chunk_number": 2, "label": "middle", "exact_protected": [], "semantic_protected_allowlist": [], "uncertain_asr_terms": []},
+    {"chunk_number": 3, "label": "late", "exact_protected": [], "semantic_protected_allowlist": [], "uncertain_asr_terms": []}
+  ],
+  "required_per_call": {
+    "finish_ok": null,
+    "current_chunk_complete": null,
+    "chunk_only": null,
+    "outside_chunk_span_count": null,
+    "exact_protected": {"preserved": null, "violations": []},
+    "semantic_protected": {"allowlist_only": null, "violations": []},
+    "uncertain_asr_terms_preserved": null,
+    "punctuation_improved": null,
+    "topic_paragraphs_improved": null,
+    "meaning_preserved_without_shortening": null,
+    "beneficial_corrections": [],
+    "harmful_corrections": []
+  },
+  "acceptance": {
+    "finish_ok": true,
+    "current_chunk_complete": true,
+    "chunk_only": true,
+    "outside_chunk_span_count": 0,
+    "exact_protected.preserved": true,
+    "semantic_protected.allowlist_only": true,
+    "uncertain_asr_terms_preserved": true,
+    "meaning_preserved_without_shortening": true,
+    "harmful_corrections": 0
+  }
+}
