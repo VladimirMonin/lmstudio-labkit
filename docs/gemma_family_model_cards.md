@@ -41,6 +41,25 @@ merge retained 24/24 IDs in exact order. E2B long schema-output failed 2/2 throu
 reasoning/output-budget exhaustion, while E4B completed one narrow long schema-output
 cell. See [the final bounded recommendations](../experiments/lmstudio/results_summaries/2026-07-12_gemma4_final_practical_recommendations.md).
 
+## Host-application-shaped context and summary update
+
+A later 202-call 12B study compared current-only, boundary-neighbor, adjacent-chunk,
+and full-transcript context on one frozen recording. It changes the local integration
+recommendation:
+
+- block-preserving cleanup: use current blocks plus previous-tail and next-head
+  boundary blocks; keep timestamps application-owned and reattach them by exact ID;
+- per-chunk summaries: use current-only context;
+- fast whole-recording summary: one direct full-transcript request;
+- detailed notes: hierarchical synthesis over current-only chunk summaries;
+- do not send the full transcript with every chunk request or depend on unproven
+  changing-suffix prefix-cache reuse;
+- P2/P4 passed bounded structural and semantic screening for the selected short
+  contracts, but unmatched inputs and separate loads leave production concurrency
+  unqualified.
+
+See [the host-application-shaped decision report](../experiments/lmstudio/results_summaries/2026-07-13_host_application_shaped_structured_context_summary.md).
+
 ## Final evidence boundary
 
 The historical run executed a complete 64-cell/80-call matrix across 8,192,

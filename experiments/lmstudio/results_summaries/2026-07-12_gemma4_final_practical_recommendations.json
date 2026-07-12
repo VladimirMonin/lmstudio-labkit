@@ -5,11 +5,12 @@
   "decision": {
     "production_admission": "not established for any model",
     "preferred_candidate": "Gemma 4 12B QAT",
-    "default_long_context_representation": "plain text",
-    "conditional_structured_representation": "compact generic JSON blocks with application-owned identity validation",
+    "default_long_context_representation": "task-specific: boundary-neighbor blocks for cleanup, current-only for chunk summaries, full transcript only for direct whole summary",
+    "conditional_structured_representation": "compact generic JSON blocks with application-owned identity and timestamp reattachment",
+    "superseding_report": "2026-07-13_host_application_shaped_structured_context_summary.md",
     "safe_concurrency": {
       "full_approximately_23k_prefix_tested_32k_runtime": "P1 sequential",
-      "bounded_8k_compact_generic_schema": "P2 qualified; repaired P4 structural-only until semantic qualification"
+      "bounded_short_context_selected_contracts": "P2/P4 structural and semantic screening passed; matched repeated production qualification remains open"
     },
     "default_gpu_placement": "automatic",
     "physical_cache_reuse": "unproven"

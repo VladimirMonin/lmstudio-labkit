@@ -13,7 +13,14 @@ Use workload-qualified concurrency:
 - **Full approximately 23k-token prefix in the tested 32k runtime:** run sequentially at P1. The two concurrent middle/late requests were rejected before generation in both plain and block lanes.
 - **Bounded approximately 8k compact generic-schema workload:** P2 passed, and repaired P4 passed structurally. Do not transfer that admission to the 23k shape.
 
-Use plain full context by default. Use compact generic JSON blocks when application-owned IDs and merge identity are required. Keep request-specific IDs out of the runtime grammar and validate count, uniqueness, exact set, and order after generation.
+Use task-specific context rather than one full-context default. The later host-application-shaped study supersedes the earlier generic full-context recommendation for the selected 12B candidate:
+
+- block-preserving cleanup: current blocks plus previous-tail and next-head boundary blocks;
+- per-chunk summary: current chunk only;
+- fast whole-recording summary: one direct full-transcript request;
+- detailed whole-recording notes: hierarchical synthesis over current-only chunk summaries.
+
+Use compact generic JSON blocks when application-owned IDs and merge identity are required. Keep request-specific IDs out of the runtime grammar and validate count, uniqueness, exact set, and order after generation. See `2026-07-13_host_application_shaped_structured_context_summary.md`.
 
 Retry policy must distinguish two failure classes:
 

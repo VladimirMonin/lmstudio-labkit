@@ -1,0 +1,230 @@
+{
+  "schema_version": "host-application-shaped-structured-context-summary-v1",
+  "date": "2026-07-13",
+  "status": "bounded single-recording qualification; no production admission",
+  "scope": {
+    "unique_transcripts": 1,
+    "models": 1,
+    "primary_calls": 157,
+    "repeat_cache_calls": 33,
+    "parallel_calls": 12,
+    "all_calls": 202,
+    "independent_quality_observations": null
+  },
+  "model": "Gemma 4 12B QAT",
+  "measured_calls": {
+    "first_pass_cleanup": 12,
+    "first_pass_chunk_summaries": 140,
+    "first_pass_whole_summaries": 5,
+    "representative_cleanup_and_summary_repeats": 24,
+    "whole_summary_repeats": 5,
+    "cache_probes": 4,
+    "parallel_requests": 12,
+    "total": 202
+  },
+  "context_strategies": [
+    "current_only",
+    "boundary_neighbors",
+    "adjacent_chunks",
+    "full_transcript"
+  ],
+  "decision": {
+    "block_cleanup_context": "boundary_neighbors",
+    "block_cleanup_conservative_alternative": "current_only",
+    "chunk_summary_context": "current_only",
+    "fast_whole_summary": "direct_full",
+    "detailed_whole_summary": "hierarchical_current_only",
+    "reject_as_default": [
+      "adjacent_chunks",
+      "full_transcript_per_chunk"
+    ],
+    "timestamp_owner": "application source blocks",
+    "model_output_fields": [
+      "id",
+      "text"
+    ],
+    "cache_dependency": "not allowed; stable-prefix reuse with changing suffix is unproven"
+  },
+  "technical_success": {
+    "http_200": {"count": 202, "denominator": 202},
+    "schema_parseable": {"count": 199, "denominator": 202},
+    "primary_schema_parseable": {"count": 155, "denominator": 157},
+    "repeat_cache_schema_parseable": {"count": 32, "denominator": 33},
+    "parallel_structurally_accepted": {"count": 12, "denominator": 12}
+  },
+  "structured_cleanup_first_pass": {
+    "calls": 12,
+    "http_200": 12,
+    "finish_stop": 12,
+    "reasoning_zero": 12,
+    "json_parse": 12,
+    "exact_ids_and_order": 12,
+    "evaluated_output_blocks": 36,
+    "source_ids_enabling_external_timestamp_reattachment": 36,
+    "timestamp_end_to_end_validation": false,
+    "strategy_semantic_verdicts": {
+      "current_only": "safe conservative option",
+      "boundary_neighbors": "best observed balance and recommended default",
+      "adjacent_chunks": "no stable gain and one questionable context-driven correction",
+      "full_transcript": "rejected: first-pass boundary leakage and repeat malformed length exhaustion"
+    }
+  },
+  "chunk_summary_first_pass": {
+    "calls": 140,
+    "http_200": 140,
+    "finish_stop": 138,
+    "practically_valid_structured_output": 137,
+    "reasoning_zero": 140,
+    "by_strategy": {
+      "current_only": {
+        "calls": 35,
+        "finish_stop": 35,
+        "valid_structured": 35,
+        "median_prompt_tokens": 786,
+        "median_completion_tokens": 373,
+        "median_latency_ms": 8038.569
+      },
+      "boundary_neighbors": {
+        "calls": 35,
+        "finish_stop": 34,
+        "valid_structured": 33,
+        "median_prompt_tokens": 1040,
+        "median_completion_tokens": 381,
+        "median_latency_ms": 8216.924
+      },
+      "adjacent_chunks": {
+        "calls": 35,
+        "finish_stop": 34,
+        "valid_structured": 34,
+        "median_prompt_tokens": 2107,
+        "median_completion_tokens": 377,
+        "median_latency_ms": 8603.619
+      },
+      "full_transcript": {
+        "calls": 35,
+        "finish_stop": 35,
+        "valid_structured": 35,
+        "median_prompt_tokens": 23099,
+        "median_completion_tokens": 390,
+        "median_latency_ms": 20204.584
+      }
+    },
+    "schema_observation": "Free-form entities were the weakest field and participated in two cyclic structured-generation failures."
+  },
+  "whole_summary": {
+    "first_pass_calls": 5,
+    "first_pass_stop": 5,
+    "repeat_calls": 5,
+    "byte_identical_repeats": 5,
+    "direct_full": "best for one compact executive overview",
+    "hierarchical_current_only": "best for detailed chronological coverage",
+    "full_context_per_chunk": "not justified by quality relative to token and latency cost"
+  },
+  "repeatability": {
+    "representative_calls": 24,
+    "http_200": 24,
+    "finish_stop": 23,
+    "reasoning_zero": 24,
+    "byte_identical_to_first_pass": 22,
+    "chunk_summary_repeats_byte_identical": 12,
+    "whole_summary_repeats_byte_identical": 5,
+    "full_context_cleanup_repeat": "4096/4096 output tokens, finish=length, malformed JSON"
+  },
+  "cache_probe": {
+    "calls": 4,
+    "http_200": 4,
+    "finish_stop": 4,
+    "reasoning_zero": 4,
+    "cached_token_telemetry": null,
+    "latency_ms": {
+      "first": 22416.122,
+      "exact_repeat": 11803.425,
+      "same_prefix_changed_suffix": 22240.909,
+      "changed_prefix_same_suffix": 23236.259
+    },
+    "classification": {
+      "proven": [
+        "all requests completed",
+        "the exact repeat was faster in the observed sequence"
+      ],
+      "timing_signal": [
+        "exact-request reuse or warm-runtime behavior"
+      ],
+      "unproven": [
+        "stable-prefix reuse for a changed suffix",
+        "physical KV-cache reuse",
+        "avoided prefill",
+        "persistent cache semantics"
+      ]
+    }
+  },
+  "parallel_qualification": {
+    "requests": 12,
+    "http_200": 12,
+    "finish_stop": 12,
+    "reasoning_zero": 12,
+    "accepted_structure": 12,
+    "cells": {
+      "cleanup_boundary_p2": {
+        "accepted": "2/2",
+        "batch_wall_ms": 17190.07
+      },
+      "cleanup_boundary_p4": {
+        "accepted": "4/4",
+        "batch_wall_ms": 23394.821
+      },
+      "summary_current_p2": {
+        "accepted": "2/2",
+        "batch_wall_ms": 9725.77
+      },
+      "summary_current_p4": {
+        "accepted": "4/4",
+        "batch_wall_ms": 11609.024
+      }
+    },
+    "matched_p2_p4_inputs": false,
+    "production_concurrency_recommendation_supported": false,
+    "semantic_review": {
+      "outputs_reviewed": 12,
+      "cross_request_contamination": 0,
+      "critical_protected_value_damage": 0,
+      "summary_outputs_practically_usable": 6,
+      "cleanup_outputs_conservative_drafts": 6
+    },
+    "scope": "Bounded screening only. Full-transcript concurrency and a production P2/P4 default are not qualified."
+  },
+  "recommended_contract": {
+    "cleanup": {
+      "context": "previous boundary block + current blocks + next boundary block",
+      "response_schema": "generic array of id and non-empty text",
+      "post_validation": [
+        "exact cardinality",
+        "exact ID set",
+        "unique IDs",
+        "exact order",
+        "block-boundary ownership",
+        "protected values",
+        "no repetition"
+      ],
+      "parallelism": "P2 conservative screening candidate; P4 requires matched repeated qualification"
+    },
+    "chunk_summary": {
+      "context": "current chunk only",
+      "parallelism": "P2 conservative screening candidate; P4 requires matched repeated qualification",
+      "schema_change": "remove free-form entities or constrain type, confidence, source, and canonicalization"
+    },
+    "whole_summary": {
+      "fast": "direct full transcript",
+      "detailed": "current-only chunk summaries followed by hierarchical synthesis"
+    }
+  },
+  "limits": [
+    "one recording and one selected model",
+    "deep cleanup semantic review only on early, middle, and late representatives",
+    "parallel semantic review completed, but P2/P4 chunk sets and loads were unmatched",
+    "no audio-grounded truth for uncertain proper names",
+    "no source-application persistence/read-back or subtitle-export integration",
+    "no physical cache telemetry",
+    "no blind or multi-rater semantic scoring"
+  ]
+}

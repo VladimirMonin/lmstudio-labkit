@@ -43,6 +43,27 @@ unattended production, persistence, or fallback admission. The authoritative bou
 interpretation is in
 [Gemma 4 final practical recommendations](2026-07-12_gemma4_final_practical_recommendations.md).
 
+## Host-application-shaped context and summary addendum
+
+A later 202-call 12B study on one frozen recording compared current-only,
+boundary-neighbor, adjacent-chunk, and full-transcript context. Its bounded
+recommendation is task-specific:
+
+- boundary-neighbor context for block-preserving cleanup;
+- current-only context for per-chunk summaries;
+- direct full transcript for a fast whole-recording overview;
+- hierarchical synthesis over current-only chunk summaries for detailed notes.
+
+The model returns only `{id, text}`; source timestamps remain application-owned and
+can be reattached by exact ID. This is not an end-to-end persistence/export proof.
+Full context was materially more expensive, caused one reviewed block-boundary leak,
+and produced one malformed 4,096-token cleanup repeat. A single exact request repeat
+was faster, but same-prefix/changing-suffix reuse and physical KV caching remain
+unproven. Bounded P2/P4 screening passed 12/12 requests, but unmatched chunk sets and
+separate loads do not establish a production concurrency default.
+
+See [the host-application-shaped decision report](2026-07-13_host_application_shaped_structured_context_summary.md).
+
 ## Authoritative 2026-07-12 result
 
 The final benchmark used publication-safe views derived from real sanitized Whisper
