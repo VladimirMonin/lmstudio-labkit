@@ -1,0 +1,656 @@
+{
+  "comparison_to_prior": {
+    "change": "The prior accepted=0 aggregate remains historical evidence, but it no longer stands for absence of JSON/schema/structural capability.",
+    "corrected_strictly_accepted_calls": 0,
+    "interpretation_changed": true,
+    "prior_strictly_accepted_calls": 0
+  },
+  "context_length": 28672,
+  "final_loaded_total": 0,
+  "historical_evidence_preserved": true,
+  "historical_report": "2026-07-12_four_model_real_asset_benchmark_synthesis.json",
+  "m05_output_budget": 4096,
+  "m05_output_budget_derivation": {
+    "headroom_multiplier": 2,
+    "reference_characters": 1006,
+    "reference_utf8_bytes": 1729,
+    "rounded_token_budget": 4096
+  },
+  "matrix": {
+    "calls": 12,
+    "models": [
+      "google/gemma-4-e2b",
+      "google/gemma-4-e4b",
+      "google/gemma-4-12b-qat",
+      "google/gemma-4-26b-a4b-qat"
+    ],
+    "views": [
+      "M01",
+      "M05",
+      "L02-L"
+    ]
+  },
+  "preflight_loaded_total": 0,
+  "preflight_snapshot_sha256": "dabb2213e4cf1625ad70f095596c8d15d81809be1cb2a3409327654f62b513be",
+  "rows": [
+    {
+      "attempts": 1,
+      "context_length": 28672,
+      "ended_at": 1783831979.215708,
+      "finish_reason": "stop",
+      "latency_seconds": 2.9661436080932617,
+      "length_hit": false,
+      "max_output_tokens": 512,
+      "model_id": "google/gemma-4-e2b",
+      "model_instance_id": "google/gemma-4-e2b",
+      "post_model_loaded_total": 0,
+      "post_model_snapshot_sha256": "dabb2213e4cf1625ad70f095596c8d15d81809be1cb2a3409327654f62b513be",
+      "raw_output_bytes": 1231,
+      "raw_output_sha256": "9ccb79f159a0754c86b6103cafeb65d7f00a4a5c2e069265a8d19950c3513ac0",
+      "reasoning_content_present": false,
+      "reasoning_requested": "none",
+      "request_content_sha256": "d59923a1de791c922c1a9a07db07600e035c5feb7f4db07a04a52bb744b7e30d",
+      "response_envelope_sha256": "00783ab3d1f181f62d9deddc3eb468786de7fa2a51903739ed4f16101c2c4838",
+      "schema_sha256": "f09afba78b52f89365300ae72e089974c36089576ddd00267cc10d0e9cf62bcd",
+      "scores": {
+        "exact_schema": true,
+        "extracted_or_fenced_json": true,
+        "hard_failures": [
+          "placeholder_corruption",
+          "target_text_mismatch"
+        ],
+        "placeholder_fidelity": false,
+        "raw_json": true,
+        "semantic_fidelity": false,
+        "strict_end_to_end_acceptance": false,
+        "structural_retention": null
+      },
+      "started_at": 1783831976.2495644,
+      "transport": "/v1/responses text.format.json_schema strict=true",
+      "usage": {
+        "input_tokens": 737,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 362,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1099
+      },
+      "view_label": "M01"
+    },
+    {
+      "attempts": 1,
+      "context_length": 28672,
+      "ended_at": 1783831983.5560539,
+      "finish_reason": "stop",
+      "latency_seconds": 4.335082292556763,
+      "length_hit": false,
+      "max_output_tokens": 4096,
+      "model_id": "google/gemma-4-e2b",
+      "model_instance_id": "google/gemma-4-e2b",
+      "post_model_loaded_total": 0,
+      "post_model_snapshot_sha256": "dabb2213e4cf1625ad70f095596c8d15d81809be1cb2a3409327654f62b513be",
+      "raw_output_bytes": 2639,
+      "raw_output_sha256": "b953bf0bdd9dc5124cdb921364451c4388f7dc753c463ea69740fbb625c2c7a9",
+      "reasoning_content_present": false,
+      "reasoning_requested": "none",
+      "request_content_sha256": "e2dcc964d770d219e53e99d9dae9289d6ca374d2f3b7510bf32c342b3835642f",
+      "response_envelope_sha256": "41785918042753ffe22ef35ea3c483e37d1ff3e5d9a7d862b5eb74da5ee4df8b",
+      "schema_sha256": "f09afba78b52f89365300ae72e089974c36089576ddd00267cc10d0e9cf62bcd",
+      "scores": {
+        "exact_schema": true,
+        "extracted_or_fenced_json": true,
+        "hard_failures": [
+          "placeholder_corruption",
+          "target_text_mismatch"
+        ],
+        "placeholder_fidelity": false,
+        "raw_json": true,
+        "semantic_fidelity": false,
+        "strict_end_to_end_acceptance": false,
+        "structural_retention": null
+      },
+      "started_at": 1783831979.2209716,
+      "transport": "/v1/responses text.format.json_schema strict=true",
+      "usage": {
+        "input_tokens": 1170,
+        "input_tokens_details": {
+          "cached_tokens": 1
+        },
+        "output_tokens": 554,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1724
+      },
+      "view_label": "M05"
+    },
+    {
+      "attempts": 1,
+      "context_length": 28672,
+      "ended_at": 1783831986.4982085,
+      "finish_reason": "stop",
+      "latency_seconds": 2.9314956665039062,
+      "length_hit": false,
+      "max_output_tokens": 512,
+      "model_id": "google/gemma-4-e2b",
+      "model_instance_id": "google/gemma-4-e2b",
+      "post_model_loaded_total": 0,
+      "post_model_snapshot_sha256": "dabb2213e4cf1625ad70f095596c8d15d81809be1cb2a3409327654f62b513be",
+      "raw_output_bytes": 774,
+      "raw_output_sha256": "26cfce7b2d2a7d805200a80f6bf69f331d963e06644cbcbbae302cea8a0962cf",
+      "reasoning_content_present": false,
+      "reasoning_requested": "none",
+      "request_content_sha256": "9c7d4c75220fe84858ab56c75a03ddbfa222e228df673578fe4bea05fa79a29b",
+      "response_envelope_sha256": "465b189825d15cd1698d113eacc1afa283cb00120176e403cd7b02a2e81ce260",
+      "schema_sha256": "c55ba92b6d2bffdc0df492d1914df7b27f1d350731b541aed1b144ad7b9cba2f",
+      "scores": {
+        "exact_schema": true,
+        "extracted_or_fenced_json": true,
+        "hard_failures": [
+          "structural_retention_or_transport_failure"
+        ],
+        "placeholder_fidelity": null,
+        "raw_json": false,
+        "semantic_fidelity": null,
+        "strict_end_to_end_acceptance": false,
+        "structural_retention": false
+      },
+      "started_at": 1783831983.5667129,
+      "transport": "/v1/responses text.format.json_schema strict=true",
+      "usage": {
+        "input_tokens": 12060,
+        "input_tokens_details": {
+          "cached_tokens": 1
+        },
+        "output_tokens": 155,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 12215
+      },
+      "view_label": "L02-L"
+    },
+    {
+      "attempts": 1,
+      "context_length": 28672,
+      "ended_at": 1783831997.4087703,
+      "finish_reason": "stop",
+      "latency_seconds": 3.4425933361053467,
+      "length_hit": false,
+      "max_output_tokens": 512,
+      "model_id": "google/gemma-4-e4b",
+      "model_instance_id": "google/gemma-4-e4b",
+      "post_model_loaded_total": 0,
+      "post_model_snapshot_sha256": "dabb2213e4cf1625ad70f095596c8d15d81809be1cb2a3409327654f62b513be",
+      "raw_output_bytes": 978,
+      "raw_output_sha256": "2297c1126e269459ad2ac578d14f4d51972465b9111d77b0519105591d02a6aa",
+      "reasoning_content_present": false,
+      "reasoning_requested": "none",
+      "request_content_sha256": "d59923a1de791c922c1a9a07db07600e035c5feb7f4db07a04a52bb744b7e30d",
+      "response_envelope_sha256": "affe0fb296b93eede06f64079c94fe63aee849d71df22e35e0484e5278eea906",
+      "schema_sha256": "f09afba78b52f89365300ae72e089974c36089576ddd00267cc10d0e9cf62bcd",
+      "scores": {
+        "exact_schema": true,
+        "extracted_or_fenced_json": true,
+        "hard_failures": [
+          "json_invalid",
+          "placeholder_corruption",
+          "target_text_mismatch"
+        ],
+        "placeholder_fidelity": false,
+        "raw_json": false,
+        "semantic_fidelity": false,
+        "strict_end_to_end_acceptance": false,
+        "structural_retention": null
+      },
+      "started_at": 1783831993.966177,
+      "transport": "/v1/responses text.format.json_schema strict=true",
+      "usage": {
+        "input_tokens": 737,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 268,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1005
+      },
+      "view_label": "M01"
+    },
+    {
+      "attempts": 1,
+      "context_length": 28672,
+      "ended_at": 1783832043.8748198,
+      "finish_reason": "stop",
+      "latency_seconds": 46.45889854431152,
+      "length_hit": false,
+      "max_output_tokens": 4096,
+      "model_id": "google/gemma-4-e4b",
+      "model_instance_id": "google/gemma-4-e4b",
+      "post_model_loaded_total": 0,
+      "post_model_snapshot_sha256": "dabb2213e4cf1625ad70f095596c8d15d81809be1cb2a3409327654f62b513be",
+      "raw_output_bytes": 20834,
+      "raw_output_sha256": "69141af6ff9dfd1235231065dd702b790efa70890565261e3a9533767e88515f",
+      "reasoning_content_present": false,
+      "reasoning_requested": "none",
+      "request_content_sha256": "e2dcc964d770d219e53e99d9dae9289d6ca374d2f3b7510bf32c342b3835642f",
+      "response_envelope_sha256": "85687e3356d8618bc8b3fb09119cf7f27da2013923641da7db21a36c51039a4e",
+      "schema_sha256": "f09afba78b52f89365300ae72e089974c36089576ddd00267cc10d0e9cf62bcd",
+      "scores": {
+        "exact_schema": false,
+        "extracted_or_fenced_json": false,
+        "hard_failures": [
+          "json_invalid",
+          "schema_invalid"
+        ],
+        "placeholder_fidelity": false,
+        "raw_json": false,
+        "semantic_fidelity": false,
+        "strict_end_to_end_acceptance": false,
+        "structural_retention": null
+      },
+      "started_at": 1783831997.4159212,
+      "transport": "/v1/responses text.format.json_schema strict=true",
+      "usage": {
+        "input_tokens": 1170,
+        "input_tokens_details": {
+          "cached_tokens": 1
+        },
+        "output_tokens": 4096,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 5266
+      },
+      "view_label": "M05"
+    },
+    {
+      "attempts": 1,
+      "context_length": 28672,
+      "ended_at": 1783832049.280348,
+      "finish_reason": "stop",
+      "latency_seconds": 5.385877370834351,
+      "length_hit": false,
+      "max_output_tokens": 512,
+      "model_id": "google/gemma-4-e4b",
+      "model_instance_id": "google/gemma-4-e4b",
+      "post_model_loaded_total": 0,
+      "post_model_snapshot_sha256": "dabb2213e4cf1625ad70f095596c8d15d81809be1cb2a3409327654f62b513be",
+      "raw_output_bytes": 1001,
+      "raw_output_sha256": "9e58bc00b799bf4ccd2f6810c45b06a2b256572eea7980bcb2d07d6620cd133e",
+      "reasoning_content_present": false,
+      "reasoning_requested": "none",
+      "request_content_sha256": "9c7d4c75220fe84858ab56c75a03ddbfa222e228df673578fe4bea05fa79a29b",
+      "response_envelope_sha256": "bb16f3f60ad924eeb08a9e53ee22aeaba3870cbf75df316a1d7d78ad702b94c3",
+      "schema_sha256": "c55ba92b6d2bffdc0df492d1914df7b27f1d350731b541aed1b144ad7b9cba2f",
+      "scores": {
+        "exact_schema": true,
+        "extracted_or_fenced_json": true,
+        "hard_failures": [
+          "structural_retention_or_transport_failure"
+        ],
+        "placeholder_fidelity": null,
+        "raw_json": false,
+        "semantic_fidelity": null,
+        "strict_end_to_end_acceptance": false,
+        "structural_retention": false
+      },
+      "started_at": 1783832043.8944707,
+      "transport": "/v1/responses text.format.json_schema strict=true",
+      "usage": {
+        "input_tokens": 12060,
+        "input_tokens_details": {
+          "cached_tokens": 1
+        },
+        "output_tokens": 215,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 12275
+      },
+      "view_label": "L02-L"
+    },
+    {
+      "attempts": 1,
+      "context_length": 28672,
+      "ended_at": 1783832062.8260531,
+      "finish_reason": "stop",
+      "latency_seconds": 6.270519018173218,
+      "length_hit": false,
+      "max_output_tokens": 512,
+      "model_id": "google/gemma-4-12b-qat",
+      "model_instance_id": "google/gemma-4-12b-qat",
+      "post_model_loaded_total": 0,
+      "post_model_snapshot_sha256": "dabb2213e4cf1625ad70f095596c8d15d81809be1cb2a3409327654f62b513be",
+      "raw_output_bytes": 1035,
+      "raw_output_sha256": "69517b6ff15aa42222f4196d538be91074ea980c8255e3d176ddc39bbc4d82f8",
+      "reasoning_content_present": false,
+      "reasoning_requested": "none",
+      "request_content_sha256": "d59923a1de791c922c1a9a07db07600e035c5feb7f4db07a04a52bb744b7e30d",
+      "response_envelope_sha256": "c3e59585b4f34496cbdf8caccac0cfcd21deed9d30149e3423569abb5ce7f5af",
+      "schema_sha256": "f09afba78b52f89365300ae72e089974c36089576ddd00267cc10d0e9cf62bcd",
+      "scores": {
+        "exact_schema": false,
+        "extracted_or_fenced_json": true,
+        "hard_failures": [
+          "json_invalid",
+          "schema_invalid"
+        ],
+        "placeholder_fidelity": false,
+        "raw_json": false,
+        "semantic_fidelity": false,
+        "strict_end_to_end_acceptance": false,
+        "structural_retention": null
+      },
+      "started_at": 1783832056.5555341,
+      "transport": "/v1/responses text.format.json_schema strict=true",
+      "usage": {
+        "input_tokens": 741,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 290,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1031
+      },
+      "view_label": "M01"
+    },
+    {
+      "attempts": 1,
+      "context_length": 28672,
+      "ended_at": 1783832072.662199,
+      "finish_reason": "stop",
+      "latency_seconds": 9.82873797416687,
+      "length_hit": false,
+      "max_output_tokens": 4096,
+      "model_id": "google/gemma-4-12b-qat",
+      "model_instance_id": "google/gemma-4-12b-qat",
+      "post_model_loaded_total": 0,
+      "post_model_snapshot_sha256": "dabb2213e4cf1625ad70f095596c8d15d81809be1cb2a3409327654f62b513be",
+      "raw_output_bytes": 2114,
+      "raw_output_sha256": "11cd059b39e581c9f1606e879127f320a6b44b5bede79ac68a5e78a2a4b4c688",
+      "reasoning_content_present": false,
+      "reasoning_requested": "none",
+      "request_content_sha256": "e2dcc964d770d219e53e99d9dae9289d6ca374d2f3b7510bf32c342b3835642f",
+      "response_envelope_sha256": "8cb3086391aa6995c1d9860373983fb733a9b3699460b74b2c71d3633f812345",
+      "schema_sha256": "f09afba78b52f89365300ae72e089974c36089576ddd00267cc10d0e9cf62bcd",
+      "scores": {
+        "exact_schema": true,
+        "extracted_or_fenced_json": true,
+        "hard_failures": [
+          "json_invalid",
+          "placeholder_corruption",
+          "target_text_mismatch"
+        ],
+        "placeholder_fidelity": false,
+        "raw_json": false,
+        "semantic_fidelity": false,
+        "strict_end_to_end_acceptance": false,
+        "structural_retention": null
+      },
+      "started_at": 1783832062.833461,
+      "transport": "/v1/responses text.format.json_schema strict=true",
+      "usage": {
+        "input_tokens": 1174,
+        "input_tokens_details": {
+          "cached_tokens": 1
+        },
+        "output_tokens": 445,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1619
+      },
+      "view_label": "M05"
+    },
+    {
+      "attempts": 1,
+      "context_length": 28672,
+      "ended_at": 1783832082.0605173,
+      "finish_reason": "stop",
+      "latency_seconds": 9.361087322235107,
+      "length_hit": false,
+      "max_output_tokens": 512,
+      "model_id": "google/gemma-4-12b-qat",
+      "model_instance_id": "google/gemma-4-12b-qat",
+      "post_model_loaded_total": 0,
+      "post_model_snapshot_sha256": "dabb2213e4cf1625ad70f095596c8d15d81809be1cb2a3409327654f62b513be",
+      "raw_output_bytes": 674,
+      "raw_output_sha256": "ed241df47e9e6d1c109f67c30f1235c605df965bf725af483b668e6de910a547",
+      "reasoning_content_present": false,
+      "reasoning_requested": "none",
+      "request_content_sha256": "9c7d4c75220fe84858ab56c75a03ddbfa222e228df673578fe4bea05fa79a29b",
+      "response_envelope_sha256": "06ea913d556a37aec346e952a2629f63428295752e20f91320393a9504add191",
+      "schema_sha256": "c55ba92b6d2bffdc0df492d1914df7b27f1d350731b541aed1b144ad7b9cba2f",
+      "scores": {
+        "exact_schema": true,
+        "extracted_or_fenced_json": true,
+        "hard_failures": [
+          "structural_retention_or_transport_failure"
+        ],
+        "placeholder_fidelity": null,
+        "raw_json": false,
+        "semantic_fidelity": null,
+        "strict_end_to_end_acceptance": false,
+        "structural_retention": true
+      },
+      "started_at": 1783832072.69943,
+      "transport": "/v1/responses text.format.json_schema strict=true",
+      "usage": {
+        "input_tokens": 12064,
+        "input_tokens_details": {
+          "cached_tokens": 1
+        },
+        "output_tokens": 164,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 12228
+      },
+      "view_label": "L02-L"
+    },
+    {
+      "attempts": 1,
+      "context_length": 28672,
+      "ended_at": 1783832108.8297238,
+      "finish_reason": "stop",
+      "latency_seconds": 12.16710901260376,
+      "length_hit": false,
+      "max_output_tokens": 512,
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_instance_id": "google/gemma-4-26b-a4b-qat",
+      "post_model_loaded_total": 0,
+      "post_model_snapshot_sha256": "dabb2213e4cf1625ad70f095596c8d15d81809be1cb2a3409327654f62b513be",
+      "raw_output_bytes": 1034,
+      "raw_output_sha256": "3e70fde7a11484dc4a10fdc167353c159484d0898a560cce48527f97b17f7583",
+      "reasoning_content_present": false,
+      "reasoning_requested": "none",
+      "request_content_sha256": "d59923a1de791c922c1a9a07db07600e035c5feb7f4db07a04a52bb744b7e30d",
+      "response_envelope_sha256": "1751bdc0dd156c1a8f5c9d673a4f54aa2ec281ac02f46f2a7afc1c0461affbe2",
+      "schema_sha256": "f09afba78b52f89365300ae72e089974c36089576ddd00267cc10d0e9cf62bcd",
+      "scores": {
+        "exact_schema": false,
+        "extracted_or_fenced_json": true,
+        "hard_failures": [
+          "json_invalid",
+          "schema_invalid"
+        ],
+        "placeholder_fidelity": false,
+        "raw_json": false,
+        "semantic_fidelity": false,
+        "strict_end_to_end_acceptance": false,
+        "structural_retention": null
+      },
+      "started_at": 1783832096.6626148,
+      "transport": "/v1/responses text.format.json_schema strict=true",
+      "usage": {
+        "input_tokens": 741,
+        "input_tokens_details": {
+          "cached_tokens": 0
+        },
+        "output_tokens": 290,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1031
+      },
+      "view_label": "M01"
+    },
+    {
+      "attempts": 1,
+      "context_length": 28672,
+      "ended_at": 1783832127.0908496,
+      "finish_reason": "stop",
+      "latency_seconds": 18.256646394729614,
+      "length_hit": false,
+      "max_output_tokens": 4096,
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_instance_id": "google/gemma-4-26b-a4b-qat",
+      "post_model_loaded_total": 0,
+      "post_model_snapshot_sha256": "dabb2213e4cf1625ad70f095596c8d15d81809be1cb2a3409327654f62b513be",
+      "raw_output_bytes": 2120,
+      "raw_output_sha256": "f8df4457718925ac445d08c9f104c7dadfe607a47288a981bcd926c17cb8b37e",
+      "reasoning_content_present": false,
+      "reasoning_requested": "none",
+      "request_content_sha256": "e2dcc964d770d219e53e99d9dae9289d6ca374d2f3b7510bf32c342b3835642f",
+      "response_envelope_sha256": "4999f6ecaf12177cbada38169f37f7420434603378f70258c41aba02d05cabe4",
+      "schema_sha256": "f09afba78b52f89365300ae72e089974c36089576ddd00267cc10d0e9cf62bcd",
+      "scores": {
+        "exact_schema": true,
+        "extracted_or_fenced_json": true,
+        "hard_failures": [
+          "json_invalid",
+          "placeholder_corruption",
+          "target_text_mismatch"
+        ],
+        "placeholder_fidelity": false,
+        "raw_json": false,
+        "semantic_fidelity": false,
+        "strict_end_to_end_acceptance": false,
+        "structural_retention": null
+      },
+      "started_at": 1783832108.8342032,
+      "transport": "/v1/responses text.format.json_schema strict=true",
+      "usage": {
+        "input_tokens": 1174,
+        "input_tokens_details": {
+          "cached_tokens": 1
+        },
+        "output_tokens": 441,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1615
+      },
+      "view_label": "M05"
+    },
+    {
+      "attempts": 1,
+      "context_length": 28672,
+      "ended_at": 1783832161.6558022,
+      "finish_reason": "stop",
+      "latency_seconds": 34.53973984718323,
+      "length_hit": false,
+      "max_output_tokens": 512,
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "model_instance_id": "google/gemma-4-26b-a4b-qat",
+      "post_model_loaded_total": 0,
+      "post_model_snapshot_sha256": "dabb2213e4cf1625ad70f095596c8d15d81809be1cb2a3409327654f62b513be",
+      "raw_output_bytes": 1227,
+      "raw_output_sha256": "3bb5254128ed9bae25ec10bf7995a76069803894ecd1b9b66909a15cb7c34299",
+      "reasoning_content_present": false,
+      "reasoning_requested": "none",
+      "request_content_sha256": "9c7d4c75220fe84858ab56c75a03ddbfa222e228df673578fe4bea05fa79a29b",
+      "response_envelope_sha256": "ea91e4c25bf322a7f7aeaa992b533de685b213e5e6159fb8fa33db414bc9ab50",
+      "schema_sha256": "c55ba92b6d2bffdc0df492d1914df7b27f1d350731b541aed1b144ad7b9cba2f",
+      "scores": {
+        "exact_schema": false,
+        "extracted_or_fenced_json": true,
+        "hard_failures": [
+          "structural_retention_or_transport_failure"
+        ],
+        "placeholder_fidelity": null,
+        "raw_json": false,
+        "semantic_fidelity": null,
+        "strict_end_to_end_acceptance": false,
+        "structural_retention": false
+      },
+      "started_at": 1783832127.1160624,
+      "transport": "/v1/responses text.format.json_schema strict=true",
+      "usage": {
+        "input_tokens": 12064,
+        "input_tokens_details": {
+          "cached_tokens": 1
+        },
+        "output_tokens": 279,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 12343
+      },
+      "view_label": "L02-L"
+    }
+  ],
+  "schema_version": "gemma4-native-structured-output-correction-v1",
+  "summary": {
+    "admission_interpretation": "No model is admitted end to end. Native schema binding proves several distinct transport/schema capabilities, but no normalization row matches the bound target or placeholder contract, and only 12B QAT retains all L02-L structural units.",
+    "admitted_models": [],
+    "models": {
+      "google/gemma-4-12b-qat": {
+        "calls": 3,
+        "exact_schema": 2,
+        "extracted_or_fenced_json": 3,
+        "length_hits": 0,
+        "placeholder_fidelity": 0,
+        "raw_json": 0,
+        "reasoning_tokens": 0,
+        "semantic_fidelity": 0,
+        "strict_end_to_end_acceptance": 0,
+        "structural_retention": 1
+      },
+      "google/gemma-4-26b-a4b-qat": {
+        "calls": 3,
+        "exact_schema": 1,
+        "extracted_or_fenced_json": 3,
+        "length_hits": 0,
+        "placeholder_fidelity": 0,
+        "raw_json": 0,
+        "reasoning_tokens": 0,
+        "semantic_fidelity": 0,
+        "strict_end_to_end_acceptance": 0,
+        "structural_retention": 0
+      },
+      "google/gemma-4-e2b": {
+        "calls": 3,
+        "exact_schema": 3,
+        "extracted_or_fenced_json": 3,
+        "length_hits": 0,
+        "placeholder_fidelity": 0,
+        "raw_json": 2,
+        "reasoning_tokens": 0,
+        "semantic_fidelity": 0,
+        "strict_end_to_end_acceptance": 0,
+        "structural_retention": 0
+      },
+      "google/gemma-4-e4b": {
+        "calls": 3,
+        "exact_schema": 2,
+        "extracted_or_fenced_json": 2,
+        "length_hits": 0,
+        "placeholder_fidelity": 0,
+        "raw_json": 0,
+        "reasoning_tokens": 0,
+        "semantic_fidelity": 0,
+        "strict_end_to_end_acceptance": 0,
+        "structural_retention": 0
+      }
+    },
+    "strictly_accepted_calls": 0
+  }
+}

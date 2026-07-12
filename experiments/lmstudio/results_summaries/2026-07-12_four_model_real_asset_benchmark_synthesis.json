@@ -2417,6 +2417,12 @@
     16384,
     28672
   ],
+  "correction": {
+    "addendum": "2026-07-12_gemma4_native_structured_output_correction.json",
+    "historical_evidence_preserved": true,
+    "reason": "Historical requests embedded the schema in the prompt and did not bind native structured output.",
+    "status": "superseded_admission_interpretation"
+  },
   "models": [
     {
       "accepted_calls": 0,

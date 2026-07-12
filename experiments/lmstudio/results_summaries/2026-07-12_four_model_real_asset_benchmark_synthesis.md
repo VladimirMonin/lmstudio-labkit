@@ -1,5 +1,11 @@
 # Four-model real-asset benchmark synthesis
 
+> **Correction:** this historical matrix embedded the output schema in the prompt but did not
+> bind LM Studio native structured output. Its strict `accepted=0` result remains historical
+> evidence, but it must not be interpreted as absence of JSON, exact-schema, or structural
+> capability. See `2026-07-12_gemma4_native_structured_output_correction.md` for the focused
+> native-schema rerun and corrected admission interpretation.
+
 ## Decision
 
 None of the four models is operationally admitted under the current prompt, schema, and scoring contract. All 80 calls were independently reviewed and all 80 were rejected. Timing remains useful only as a diagnostic signal.
