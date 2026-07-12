@@ -1,8 +1,116 @@
-# L3.31-L3.38 Gemma Admission Matrix
+# Gemma 4 Admission Matrix
 
-Status: reconciled after the bounded L3.38 reasoning-off follow-up. Family closure remains partial, not green.
+Status: final documentation reconciliation after the 2026-07-12 real-Whisper benchmark and native structured-output correction. No model is admitted end to end for the tested normalization contract.
 
-Timestamp: 2026-07-10T22:15:00+05:00
+Timestamp: 2026-07-12
+
+## Authoritative 2026-07-12 result
+
+The final benchmark used publication-safe views derived from real sanitized Whisper
+assets. It retained the normalization and long-structure difficulty needed for the
+experiment without publishing raw private transcripts, prompts, or model outputs.
+The exact tested family was:
+
+- `google/gemma-4-e2b`
+- `google/gemma-4-e4b`
+- `google/gemma-4-12b-qat`
+- `google/gemma-4-26b-a4b-qat`
+
+Gemma 4 31B variants were explicitly excluded.
+
+### Historical matrix and superseded interpretation
+
+The first real-asset run executed all 64 planned cells and all 80 planned calls:
+M01 and M05 at 8,192, 16,384, and 28,672 context, L02-L at 16,384,
+loaded-session comparisons, and P1/P2/P4 fan-out. It embedded the schema in the
+prompt rather than binding native structured output. All 80 strict verdicts were
+rejected, but `accepted=0` did **not** mean that the models produced no useful
+structure. The run already showed exact-schema results on M01/M05 and structural
+retention up to 428/428 units; its old all-or-nothing capability interpretation is
+superseded. The 64-cell/80-call evidence itself remains historical and unchanged.
+
+Timing from that run is diagnostic only. It does not prove physical KV-cache reuse,
+and rejected quality rows cannot establish production parallelism or capacity.
+
+### Corrected native structured-output matrix
+
+The focused correction ran one measured Responses API call for each model across
+M01, M05, and L02-L: 12 calls total. Every request used `/v1/responses`, native
+`text.format.type=json_schema`, the exact bound schema, `strict=true`,
+`reasoning.effort=none`, temperature 0, and a 28,672-token context. Every envelope
+reported `reasoning_tokens=0`. Output budgets were 512 tokens for M01 and L02-L,
+and 4,096 for M05.
+
+Scoring kept these axes separate instead of collapsing them into one verdict:
+
+1. raw JSON;
+2. extracted JSON, including fenced JSON;
+3. exact schema;
+4. semantic fidelity to the bound target;
+5. placeholder fidelity;
+6. L02-L structural retention;
+7. strict end-to-end acceptance.
+
+| Model | Raw JSON | Extracted/fenced JSON | Exact schema | Semantic fidelity | Placeholder fidelity | L02-L retention | Strict accepted |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| E2B | 2/3 | 3/3 | 3/3 | 0/2 | 0/2 | 318/428 | 0/3 |
+| E4B | 0/3 | 2/3 | 2/3 | 0/2 | 0/2 | 43/428 | 0/3 |
+| 12B QAT | 0/3 | 3/3 | 2/3 | 0/2 | 0/2 | 428/428 | 0/3 |
+| 26B MoE | 0/3 | 3/3 | 1/3 | 0/2 | 0/2 | 427/428 | 0/3 |
+
+E2B is the strongest raw-JSON and schema follower. 12B QAT is the strongest
+long-structure candidate and retained every L02-L unit. 26B MoE missed one unit and
+followed the exact schema inconsistently. None of the models met semantic and
+placeholder fidelity, so none passed strict acceptance.
+
+### E4B/M05 runaway boundary
+
+E4B/M05 exhausted three exact no-reasoning budgets under the same prompt, native
+strict schema, temperature, model, and context contract:
+
+| Maximum output | Reported output | Reasoning tokens | Result |
+|---:|---:|---:|---|
+| 4,096 | 4,096 | 0 | malformed non-JSON |
+| 8,192 | 8,192 | 0 | full 4,096-run prefix, then continued malformed output |
+| 16,384 | 16,384 | 0 | full 4,096- and 8,192-run prefixes, then continued malformed output |
+
+All three envelopes reported `finish_reason=stop`, so exact budget exhaustion is
+part of the length classification. The final call had a measured 1,175-token SDK
+formatted input and 2,048-token safety margin; input + output + margin required
+19,607 of 28,672 tokens, leaving 9,065 tokens of context headroom. The repeated
+full-prefix continuation, malformed output, failed schema, and zero reasoning prove
+a runaway generation for this exact contract—not reasoning-token competition or
+context choking.
+
+### Operational decision
+
+- Use E2B as the first candidate when raw JSON and exact-schema following matter,
+  but repair semantic and placeholder fidelity before admission.
+- Use 12B QAT only as a structural-retention research candidate; fenced transport
+  and normalization fidelity still block admission.
+- Do not select 26B MoE as a quality ceiling from this evidence; it is slower,
+  schema-inconsistent, and one L02-L unit short.
+- Keep E4B/M05 blocked until the runaway generation is repaired under this exact
+  native schema contract.
+- Do not infer production parallelism, cache benefit, physical KV reuse, or timing
+  superiority from rejected rows.
+
+All model slices and both E4B boundary follow-ups ended with cleanup read-back
+`loaded_total=0`; preflight and final global read-backs were also zero.
+
+### Canonical evidence
+
+- [Historical 64-cell/80-call synthesis](2026-07-12_four_model_real_asset_benchmark_synthesis.md)
+- [Historical machine report](2026-07-12_four_model_real_asset_benchmark_synthesis.json)
+- [Corrected 12-call native structured-output report](2026-07-12_gemma4_native_structured_output_correction.md)
+- [Corrected machine report](2026-07-12_gemma4_native_structured_output_correction.json)
+- Evidence commits: [`16bede4`](https://github.com/VladimirMonin/lmstudio-labkit/commit/16bede4), [`75565dd`](https://github.com/VladimirMonin/lmstudio-labkit/commit/75565dd), [`a5080dd`](https://github.com/VladimirMonin/lmstudio-labkit/commit/a5080dd), and [`fcfbefd`](https://github.com/VladimirMonin/lmstudio-labkit/commit/fcfbefd).
+
+## Earlier L3.31-L3.38 evidence (historical)
+
+The sections below preserve the earlier route-specific canaries and diagnostics.
+Where they conflict with the authoritative 2026-07-12 result above, the later
+real-asset native structured-output correction controls the current interpretation.
 
 Legend:
 
