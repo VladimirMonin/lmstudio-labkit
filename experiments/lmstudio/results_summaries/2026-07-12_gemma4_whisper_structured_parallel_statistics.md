@@ -33,7 +33,11 @@ All accepted statistical calls used reasoning disabled. Cleanup verification end
 
 `Gemma 4 26B MoE` did not provide a consistent quality advantage over 12B. It was slower, failed exact schema in two of the three repeated structured cells, and several long-transcript outputs either removed a critical item, damaged technical names, or performed little cleanup.
 
-For the tested runtime and 8k structured-block workload, P2 is the practical maximum. P4 produced HTTP 400 for all four measured requests on every model after a successful sequential warmup. This is a runtime/capacity boundary, not an output-token truncation.
+P4 is supported when the runtime JSON grammar is compact. The original positional
+schema encoded a separate `const` ID constraint for every one of 25 array positions;
+that grammar produced HTTP 400 before generation. Replacing it with a generic
+25-item `{id, text}` schema and validating exact IDs and order after generation
+repaired P4 on every model: 5/5 batches and 20/20 requests passed per model.
 
 ## 1. Long real-transcript cold repeats
 
@@ -110,18 +114,42 @@ True overlap was verified by the runner with two loaded inference slots and two 
 
 The two 12B preflight/warmup attempts that ended before measured requests are configuration failures, not model failures: one lacked explicit verified context and one inherited a 30-second legacy timeout.
 
-### P4
+### P4 diagnosis and repair
 
-| Model | Sequential warmup | Four measured requests | Verdict |
-|---|---:|---:|---|
-| E2B | pass | HTTP 400, 4/4 | runtime/capacity failure |
-| E4B | pass | HTTP 400, 4/4 | runtime/capacity failure |
-| 12B QAT | pass | HTTP 400, 4/4 | runtime/capacity failure |
-| 26B MoE | pass at 4096 | HTTP 400, 4/4 | runtime/capacity failure |
+The initial P4 workload used a positional schema with 25 separate per-position
+`const` ID constraints. Its sequential warmup passed, but all four measured requests
+received HTTP 400 before generation on every model. Controls then isolated the
+failure:
 
-P4 failures occurred before response generation: response bodies were empty, `finish_length=0`, and output budget was irrelevant. The 26B control used 4096 tokens to prove that its warmup could complete before the same four-request HTTP failure.
+- short plain P4: 4/4 HTTP 200;
+- medium plain P4 at roughly 1,173 prompt tokens per request: 4/4 HTTP 200;
+- minimal JSON-schema P4: 4/4 HTTP 200;
+- the positional 25-`const` schema still failed after reducing context from 8,192 to
+  4,096;
+- a generic 25-item blocks schema passed while preserving exact IDs and order through
+  post-generation validation.
 
-**Operational recommendation:** use P2 as the maximum concurrency for this LM Studio runtime/configuration. Do not promote P4 without a separate runtime-capacity repair and revalidation.
+The repair keeps runtime grammar constraints generic (`id` integer, `text` string,
+exactly 25 items) and moves request-specific ID/order/duplicate/missing/extra checks
+to the application validator.
+
+Five independent P4 batches were then executed per model. Each batch contained four
+simultaneous requests.
+
+| Model | Batches | HTTP 200 | `finish=stop` | Reasoning zero | Exact IDs/order | Mean request latency | Observed range |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| E2B | 5/5 | 20/20 | 20/20 | 20/20 | 20/20 | 15.6 s | 15.4-15.7 s |
+| E4B | 5/5 | 20/20 | 20/20 | 20/20 | 20/20 | 18.1 s | 17.7-18.3 s |
+| 12B QAT | 5/5 | 20/20 | 20/20 | 20/20 | 20/20 | 19.3 s | 18.9-19.5 s |
+| 26B MoE | 5/5 | 20/20 | 20/20 | 20/20 | 20/20 | 64.7 s | 60.4-69.2 s |
+
+The repaired P4 closure adds 80 successful concurrent requests. P4 is therefore not
+a general runtime or memory limit in this setup; the blocker was the complexity of
+the request-specific grammar.
+
+**Operational recommendation:** P2 remains the conservative default. P4 is admitted
+for compact generic schemas with strict post-generation ID/order validation. Do not
+use const-heavy positional schemas at P4.
 
 ## 4. GPU placement
 
@@ -162,15 +190,18 @@ Do not use retry to conceal semantic deletion, context leakage, changed identifi
 - L02 retention fields are model-produced structured values; they are not a source-to-output alignment proof for every transcript unit.
 - Loaded-session or parallel timing does not prove physical KV-cache reuse without server-side cache telemetry.
 - GPU load text does not prove physical per-layer placement or complete VRAM utilization.
-- P4 is blocked only for the tested runtime, context, structured workload, and hardware placement. It is not a universal model architecture limit.
+- Const-heavy positional schemas were blocked at P4; compact generic schemas passed
+  80/80 repaired requests. This does not establish P4 for every schema complexity,
+  context size, or hardware placement.
 
 ## 7. Closure
 
 The statistical experiment is closed with these operational choices:
 
 - primary model: Gemma 4 12B QAT;
-- supported concurrency: P1/P2;
-- rejected concurrency: P4 in the current runtime;
+- supported concurrency: P1/P2 and bounded P4 with compact generic schemas;
+- rejected P4 contract: request-specific positional schemas with 25 separate `const`
+  constraints;
 - preferred long-context representations: plain text or JSON blocks;
 - timestamped full context requires additional boundary controls;
 - all private raw evidence remains outside version control.

@@ -15,8 +15,9 @@ The operational result supersedes the older recommendation to begin long cleanup
 with E2B:
 
 - 12B QAT is the primary long-cleanup and structured-block rehearsal candidate;
-- P2 passed on all four models, while P4 returned HTTP 400 for all four measured
-  requests on every model in this runtime;
+- P2 passed on all four models; the initial const-heavy positional P4 schema returned
+  HTTP 400, while a generic blocks schema repaired P4 to 5/5 batches and 20/20
+  requests per model with exact post-generation ID/order validation;
 - E2B remains the strongest raw-JSON follower but did not perform adequate cleanup
   in five deterministic long/plain repeats;
 - E4B remains blocked for unattended M05 cleanup by deterministic runaway;
@@ -25,8 +26,9 @@ with E2B:
   footprint.
 
 The recommended bounded configuration is 12B QAT, reasoning disabled, plain or
-JSON-block full context, explicit chunk boundaries, adequate output budget, and P2
-maximum concurrency. Exact IDs, URLs, commands, placeholders, and critical digits
+JSON-block full context, explicit chunk boundaries, and adequate output budget. P2 is
+the conservative concurrency default; bounded P4 is supported only with compact
+generic schemas. Exact IDs, URLs, commands, placeholders, and critical digits
 must be validated separately from semantic value.
 
 ## Authoritative 2026-07-12 result

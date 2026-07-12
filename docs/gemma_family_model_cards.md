@@ -19,7 +19,8 @@ Current practical roles:
 
 - **12B QAT:** primary candidate for long transcript cleanup and structured blocks;
   use an adequate output budget, explicit chunk boundaries, reasoning disabled,
-  and no more than P2 concurrency in the tested runtime.
+  P2 by default, and P4 only with compact generic schemas plus strict
+  post-generation ID/order validation.
 - **E2B:** fast raw-JSON/schema follower, but its five deterministic long/plain
   results preserved words without performing the required punctuation and paragraph
   cleanup.
@@ -27,8 +28,10 @@ Current practical roles:
   in 5/5 statistical calls and at larger 8k/16k output controls.
 - **26B MoE:** slower and did not show a stable quality/schema advantage over 12B.
 
-P2 passed on all four models. P4 failed at runtime with four HTTP 400 responses per
-model after successful warmup. `--gpu max` did not improve the focused 12B P2 run.
+P2 passed on all four models. The original P4 positional schema, with 25 per-position
+`const` ID constraints, failed before generation. A generic 25-item blocks schema
+repaired P4 to 5/5 batches and 20/20 exact-ID requests per model. `--gpu max` did not
+improve the focused 12B P2 run.
 
 ## Final evidence boundary
 
