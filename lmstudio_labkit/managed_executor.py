@@ -833,6 +833,19 @@ class LocalLMStudioHostRunner:
             payload["max_tokens"] = max_tokens
         return self._request_json(endpoint_path, payload, timeout_s)
 
+    def strict_chat_completion(
+        self,
+        *,
+        endpoint_path: str,
+        payload: dict[str, object],
+        timeout_s: float,
+    ) -> object:
+        """Send an already validated strict chat payload without reshaping it."""
+
+        if endpoint_path != "/v1/chat/completions":
+            raise ManagedExecutorError("local managed runner supports only /v1/chat/completions")
+        return self._request_json(endpoint_path, payload, timeout_s)
+
     def native_chat_diagnostic(
         self,
         *,
@@ -846,6 +859,7 @@ class LocalLMStudioHostRunner:
         attempt_index: int = 1,
         context_length: int = 8192,
         image_data_url: str | None = None,
+        capture_outbound_request: bool = False,
     ) -> NativeChatDiagnosticResult:
         """Run one explicitly enabled native reasoning diagnostic request.
 
@@ -927,6 +941,8 @@ class LocalLMStudioHostRunner:
                 message_text=parsed.message_text,
                 finish_reason=parsed.finish_reason,
                 boundary=parsed.boundary,
+                endpoint="/api/v1/chat" if capture_outbound_request else None,
+                request_payload=payload if capture_outbound_request else None,
             )
         return NativeChatDiagnosticResult(
             http_status=parsed.http_status,

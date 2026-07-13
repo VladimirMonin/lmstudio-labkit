@@ -1,0 +1,885 @@
+{
+  "manifest_version": 1,
+  "serial": true,
+  "retry_policy": "off",
+  "max_calls": 40,
+  "models": [
+    "google/gemma-4-e2b",
+    "google/gemma-4-e4b",
+    "google/gemma-4-12b-qat",
+    "google/gemma-4-26b-a4b-qat"
+  ],
+  "fixture_builder": {
+    "implementation": "lmstudio_labkit.strict_vision.build_strict_vision_fixture",
+    "pillow_version": "11.3.0",
+    "max_side": 1024,
+    "format": "PNG",
+    "resample": "LANCZOS",
+    "compress_level": 9
+  },
+  "strict_request": {
+    "endpoint": "/v1/chat/completions",
+    "context_length": 8192,
+    "max_tokens": 1024,
+    "temperature": 0.0,
+    "stream": false,
+    "reasoning_effort": "none",
+    "enable_thinking": false
+  },
+  "prompts": [
+    {
+      "name": "native_plain",
+      "text": "Describe only what is visibly present in the image. Do not infer private context or identities.",
+      "sha256": "43e9952a8ce6b58a719c7297b80f43156cae4e5b132a328435821d49a528933f"
+    },
+    {
+      "name": "simple_description",
+      "text": "Return the strict schema. Describe visible content, transcribe visible text, and list uncertainty in warnings. Do not invent hidden context.",
+      "sha256": "0ad5354cd9b0da6c37eb777f37210f650df34b13603967375578d9555d91cf13"
+    },
+    {
+      "name": "medium_objects_text",
+      "text": "Return the strict schema. Describe visible content, transcribe visible text, list visible object labels, and list uncertainty in warnings. Do not invent hidden context.",
+      "sha256": "40cf67016add7e7fa99031c0cc525b9ce6d05ee6d58497cd5b1d5982f5912650"
+    },
+    {
+      "name": "text_preflight",
+      "text": "Return a synthetic object conforming to the supplied schema, with no image-dependent claims.",
+      "sha256": "7abb5c10080dc021fbc27fee6881ef2db898f2e0605a2303f4ffc0f640ec6fb5"
+    }
+  ],
+  "conditional_gates": {
+    "route_rejection": "stop_all_after_first_e2b_schema_image",
+    "simple_hard_failure": "block_model_medium_and_repeat",
+    "semantic_failure": "block_model_admission",
+    "finish_reason": "require_stop",
+    "reasoning": "require_observed_zero",
+    "cleanup": "require_global_zero"
+  },
+  "fixtures": [
+    {
+      "fixture_id": "ui_settings_ru_001",
+      "path": "fixtures/bd6001e7aa080737d65a8795aae32e7129f53a02700e39ff94f99009bf35337d.png",
+      "sha256": "bd6001e7aa080737d65a8795aae32e7129f53a02700e39ff94f99009bf35337d",
+      "source_sha256": "8aac714df23fba84e667153d7a50bf21c29e35035fa3fbec977373839663b04d",
+      "width": 1024,
+      "height": 683,
+      "ground_truth": {
+        "expected_visible_text": [
+          "Настройки модели",
+          "google/gemma-4-e4b",
+          "8192",
+          "0.0",
+          "JSON-схема",
+          "Сохранить",
+          "Отмена"
+        ],
+        "supported_visible_text": [
+          "Настройки модели",
+          "google/gemma-4-e4b",
+          "8192",
+          "0.0",
+          "JSON-схема",
+          "Сохранить",
+          "Отмена"
+        ],
+        "expected_objects": [
+          "settings_window",
+          "left_navigation",
+          "model_field",
+          "context_field",
+          "temperature_field",
+          "save_button",
+          "cancel_button"
+        ],
+        "supported_objects": [
+          "settings_window",
+          "left_navigation",
+          "model_field",
+          "context_field",
+          "temperature_field",
+          "save_button",
+          "cancel_button"
+        ],
+        "forbidden_claims": [
+          "real customer data",
+          "private production system",
+          "identified person"
+        ],
+        "minimum_visible_text_recall": 0.5,
+        "minimum_visible_text_precision": 1.0,
+        "minimum_object_recall": 0.6,
+        "minimum_object_precision": 1.0
+      }
+    },
+    {
+      "fixture_id": "document_table_products_ru_001",
+      "path": "fixtures/5a64ebb12e6ec12507238392d1e802144f94a11231e39350907e2bf5fa3cbeff.png",
+      "sha256": "5a64ebb12e6ec12507238392d1e802144f94a11231e39350907e2bf5fa3cbeff",
+      "source_sha256": "dbb6e061f7954f1a772806d8b67d66125169efd4b88d1a8b4eb91b42aeab5149",
+      "width": 1024,
+      "height": 768,
+      "ground_truth": {
+        "expected_visible_text": [
+          "Таблица товаров",
+          "ID",
+          "Товар",
+          "Кол-во",
+          "Цена",
+          "Кабель",
+          "Адаптер",
+          "Блокнот",
+          "300",
+          "750",
+          "120"
+        ],
+        "supported_visible_text": [
+          "Таблица товаров",
+          "ID",
+          "Товар",
+          "Кол-во",
+          "Цена",
+          "Кабель",
+          "Адаптер",
+          "Блокнот",
+          "300",
+          "750",
+          "120"
+        ],
+        "expected_objects": [
+          "document_window",
+          "toolbar",
+          "product_table",
+          "table_header",
+          "three_data_rows"
+        ],
+        "supported_objects": [
+          "document_window",
+          "toolbar",
+          "product_table",
+          "table_header",
+          "three_data_rows"
+        ],
+        "forbidden_claims": [
+          "real customer data",
+          "private production system",
+          "identified person"
+        ],
+        "minimum_visible_text_recall": 0.5,
+        "minimum_visible_text_precision": 1.0,
+        "minimum_object_recall": 0.6,
+        "minimum_object_precision": 1.0
+      }
+    },
+    {
+      "fixture_id": "chart_tasks_by_month_ru_001",
+      "path": "fixtures/4a4bbfb13400d62a4d0ae698106f8757ed290469bed5e5f03a9189ba602cc183.png",
+      "sha256": "4a4bbfb13400d62a4d0ae698106f8757ed290469bed5e5f03a9189ba602cc183",
+      "source_sha256": "9c8c757383fc57dec329bcf05e3cb6701a463f7741812eedbc8d77f7e261ba3e",
+      "width": 1024,
+      "height": 683,
+      "ground_truth": {
+        "expected_visible_text": [
+          "Задачи, выполненные по месяцам",
+          "Январь",
+          "Февраль",
+          "Март",
+          "Апрель",
+          "12",
+          "18",
+          "9",
+          "21",
+          "Всего задач: 60"
+        ],
+        "supported_visible_text": [
+          "Задачи, выполненные по месяцам",
+          "Январь",
+          "Февраль",
+          "Март",
+          "Апрель",
+          "12",
+          "18",
+          "9",
+          "21",
+          "Всего задач: 60"
+        ],
+        "expected_objects": [
+          "chart_title",
+          "x_axis_month_labels",
+          "four_bars",
+          "legend",
+          "summary_metrics"
+        ],
+        "supported_objects": [
+          "chart_title",
+          "x_axis_month_labels",
+          "four_bars",
+          "legend",
+          "summary_metrics"
+        ],
+        "forbidden_claims": [
+          "real customer data",
+          "private production system",
+          "identified person"
+        ],
+        "minimum_visible_text_recall": 0.5,
+        "minimum_visible_text_precision": 1.0,
+        "minimum_object_recall": 0.6,
+        "minimum_object_precision": 1.0
+      }
+    },
+    {
+      "fixture_id": "code_python_editor_001",
+      "path": "fixtures/beff10966c649b2bcc6372afd7a1ffe7c84245462b3dc0f42d52a9acb131a3d5.png",
+      "sha256": "beff10966c649b2bcc6372afd7a1ffe7c84245462b3dc0f42d52a9acb131a3d5",
+      "source_sha256": "e387c3707145554cd0148a4e6da22c6996db05498bcf35542160a5b2bd8449d9",
+      "width": 1024,
+      "height": 683,
+      "ground_truth": {
+        "expected_visible_text": [
+          "utils.py",
+          "normalize_title",
+          "clamp",
+          "format_seconds",
+          "Python 3.11.8",
+          "UTF-8",
+          "LF"
+        ],
+        "supported_visible_text": [
+          "utils.py",
+          "normalize_title",
+          "clamp",
+          "format_seconds",
+          "Python 3.11.8",
+          "UTF-8",
+          "LF"
+        ],
+        "expected_objects": [
+          "file_explorer",
+          "utils_py_tab",
+          "line_numbers",
+          "python_code_block",
+          "status_bar"
+        ],
+        "supported_objects": [
+          "file_explorer",
+          "utils_py_tab",
+          "line_numbers",
+          "python_code_block",
+          "status_bar"
+        ],
+        "forbidden_claims": [
+          "real customer data",
+          "private production system",
+          "identified person"
+        ],
+        "minimum_visible_text_recall": 0.5,
+        "minimum_visible_text_precision": 1.0,
+        "minimum_object_recall": 0.6,
+        "minimum_object_precision": 1.0
+      }
+    }
+  ],
+  "schemas": [
+    {
+      "name": "simple_description",
+      "sha256": "8a4394812e6360addc5d5cd02778544460520c6e168d60d84562d3fac819c1ae",
+      "body": {
+        "type": "object",
+        "required": [
+          "description",
+          "visible_text",
+          "warnings"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "visible_text": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "medium_objects_text",
+      "sha256": "78e5821b578d29c301e3935b30b598d30ba45c1fe092dcfcc47f02203db871c7",
+      "body": {
+        "type": "object",
+        "required": [
+          "image_type",
+          "summary",
+          "visible_text",
+          "objects",
+          "warnings"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "image_type": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "visible_text": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "objects": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "type",
+                "label"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "calls": [
+    {
+      "ordinal": 1,
+      "call_id": "sv-01-matrix-text-preflight",
+      "model_id": "google/gemma-4-e2b",
+      "fixture_id": null,
+      "kind": "text_preflight",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 2,
+      "call_id": "sv-02-e2b-native-ui",
+      "model_id": "google/gemma-4-e2b",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "native_plain",
+      "schema_name": null,
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 3,
+      "call_id": "sv-03-e2b-simple-ui_settings_ru_001",
+      "model_id": "google/gemma-4-e2b",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 4,
+      "call_id": "sv-04-e2b-simple-document_table_products_ru_001",
+      "model_id": "google/gemma-4-e2b",
+      "fixture_id": "document_table_products_ru_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 5,
+      "call_id": "sv-05-e2b-simple-chart_tasks_by_month_ru_001",
+      "model_id": "google/gemma-4-e2b",
+      "fixture_id": "chart_tasks_by_month_ru_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 6,
+      "call_id": "sv-06-e2b-simple-code_python_editor_001",
+      "model_id": "google/gemma-4-e2b",
+      "fixture_id": "code_python_editor_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 7,
+      "call_id": "sv-07-e2b-medium-ui_settings_ru_001",
+      "model_id": "google/gemma-4-e2b",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-03-e2b-simple-ui_settings_ru_001",
+        "sv-04-e2b-simple-document_table_products_ru_001",
+        "sv-05-e2b-simple-chart_tasks_by_month_ru_001",
+        "sv-06-e2b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 8,
+      "call_id": "sv-08-e2b-medium-document_table_products_ru_001",
+      "model_id": "google/gemma-4-e2b",
+      "fixture_id": "document_table_products_ru_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-03-e2b-simple-ui_settings_ru_001",
+        "sv-04-e2b-simple-document_table_products_ru_001",
+        "sv-05-e2b-simple-chart_tasks_by_month_ru_001",
+        "sv-06-e2b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 9,
+      "call_id": "sv-09-e2b-medium-chart_tasks_by_month_ru_001",
+      "model_id": "google/gemma-4-e2b",
+      "fixture_id": "chart_tasks_by_month_ru_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-03-e2b-simple-ui_settings_ru_001",
+        "sv-04-e2b-simple-document_table_products_ru_001",
+        "sv-05-e2b-simple-chart_tasks_by_month_ru_001",
+        "sv-06-e2b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 10,
+      "call_id": "sv-10-e2b-medium-code_python_editor_001",
+      "model_id": "google/gemma-4-e2b",
+      "fixture_id": "code_python_editor_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-03-e2b-simple-ui_settings_ru_001",
+        "sv-04-e2b-simple-document_table_products_ru_001",
+        "sv-05-e2b-simple-chart_tasks_by_month_ru_001",
+        "sv-06-e2b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 11,
+      "call_id": "sv-11-e2b-repeat-ui",
+      "model_id": "google/gemma-4-e2b",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "simple_repeat",
+      "schema_name": "simple_description",
+      "condition": "first_three_model_simple_accepted",
+      "depends_on_call_ids": [
+        "sv-03-e2b-simple-ui_settings_ru_001",
+        "sv-04-e2b-simple-document_table_products_ru_001",
+        "sv-05-e2b-simple-chart_tasks_by_month_ru_001",
+        "sv-06-e2b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 12,
+      "call_id": "sv-12-e4b-native-ui",
+      "model_id": "google/gemma-4-e4b",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "native_plain",
+      "schema_name": null,
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 13,
+      "call_id": "sv-13-e4b-simple-ui_settings_ru_001",
+      "model_id": "google/gemma-4-e4b",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 14,
+      "call_id": "sv-14-e4b-simple-document_table_products_ru_001",
+      "model_id": "google/gemma-4-e4b",
+      "fixture_id": "document_table_products_ru_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 15,
+      "call_id": "sv-15-e4b-simple-chart_tasks_by_month_ru_001",
+      "model_id": "google/gemma-4-e4b",
+      "fixture_id": "chart_tasks_by_month_ru_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 16,
+      "call_id": "sv-16-e4b-simple-code_python_editor_001",
+      "model_id": "google/gemma-4-e4b",
+      "fixture_id": "code_python_editor_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 17,
+      "call_id": "sv-17-e4b-medium-ui_settings_ru_001",
+      "model_id": "google/gemma-4-e4b",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-13-e4b-simple-ui_settings_ru_001",
+        "sv-14-e4b-simple-document_table_products_ru_001",
+        "sv-15-e4b-simple-chart_tasks_by_month_ru_001",
+        "sv-16-e4b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 18,
+      "call_id": "sv-18-e4b-medium-document_table_products_ru_001",
+      "model_id": "google/gemma-4-e4b",
+      "fixture_id": "document_table_products_ru_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-13-e4b-simple-ui_settings_ru_001",
+        "sv-14-e4b-simple-document_table_products_ru_001",
+        "sv-15-e4b-simple-chart_tasks_by_month_ru_001",
+        "sv-16-e4b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 19,
+      "call_id": "sv-19-e4b-medium-chart_tasks_by_month_ru_001",
+      "model_id": "google/gemma-4-e4b",
+      "fixture_id": "chart_tasks_by_month_ru_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-13-e4b-simple-ui_settings_ru_001",
+        "sv-14-e4b-simple-document_table_products_ru_001",
+        "sv-15-e4b-simple-chart_tasks_by_month_ru_001",
+        "sv-16-e4b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 20,
+      "call_id": "sv-20-e4b-medium-code_python_editor_001",
+      "model_id": "google/gemma-4-e4b",
+      "fixture_id": "code_python_editor_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-13-e4b-simple-ui_settings_ru_001",
+        "sv-14-e4b-simple-document_table_products_ru_001",
+        "sv-15-e4b-simple-chart_tasks_by_month_ru_001",
+        "sv-16-e4b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 21,
+      "call_id": "sv-21-e4b-repeat-ui",
+      "model_id": "google/gemma-4-e4b",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "simple_repeat",
+      "schema_name": "simple_description",
+      "condition": "first_three_model_simple_accepted",
+      "depends_on_call_ids": [
+        "sv-13-e4b-simple-ui_settings_ru_001",
+        "sv-14-e4b-simple-document_table_products_ru_001",
+        "sv-15-e4b-simple-chart_tasks_by_month_ru_001",
+        "sv-16-e4b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 22,
+      "call_id": "sv-22-12b-native-ui",
+      "model_id": "google/gemma-4-12b-qat",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "native_plain",
+      "schema_name": null,
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 23,
+      "call_id": "sv-23-12b-simple-ui_settings_ru_001",
+      "model_id": "google/gemma-4-12b-qat",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 24,
+      "call_id": "sv-24-12b-simple-document_table_products_ru_001",
+      "model_id": "google/gemma-4-12b-qat",
+      "fixture_id": "document_table_products_ru_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 25,
+      "call_id": "sv-25-12b-simple-chart_tasks_by_month_ru_001",
+      "model_id": "google/gemma-4-12b-qat",
+      "fixture_id": "chart_tasks_by_month_ru_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 26,
+      "call_id": "sv-26-12b-simple-code_python_editor_001",
+      "model_id": "google/gemma-4-12b-qat",
+      "fixture_id": "code_python_editor_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 27,
+      "call_id": "sv-27-12b-medium-ui_settings_ru_001",
+      "model_id": "google/gemma-4-12b-qat",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-23-12b-simple-ui_settings_ru_001",
+        "sv-24-12b-simple-document_table_products_ru_001",
+        "sv-25-12b-simple-chart_tasks_by_month_ru_001",
+        "sv-26-12b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 28,
+      "call_id": "sv-28-12b-medium-document_table_products_ru_001",
+      "model_id": "google/gemma-4-12b-qat",
+      "fixture_id": "document_table_products_ru_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-23-12b-simple-ui_settings_ru_001",
+        "sv-24-12b-simple-document_table_products_ru_001",
+        "sv-25-12b-simple-chart_tasks_by_month_ru_001",
+        "sv-26-12b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 29,
+      "call_id": "sv-29-12b-medium-chart_tasks_by_month_ru_001",
+      "model_id": "google/gemma-4-12b-qat",
+      "fixture_id": "chart_tasks_by_month_ru_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-23-12b-simple-ui_settings_ru_001",
+        "sv-24-12b-simple-document_table_products_ru_001",
+        "sv-25-12b-simple-chart_tasks_by_month_ru_001",
+        "sv-26-12b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 30,
+      "call_id": "sv-30-12b-medium-code_python_editor_001",
+      "model_id": "google/gemma-4-12b-qat",
+      "fixture_id": "code_python_editor_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-23-12b-simple-ui_settings_ru_001",
+        "sv-24-12b-simple-document_table_products_ru_001",
+        "sv-25-12b-simple-chart_tasks_by_month_ru_001",
+        "sv-26-12b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 31,
+      "call_id": "sv-31-12b-repeat-ui",
+      "model_id": "google/gemma-4-12b-qat",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "simple_repeat",
+      "schema_name": "simple_description",
+      "condition": "first_three_model_simple_accepted",
+      "depends_on_call_ids": [
+        "sv-23-12b-simple-ui_settings_ru_001",
+        "sv-24-12b-simple-document_table_products_ru_001",
+        "sv-25-12b-simple-chart_tasks_by_month_ru_001",
+        "sv-26-12b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 32,
+      "call_id": "sv-32-26b-native-ui",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "native_plain",
+      "schema_name": null,
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 33,
+      "call_id": "sv-33-26b-simple-ui_settings_ru_001",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 34,
+      "call_id": "sv-34-26b-simple-document_table_products_ru_001",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "fixture_id": "document_table_products_ru_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 35,
+      "call_id": "sv-35-26b-simple-chart_tasks_by_month_ru_001",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "fixture_id": "chart_tasks_by_month_ru_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 36,
+      "call_id": "sv-36-26b-simple-code_python_editor_001",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "fixture_id": "code_python_editor_001",
+      "kind": "simple_description",
+      "schema_name": "simple_description",
+      "condition": "always",
+      "depends_on_call_ids": []
+    },
+    {
+      "ordinal": 37,
+      "call_id": "sv-37-26b-medium-ui_settings_ru_001",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-33-26b-simple-ui_settings_ru_001",
+        "sv-34-26b-simple-document_table_products_ru_001",
+        "sv-35-26b-simple-chart_tasks_by_month_ru_001",
+        "sv-36-26b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 38,
+      "call_id": "sv-38-26b-medium-document_table_products_ru_001",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "fixture_id": "document_table_products_ru_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-33-26b-simple-ui_settings_ru_001",
+        "sv-34-26b-simple-document_table_products_ru_001",
+        "sv-35-26b-simple-chart_tasks_by_month_ru_001",
+        "sv-36-26b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 39,
+      "call_id": "sv-39-26b-medium-chart_tasks_by_month_ru_001",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "fixture_id": "chart_tasks_by_month_ru_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-33-26b-simple-ui_settings_ru_001",
+        "sv-34-26b-simple-document_table_products_ru_001",
+        "sv-35-26b-simple-chart_tasks_by_month_ru_001",
+        "sv-36-26b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 40,
+      "call_id": "sv-40-26b-medium-code_python_editor_001",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "fixture_id": "code_python_editor_001",
+      "kind": "medium_objects_text",
+      "schema_name": "medium_objects_text",
+      "condition": "model_simple_schema_accepted",
+      "depends_on_call_ids": [
+        "sv-33-26b-simple-ui_settings_ru_001",
+        "sv-34-26b-simple-document_table_products_ru_001",
+        "sv-35-26b-simple-chart_tasks_by_month_ru_001",
+        "sv-36-26b-simple-code_python_editor_001"
+      ]
+    },
+    {
+      "ordinal": 41,
+      "call_id": "sv-41-26b-repeat-ui",
+      "model_id": "google/gemma-4-26b-a4b-qat",
+      "fixture_id": "ui_settings_ru_001",
+      "kind": "simple_repeat",
+      "schema_name": "simple_description",
+      "condition": "first_three_model_simple_accepted",
+      "depends_on_call_ids": [
+        "sv-33-26b-simple-ui_settings_ru_001",
+        "sv-34-26b-simple-document_table_products_ru_001",
+        "sv-35-26b-simple-chart_tasks_by_month_ru_001",
+        "sv-36-26b-simple-code_python_editor_001"
+      ]
+    }
+  ]
+}

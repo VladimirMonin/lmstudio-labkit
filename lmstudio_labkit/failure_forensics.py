@@ -111,6 +111,9 @@ class LocalFailureForensics:
         message_text: str = "",
         finish_reason: str | None = None,
         boundary: str | None = None,
+        endpoint: str | None = None,
+        request_payload: object | None = None,
+        transport_error_category: str | None = None,
     ) -> ForensicsRecordHandle | None:
         if not self.enabled:
             return None
@@ -122,6 +125,11 @@ class LocalFailureForensics:
         ]
         parse = _json_parse_diagnostics(message_text)
         numeric_stats = _numeric_stats_tree(raw_envelope)
+        outbound = (
+            {"endpoint": endpoint, "payload": _json_safe(request_payload)}
+            if endpoint is not None and request_payload is not None
+            else None
+        )
         record = {
             "schema_version": "local-failure-forensics-v1",
             "request": {
@@ -140,7 +148,9 @@ class LocalFailureForensics:
                 "http_status": http_status,
                 "content_type": content_type,
                 "boundary": boundary,
+                "error_category": transport_error_category,
             },
+            "outbound": outbound,
             "raw": {
                 "envelope": _json_safe(raw_envelope),
                 "sse_frames": frame_rows,
@@ -176,6 +186,9 @@ class LocalFailureForensics:
             },
             "private_local_pack_exists": True,
         }
+        outbound_manifest = _outbound_safe_manifest(endpoint, request_payload)
+        if outbound_manifest["captured"] is True:
+            safe_manifest["outbound"] = outbound_manifest
         filename = f"attempt-{attempt_index:04d}-{time.time_ns()}-{uuid.uuid4().hex[:12]}.json"
         path = self.root / filename
         _atomic_private_json(path, record)
@@ -447,6 +460,27 @@ def _text_presence(text: str) -> dict[str, object]:
         "present": bool(text),
         "char_count": len(text),
         "sha256": _hash_text(text),
+    }
+
+
+def _outbound_safe_manifest(endpoint: str | None, payload: object | None) -> dict[str, object]:
+    if endpoint is None or payload is None:
+        return {"captured": False}
+    safe_payload = _json_safe(payload)
+    serialized = json.dumps(safe_payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    top_level_fields = sorted(str(key) for key in payload) if isinstance(payload, Mapping) else []
+    response_format = payload.get("response_format") if isinstance(payload, Mapping) else None
+    json_schema = (
+        response_format.get("json_schema") if isinstance(response_format, Mapping) else None
+    )
+    return {
+        "captured": True,
+        "endpoint": endpoint,
+        "payload_sha256": _hash_text(serialized),
+        "top_level_fields": top_level_fields,
+        "strict_json_schema": isinstance(json_schema, Mapping)
+        and json_schema.get("strict") is True,
+        "image_data_url_present": "data:image/" in serialized,
     }
 
 
