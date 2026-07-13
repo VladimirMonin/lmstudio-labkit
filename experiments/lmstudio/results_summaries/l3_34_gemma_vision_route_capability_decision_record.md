@@ -21,7 +21,7 @@ Latest placeholder:
 docs/live_demo/latest_gemma_vision_route_probe/README.md
 ```
 
-## Current metadata posture
+## Historical metadata posture
 
 The committed Gemma specs in the prepared config remain text-only:
 
@@ -77,7 +77,7 @@ A future live L3.34 route probe may be considered accepted only if all of these 
 
 If the route rejects image payloads after metadata eligibility, classify the result as `route_rejected_image_payload` with `quality_failure=false`.
 
-## Downstream decision
+## Historical downstream decision
 
 L3.35 image matrix work remains blocked until L3.34 proves at least one eligible Gemma image route. If no eligible route is proven, close image benchmarking as `unsupported_modality` / `blocked`, not as a failed quality benchmark.
 
@@ -112,3 +112,42 @@ native_e4b_gate:
 The native E4B route is proven for non-empty plain text in this one-asset shape.
 Structured image output and broader vision screening remain blocked; route
 acceptance and plain-text success are not model-quality or JSON admission.
+
+## Superseding full strict-schema route update — 2026-07-13
+
+The historical measurements above remain unchanged. The exact outbound contract
+of the four-call compatibility probe is not retained, so those calls are still
+contract-unverified rather than schema-bound evidence. The native E4B result also
+remains a plain/prompt-only route diagnostic.
+
+A later content-addressed run and reviewed continuation now supersede only the old
+conclusion that API-bound structured image transport was unproven:
+
+```yaml
+route: /v1/chat/completions
+request_contract: image_data_url_plus_response_format_json_schema_strict_true
+schemas: [simple_description, medium_objects_text]
+models: [E2B, E4B, 12B, 26B]
+executed_strict_simple_rows: 16
+executed_strict_medium_rows: 16
+executed_repeat_rows: 3
+strict_image_http_200: 35
+strict_image_raw_json: 35
+strict_image_schema_pass: 35
+controller_validator_rejections: 35
+controller_validator_status: preserved_partial_gold_failure_record
+semantic_binary_admission: not_assessed_under_valid_gate
+production_admission: none
+final_global_loaded_count: 0
+```
+
+This confirms compatible-route image transport plus strict simple/medium schema
+response contracts for 35/35 bounded strict-image rows. Direct pixel/raw review
+found 15/16 medium object inventories grounded and all three executed UI repeat
+pairs byte-identical. These results remain bounded and do not establish ranking,
+broad determinism, or production admission.
+
+The earlier 0/16 controller verdict is no longer binding semantic evidence. Its
+partial allow-lists and warning policy were invalid for open-world precision; the
+0/16 and 35/35 rejection counts remain preserved as a validator failure record. See
+`2026-07-13_native_structured_vision_closure.md` for the qualified decision.

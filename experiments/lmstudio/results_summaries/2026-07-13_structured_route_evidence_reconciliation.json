@@ -1,0 +1,322 @@
+{
+  "schema_version": "lmstudio-labkit-structured-route-evidence-reconciliation-v1",
+  "date": "2026-07-13",
+  "status": "offline evidence reconciliation; no model calls",
+  "decision": {
+    "prompt_requested_json_is_schema_bound": false,
+    "fence_normalized_json_is_raw_json": false,
+    "local_schema_validation_proves_api_binding": false,
+    "api_bound_strict_schema_requires": [
+      "a schema field in the outbound API payload",
+      "strict=true in that field",
+      "a retained route and request-shape binding"
+    ],
+    "historical_image_schema_bound_calls": 0,
+    "historical_image_schema_bound_status": "not demonstrated before the new closure runner",
+    "text_schema_bound_evidence_exists": true
+  },
+  "definitions": {
+    "plain_text": "No JSON response contract was requested.",
+    "prompt_only_json": "The prompt requested JSON, while no API schema field was sent.",
+    "fence_normalized_json": "Exactly one complete Markdown JSON fence was removed before parsing; this is recovered serialization, not raw JSON and not proof of API schema binding.",
+    "api_bound_strict_json_schema": "The outbound payload carried a route-specific JSON Schema field with strict=true.",
+    "local_schema_validation": "A caller-side check after generation; it does not establish how the generation request was constrained."
+  },
+  "inventory": [
+    {
+      "evidence_set": "l3_34_prepared_route_probe",
+      "route": "none",
+      "modality": "image",
+      "payload_contract": "offline image-task configuration only",
+      "response_contract": "configured simple_description schema; no request sent",
+      "response_surface": "none",
+      "classification": "zero_call_preparation",
+      "denominators": {
+        "planned_request_slots": 4,
+        "executed_calls": 0
+      },
+      "claim_boundary": "The prepared strict_json_schema flag is not live structured-output evidence.",
+      "sources": [
+        "experiments/lmstudio/structured_matrix/configs/matrix.l3_34_gemma_vision_route_probe.yaml:35-80,145-167",
+        "experiments/lmstudio/results_summaries/l3_34_gemma_vision_route_capability_decision_record.md:24-82"
+      ]
+    },
+    {
+      "evidence_set": "l3_34_compat_image_probe",
+      "route": "/v1/chat/completions compatibility envelope",
+      "modality": "image",
+      "payload_contract": "PNG data URI object; exact retained outbound response_format is not present in the public evidence",
+      "response_contract": "schema pass was scored after extraction, but API-level schema binding is not proven",
+      "response_surface": "choices[0].message.content",
+      "classification": "contract_unverified_not_schema_bound_evidence",
+      "denominators": {
+        "executed_calls": 4,
+        "http_payload_accepted": 4,
+        "schema_pass": 0,
+        "finish_length": 4
+      },
+      "claim_boundary": "Do not call these four calls prompt-only or API-bound without the missing outbound payload. They prove compatibility-route acceptance and failure on the extracted surface only.",
+      "missing_evidence": [
+        "retained exact outbound request payload",
+        "retained response_format field or proof that it was absent"
+      ],
+      "sources": [
+        "experiments/lmstudio/results_summaries/l3_34_gemma_vision_route_capability_decision_record.md:84-114",
+        "experiments/lmstudio/results_summaries/l3_34_1_vision_probe_repair_decision_record.md:170-220"
+      ]
+    },
+    {
+      "evidence_set": "l3_34_1_compat_plain_repair",
+      "route": "/v1/chat/completions compatibility envelope",
+      "modality": "image",
+      "payload_contract": "PNG data URI object, max_tokens=256",
+      "response_contract": "plain text",
+      "response_surface": "choices[0].message.content",
+      "classification": "plain_text",
+      "denominators": {
+        "executed_calls": 1,
+        "non_empty_extracted_text": 0,
+        "finish_length": 1
+      },
+      "claim_boundary": "This was not a structured-output call.",
+      "sources": [
+        "experiments/lmstudio/results_summaries/l3_34_1_vision_probe_repair_decision_record.md:21-82",
+        "experiments/lmstudio/live_runs/l3_34_1_vision_probe_repair_20260710/sanitized_vision_probe_repair_summary.json:4-28"
+      ]
+    },
+    {
+      "evidence_set": "native_e4b_sequential_vision_gate",
+      "route": "/api/v1/chat",
+      "modality": "image",
+      "payload_contract": "input=[text(content), image(data_url)], temperature=0, native max_output_tokens",
+      "response_contract": "gate 1 plain text; gate 2 prompt-requested minimal JSON; no API schema field",
+      "response_surface": "output[] message content",
+      "classification": "one_plain_text_plus_one_prompt_only_json",
+      "denominators": {
+        "executed_calls": 2,
+        "plain_text_calls": 1,
+        "prompt_only_json_calls": 1,
+        "prompt_only_raw_json_pass": 0,
+        "later_zero_call_gates": 1
+      },
+      "claim_boundary": "Native image transport and plain text passed; structured image output did not. The local parse/schema gate is not native strict JSON Schema.",
+      "sources": [
+        "experiments/lmstudio/results_summaries/t_91fd364e_native_e4b_vision_gate_decision_record.md:9-114"
+      ]
+    },
+    {
+      "evidence_set": "l3_38_e4b_reasoning_off_vision_gate",
+      "route": "/api/v1/chat",
+      "modality": "text and image",
+      "payload_contract": "native text message, optional image_data_url lowered to text/image input, reasoning=off, max_output_tokens=1024; no API schema field",
+      "response_contract": "one plain marker, one prompt-requested text JSON object, one prompt-requested image JSON object; caller-side validation",
+      "response_surface": "native SSE output message text",
+      "classification": "one_plain_text_plus_two_prompt_only_json",
+      "denominators": {
+        "executed_calls": 3,
+        "prompt_only_json_calls": 2,
+        "raw_json_parse_pass": 2,
+        "local_schema_pass": 1,
+        "grounded_image_contract_pass": 0
+      },
+      "claim_boundary": "The image row returned valid JSON but the grounded boolean was wrong. Neither JSON row was API-schema-bound.",
+      "sources": [
+        "tools/lmstudio_lab/l3_38_followup.py:314-375,423-498",
+        "experiments/lmstudio/live_runs/l3_38_reasoning_off_followup/e4b_vision_admission_report.json:7-67"
+      ]
+    },
+    {
+      "evidence_set": "l3_38_repeated_context_12b",
+      "route": "/api/v1/chat",
+      "modality": "text",
+      "payload_contract": "native text messages, reasoning=off, max_output_tokens=1024; schema represented only in prompt and caller-side ResponseContract",
+      "response_contract": "prompt-requested marker/status/warnings JSON",
+      "response_surface": "native SSE output message text",
+      "classification": "fence_normalized_prompt_only_json",
+      "denominators": {
+        "executed_calls": 6,
+        "raw_json_parse_pass": 0,
+        "single_complete_fence_normalized_parse_pass": 6,
+        "normalized_local_contract_pass": 6
+      },
+      "claim_boundary": "The original strict-first validator rejected 6/6. Offline fence unwrapping recovered 6/6 without semantic repair, but did not turn them into raw or API-bound success.",
+      "sources": [
+        "tools/lmstudio_lab/l3_38_followup.py:501-565",
+        "experiments/lmstudio/live_runs/l3_38_reasoning_off_followup/repeated_context_12b.sanitized.json:1-269",
+        "experiments/lmstudio/results_summaries/l3_39_12b_fenced_replay_addendum.md"
+      ]
+    },
+    {
+      "evidence_set": "l3_38_openai_strict_investigation",
+      "route": "/v1/chat/completions",
+      "modality": "text",
+      "payload_contract": "documented response_format.type=json_schema shape was recorded but generation was disabled",
+      "response_contract": "API-bound strict JSON Schema planned only",
+      "response_surface": "choices[0].message.content",
+      "classification": "zero_call_schema_bound_plan",
+      "denominators": {
+        "executed_calls": 0,
+        "model_loads": 0
+      },
+      "claim_boundary": "No L3.38 OpenAI-compatible strict-route result exists.",
+      "sources": [
+        "experiments/lmstudio/results_summaries/l3_38_reasoning_off_followup_launch_gate.md:104-108",
+        "experiments/lmstudio/live_runs/l3_38_reasoning_off_followup/strict_json_route_contract_decision.json:1-62"
+      ]
+    },
+    {
+      "evidence_set": "l3_39_vision_family_matrix",
+      "route": "/api/v1/chat",
+      "modality": "image",
+      "payload_contract": "native text message plus hash-pinned 8-bit RGB PNG data URL, reasoning class, max_output_tokens; no API schema field",
+      "response_contract": "perception is plain text; simple/medium/complex request JSON only in prompt, then caller-side fence parsing, schema validation, business checks, and grounding review",
+      "response_surface": "native SSE output message text",
+      "classification": "plain_perception_plus_fence_normalized_prompt_only_json",
+      "denominators": {
+        "planned_e2b_e4b_requests": 16,
+        "executed_e2b_e4b_requests": 11,
+        "e2b_e4b_structured_outputs": 7,
+        "e2b_e4b_raw_json_pass": 0,
+        "e2b_e4b_fence_normalized_parse_pass": 7,
+        "e2b_e4b_local_schema_pass": 3,
+        "full_family_executed_structured_vision_outputs": 17,
+        "full_family_raw_json_pass": 0,
+        "full_family_fence_normalized_parse_pass": 17,
+        "full_family_local_schema_pass": 8
+      },
+      "claim_boundary": "All structured vision rows are prompt-only. Fence normalization and local schema validity do not demonstrate API-bound structured vision.",
+      "sources": [
+        "tools/lmstudio_lab/l3_39_family_matrix.py:546-638,641-733,939-979",
+        "experiments/lmstudio/results_summaries/l3_39a_e2b_e4b_vision_results.md:11-47",
+        "experiments/lmstudio/results_summaries/l3_39d_e2b_full_axes.sanitized.json",
+        "experiments/lmstudio/results_summaries/l3_39e_e4b_full_axes.sanitized.json",
+        "experiments/lmstudio/results_summaries/l3_39f_12b_full_axes.sanitized.json",
+        "experiments/lmstudio/results_summaries/l3_39g_26b_full_axes.sanitized.json",
+        "experiments/lmstudio/results_summaries/l3_39h_unsloth_31b_full_axes.sanitized.json"
+      ]
+    },
+    {
+      "evidence_set": "long_transcript_representation_partial_matrix",
+      "route": "/v1/chat/completions",
+      "modality": "text",
+      "payload_contract": "messages, max_tokens, temperature=0, reasoning_effort=none, enable_thinking=false; no response_format",
+      "response_contract": "plain text even when the full reference context representation was JSON blocks",
+      "response_surface": "choices[0].message.content",
+      "classification": "plain_text",
+      "denominators": {
+        "frozen_plan_calls": 54,
+        "retained_phase_calls": 27,
+        "not_tested_plan_calls": 27,
+        "plain_output_calls": 27,
+        "structured_output_calls": 0
+      },
+      "claim_boundary": "JSON blocks described an input representation, not an output contract. The 27 calls are neither prompt-only JSON nor schema-bound JSON evidence.",
+      "sources": [
+        "tools/lmstudio_lab/source_shaped_rehearsal.py:112-203,393-441",
+        "experiments/lmstudio/results_summaries/2026-07-12_long_context_representation_analysis.md:18-65,111-125",
+        "experiments/lmstudio/results_summaries/2026-07-12_gemma4_last_day_evidence_inventory.json:63-80,138-145"
+      ]
+    },
+    {
+      "evidence_set": "native_structured_output_correction_and_repeat5",
+      "route": "/v1/responses",
+      "modality": "text",
+      "payload_contract": "input text plus text.format.type=json_schema, strict=true, bound schema, temperature=0, reasoning.effort=none",
+      "response_contract": "API-bound strict JSON Schema with caller-side raw-first and one-complete-fence extraction reported separately",
+      "response_surface": "output[].content[].type=output_text",
+      "classification": "api_bound_strict_json_schema",
+      "denominators": {
+        "authoritative_correction_calls": 12,
+        "boundary_follow_up_calls": 2,
+        "repeat5_calls": 60,
+        "repeat5_raw_or_fence_recoverable": 55,
+        "repeat5_total": 60
+      },
+      "claim_boundary": "API binding proves request enforcement, not raw serialization, exact schema, semantic correctness, or grounding.",
+      "sources": [
+        "tools/lmstudio_lab/structured_output_correction.py:114-182",
+        "experiments/lmstudio/results_summaries/2026-07-12_gemma4_native_structured_output_correction.md:9-26,28-61",
+        "experiments/lmstudio/results_summaries/2026-07-12_structured_output_and_scorer_audit.md:15-56"
+      ]
+    },
+    {
+      "evidence_set": "host_application_shaped_202_call_text_series",
+      "route": "/v1/chat/completions",
+      "modality": "text",
+      "payload_contract": "messages plus response_format={type:json_schema,json_schema:{name,strict:true,schema}}, temperature=0, max_tokens, cache_prompt=true, enable_thinking=false, reasoning_effort=none",
+      "response_contract": "API-bound strict JSON Schema on every call; caller parses the unmodified choices message as raw JSON",
+      "response_surface": "choices[0].message.content",
+      "classification": "api_bound_strict_json_schema",
+      "denominators": {
+        "total_calls": 202,
+        "http_200": 202,
+        "raw_json_parseable": 199,
+        "primary_calls": 157,
+        "primary_raw_json_parseable": 155,
+        "repeat_and_cache_calls": 33,
+        "repeat_and_cache_raw_json_parseable": 32,
+        "parallel_calls": 12,
+        "parallel_structurally_accepted": 12
+      },
+      "claim_boundary": "The 202 calls are heterogeneous and not 202 independent quality observations. This series is text-only and does not establish schema-bound vision.",
+      "exact_runners": [
+        "owner-only run_wvm_shaped_structured_v1.py",
+        "owner-only run_wvm_shaped_repeat_cache_v1.py",
+        "owner-only run_wvm_shaped_parallel_v1.py"
+      ],
+      "sources": [
+        "experiments/lmstudio/results_summaries/2026-07-13_host_application_shaped_structured_context_summary.md:19-50,75-91",
+        "experiments/lmstudio/results_summaries/2026-07-13_host_application_shaped_structured_context_summary.json:5-24,48-54"
+      ]
+    }
+  ],
+  "superseded_or_unsupported_claims": [
+    {
+      "claim": "The 27-call representation matrix tested structured JSON output.",
+      "verdict": "contradicted",
+      "correction": "It tested three input context representations and requested plain-text output in all 27 retained calls."
+    },
+    {
+      "claim": "L3.39 vision schema-valid rows prove native or API-bound structured vision.",
+      "verdict": "contradicted",
+      "correction": "L3.39 used native prompt-requested JSON plus caller-side fence normalization and schema validation; it sent no API schema field."
+    },
+    {
+      "claim": "Fence-normalized JSON is raw JSON compliance.",
+      "verdict": "contradicted",
+      "correction": "Report raw parse, deterministic fence recovery, and schema validity as separate axes."
+    },
+    {
+      "claim": "Caller-side schema validation proves the model was constrained by strict JSON Schema on the wire.",
+      "verdict": "contradicted",
+      "correction": "Only a retained outbound route-specific schema field with strict=true proves API binding."
+    },
+    {
+      "claim": "The historical prompt-embedded 80-call overlay proves absence of JSON or schema capability.",
+      "verdict": "superseded",
+      "correction": "Its accepted=0 result is only the combined strict verdict for its prompt-embedded contract; later /v1/responses calls prove bounded native schema capability."
+    },
+    {
+      "claim": "The 202-call text series proves schema-bound image output.",
+      "verdict": "unsupported",
+      "correction": "It proves text-only API-bound strict JSON Schema over /v1/chat/completions."
+    },
+    {
+      "claim": "HTTP image-route acceptance, JSON syntax, schema validity, and visual grounding are interchangeable.",
+      "verdict": "contradicted",
+      "correction": "Keep transport, response surface, raw syntax, recovered syntax, schema, and grounding as independent gates."
+    }
+  ],
+  "missing_evidence": [
+    "No retained historical image request combines image input with a route-level strict JSON Schema field.",
+    "The exact outbound response_format contract of the four-call L3.34 compatibility probe is not retained in public evidence.",
+    "No historical image denominator can be reclassified as API-bound solely from local schema results.",
+    "Schema-bound image evidence therefore requires the separately reviewed closure runner and new live calls."
+  ],
+  "non_claims": [
+    "No model call, model load, network request, or raw private artifact publication was performed for this reconciliation.",
+    "No normalized JSON result is reported as raw JSON.",
+    "No prompt-only JSON result is reported as API-bound strict JSON Schema.",
+    "No text-only schema-bound result is generalized to vision."
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "admission": "No model/schema combination is admitted from this run.",
+  "date": "2026-07-13",
+  "denominators": {
+    "candidate_rows": 41,
+    "executed_host_calls": 21,
+    "medium_rows_executed": 0,
+    "native_plain_rows_executed": 4,
+    "repeat_rows_executed": 0,
+    "reviewed_executed_rows": 21,
+    "strict_image_rows_executed": 16,
+    "text_preflight_rows_executed": 1,
+    "zero_call_rows": 20
+  },
+  "findings": [
+    "API-bound strict JSON and schema validity succeeded for all 16 executed strict image rows.",
+    "Schema success did not establish semantic admission: the frozen controller admitted 0/16 strict image rows.",
+    "Independent raw-image review found exact visible_text arrays in 10/16 rows and supported/relevant warning arrays in 7/16 rows.",
+    "No forbidden private-production, real-customer, or identified-person claim was found in any strict image row.",
+    "The frozen supported-text allow-lists are materially incomplete relative to the fixture pixels; many controller precision penalties are false positives for genuinely visible text. The 0/16 controller verdict remains binding, but it must not be described as 16 hallucination failures.",
+    "Native baselines were grounded on the UI fixture, but 12B and 26B hit the output cap and were incomplete.",
+    "No medium/object or repeatability claim is supported because those rows made zero calls."
+  ],
+  "limitations": [
+    "Manual review is bounded to the four pinned fixtures and the 21 executed raw artifacts.",
+    "Fixture ground truth is a salient subset, not an exhaustive OCR transcript; manual exactness checks used direct pixel inspection for emitted strings.",
+    "No new model call, retry, alternative cap, or medium/repeat execution was performed.",
+    "Per-model ranking is not supported by four simple rows per model and zero repeats."
+  ],
+  "manifest_sha256": "9f1b7fbad08203f3cf0049e26ac2bb5e62f4ad95129046fb38a3ae2e20ca942e",
+  "native_plain_aggregate": {
+    "complete": {"denominator": 4, "numerator": 2},
+    "grounded_visible_prefix": {"denominator": 4, "numerator": 4},
+    "output_cap_truncated": {"denominator": 4, "numerator": 2},
+    "schema_applicable": false
+  },
+  "objects": {
+    "executed_medium_rows": 0,
+    "reason": "The simple_description schema has no objects field and all medium_objects_text rows were zero-call stop-gated.",
+    "verdict": "not_evaluated"
+  },
+  "per_model_simple_schema": {
+    "google/gemma-4-12b-qat": {
+      "admission_verdict": "not_admitted", "controller_grounding_pass": 0, "executed": 4,
+      "forbidden_claim_rows": 0, "independent_schema_pass": 4, "manual_grounded": 2,
+      "manual_visible_text_exact": 2, "manual_warnings_supported_and_relevant": 2,
+      "raw_json_pass": 4, "schema": "simple_description"
+    },
+    "google/gemma-4-26b-a4b-qat": {
+      "admission_verdict": "not_admitted", "controller_grounding_pass": 0, "executed": 4,
+      "forbidden_claim_rows": 0, "independent_schema_pass": 4, "manual_grounded": 4,
+      "manual_visible_text_exact": 4, "manual_warnings_supported_and_relevant": 2,
+      "raw_json_pass": 4, "schema": "simple_description"
+    },
+    "google/gemma-4-e2b": {
+      "admission_verdict": "not_admitted", "controller_grounding_pass": 0, "executed": 4,
+      "forbidden_claim_rows": 0, "independent_schema_pass": 4, "manual_grounded": 2,
+      "manual_visible_text_exact": 1, "manual_warnings_supported_and_relevant": 1,
+      "raw_json_pass": 4, "schema": "simple_description"
+    },
+    "google/gemma-4-e4b": {
+      "admission_verdict": "not_admitted", "controller_grounding_pass": 0, "executed": 4,
+      "forbidden_claim_rows": 0, "independent_schema_pass": 4, "manual_grounded": 3,
+      "manual_visible_text_exact": 3, "manual_warnings_supported_and_relevant": 2,
+      "raw_json_pass": 4, "schema": "simple_description"
+    }
+  },
+  "repeatability": {
+    "executed_repeats": 0,
+    "reason": "All repeat rows were correctly stop-gated after simple-schema semantic rejection.",
+    "verdict": "not_evaluated"
+  },
+  "report_version": 1,
+  "strict_simple_aggregate": {
+    "controller_grounding_pass": {"denominator": 16, "numerator": 0},
+    "controller_minimum_visible_text_recall_pass": {"denominator": 16, "numerator": 16},
+    "forbidden_claim_rows": {"denominator": 16, "numerator": 0},
+    "independent_schema_pass": {"denominator": 16, "numerator": 16},
+    "manual_grounded": {"denominator": 16, "numerator": 11},
+    "manual_visible_text_exact": {"denominator": 16, "numerator": 10},
+    "manual_warnings_supported_and_relevant": {"denominator": 16, "numerator": 7},
+    "raw_json_pass": {"denominator": 16, "numerator": 16}
+  }
+}

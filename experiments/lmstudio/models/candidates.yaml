@@ -136,3 +136,62 @@ candidates:
       observed_after: m0_7_policy_backed_smoke_qwen35_9b_001
       loaded_in_ram_vram: false
     status: lab_verified
+
+# Modality-scoped evidence does not change the general structured_output_policy
+# fields above. These records are descriptive model-card annotations only.
+vision_evidence:
+  evidence_date: 2026-07-13
+  route: /v1/chat/completions
+  request_contract: image_data_url_plus_response_format_json_schema_strict_true
+  schemas:
+    - simple_description
+    - medium_objects_text
+  fixture_count: 4
+  executed_host_calls: 40
+  executed_image_calls: 39
+  strict_image_raw_json_pass: 35
+  strict_image_schema_pass: 35
+  ranking: unsupported
+  production_admission: none
+  semantic_binary_admission: not_assessed_under_valid_gate
+  medium_objects_text: executed_16_of_16
+  repeatability: three_of_three_byte_identical_ui_pairs_only
+  validator_failure:
+    preserved_initial_partial_gold_verdict: 0_of_16
+    preserved_full_strict_image_rejections: 35_of_35
+    superseded_as_semantic_admission: true
+    reason: incomplete_open_world_allow_lists_and_warning_policy
+  canonical_report: ../results_summaries/2026-07-13_native_structured_vision_closure.md
+  per_model:
+    google/gemma-4-e2b:
+      image_calls: 10
+      strict_image_raw_schema_pass: 9_of_9
+      visible_text_exact: 2_of_10
+      salient_text_complete: 4_of_10
+      medium_objects_grounded: 3_of_4
+      repeat_executed: true
+      production_admission: none
+    google/gemma-4-e4b:
+      image_calls: 10
+      strict_image_raw_schema_pass: 9_of_9
+      visible_text_exact: 8_of_10
+      salient_text_complete: 10_of_10
+      medium_objects_grounded: 4_of_4
+      repeat_executed: true
+      production_admission: none
+    google/gemma-4-12b-qat:
+      image_calls: 9
+      strict_image_raw_schema_pass: 8_of_8
+      visible_text_exact: 5_of_9
+      salient_text_complete: 8_of_9
+      medium_objects_grounded: 4_of_4
+      repeat_executed: false
+      production_admission: none
+    google/gemma-4-26b-a4b-qat:
+      image_calls: 10
+      strict_image_raw_schema_pass: 9_of_9
+      visible_text_exact: 10_of_10
+      salient_text_complete: 9_of_10
+      medium_objects_grounded: 4_of_4
+      repeat_executed: true
+      production_admission: none

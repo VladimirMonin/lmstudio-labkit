@@ -1,0 +1,186 @@
+{
+  "schema_version": "lmstudio-labkit-native-structured-vision-closure-v2",
+  "date": "2026-07-13",
+  "status": "full_evidence_closure_after_continuation",
+  "verdict": "schema_bound_transport_confirmed_manual_semantics_mixed",
+  "manifest_sha256": "9f1b7fbad08203f3cf0049e26ac2bb5e62f4ad95129046fb38a3ae2e20ca942e",
+  "scope": {
+    "models": [
+      "google/gemma-4-e2b",
+      "google/gemma-4-e4b",
+      "google/gemma-4-12b-qat",
+      "google/gemma-4-26b-a4b-qat"
+    ],
+    "fixtures": 4,
+    "candidate_rows": 41,
+    "maximum_authorized_host_calls": 40,
+    "executed_host_calls": 40,
+    "zero_call_rows": 1,
+    "manually_reviewed_calls": 40,
+    "new_calls_during_final_manual_review": 0
+  },
+  "denominator_explanation": "The manifest contains four conditional repeat candidates but authorizes at most three repeats. Three reviewed repeats executed; the 12B repeat remained zero-call. Therefore 41 candidate dispositions, 40 executed calls, one zero-call row, and the 40-call ceiling are consistent.",
+  "execution": {
+    "text_preflight": {
+      "candidate": 1,
+      "executed": 1,
+      "zero_call": 0,
+      "raw_json_pass": {"numerator": 1, "denominator": 1},
+      "schema_pass": {"numerator": 1, "denominator": 1},
+      "claim_boundary": "Route plumbing only; not an image or model-admission result."
+    },
+    "native_plain_ui_baseline": {
+      "candidate": 4,
+      "executed": 4,
+      "zero_call": 0,
+      "schema_applicable": false,
+      "visible_text_exact": {"numerator": 3, "denominator": 4},
+      "salient_text_complete": {"numerator": 2, "denominator": 4},
+      "objects_grounded": {"numerator": 4, "denominator": 4},
+      "salient_objects_complete": {"numerator": 2, "denominator": 4}
+    },
+    "strict_simple_image": {
+      "candidate": 16,
+      "executed": 16,
+      "zero_call": 0,
+      "schema": "simple_description",
+      "raw_json_pass": {"numerator": 16, "denominator": 16},
+      "independent_schema_pass": {"numerator": 16, "denominator": 16},
+      "visible_text_exact": {"numerator": 10, "denominator": 16},
+      "salient_text_complete": {"numerator": 13, "denominator": 16},
+      "warnings_supported_and_relevant": {"numerator": 5, "denominator": 16}
+    },
+    "strict_medium_image": {
+      "candidate": 16,
+      "executed": 16,
+      "zero_call": 0,
+      "schema": "medium_objects_text",
+      "raw_json_pass": {"numerator": 16, "denominator": 16},
+      "independent_schema_pass": {"numerator": 16, "denominator": 16},
+      "visible_text_exact": {"numerator": 10, "denominator": 16},
+      "salient_text_complete": {"numerator": 13, "denominator": 16},
+      "objects_grounded": {"numerator": 15, "denominator": 16},
+      "salient_objects_complete": {"numerator": 11, "denominator": 16},
+      "warnings_supported_and_relevant": {"numerator": 4, "denominator": 16}
+    },
+    "exact_repeat": {
+      "candidate": 4,
+      "executed": 3,
+      "zero_call": 1,
+      "byte_identical": {"numerator": 3, "denominator": 3},
+      "covered_models": [
+        "google/gemma-4-e2b",
+        "google/gemma-4-e4b",
+        "google/gemma-4-26b-a4b-qat"
+      ],
+      "not_executed_model": "google/gemma-4-12b-qat",
+      "claim_boundary": "One strict-simple UI request was repeated once on three models; broader determinism is not established."
+    }
+  },
+  "transport_and_structure": {
+    "http_200_no_transport_error": {"numerator": 40, "denominator": 40},
+    "raw_json_pass": {"numerator": 36, "denominator": 36},
+    "independent_schema_pass": {"numerator": 36, "denominator": 36},
+    "native_plain_non_json_by_design": {"numerator": 4, "denominator": 4}
+  },
+  "manual_image_semantics": {
+    "all_image_rows": {
+      "visible_text_exact": {"numerator": 25, "denominator": 39},
+      "salient_text_complete": {"numerator": 31, "denominator": 39},
+      "unsupported_claims_none": {"numerator": 36, "denominator": 39},
+      "forbidden_private_claims_absent": {"numerator": 39, "denominator": 39}
+    },
+    "interpretation": "Quality is mixed by row and dimension. The evidence demonstrates structured visual extraction but does not support a binary family ranking or production recommendation."
+  },
+  "per_model": {
+    "google/gemma-4-e2b": {
+      "calls": 11,
+      "image_calls": 10,
+      "strict_image_schema_pass": {"numerator": 9, "denominator": 9},
+      "visible_text_exact": {"numerator": 2, "denominator": 10},
+      "salient_text_complete": {"numerator": 4, "denominator": 10},
+      "medium_objects_grounded": {"numerator": 3, "denominator": 4},
+      "repeat_executed": true
+    },
+    "google/gemma-4-e4b": {
+      "calls": 10,
+      "image_calls": 10,
+      "strict_image_schema_pass": {"numerator": 9, "denominator": 9},
+      "visible_text_exact": {"numerator": 8, "denominator": 10},
+      "salient_text_complete": {"numerator": 10, "denominator": 10},
+      "medium_objects_grounded": {"numerator": 4, "denominator": 4},
+      "repeat_executed": true
+    },
+    "google/gemma-4-12b-qat": {
+      "calls": 9,
+      "image_calls": 9,
+      "strict_image_schema_pass": {"numerator": 8, "denominator": 8},
+      "visible_text_exact": {"numerator": 5, "denominator": 9},
+      "salient_text_complete": {"numerator": 8, "denominator": 9},
+      "medium_objects_grounded": {"numerator": 4, "denominator": 4},
+      "repeat_executed": false
+    },
+    "google/gemma-4-26b-a4b-qat": {
+      "calls": 10,
+      "image_calls": 10,
+      "strict_image_schema_pass": {"numerator": 9, "denominator": 9},
+      "visible_text_exact": {"numerator": 10, "denominator": 10},
+      "salient_text_complete": {"numerator": 9, "denominator": 10},
+      "medium_objects_grounded": {"numerator": 4, "denominator": 4},
+      "repeat_executed": true
+    }
+  },
+  "validator_failure_record": {
+    "preserved": true,
+    "initial_partial_gold_verdict": {
+      "controller_grounding_pass": {"numerator": 0, "denominator": 16},
+      "historical_effect": "Prematurely stop-gated medium and repeat candidates."
+    },
+    "full_run_controller_rejections": {"numerator": 35, "denominator": 35},
+    "rejected_rows_with_exact_visible_text": {"numerator": 22, "denominator": 35},
+    "rejected_medium_rows_with_grounded_objects": {"numerator": 15, "denominator": 16},
+    "superseded_interpretation": "The controller rejection count is not a semantic-admission denominator and does not prove zero vision quality. The partial-gold allow-lists and warning-field policy were not valid closed-world gold.",
+    "retained_interpretation": "The 0/16 and 35/35 results remain immutable evidence that the automated validator failed for this open-world fixture contract."
+  },
+  "admission": {
+    "route_and_schema": "accepted_for_the_bounded_four_model_four_fixture_contract",
+    "semantic_binary_admission": "not_assessed_under_a_valid_closed_world_or_open_world_gate",
+    "production_admission": "none",
+    "model_ranking": "unsupported",
+    "reason": "The defective automated verdict is superseded, while the manual evidence is heterogeneous and no valid binary production threshold was predeclared."
+  },
+  "supersession": [
+    {
+      "historical_evidence": "2026-07-13_native_structured_vision_independent_review_and_red_team",
+      "preserved": true,
+      "superseded_interpretation": "The partial-gold controller 0/16 verdict remains binding for semantic admission and medium/repeat evidence is absent.",
+      "current_interpretation": "The controller result is retained as a validator failure record. The completed continuation adds 16 medium rows and three repeats; all 40 calls were manually reconciled."
+    },
+    {
+      "historical_evidence": "l3_34_l3_35_pre_continuation_records",
+      "preserved": true,
+      "superseded_interpretation": "Medium/object extraction and repeatability were not evaluated.",
+      "current_interpretation": "Medium object extraction executed for 16/16 rows and three exact UI repeats executed; both remain bounded by the stated denominators."
+    }
+  ],
+  "cleanup": {
+    "final_global_loaded_count": 0,
+    "final_manual_review_model_calls": 0
+  },
+  "remaining_gaps": [
+    "Define and independently review a valid closed-world gold or open-world admission rubric before assigning binary semantic model admission.",
+    "Add fixtures and broader repeats before comparative ranking or production recommendations.",
+    "Do not generalize the three byte-identical UI pairs to broad determinism."
+  ],
+  "private_ledger_binding": {
+    "row_count": 40,
+    "sha256": "1ffad2666d2208297b5bfe11cc24455a8d4e92d3a0a3629e4184368cf3e6b44e",
+    "note": "The owner-only ledger is stored outside the repository; no private path or raw response text is published."
+  },
+  "public_evidence": [
+    "experiments/lmstudio/results_summaries/2026-07-13_strict_vision_40_call_manual_reconciliation.json",
+    "experiments/lmstudio/results_summaries/2026-07-13_native_structured_vision_independent_review.json",
+    "experiments/lmstudio/results_summaries/2026-07-13_native_structured_vision_red_team.json",
+    "experiments/lmstudio/strict_vision/launch_manifest.json"
+  ]
+}

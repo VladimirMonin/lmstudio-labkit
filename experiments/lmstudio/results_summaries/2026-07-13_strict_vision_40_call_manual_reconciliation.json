@@ -1,0 +1,249 @@
+{
+  "schema_version": "lmstudio-labkit-strict-vision-40-call-manual-reconciliation-v1",
+  "date": "2026-07-13",
+  "status": "manual_pixel_and_raw_reconciliation_complete",
+  "scope": {
+    "host_calls": 40,
+    "models": 4,
+    "fixtures": 4,
+    "kinds": {
+      "medium_objects_text": 16,
+      "native_plain": 4,
+      "simple_description": 16,
+      "simple_repeat": 3,
+      "text_preflight": 1
+    },
+    "new_model_calls_during_review": 0
+  },
+  "transport_and_structure": {
+    "http_200_no_transport_error": {
+      "numerator": 40,
+      "denominator": 40
+    },
+    "raw_json_pass": {
+      "numerator": 36,
+      "denominator": 36
+    },
+    "independent_schema_pass": {
+      "numerator": 36,
+      "denominator": 36
+    },
+    "native_plain_non_json_by_design": {
+      "numerator": 4,
+      "denominator": 4
+    }
+  },
+  "manual_image_semantics": {
+    "all_image_rows": {
+      "visible_text_exact": {
+        "numerator": 25,
+        "denominator": 39
+      },
+      "salient_text_complete": {
+        "numerator": 31,
+        "denominator": 39
+      },
+      "unsupported_claims_none": {
+        "numerator": 36,
+        "denominator": 39
+      },
+      "forbidden_private_claims_absent": {
+        "numerator": 39,
+        "denominator": 39
+      }
+    },
+    "native_plain_ui": {
+      "visible_text_exact": {
+        "numerator": 3,
+        "denominator": 4
+      },
+      "salient_text_complete": {
+        "numerator": 2,
+        "denominator": 4
+      },
+      "objects_grounded": {
+        "numerator": 4,
+        "denominator": 4
+      },
+      "salient_objects_complete": {
+        "numerator": 2,
+        "denominator": 4
+      }
+    },
+    "strict_simple_image": {
+      "visible_text_exact": {
+        "numerator": 10,
+        "denominator": 16
+      },
+      "salient_text_complete": {
+        "numerator": 13,
+        "denominator": 16
+      },
+      "warnings_supported_and_relevant": {
+        "numerator": 5,
+        "denominator": 16
+      }
+    },
+    "strict_medium_image": {
+      "visible_text_exact": {
+        "numerator": 10,
+        "denominator": 16
+      },
+      "salient_text_complete": {
+        "numerator": 13,
+        "denominator": 16
+      },
+      "objects_grounded": {
+        "numerator": 15,
+        "denominator": 16
+      },
+      "salient_objects_complete": {
+        "numerator": 11,
+        "denominator": 16
+      },
+      "warnings_supported_and_relevant": {
+        "numerator": 4,
+        "denominator": 16
+      }
+    },
+    "exact_repeats": {
+      "byte_identical": {
+        "numerator": 3,
+        "denominator": 3
+      },
+      "covered_models": [
+        "google/gemma-4-e2b",
+        "google/gemma-4-e4b",
+        "google/gemma-4-26b-a4b-qat"
+      ],
+      "not_executed_model": "google/gemma-4-12b-qat",
+      "boundary": "Only the strict-simple UI request was repeated once for three models; no broader repeatability claim is supported."
+    }
+  },
+  "per_model": {
+    "google/gemma-4-e2b": {
+      "calls": 11,
+      "image_calls": 10,
+      "visible_text_exact": {
+        "numerator": 2,
+        "denominator": 10
+      },
+      "salient_text_complete": {
+        "numerator": 4,
+        "denominator": 10
+      },
+      "medium_objects_grounded": {
+        "numerator": 3,
+        "denominator": 4
+      },
+      "repeat_executed": true
+    },
+    "google/gemma-4-e4b": {
+      "calls": 10,
+      "image_calls": 10,
+      "visible_text_exact": {
+        "numerator": 8,
+        "denominator": 10
+      },
+      "salient_text_complete": {
+        "numerator": 10,
+        "denominator": 10
+      },
+      "medium_objects_grounded": {
+        "numerator": 4,
+        "denominator": 4
+      },
+      "repeat_executed": true
+    },
+    "google/gemma-4-12b-qat": {
+      "calls": 9,
+      "image_calls": 9,
+      "visible_text_exact": {
+        "numerator": 5,
+        "denominator": 9
+      },
+      "salient_text_complete": {
+        "numerator": 8,
+        "denominator": 9
+      },
+      "medium_objects_grounded": {
+        "numerator": 4,
+        "denominator": 4
+      },
+      "repeat_executed": false
+    },
+    "google/gemma-4-26b-a4b-qat": {
+      "calls": 10,
+      "image_calls": 10,
+      "visible_text_exact": {
+        "numerator": 10,
+        "denominator": 10
+      },
+      "salient_text_complete": {
+        "numerator": 9,
+        "denominator": 10
+      },
+      "medium_objects_grounded": {
+        "numerator": 4,
+        "denominator": 4
+      },
+      "repeat_executed": true
+    }
+  },
+  "validator_disagreements": {
+    "controller_rejected_strict_image_rows": {
+      "numerator": 35,
+      "denominator": 35
+    },
+    "rejected_rows_with_exact_visible_text": {
+      "numerator": 22,
+      "denominator": 35
+    },
+    "rejected_medium_rows_with_grounded_objects": {
+      "numerator": 15,
+      "denominator": 16
+    },
+    "interpretation": "Controller acceptance remains a frozen automated gate result. It must not replace direct pixel/raw adjudication; sparse allow-lists and warning-field policy explain many, but not all, disagreements."
+  },
+  "unsupported_claim_rows": [
+    {
+      "call_id": "sv-24-12b-simple-document_table_products_ru_001",
+      "severity": "material",
+      "finding": "Table transcription is grounded, but warnings invents cursor occlusion over the ruler; no such cursor is visible."
+    },
+    {
+      "call_id": "sv-09-e2b-medium-chart_tasks_by_month_ru_001",
+      "severity": "minor",
+      "finding": "Objects and values are grounded, but visible_text omits values/summary; summary incorrectly says 'years January through April'."
+    },
+    {
+      "call_id": "sv-38-26b-medium-document_table_products_ru_001",
+      "severity": "minor",
+      "finding": "Exact table text and grounded objects; software-name uncertainty is valid, while 'web-based' is an unsupported hedged inference."
+    }
+  ],
+  "corrections_to_prior_manual_evidence": [
+    {
+      "call_id": "sv-02-e2b-native-ui",
+      "correction": "Prior review marked visible text exact; direct reinspection finds 'применяются' in output versus visible 'применятся'."
+    },
+    {
+      "call_id": "sv-23-12b-simple-ui_settings_ru_001",
+      "correction": "The warning entry describes an informational banner rather than uncertainty; it is not counted as warning-quality pass."
+    }
+  ],
+  "decisions": {
+    "transport": "confirmed_for_all_40_calls",
+    "strict_json_and_schema": "confirmed_for_all_36_applicable_calls",
+    "vision_semantics": "mixed_by_row_and_dimension",
+    "object_extraction": "demonstrated_but_not_uniformly_complete_or_exact",
+    "repeatability": "byte_identical_for_three_executed_ui_pairs_only",
+    "model_ranking": "unsupported_by_this_small_heterogeneous_fixture_set",
+    "production_recommendation": "unsupported"
+  },
+  "private_ledger_binding": {
+    "row_count": 40,
+    "sha256": "1ffad2666d2208297b5bfe11cc24455a8d4e92d3a0a3629e4184368cf3e6b44e",
+    "note": "Owner-only ledger is stored outside the repository; no private path or raw response text is published."
+  }
+}

@@ -1,0 +1,175 @@
+{
+  "schema_version": "lmstudio-labkit-native-structured-vision-red-team-v1",
+  "date": "2026-07-13",
+  "verdict": "route_and_simple_schema_transport_confirmed_but_vision_admission_not_closed",
+  "manifest_sha256": "9f1b7fbad08203f3cf0049e26ac2bb5e62f4ad95129046fb38a3ae2e20ca942e",
+  "scope": {
+    "new_model_calls": 0,
+    "candidate_rows": 41,
+    "maximum_authorized_host_calls": 40,
+    "executed_host_calls": 21,
+    "zero_call_rows": 20,
+    "reviewed_executed_rows": 21
+  },
+  "denominator_explanation": "The manifest contains 41 candidate rows because it has four conditional repeat candidates, while the executable selection permits at most the first three accepted models. All four repeat candidates were stop-gated in this run, so 41 candidate dispositions and the 40-call ceiling are consistent.",
+  "confirmed_claims": [
+    {
+      "claim": "The compatible route accepted image data together with an API-bound strict JSON Schema request.",
+      "evidence": "16/16 executed simple image calls returned HTTP 200; each retained outbound payload used /v1/chat/completions, contained an image data URL, and carried response_format.type=json_schema with strict=true."
+    },
+    {
+      "claim": "The executed simple image outputs were raw JSON and independently valid against the pinned simple_description schema.",
+      "evidence": "16/16 raw JSON; 16/16 independent schema validation; 16/16 finish_reason=stop; 16/16 reported zero reasoning tokens."
+    },
+    {
+      "claim": "The frozen controller admitted no strict image row.",
+      "evidence": "Controller grounding pass 0/16 under the pinned salient-text allow-lists and precision threshold. This is a contract result, not proof of 16 hallucination failures."
+    },
+    {
+      "claim": "Independent direct-image review found mixed semantic quality.",
+      "evidence": "11/16 manually grounded, 10/16 exact visible_text arrays, 7/16 supported and relevant warnings, and 0/16 rows containing the three pinned forbidden-claim classes."
+    },
+    {
+      "claim": "The native plain route produced grounded UI descriptions for all four models in the one-fixture baseline.",
+      "evidence": "4/4 grounded native UI baselines; only 2/4 were complete, because 12B and 26B each reached the 1024-token output cap."
+    },
+    {
+      "claim": "The run respected stop and cleanup boundaries.",
+      "evidence": "21 host calls, no measured-cell retries, 16 medium rows and 4 repeat rows recorded as zero-call skips, and final global loaded count zero."
+    }
+  ],
+  "overstated_claims": [
+    {
+      "claim": "Strict schema success proves visual understanding.",
+      "correction": "Report transport, API schema binding, raw JSON, schema validity, and semantic grounding as separate gates."
+    },
+    {
+      "claim": "Controller grounding 0/16 means all 16 outputs hallucinated visible text.",
+      "correction": "The frozen supported-text lists are sparse. Keep 0/16 as the binding controller verdict, but report direct-image review separately: 11/16 grounded and 10/16 exact visible_text arrays."
+    },
+    {
+      "claim": "The run rejected 20 image outputs.",
+      "correction": "The controller summary's 20 rejected executed rows combine four native plain baselines with sixteen strict simple rows. The native rows are non-schema baselines and were 4/4 grounded; they must not be counted as strict semantic failures."
+    },
+    {
+      "claim": "The native baseline passed without qualification.",
+      "correction": "State 4/4 grounded on one UI fixture, 2/4 complete, and 2/4 output-cap-limited."
+    },
+    {
+      "claim": "The image route or family is closed.",
+      "correction": "Only compatible-route plus simple-schema structural behavior is closed for this four-fixture run. Semantic admission, medium/object extraction, repeatability, ranking, and production use remain open or untested."
+    }
+  ],
+  "unsupported_claims": [
+    {
+      "claim": "Any tested model is admitted for structured vision.",
+      "reason": "No model passed the frozen semantic gate across its four simple rows."
+    },
+    {
+      "claim": "26B is the best structured-vision model.",
+      "reason": "Its 4/4 exact visible_text result is descriptive only; four fixtures per model, no repeats, an incomplete native baseline, and no admitted lane do not support ranking."
+    },
+    {
+      "claim": "The medium_objects_text schema works or improves extraction.",
+      "reason": "0/16 medium rows executed; objects were not evaluated."
+    },
+    {
+      "claim": "Structured-vision output is repeatable or deterministic.",
+      "reason": "0/4 repeat candidate rows executed. Temperature zero is a request setting, not repeatability evidence."
+    },
+    {
+      "claim": "No hallucinations or unsupported claims occurred.",
+      "reason": "Only three forbidden-claim classes were checked at 0/16. OCR and warning errors were present, and absence of those classes is not a universal hallucination audit."
+    },
+    {
+      "claim": "API-bound strict JSON Schema was causally necessary for the valid outputs.",
+      "reason": "The retained payload proves the contract was sent and accepted, and all outputs conformed; this run has no matched no-schema counterfactual on the compatible image route."
+    }
+  ],
+  "contradicted_claims": [
+    {
+      "claim": "Historical L3.39 or fence-normalized image JSON already proved API-bound strict structured vision.",
+      "correction": "Those rows were prompt-only with caller-side normalization and validation. The new 16-row run is the first retained schema-bound image evidence in this evidence chain."
+    },
+    {
+      "claim": "All four models failed image transport or strict schema.",
+      "correction": "All four models completed all four strict simple image rows with HTTP 200, raw JSON, and independent schema validity. Their blocker was the frozen semantic admission gate."
+    },
+    {
+      "claim": "Medium/object and repeatability evidence exists because those rows were present in the manifest.",
+      "correction": "Manifest presence is not execution: all 20 such rows were zero-call stop-gated."
+    }
+  ],
+  "mandatory_target_file_corrections": [
+    {
+      "target": "experiments/lmstudio/results_summaries/2026-07-13_native_structured_vision_closure.md",
+      "required": [
+        "Use the exact 41 candidate / 21 executed / 20 zero-call denominator and explain why the candidate count can exceed the 40-call ceiling.",
+        "Report 1 text preflight, 4 native baselines, 16 strict simple rows, 0 medium rows, and 0 repeats separately.",
+        "Report strict compatible-route results as 16/16 HTTP 200, raw JSON, schema-valid, finish stop, and zero reported reasoning tokens.",
+        "Keep controller 0/16 separate from manual 11/16 grounded, 10/16 exact visible_text, and 7/16 warning-quality results.",
+        "State that no model is admitted and that ranking, medium/object extraction, and repeatability are not evaluated.",
+        "Qualify native baseline evidence as one UI fixture, 4/4 grounded, 2/4 complete, and 2/4 output-cap-limited.",
+        "State final global loaded count zero and no new calls during review/red-team."
+      ]
+    },
+    {
+      "target": "experiments/lmstudio/results_summaries/2026-07-13_native_structured_vision_closure.json",
+      "required": [
+        "Encode every numerator with its denominator and use null/not_evaluated for medium, objects, repeats, ranking, and admission rather than zero-valued quality scores.",
+        "Do not use controller accepted_rows/rejected_rows as a model-admission denominator; split preflight, native baseline, strict simple, and skipped rows by kind.",
+        "Represent route/schema, controller semantics, manual semantics, and cleanup as distinct objects."
+      ]
+    },
+    {
+      "target": "experiments/lmstudio/results_summaries/l3_34_gemma_vision_route_capability_decision_record.md",
+      "required": [
+        "Append a dated superseding update: compatible image plus strict schema transport is now confirmed for 16/16 simple rows across four models.",
+        "Preserve the historical four-call length result and native E4B gate without rewriting them as schema-bound successes.",
+        "Do not convert route capability into semantic or model-quality admission."
+      ]
+    },
+    {
+      "target": "experiments/lmstudio/results_summaries/l3_35_gemma_vision_screening_decision_record.md",
+      "required": [
+        "Replace the stale sole blocker 'native minimal JSON failed' with the current state: strict simple screening executed structurally, but no model passed the frozen semantic admission gate.",
+        "Record 16 strict simple calls and zero medium/object/repeat calls; keep model admission blocked."
+      ]
+    },
+    {
+      "target": "experiments/lmstudio/results_summaries/l3_31_l3_36_gemma_admission_matrix.md",
+      "required": [
+        "Add a dated vision addendum rather than rewriting text-task admissions.",
+        "For each of the four models record 4/4 strict simple raw/schema success and not_admitted for vision semantics.",
+        "Do not rank 26B or generalize this vision result to text structured-output policy."
+      ]
+    },
+    {
+      "target": "experiments/lmstudio/models/candidates.yaml",
+      "required": [
+        "Do not change existing general structured_output_policy fields from this vision run.",
+        "If a vision annotation is added, make it route- and schema-scoped and set admission to not_admitted; do not add a family ranking."
+      ]
+    }
+  ],
+  "remaining_minimal_gaps": [
+    "Correct the incomplete fixture truth or replace exact allow-list precision with an exhaustive/pixel-reviewed semantic rubric before using it as an admission gate.",
+    "After an approved plan change, rerun the bounded simple gate under the corrected rubric; only admitted models may enter medium/object and repeat lanes.",
+    "Execute at least one exact repeat for any admitted model before making repeatability claims.",
+    "Execute medium rows before making object-extraction claims.",
+    "Use more fixtures and repeats before any comparative model ranking or production recommendation."
+  ],
+  "non_claims": [
+    "No model is admitted for structured vision.",
+    "No model ranking is supported.",
+    "No medium/object result exists.",
+    "No repeatability result exists.",
+    "No production, source-application integration, latency superiority, or unattended-use claim is supported.",
+    "No new call, retry, cap increase, model load, or network action was performed by the red-team review."
+  ],
+  "public_evidence": [
+    "experiments/lmstudio/results_summaries/2026-07-13_structured_route_evidence_reconciliation.md",
+    "experiments/lmstudio/results_summaries/2026-07-13_native_structured_vision_independent_review.md",
+    "experiments/lmstudio/strict_vision/launch_manifest.json"
+  ]
+}

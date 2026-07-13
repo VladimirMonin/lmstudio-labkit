@@ -64,6 +64,31 @@ separate loads do not establish a production concurrency default.
 
 See [the host-application-shaped decision report](2026-07-13_host_application_shaped_structured_context_summary.md).
 
+## Native structured vision addendum — 2026-07-13
+
+This addendum is modality-, route-, schema-, fixture-, and rubric-scoped. It does
+not change any text cleanup, text structured-output, context, cache, or concurrency
+decision elsewhere in this matrix.
+
+The OpenAI-compatible `/v1/chat/completions` route accepted image data plus
+API-bound strict schemas for all 35 executed strict-image rows: 16 simple, 16
+medium, and three repeats. All 35 returned raw, independently schema-valid JSON.
+The earlier controller 0/16 simple verdict and eventual 35/35 rejection record are
+preserved as a partial-gold validator failure, not a semantic-admission denominator.
+
+| Model | Image calls | Strict image raw/schema | Exact visible text | Salient text complete | Medium objects grounded | Repeat | Production admission |
+|---|---:|---:|---:|---:|---:|---|---|
+| `google/gemma-4-e2b` | 10 | 9/9 | 2/10 | 4/10 | 3/4 | byte-identical pair | none |
+| `google/gemma-4-e4b` | 10 | 9/9 | 8/10 | 10/10 | 4/4 | byte-identical pair | none |
+| `google/gemma-4-12b-qat` | 9 | 8/8 | 5/9 | 8/9 | 4/4 | not executed | none |
+| `google/gemma-4-26b-a4b-qat` | 10 | 9/9 | 10/10 | 9/10 | 4/4 | byte-identical pair | none |
+
+Binary semantic admission is not assessed because the automated rubric was invalid
+and no replacement production threshold was predeclared. Manual dimensions are
+descriptive, object extraction is demonstrated but imperfect, and the three
+one-request repeat pairs do not establish broad determinism or ranking. Canonical interpretation:
+[Native structured vision closure](2026-07-13_native_structured_vision_closure.md).
+
 ## Authoritative 2026-07-12 result
 
 The final benchmark used publication-safe views derived from real sanitized Whisper
@@ -428,12 +453,13 @@ cache_session:
     - google/gemma-4-12b-qat; L3.38 reasoning-off rerun remained 0/6 strict-valid
   kv_reuse_proven: false
 vision:
+  historical_status: superseded_by_2026_07_13_native_structured_vision_addendum
   eligible_for_l3_35: []
   native_plain_text_accepted_narrow:
     - google/gemma-4-e4b one-asset gate
   image_transport_accepted_narrow:
     - google/gemma-4-e4b one-asset reasoning-off gate
-  blocked_reason: L3.38 image JSON was valid and non-truncated but grounded the verified fixture incorrectly
+  blocked_reason: historical L3.38 image JSON was valid and non-truncated but grounded the verified fixture incorrectly
 next_repair_gates:
   - expose and verify an explicit reasoning-off contract for the OpenAI-compatible structured route, or keep the native reasoning-off path isolated as a narrow fallback
   - do not broaden 12B complex JSON from the blocks-only L3.37 result
