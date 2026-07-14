@@ -20,6 +20,7 @@ from .lifecycle_policy import (
     ensure_loaded_decision,
     ensure_unloaded_decision,
 )
+from .metrics import PhaseConfidence, PhaseDerivationMethod, PhaseMarker
 from .model_probe import (
     _CONTEXT_KEY_ALIASES,
     _LOCALHOST_NAMES,
@@ -39,6 +40,10 @@ logger = logging.getLogger(__name__)
 type ModelLifecycleTransport = Callable[[urllib_request.Request, float], bytes]
 type SleepFunc = Callable[[float], None]
 type ManagedLifecycleOperation = Callable[[Mapping[str, object]], Mapping[str, object]]
+type PhaseMarkerCallback = Callable[
+    [PhaseMarker, PhaseDerivationMethod, PhaseConfidence],
+    None,
+]
 
 MODEL_LIFECYCLE_LIST_ENDPOINT_PATH = "/api/v1/models"
 MODEL_LIFECYCLE_LOAD_ENDPOINT_PATH = "/api/v1/models/load"
@@ -459,6 +464,7 @@ def _loaded_state_for_model(payload: object, *, model_id: str) -> dict[str, obje
         "instance_ids": tuple(instance_ids),
         "instance_id_hashes": tuple(_sha256_text(instance_id) for instance_id in instance_ids),
         "observed_loaded_count": len(instance_ids),
+        "global_loaded_count": sum(len(_extract_loaded_instances(model)) for model in models),
     }
 
 
@@ -656,6 +662,7 @@ def _get_models_state(
             event_records[-1]["instance_id_hashes"] = hashes
             event_records[-1]["instance_id_hash"] = hashes[0]
     summary["observed_loaded_count"] = state["observed_loaded_count"]
+    summary["observed_global_loaded_count"] = state["global_loaded_count"]
     return state
 
 
@@ -907,6 +914,7 @@ def _cleanup_exact_instance_ids(
     remaining_hashes = set(cleanup_state["instance_id_hashes"])
     summary["cleanup_verification_observed"] = True
     summary["cleanup_final_loaded_count"] = cleanup_state["observed_loaded_count"]
+    summary["cleanup_final_global_loaded_count"] = cleanup_state["global_loaded_count"]
     summary["cleanup_verified_count"] = sum(
         1 for instance_id_hash in cleanup_hashes if instance_id_hash not in remaining_hashes
     )
@@ -916,6 +924,20 @@ def _cleanup_exact_instance_ids(
     if cleanup_failures:
         summary["cleanup_post_failures"] = cleanup_failures
     _restore_terminal_fields(summary, primary_terminal_snapshot)
+
+
+def _emit_phase_marker(
+    callback: PhaseMarkerCallback | None,
+    marker: PhaseMarker,
+    derivation_method: PhaseDerivationMethod = PhaseDerivationMethod.DIRECT_EVENT,
+    confidence: PhaseConfidence = PhaseConfidence.HIGH,
+) -> None:
+    if callback is None:
+        return
+    try:
+        callback(marker, derivation_method, confidence)
+    except Exception:
+        logger.warning("phase telemetry callback failed marker=%s", marker.value)
 
 
 def run_exact_model_operation(
@@ -928,6 +950,7 @@ def run_exact_model_operation(
     timeout_s: float = 120.0,
     transport: ModelLifecycleTransport | None = None,
     api_token: str | None = None,
+    phase_callback: PhaseMarkerCallback | None = None,
 ) -> dict[str, object]:
     """Run a callback between exact native load and exact cleanup.
 
@@ -960,6 +983,7 @@ def run_exact_model_operation(
     pending_exception: tuple[type[BaseException], BaseException, TracebackType | None] | None = None
 
     try:
+        _emit_phase_marker(phase_callback, PhaseMarker.LOAD_STARTED)
         raw_instance_id = _post_load(
             base_url=base_url,
             timeout_s=timeout_s,
@@ -1003,6 +1027,7 @@ def run_exact_model_operation(
         )
         if summary["load_verified"] is not True:
             raise RuntimeError("native load verification failed")
+        _emit_phase_marker(phase_callback, PhaseMarker.LOADED_IDLE)
 
         applied_context_length = _safe_int(summary.get("applied_context_length"))
         applied_parallel = _safe_int(summary.get("applied_parallel"))
@@ -1018,11 +1043,25 @@ def run_exact_model_operation(
             "load_verified": summary["load_verified"],
             "verified_context_length": applied_context_length or requested_context_length,
         }
+        _emit_phase_marker(
+            phase_callback,
+            PhaseMarker.REQUEST_DISPATCHED,
+            PhaseDerivationMethod.ATTRIBUTABLE_REQUEST_INTERVAL,
+            PhaseConfidence.MEDIUM,
+        )
         operation_summary = operation(safe_operation_state)
+        _emit_phase_marker(phase_callback, PhaseMarker.BATCH_COMPLETED)
+        _emit_phase_marker(
+            phase_callback,
+            PhaseMarker.POST_BATCH_IDLE,
+            PhaseDerivationMethod.UNAVAILABLE,
+            PhaseConfidence.UNAVAILABLE,
+        )
     except Exception:
         pending_exception = sys.exc_info()
     finally:
         if raw_owned_instance_ids:
+            _emit_phase_marker(phase_callback, PhaseMarker.UNLOAD_STARTED)
             _cleanup_exact_instance_ids(
                 base_url=base_url,
                 timeout_s=timeout_s,
@@ -1039,8 +1078,12 @@ def run_exact_model_operation(
             cleanup_post_failures = _safe_int(summary.get("cleanup_post_failures")) or 0
             cleanup_verified_count = _safe_int(summary.get("cleanup_verified_count")) or 0
             final_loaded_instances = _safe_int(summary.get("cleanup_final_loaded_count"))
+            final_global_loaded_instances = _safe_int(
+                summary.get("cleanup_final_global_loaded_count")
+            )
             summary["cleanup_verified_count"] = cleanup_verified_count
             summary["final_loaded_instances"] = final_loaded_instances
+            summary["final_global_loaded_instances"] = final_global_loaded_instances
             if (
                 summary.get("cleanup_verification_observed") is True
                 and cleanup_verified_count == len(_ordered_unique(raw_owned_instance_ids))
@@ -1048,6 +1091,11 @@ def run_exact_model_operation(
                 and cleanup_post_failures == 0
             ):
                 summary["cleanup_status"] = "cleanup_verified"
+                if final_global_loaded_instances == 0:
+                    _emit_phase_marker(
+                        phase_callback,
+                        PhaseMarker.AFTER_UNLOAD_GLOBAL_ZERO,
+                    )
             elif summary.get("cleanup_verification_observed") is True:
                 summary["cleanup_status"] = "cleanup_incomplete"
             else:
@@ -1059,6 +1107,7 @@ def run_exact_model_operation(
             summary["cleanup_called"] = False
             summary["cleanup_verified_count"] = 0
             summary["final_loaded_instances"] = None
+            summary["final_global_loaded_instances"] = None
             summary["cleanup_status"] = "cleanup_not_started"
 
         if pending_exception is not None:

@@ -1,0 +1,299 @@
+{
+  "schema_version": "lmstudio-labkit-adaptive-local-request-owner-decisions-v1",
+  "date": "2026-07-13",
+  "status": "recommended_stage_0_owner_decisions_offline_implementation_not_authorized",
+  "scope": {
+    "decisions": ["O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", "O10", "O11", "O12"],
+    "implementation_authorized": false,
+    "live_execution_authorized": false,
+    "migration_authorized": false,
+    "models_approved": 0,
+    "task_profiles_approved": 0,
+    "implementation_cards_created": 0
+  },
+  "evidence_boundary": {
+    "current_static_contract": [
+      "Prompt behavior is currently inferred from filenames and placeholders and no complete provider-neutral manifest system exists.",
+      "Native and OpenAI-compatible model discovery are separate planes and current identity facts do not provide an immutable artifact digest on every installation.",
+      "Current schema validation paths are incomplete subsets or tolerant parsers rather than one complete product validator.",
+      "Current resource telemetry does not prove multi-device placement or an externally attributable Apple shared-memory envelope.",
+      "No immutable summary lifecycle or separate microphone-command artifact exists in the current host contract."
+    ],
+    "retained_executed": {
+      "exact_token_rows": 80,
+      "loaded_instance_bindings": 4,
+      "formatted_prompt_token_range": [925, 12797],
+      "structured_context_calls": 202,
+      "structured_context_recordings": 1,
+      "structured_context_models": 1,
+      "structured_vision_calls": 40,
+      "structured_vision_models": 4,
+      "structured_vision_fixtures": 4,
+      "structured_vision_raw_schema_applicable_pass": {"numerator": 36, "denominator": 36},
+      "interpretation": "Bounded token, transport, structure, context and selected semantic evidence only; no production task admission."
+    },
+    "runtime_unexecuted": [
+      "contract_kernel_in_host",
+      "prompt_manifest_migration",
+      "approved_catalog_and_updater",
+      "artifact_digest_resolver",
+      "complete_validator_integration",
+      "provider_capability_negotiation",
+      "resource_adapters_and_observed_envelopes",
+      "loaded_instance_exact_host_token_gate",
+      "summary_artifact_lifecycle",
+      "microphone_command_path",
+      "atomic_persistence_readback_and_rollback",
+      "shadow_canary_and_production_promotion"
+    ],
+    "actions_by_synthesis": {
+      "live_requests": 0,
+      "model_operations": 0,
+      "cloud_calls": 0,
+      "tokenizer_captures": 0,
+      "host_repository_changes": 0,
+      "implementation_changes": 0,
+      "implementation_cards_created": 0,
+      "commits": 0,
+      "pushes": 0
+    }
+  },
+  "decision_register": [
+    {
+      "id": "O1",
+      "topic": "canonical_summary_placeholder",
+      "status": "approve_now",
+      "default": "document_summary_only_scope_in_artifact_metadata",
+      "rationale": "One provider-neutral token avoids alias drift and keeps summary distinct from authoritative full text.",
+      "failure_behavior": ["prompt_placeholder_unknown", "summary_required_unavailable", "summary_ineligible", "summary_provenance_mismatch", "prompt_placeholder_leak"],
+      "failure_side_effects": {"provider_request": false, "persistence": false, "clipboard": false, "full_text_fallback": false},
+      "rollback": "disable_summary_consumption_and_increment_request_generation_without_mutating_source_or_artifacts",
+      "minimum_verification": ["requirement_level_rendering_matrix", "no_full_text_alias", "provenance_and_staleness", "fake_adapter_logical_message_parity", "stale_generation_inert"]
+    },
+    {
+      "id": "O2",
+      "topic": "approved_task_profile_catalog_governance",
+      "status": "approve_now",
+      "default": "host_owned_versioned_integrity_protected_catalog_explicit_approval_separate_auto_eligible_no_lab_auto_promotion",
+      "rationale": "Approval is task, shape, runtime and evidence specific rather than a model-family property.",
+      "failure_behavior": ["catalog_missing", "catalog_schema_invalid", "catalog_signature_invalid", "catalog_key_untrusted", "catalog_expired", "catalog_revision_rollback_rejected", "catalog_chain_mismatch", "catalog_profile_revoked", "catalog_profile_not_approved", "catalog_profile_manual_only"],
+      "rollback": "global_auto_kill_switch_plus_generation_increment_and_signed_higher_revision_reactivation_of_previous_known_good_payload",
+      "minimum_verification": ["schema_signature_and_revision_chain", "atomic_activation_readback", "activation_crash_recovery", "signed_rollback_plain_replay_rejected", "lab_evidence_cannot_mutate_catalog"]
+    },
+    {
+      "id": "O3",
+      "topic": "exact_artifact_identity_and_digest",
+      "status": "approve_now",
+      "default": "native_key_compat_id_format_verified_quantization_and_immutable_sha256_from_artifact_bytes_or_trusted_signed_manifest",
+      "rationale": "Names, sizes and loaded-instance identifiers are not immutable artifact authority.",
+      "failure_behavior": ["native_identity_missing", "compat_identity_missing", "identity_ambiguous", "identity_mismatch", "format_mismatch", "quantization_unknown", "artifact_digest_unavailable", "artifact_digest_source_untrusted", "artifact_digest_scope_unsupported", "artifact_digest_mismatch"],
+      "auto_eligible_outcomes": ["identity_exact"],
+      "rollback": "disable_auto_for_unresolved_identity_without_searching_arbitrary_paths_or_unloading_external_instances",
+      "minimum_verification": ["each_missing_and_mismatch_branch", "ambiguous_mapping", "symlink_out_of_root_and_TOCTOU_rejection", "no_path_leak", "multi_file_scope"]
+    },
+    {
+      "id": "O4",
+      "topic": "telemetry_identity_and_privacy",
+      "status": "approve_now",
+      "default": "raw_identifiers_local_only_export_bounded_categories_counts_and_purpose_separated_HMAC_SHA256_pseudonyms",
+      "rationale": "Stable raw identifiers and unkeyed low-entropy digests are correlatable.",
+      "failure_behavior": ["telemetry_identity_omitted"],
+      "missing_key_behavior": "omit_pseudonymous_identity_without_unkeyed_fallback_and_do_not_block_product_request",
+      "rollback": "disable_export_or_rotate_key_epoch_without_changing_local_control_identity",
+      "minimum_verification": ["serialized_leak_scan", "purpose_and_epoch_separation", "missing_key_omission", "bounded_validator_errors", "retention_removes_event_pseudonyms_preserves_aggregates"]
+    },
+    {
+      "id": "O5",
+      "topic": "complete_JSON_Schema_validation",
+      "status": "approve_now",
+      "default": "Draft_2020_12_complete_validator_recursive_fail_closed_product_admission_local_references_only_untouched_raw_JSON",
+      "rationale": "Provider strict claims and current subset validators do not establish complete local validation.",
+      "failure_behavior": ["schema_dialect_missing", "schema_dialect_unsupported", "schema_unknown_keyword", "schema_remote_reference_forbidden", "schema_reference_unresolved", "schema_meta_invalid", "schema_digest_mismatch", "validator_unavailable", "instance_raw_json_invalid", "instance_schema_invalid"],
+      "repair_coercion_or_defaults": false,
+      "rollback": "disable_contract_submissions_increment_generation_and_reactivate_previously_admitted_version",
+      "minimum_verification": ["meta_schema_and_keyword_matrix", "boolean_schema_and_items_false", "arrays_defs_and_local_refs", "privacy_safe_deterministic_errors", "later_gates_cannot_be_bypassed"]
+    },
+    {
+      "id": "O6",
+      "topic": "token_output_and_call_defaults",
+      "status": "approve_configurable_default",
+      "default": {
+        "context_safety_ratio": 0.85,
+        "uncalibrated_margin_tokens": 256,
+        "degraded_estimate_threshold_of_safe_budget": 0.5,
+        "short_task_stages": [512, 1024],
+        "long_task_stages": [1024, 2048, 4096],
+        "simple_call_ceiling": 2,
+        "long_call_ceiling": 3,
+        "output_escalation": "independent_truncation_only"
+      },
+      "rationale": "Retained evidence supports bounded planning and shows that larger caps do not establish correctness; numeric values are not universal.",
+      "production_promotion": "requires_shadow_calibration",
+      "failure_behavior": ["exact_tokenization_unavailable", "estimate_no_fit", "exact_no_fit", "truncation_signal_unavailable", "truncation_next_stage_no_fit", "complete_structural_failure", "semantic_failure", "call_ceiling_reached"],
+      "rollback": "disable_estimate_only_mode_or_restore_previous_policy_version_and_increment_generation",
+      "minimum_verification": ["freeze_and_invalidation", "threshold_boundaries", "estimate_pass_exact_fail", "truncation_matrix", "one_cumulative_counter", "no_nontruncation_escalation"]
+    },
+    {
+      "id": "O7",
+      "topic": "resource_headroom_and_estimate_policy",
+      "status": "approve_configurable_default",
+      "default": {
+        "reserve_formula": "max(absolute_reserve_bytes,floor(total_bytes*proportional_reserve))",
+        "cuda_target_vram": {"absolute_gib": 1, "proportional": 0.10},
+        "discrete_host_ram": {"absolute_gib": 2, "proportional": 0.15},
+        "apple_unified_memory": {"absolute_gib": 4, "proportional": 0.20},
+        "apple_metal_working_set": {"absolute_gib": 1, "proportional": 0.15}
+      },
+      "rationale": "Resource channels require independent or shared-pool accounting and no retained evidence establishes universal headroom.",
+      "production_promotion": "requires_platform_and_profile_shadow_calibration",
+      "failure_behavior": ["resource_metrics_unavailable", "resource_snapshot_stale", "headroom_insufficient", "static_estimate_exceeds_budget", "observed_peak_exceeds_budget", "process_attribution_ambiguous", "cleanup_readback_failed"],
+      "rollback": "disable_conservative_resource_estimate_auto_per_platform_profile_and_return_to_approved_manual_or_non_model_path",
+      "minimum_verification": ["reserve_arithmetic", "independent_CUDA_and_host_gates", "unknown_stale_and_ambiguous_metrics", "exact_envelope_binding", "owned_only_cleanup"]
+    },
+    {
+      "id": "O8",
+      "topic": "Apple_MLX_Metal_metrics",
+      "status": "blocked_external_capability",
+      "default": "apple_auto_disabled_without_verified_shared_pool_adapter_or_exact_trusted_observed_envelope",
+      "rationale": "Counter overlap, reset semantics and attribution to an external runtime are unverified.",
+      "failure_behavior": ["apple_unified_adapter_unverified", "apple_pressure_unavailable", "apple_pressure_warning", "apple_pressure_critical", "apple_process_footprint_unavailable", "apple_runtime_counters_unavailable", "apple_envelope_missing", "apple_envelope_shape_mismatch"],
+      "rollback": "apple_auto_enabled_false_and_generation_increment",
+      "minimum_verification": ["counter_reset_and_overlap", "process_attribution", "pressure_states", "separately_authorized_exact_load_settle_peak_unload_envelope"]
+    },
+    {
+      "id": "O9",
+      "topic": "CUDA_multi_device_and_process_attribution",
+      "status": "approve_now",
+      "default": "one_exact_physical_GPU_or_one_exact_MIG_instance_only_never_sum_devices",
+      "rationale": "Current sampling does not prove multi-device placement or per-device peak safety.",
+      "blocked_external_capability": "multi_GPU_sharded_tensor_parallel_layer_split_or_ambiguous_placement_Auto",
+      "failure_behavior": ["cuda_device_unresolved", "cuda_process_not_bound", "cuda_competing_process_ambiguous", "cuda_multi_device_unverified", "cuda_mig_handle_required", "cuda_placement_unverified"],
+      "rollback": "cuda_multi_device_auto_enabled_false_without_changing_single_device_approved_records",
+      "minimum_verification": ["device_or_MIG_identity", "exact_process_binding", "per_device_peak", "two_device_no_sum_regression", "cleanup_readback"]
+    },
+    {
+      "id": "O10",
+      "topic": "task_semantic_acceptance_and_rollout_thresholds",
+      "status": "requires_shadow_calibration",
+      "default": {
+        "policy": "separate_deterministic_semantic_and_product_verdicts_per_exact_task_prompt_validator_model_route_and_shape",
+        "outcomes": ["accepted", "fallback_original", "abstain", "review_required", "unavailable", "failed", "cancelled"],
+        "universal_quality_score": false,
+        "numeric_thresholds": "versioned_configurable_starting_defaults"
+      },
+      "rationale": "Retained transport and structural evidence is bounded and heterogeneous and does not admit production semantics for any task.",
+      "failure_behavior": {
+        "missing_evaluator_authority": "review_required_or_unavailable",
+        "cleanup_or_translation": "fallback_original_when_safe",
+        "summary_or_vision": "never_stale_or_partial_fallback",
+        "nonaccepted_counts_as_success": false
+      },
+      "rollback": "disable_exact_task_profile_route_increment_generation_and_preserve_original_or_prior_authoritative_artifact",
+      "minimum_verification": ["minimum_30_offline_fixtures", "frozen_rubric_pilot", "denominator_and_mutual_exclusion", "separately_authorized_per_task_shadow_canary", "immediate_and_rate_stop_gates"]
+    },
+    {
+      "id": "O11",
+      "topic": "command_history_persistence_and_retention",
+      "status": "approve_configurable_default",
+      "default": {"bootstrap": "disabled", "post_offline_gate_with_separate_live_authorization": "shadow_ephemeral", "durable_history": false, "display_copy_paste": false},
+      "rationale": "Command candidates require distinct artifacts, authority and transaction/privacy policy; transcription fields are not suitable command history.",
+      "failure_behavior": ["command_disabled", "command_invalid_empty", "command_route_unsupported", "command_transport_failed", "command_raw_parse_failed", "command_schema_failed", "command_semantic_rejected", "command_cancelled", "command_stale_generation"],
+      "failure_side_effects": {"display": false, "clipboard": false, "durable_history": false, "transcription_mutation": false},
+      "rollback": "disable_command_contract_increment_generation_discard_shadow_state_and_restore_ordinary_dictation_classification",
+      "minimum_verification": ["classifier_and_strict_envelope_matrix", "zero_side_effect_fence", "database_FTS_export_unchanged", "kill_switch_races", "future_transaction_readback_retention_delete_export_no_cascade"]
+    },
+    {
+      "id": "O12",
+      "topic": "legacy_custom_prompt_disposition",
+      "status": "approve_now",
+      "default": "exactly_one_immutable_manifest_state_native_legacy_or_blocked_existing_unmanifested_is_legacy_unknown_or_contradictory_is_blocked",
+      "rationale": "Filename and placeholder inference cannot safely confer native structured trust.",
+      "failure_behavior": ["prompt_inventory_stale", "prompt_digest_mismatch", "prompt_unreadable", "prompt_placeholder_unknown", "prompt_target_shape_ambiguous", "prompt_task_manifest_mismatch", "prompt_translation_target_conflict", "prompt_schema_contract_mismatch", "prompt_legacy_disabled", "prompt_manifest_blocked"],
+      "rollback": "select_previous_immutable_admitted_revision_increment_generation_and_never_rewrite_custom_source",
+      "minimum_verification": ["bundled_custom_override_inventory", "exactly_one_state", "placeholder_shape_and_translation_matrix", "no_auto_promotion", "exact_revision_rollback"]
+    }
+  ],
+  "immediate_architecture": {
+    "dependency_flow": [
+      "host_owned_task_manifest_profile",
+      "frozen_provider_neutral_task_request",
+      "capability_identity_resource_and_token_planning",
+      "transport_only_adapter",
+      "immutable_raw_provider_result",
+      "shared_raw_schema_business_semantic_control_validation",
+      "typed_product_outcome",
+      "atomic_or_recoverable_persistence_and_readback"
+    ],
+    "hard_rules": [
+      "freeze_all_logical_contract_data_before_provider_selection",
+      "no_silent_structured_to_plain_downgrade",
+      "conservative_preload_screen_then_loaded_instance_exact_prompt_gate",
+      "one_call_counter_across_all_retry_classes",
+      "immutable_attempts_and_prepublication_generation_fence",
+      "full_text_authoritative_summary_derived",
+      "dictation_and_MODEL_command_contracts_are_separate"
+    ]
+  },
+  "staged_implementation_order": [
+    {"stage": 1, "name": "policy_and_contract_kernel", "live": false},
+    {"stage": 2, "name": "manifest_rendering_and_fake_adapter_parity", "live": false},
+    {"stage": 3, "name": "attempt_control_persistence_and_readback", "live": false},
+    {"stage": 4, "name": "catalog_identity_resource_lifecycle_and_exact_token_planning_with_fakes_first", "live": false},
+    {"stage": 5, "name": "task_specific_offline_paths_summary_lifecycle_and_disabled_command_boundary", "live": false},
+    {"stage": 6, "name": "separately_authorized_shadow_and_canary_per_exact_task_profile_route_shape", "live": true, "separate_authorization_required": true},
+    {"stage": 7, "name": "legacy_retirement_after_inventory_and_rollback_readiness", "live": false}
+  ],
+  "smallest_next_implementation_slice": {
+    "name": "offline_contract_admission_kernel_for_postprocess_text_v1",
+    "authorization": "not_granted_by_this_report",
+    "includes": [
+      "immutable_TaskDefinition_PromptManifest_ResponseContract_LogicalAttempt_and_ProductOutcome_records",
+      "native_legacy_blocked_manifest_admission",
+      "document_summary_vocabulary_without_full_text_alias",
+      "Draft_2020_12_admission_and_complete_validation_of_untouched_raw_JSON",
+      "pure_generation_fence_and_cumulative_call_counter_decisions",
+      "offline_fail_closed_fixtures"
+    ],
+    "excludes": [
+      "provider_adapters", "model_discovery", "catalog_signing", "artifact_hashing", "resource_metrics", "lifecycle", "tokenization", "database_writes", "summary_generation", "command_execution", "live_calls"
+    ],
+    "done": "Offline tests prove deterministic admission parse outcome and nonpublication behavior and the kernel has no host or live transport dependency."
+  },
+  "kill_switches": {
+    "adaptive_request_enabled": false,
+    "native_structured_task_enabled_per_contract": false,
+    "auto_selection_enabled": false,
+    "estimate_only_token_mode_enabled_per_profile": false,
+    "conservative_resource_estimate_auto_enabled_per_platform_profile": false,
+    "apple_auto_enabled": false,
+    "cuda_multi_device_auto_enabled": false,
+    "summary_consumption_enabled_per_manifest": false,
+    "command_execution_enabled": false,
+    "command_persistence_enabled": false,
+    "legacy_prompt_enabled_per_manifest": "explicit_versioned_compatibility_only",
+    "switch_change_behavior": "increment_applicable_generation_and_make_late_results_inert"
+  },
+  "non_goals": [
+    "approve_any_model_artifact_task_profile_context_concurrency_language_image_memory_latency_quality_or_rollout",
+    "prove_artifact_resolver_Apple_adapter_multi_device_placement_provider_capability_exact_host_tokens_or_live_rollback",
+    "authorize_discovery_hashing_load_inference_cloud_tokenizer_shadow_canary_migration_implementation_cards_commit_or_push",
+    "replace_authoritative_full_text_with_summary_or_auto_migrate_prompts",
+    "persist_display_copy_or_paste_command_candidates",
+    "claim_schema_or_parse_success_establishes_semantic_correctness"
+  ],
+  "external_sources": [
+    "https://lmstudio.ai/docs/developer/rest/list",
+    "https://lmstudio.ai/docs/developer/openai-compat/models",
+    "https://lmstudio.ai/docs/python/model-info/get-context-length",
+    "https://json-schema.org/draft/2020-12/json-schema-core.html",
+    "https://json-schema.org/draft/2020-12/json-schema-validation.html",
+    "https://python-jsonschema.readthedocs.io/en/stable/validate/",
+    "https://docs.nvidia.com/deploy/nvml-api/group__nvmlDeviceQueries.html",
+    "https://developer.apple.com/documentation/metal/mtldevice/recommendedmaxworkingsetsize",
+    "https://developer.apple.com/documentation/dispatch/dispatchsourcememorypressure",
+    "https://www.rfc-editor.org/rfc/rfc2104",
+    "https://www.rfc-editor.org/rfc/rfc8785",
+    "https://theupdateframework.github.io/specification/latest/"
+  ],
+  "external_source_note": "URLs and facts are inherited from the four owner-decision reports retrieved on 2026-07-13 UTC; this synthesis made no external request."
+}

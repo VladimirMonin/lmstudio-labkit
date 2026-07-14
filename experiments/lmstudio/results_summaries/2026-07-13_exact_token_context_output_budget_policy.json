@@ -1,0 +1,356 @@
+{
+  "schema_version": "exact-token-context-output-budget-policy-v1",
+  "date": "2026-07-13",
+  "status": "read_only_architecture_recommendation",
+  "decision": {
+    "planner": "preload_estimate_then_loaded_instance_exact_gate",
+    "exact_scope": "formatted_prompt_for_exact_model_revision_instance_config_messages_and_runtime",
+    "output_escalation": "independent_truncation_signal_only",
+    "global_model_call_ceiling": 3,
+    "default_safety_ratio": 0.85,
+    "default_safety_margin_tokens": 256
+  },
+  "evidence": {
+    "executed_exact_token_capture": {
+      "loaded_instance_captures": 4,
+      "request_rows": 80,
+      "minimum_exact_formatted_prompt_tokens": 925,
+      "maximum_exact_formatted_prompt_tokens": 12797,
+      "method": [
+        "loaded_instance.apply_prompt_template(chat)",
+        "loaded_instance.tokenize(formatted_prompt)"
+      ],
+      "bindings": [
+        "model_key",
+        "instance_id",
+        "instance_config_digest",
+        "effective_context",
+        "request_digest",
+        "formatted_prompt_digest",
+        "token_ids_digest",
+        "runtime_version"
+      ],
+      "zero_loaded_preflight_and_post_unload": true
+    },
+    "executed_fit_artifact": {
+      "rows": 80,
+      "all_rows_fit": true,
+      "conservative_request_change_allowance_tokens": 256,
+      "task_budgets": {
+        "short_semantic_normalization": 512,
+        "long_whisper_normalization": 2048,
+        "structural_retention": 512
+      },
+      "classification": "fit_proof_for_frozen_requests_not_universal_calibration"
+    },
+    "usage_observations": {
+      "current_only_chunk_summary_median_prompt_tokens": 786,
+      "current_only_chunk_summary_median_completion_tokens": 373,
+      "extended_context_chunk_summary_truncations_at_1024": 2,
+      "repeated_full_context_cleanup_malformed_at_cap": 4096,
+      "request_linked_cached_tokens_available": false
+    },
+    "runtime_executed_by_this_task": false
+  },
+  "formulas": {
+    "safe_context_budget": "floor(effective_context_length * safety_ratio)",
+    "preload_required": "E_chat + E_schema + E_task + initial_output_reserve + safety_margin",
+    "loaded_exact_required": "T_sdk + H_schema + H_task + initial_output_reserve + safety_margin",
+    "usage_delta": "prompt_tokens_usage - T_sdk",
+    "truncation": "finish_reason == length OR (finish_reason is absent AND completion_tokens >= configured_output_cap)",
+    "next_stage_fit": "current_input_gate + next_output_reserve <= safe_context_budget"
+  },
+  "planning_stages": [
+    {
+      "stage": 1,
+      "name": "canonical_task_assembly",
+      "requires": [
+        "task_profile",
+        "approved_model_profile",
+        "context_policy",
+        "ordered_target_units",
+        "reference_only_units",
+        "resolved_messages",
+        "resolved_summary_and_context_placeholders",
+        "api_bound_schema",
+        "digests",
+        "output_stages",
+        "call_ceiling"
+      ],
+      "failure": "unresolved_request"
+    },
+    {
+      "stage": 2,
+      "name": "preload_estimate",
+      "classification": "estimate",
+      "fallback_estimator": "one_token_per_utf8_byte_for_final_message_and_schema_serializations",
+      "action": "choose_smallest_approved_fitting_context_tier",
+      "failures": ["estimate_unavailable", "estimate_no_fit"]
+    },
+    {
+      "stage": 3,
+      "name": "lifecycle_materialization",
+      "action": "load_or_reuse_only_compatible_owned_instance_and_read_back_effective_context",
+      "failure": "load_identity_mismatch"
+    },
+    {
+      "stage": 4,
+      "name": "loaded_instance_exact_token_gate",
+      "classification": "exact_prompt_count_with_separately_classified_overhead",
+      "action": "apply_prompt_template_then_tokenize_same_frozen_messages",
+      "failures": ["exact_tokenization_unavailable", "exact_no_fit"]
+    },
+    {
+      "stage": 5,
+      "name": "generation_and_usage_reconciliation",
+      "action": "record_privacy_safe_usage_finish_validation_attempt_and_digest_metadata",
+      "failures": ["usage_unavailable", "usage_reconciliation_fault"]
+    },
+    {
+      "stage": 6,
+      "name": "truncation_only_output_escalation",
+      "action": "increase_cap_only_on_independent_truncation_and_only_when_next_stage_fits",
+      "failures": ["truncation_ceiling_reached", "complete_structural_failure", "semantic_failure"]
+    },
+    {
+      "stage": 7,
+      "name": "global_call_ceiling",
+      "action": "count_every_generation_submission_including_transport_structural_and_budget_retries",
+      "failure": "call_ceiling_reached"
+    }
+  ],
+  "preload_estimate_policy": {
+    "safety_ratio": 0.85,
+    "safety_margin_tokens": 256,
+    "uncalibrated_chat_estimate": "one_token_per_utf8_byte",
+    "uncalibrated_schema_estimate": "one_token_per_canonical_schema_utf8_byte",
+    "task_overhead": "versioned_non_negative_allowance",
+    "context_tier_selection": "smallest_approved_fitting_tier",
+    "no_fit_actions_in_order": [
+      "remove_optional_reference_context_by_task_policy",
+      "split_on_application_owned_boundaries",
+      "select_larger_approved_tier",
+      "fail"
+    ],
+    "forbidden": [
+      "silent_required_target_truncation",
+      "silent_expected_identity_truncation",
+      "negative_unexplained_overhead_correction"
+    ]
+  },
+  "exact_gate_policy": {
+    "exact_field": "T_sdk",
+    "overall_labels": [
+      "exact_total_fit",
+      "exact_prompt_plus_estimated_overhead_fit",
+      "estimate_only"
+    ],
+    "invalidation_keys": [
+      "model_revision",
+      "instance_config",
+      "runtime_or_prompt_template_version",
+      "message_digest",
+      "message_order_or_roles",
+      "placeholder_resolution",
+      "schema_binding"
+    ],
+    "generation_requires_exact_gate_after_estimate": true
+  },
+  "usage_reconciliation_policy": {
+    "observed_delta": "prompt_tokens_usage - T_sdk",
+    "reuse_requires_repeated_matching_observations": true,
+    "calibration_dimensions": [
+      "provider_runtime_version",
+      "model_revision",
+      "schema_family_and_version",
+      "task_profile",
+      "request_shape_bucket"
+    ],
+    "missing_usage": "calibration_unavailable",
+    "negative_delta": "instrumentation_fault",
+    "cached_tokens_reduce_context_fit": false
+  },
+  "output_escalation_policy": {
+    "allowed_signals": [
+      "finish_reason_length",
+      "finish_reason_absent_and_completion_tokens_at_cap"
+    ],
+    "explicit_stop_wins_at_cap": true,
+    "forbidden_reasons": [
+      "complete_malformed_json",
+      "schema_failure",
+      "identity_or_order_failure",
+      "semantic_or_boundary_failure",
+      "protected_value_failure",
+      "image_grounding_failure",
+      "runaway_repetition",
+      "reasoning_leakage",
+      "cancellation_or_stale_generation",
+      "persistence_failure"
+    ],
+    "incomplete_json_without_truncation_signal": "structural_failure_not_budget_signal"
+  },
+  "task_profiles": {
+    "short_microphone_cleanup": {
+      "initial_reserve": 512,
+      "stages": [512, 1024],
+      "hard_maximum": 1024,
+      "total_model_call_ceiling": 2,
+      "context_policy": "current_capture_only",
+      "exact_mode": "conservative_estimate_allowed_only_below_degraded_threshold"
+    },
+    "long_microphone_or_file_block_cleanup": {
+      "initial_reserve": 1024,
+      "stages": [1024, 2048, 4096],
+      "hard_maximum": 4096,
+      "total_model_call_ceiling": 3,
+      "context_policy": "current_target_blocks_plus_boundary_references",
+      "exact_mode": "exact_required",
+      "stage_4096_classification": "unexecuted_product_proposal_requires_qualification"
+    },
+    "per_chunk_summary": {
+      "initial_reserve": 512,
+      "stages": [512, 1024],
+      "hard_maximum": 1024,
+      "total_model_call_ceiling": 2,
+      "context_policy": "current_chunk_only",
+      "exact_mode": "exact_required_for_long_or_near_budget_input"
+    },
+    "direct_whole_recording_summary": {
+      "initial_reserve": 1024,
+      "stages": [1024, 2048],
+      "hard_maximum": 2048,
+      "total_model_call_ceiling": 2,
+      "context_policy": "one_full_recording_request_if_exact_gate_fits",
+      "exact_mode": "exact_required"
+    },
+    "hierarchical_summary_synthesis": {
+      "initial_reserve": 1024,
+      "stages": [1024, 2048, 4096],
+      "hard_maximum": 4096,
+      "total_model_call_ceiling": 3,
+      "context_policy": "ordered_accepted_chunk_summaries",
+      "exact_mode": "exact_required",
+      "stage_4096_classification": "unexecuted_product_proposal_requires_qualification"
+    },
+    "generic_self_contained_postprocessing": {
+      "initial_reserve": 512,
+      "stages": [512, 1024, 2048],
+      "hard_maximum": 2048,
+      "total_model_call_ceiling": 3,
+      "context_policy": "current_only",
+      "exact_mode": "conservative_estimate_allowed_only_below_degraded_threshold"
+    },
+    "image_analysis": {
+      "initial_reserve": 512,
+      "stages": [512, 1024],
+      "hard_maximum": 1024,
+      "total_model_call_ceiling": 2,
+      "context_policy": "current_image_plus_task_specific_schema",
+      "exact_mode": "conservative_estimate_allowed_only_below_degraded_threshold"
+    }
+  },
+  "global_call_counter": {
+    "increment": "before_each_generation_submission",
+    "counts": [
+      "initial_generation",
+      "transport_retry",
+      "structural_retry",
+      "output_budget_escalation"
+    ],
+    "simple_interactive_ceiling": 2,
+    "long_or_hierarchical_ceiling": 3,
+    "absolute_default_ceiling": 3,
+    "example_three_call_sequence": [
+      "initial",
+      "one_truncation_escalation",
+      "one_structural_retry_at_final_cap"
+    ]
+  },
+  "exact_tokenization_unavailable": {
+    "modes": {
+      "exact_required": {
+        "applies_to": [
+          "long_input",
+          "structured_block_transform",
+          "whole_recording_work",
+          "estimate_above_half_safe_budget"
+        ],
+        "behavior": "block_generation"
+      },
+      "conservative_estimate_allowed": {
+        "requirements": [
+          "short_bounded_non_destructive_task",
+          "one_token_per_byte_estimate_plus_all_allowances_and_hard_output_maximum_fits_below_half_safe_budget"
+        ],
+        "label": "estimate_only",
+        "usage_cannot_retroactively_make_preflight_exact": true
+      },
+      "non_model_fallback": {
+        "behavior": "preserve_original_or_leave_derived_result_unavailable"
+      }
+    },
+    "degraded_threshold_fraction_of_safe_budget": 0.5,
+    "retained_exact_count_reuse_on_binding_change": false
+  },
+  "failure_states": {
+    "unresolved_request": "do_not_estimate_load_or_call",
+    "estimate_unavailable": "fail_closed_or_explicit_non_model_path",
+    "estimate_no_fit": "shed_optional_context_split_select_approved_tier_or_fail",
+    "load_identity_mismatch": "do_not_tokenize_or_generate",
+    "exact_tokenization_unavailable": "apply_explicit_task_mode",
+    "exact_no_fit": "replan_before_generation",
+    "usage_unavailable": "continue_only_within_predeclared_cap_and_mark_unavailable",
+    "usage_reconciliation_fault": "do_not_update_calibration",
+    "truncation_observed": "escalate_only_if_fit_and_calls_remain",
+    "truncation_ceiling_reached": "fallback_split_or_fail",
+    "complete_structural_failure": "optional_one_same_cap_structural_retry_no_budget_escalation",
+    "semantic_failure": "fail_closed_to_original_no_budget_escalation",
+    "call_ceiling_reached": "stop_all_retry_classes",
+    "cancelled_or_stale": "late_output_is_inert"
+  },
+  "placeholder_policy": {
+    "all_model_visible_placeholders_resolved_before_hash_and_count": true,
+    "missing_optional_summary": "canonical_omission_or_versioned_empty_representation",
+    "reference_context_excluded_from_expected_output_size": true,
+    "required_target_units_may_be_silently_truncated": false
+  },
+  "privacy": {
+    "public_fields": [
+      "counts",
+      "categorical_outcomes",
+      "versions",
+      "caps",
+      "digests"
+    ],
+    "forbidden_public_fields": [
+      "prompts",
+      "formatted_prompts",
+      "token_ids",
+      "raw_responses",
+      "source_text",
+      "private_schema_values",
+      "image_bytes",
+      "credentials",
+      "local_paths"
+    ]
+  },
+  "implementation_order": [
+    "extract_context_fit_and_output_budget_primitives_into_contract_kernel",
+    "add_host_owned_canonical_request_planner_and_task_profiles",
+    "add_loaded_instance_tokenizer_port_with_evidence_labels",
+    "add_schema_non_chat_overhead_and_usage_reconciliation",
+    "add_global_call_counter_and_truncation_only_escalation",
+    "add_offline_failure_state_and_ceiling_tests",
+    "run_separately_authorized_shadow_capture_before_calibration_or_stage_changes"
+  ],
+  "limits": [
+    "no_host_product_exact_count_captured_by_this_task",
+    "retained_exact_counts_cover_only_80_frozen_requests_and_four_runtime_bindings",
+    "schema_grammar_accounting_is_provider_dependent_and_not_fully_proven",
+    "task_stages_thresholds_ratio_and_call_ceiling_need_product_validation",
+    "no_end_to_end_host_preflight_retry_fallback_persistence_readback_execution",
+    "usage_is_runtime_reported_not_an_independent_tokenizer_oracle",
+    "context_fit_does_not_prove_semantic_quality_cache_reuse_throughput_or_admission"
+  ]
+}

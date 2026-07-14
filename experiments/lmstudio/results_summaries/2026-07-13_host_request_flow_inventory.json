@@ -1,0 +1,426 @@
+{
+  "schema_version": "1.0",
+  "scope": "host_request_flow_inventory",
+  "date": "2026-07-13",
+  "status": "read_only_source_inventory",
+  "execution_boundary": {
+    "live_requests": false,
+    "model_operations": false,
+    "implementation": false,
+    "prompt_content_inspected": false,
+    "private_artifacts_published": false
+  },
+  "classification_definitions": {
+    "api_bound_json_schema": "The request carries response_format.type=json_schema through the provider payload builder.",
+    "plain_text": "The request omits response_format and accepts the returned message content as text.",
+    "prompt_only_json": "A prompt asks for JSON while the request has no API-bound response schema; no dedicated current request class was identified.",
+    "partially_validated": "Application parsing checks part of the contract but does not enforce every closed-schema or business invariant.",
+    "not_implemented": "No production request owner or endpoint call exists."
+  },
+  "summary": {
+    "api_bound_request_classes": [
+      "block_preserving_postprocessing",
+      "image_vision_analysis"
+    ],
+    "plain_text_request_classes": [
+      "generic_existing_text_postprocessing",
+      "short_microphone_cleanup",
+      "long_microphone_cleanup",
+      "long_media_file_cleanup_text_mode"
+    ],
+    "dedicated_prompt_only_json_request_classes": [],
+    "not_implemented_request_classes": [
+      "per_chunk_summary",
+      "whole_recording_summary"
+    ],
+    "provider_contract": "OpenRouter-compatible cloud, Polza-compatible cloud, and LM Studio local compat all use POST {compat_base}/chat/completions. Provider builders alter headers, cache/usage fields, output limits, and local thinking controls but pass response_format unchanged when supplied.",
+    "native_lmstudio_boundary": "Native /api/v1/* is used for health and lifecycle, not content generation; generation uses /v1/chat/completions."
+  },
+  "request_classes": [
+    {
+      "id": "generic_existing_text_postprocessing",
+      "source_scope": "existing application text or reprocess input",
+      "endpoint": {
+        "family": "openai_compatible_chat_completions",
+        "method": "POST",
+        "path": "{compat_base}/chat/completions",
+        "providers": ["openrouter_cloud", "polza_compatible_cloud", "lmstudio_local_compat"]
+      },
+      "request_shape": {
+        "messages": "independent system and user messages",
+        "response_format": null,
+        "cache": "optional provider-specific stable prefix"
+      },
+      "response_contract": {
+        "classification": "plain_text",
+        "shape": "message content string"
+      },
+      "validation": {
+        "transport_envelope": true,
+        "raw_json_parse": false,
+        "json_schema": false,
+        "business_identity": false,
+        "semantic_quality": false,
+        "notes": "Thinking tags are stripped; no completeness, protected-value, or boundary validator is applied."
+      },
+      "retry_fallback": {
+        "transport_retry": "timeout, rate-limit, and server classes use exponential backoff; LM Studio can receive one additional readiness retry",
+        "application_retry": "none for response quality",
+        "fallback": "surface failure and retain original text"
+      },
+      "persistence": {
+        "verdict": "updates_existing_record",
+        "writes": ["postprocessed_text", "processing_mode", "provider_model_prompt_metadata", "usage", "optional_chunk_block_map"],
+        "preserves": ["full_text", "application_id", "created_at"]
+      },
+      "evidence": [
+        "host/src/application/services/postprocessing_service.py:232-386",
+        "host/src/application/services/postprocessing_service.py:930-1025",
+        "host/src/infrastructure/llm/openai_compatible_client.py:547-606"
+      ]
+    },
+    {
+      "id": "short_microphone_cleanup",
+      "source_scope": "direct microphone coordinator",
+      "endpoint": {
+        "family": "openai_compatible_chat_completions",
+        "method": "POST",
+        "path": "{compat_base}/chat/completions",
+        "providers": ["openrouter_cloud", "polza_compatible_cloud", "lmstudio_local_compat"]
+      },
+      "request_shape": {
+        "messages": "microphone source-view prompt with one current-text chunk in the normal short case",
+        "response_format": null,
+        "queue_owner": "direct coordinator; not shared file queue"
+      },
+      "response_contract": {
+        "classification": "plain_text",
+        "shape": "message content string"
+      },
+      "validation": {
+        "transport_envelope": true,
+        "raw_json_parse": false,
+        "json_schema": false,
+        "business_identity": false,
+        "semantic_quality": false
+      },
+      "retry_fallback": {
+        "transport_retry": "common client policy",
+        "model_load_failure": "explicit degraded postprocessing error before success event",
+        "fallback": "raw transcription text remains available and postprocessed_text is not populated as success"
+      },
+      "persistence": {
+        "verdict": "conditional_persisted_or_ephemeral",
+        "identity_owner": "TranscriptionResult generates UUID and created_at before LLM processing",
+        "persisted_capture": "saved before postprocessing, then updated",
+        "ephemeral_capture": "not written"
+      },
+      "evidence": [
+        "host/src/application/services/postprocessing_coordinator.py:118-223",
+        "host/src/application/services/postprocessing_coordinator.py:225-391",
+        "host/src/services/transcription_service.py:1474-1540"
+      ]
+    },
+    {
+      "id": "long_microphone_cleanup",
+      "source_scope": "microphone text exceeding configured chunk size without blocks-mode routing",
+      "endpoint": {
+        "family": "openai_compatible_chat_completions",
+        "method": "POST",
+        "path": "{compat_base}/chat/completions",
+        "providers": ["openrouter_cloud", "polza_compatible_cloud", "lmstudio_local_compat"]
+      },
+      "request_shape": {
+        "messages": "independent character chunks with configured overlap and optional context placeholders",
+        "response_format": null,
+        "chunking": "configured character size and overlap; sentence-boundary adjustment when available"
+      },
+      "response_contract": {
+        "classification": "plain_text",
+        "shape": "one free-text response per chunk, merged by application request index"
+      },
+      "validation": {
+        "transport_envelope": true,
+        "raw_json_parse": false,
+        "json_schema": false,
+        "business_identity": false,
+        "cross_chunk_completeness": false,
+        "semantic_quality": false
+      },
+      "retry_fallback": {
+        "transport_retry": "common client policy per chunk",
+        "orchestration": "fatal errors stop successful completion of the postprocessing job",
+        "fallback": "original full transcription remains available"
+      },
+      "persistence": {
+        "verdict": "single_record_merged_update",
+        "writes": ["merged_postprocessed_text", "usage", "chunk_count"],
+        "timestamp_owner": "application speech segments; model output has no timestamp contract"
+      },
+      "evidence": [
+        "host/src/application/services/postprocessing_service.py:423-496",
+        "host/src/application/services/postprocessing_service.py:843-890",
+        "host/src/application/services/postprocessing_service.py:930-1052"
+      ]
+    },
+    {
+      "id": "long_media_file_cleanup_text_mode",
+      "source_scope": "audio or video file shared-queue LLM tail when blocks mode is unavailable or not selected",
+      "endpoint": {
+        "family": "openai_compatible_chat_completions",
+        "method": "POST",
+        "path": "{compat_base}/chat/completions",
+        "providers": ["openrouter_cloud", "polza_compatible_cloud", "lmstudio_local_compat"]
+      },
+      "request_shape": {
+        "messages": "media source-view prompt over character chunks",
+        "response_format": null,
+        "queue_owner": "shared queue LLM tail"
+      },
+      "response_contract": {
+        "classification": "plain_text",
+        "shape": "one free-text response per chunk, merged by application order"
+      },
+      "validation": {
+        "transport_envelope": true,
+        "raw_json_parse": false,
+        "json_schema": false,
+        "business_identity": false,
+        "semantic_quality": false
+      },
+      "retry_fallback": {
+        "transport_retry": "common client policy inside a queue-level timeout budget",
+        "application_retry": "none for response quality",
+        "fallback": "already-saved transcription remains available for later reprocess"
+      },
+      "persistence": {
+        "verdict": "save_then_update",
+        "record_flow": "speech result is saved before the LLM tail; postprocessing updates the existing record",
+        "identity_owner": "queue job UUID and transcription UUID are separate application-owned handles"
+      },
+      "evidence": [
+        "host/src/domain/models/config/postprocessing.py:93-133",
+        "host/src/services/queue_workers/llm_postprocess_executor.py:444-625"
+      ]
+    },
+    {
+      "id": "block_preserving_postprocessing",
+      "source_scope": "persisted microphone/media blocks, queue tail, standalone reprocess, and bulk reprocess when blocks exist",
+      "endpoint": {
+        "family": "openai_compatible_chat_completions",
+        "method": "POST",
+        "path": "{compat_base}/chat/completions",
+        "providers": ["openrouter_cloud", "polza_compatible_cloud", "lmstudio_local_compat"]
+      },
+      "request_shape": {
+        "messages": "prompt content includes {blocks:[{id,text}]}; timestamps are not sent as output fields",
+        "response_format": {
+          "type": "json_schema",
+          "strict": true,
+          "closed_schema": true,
+          "shape": "{blocks:[{id:integer,text:string}]}"
+        },
+        "chunking": "application plans chunks on block boundaries"
+      },
+      "response_contract": {
+        "classification": "api_bound_json_schema_partially_validated",
+        "shape": "intended closed object with blocks array"
+      },
+      "validation": {
+        "transport_envelope": true,
+        "raw_json_parse": true,
+        "json_schema": true,
+        "expected_id_coverage": true,
+        "extra_ids": "filtered",
+        "bare_list_accepted": true,
+        "strict_text_type_after_parse": false,
+        "duplicate_ids_rejected": false,
+        "returned_order_enforced": false,
+        "semantic_quality": false,
+        "notes": "The parser converts text to string and checks missing expected IDs, but it does not explicitly enforce exact count, uniqueness, or returned order."
+      },
+      "retry_fallback": {
+        "transport_retry": "common client policy",
+        "application_retry": "one additional retry for invalid JSON or expected-ID omission",
+        "fallback": "original blocks are returned unchanged after exhausted application retry"
+      },
+      "persistence": {
+        "verdict": "application_owned_id_reattachment",
+        "id_owner": "stored block_index",
+        "timestamp_owner": "stored block start/end values; never model-authored",
+        "writes": ["per_block_postprocessed_text", "merged_postprocessed_text", "chunk_block_map", "usage_metadata"]
+      },
+      "evidence": [
+        "host/src/domain/schemas/block_schema.py:19-63",
+        "host/src/application/services/blocks_post_processor.py:107-196",
+        "host/src/application/services/blocks_post_processor.py:318-445",
+        "host/src/application/services/blocks_post_processor.py:462-590",
+        "host/src/infrastructure/storage/components/block_manager.py:251-296"
+      ]
+    },
+    {
+      "id": "per_chunk_summary",
+      "source_scope": "requested future summary class",
+      "endpoint": null,
+      "request_shape": null,
+      "response_contract": {
+        "classification": "not_implemented",
+        "shape": null
+      },
+      "validation": {
+        "transport_envelope": false,
+        "raw_json_parse": false,
+        "json_schema": false,
+        "business_identity": false,
+        "semantic_quality": false
+      },
+      "retry_fallback": {
+        "transport_retry": null,
+        "application_retry": null,
+        "fallback": null
+      },
+      "persistence": {
+        "verdict": "no_writer_found",
+        "reserved_field": "summary",
+        "notes": "The field exists but no per-chunk summary request or persistence owner was found."
+      },
+      "evidence": [
+        "host/src/domain/models/transcription.py:171-218",
+        "host/src/infrastructure/storage/models.py:146-200"
+      ]
+    },
+    {
+      "id": "whole_recording_summary",
+      "source_scope": "requested future recording-level summary class",
+      "endpoint": null,
+      "request_shape": null,
+      "response_contract": {
+        "classification": "not_implemented",
+        "shape": null
+      },
+      "validation": {
+        "transport_envelope": false,
+        "raw_json_parse": false,
+        "json_schema": false,
+        "business_identity": false,
+        "semantic_quality": false
+      },
+      "retry_fallback": {
+        "transport_retry": null,
+        "application_retry": null,
+        "fallback": null
+      },
+      "persistence": {
+        "verdict": "reserved_but_not_populated",
+        "reserved_field": "summary",
+        "normal_create_behavior": "writes NULL explicitly",
+        "notes": "No direct full-recording request, hierarchical synthesis, update owner, or read-back gate was found."
+      },
+      "evidence": [
+        "host/src/domain/models/transcription.py:171-218",
+        "host/src/infrastructure/storage/models.py:146-200",
+        "host/src/infrastructure/storage/components/crud_repository.py:87-157"
+      ]
+    },
+    {
+      "id": "image_vision_analysis",
+      "source_scope": "single image queue job",
+      "endpoint": {
+        "family": "openai_compatible_chat_completions",
+        "method": "POST",
+        "path": "{compat_base}/chat/completions",
+        "providers": ["openrouter_cloud", "polza_compatible_cloud", "lmstudio_local_compat"]
+      },
+      "request_shape": {
+        "messages": "system message plus user multipart content containing text and one image data URI",
+        "response_format": {
+          "type": "json_schema",
+          "strict": true,
+          "closed_schema": true,
+          "shape": "{description:string,extracted_text:string,language:string,scene_type:enum}"
+        }
+      },
+      "response_contract": {
+        "classification": "api_bound_json_schema_partially_validated",
+        "shape": "description, extracted_text, language, and scene_type"
+      },
+      "validation": {
+        "transport_envelope": true,
+        "raw_json_parse": true,
+        "json_schema": true,
+        "unexpected_fields_rejected": true,
+        "missing_fields_rejected": false,
+        "missing_fields_defaulted": true,
+        "non_string_values_rejected": true,
+        "invalid_scene_type": "mapped to other",
+        "truncated_json_recovery": true,
+        "semantic_quality": false
+      },
+      "retry_fallback": {
+        "transport_retry": "common client policy",
+        "lmstudio_reasoning_content_fallback": "allowed only when normal content is empty and reasoning_content contains parseable structured JSON for an image request",
+        "application_recovery": "bounded truncated-JSON recovery",
+        "fallback": "job failure; no plain-text vision fallback"
+      },
+      "persistence": {
+        "verdict": "new_record_direct_save",
+        "identity_owner": "TranscriptionResult UUID and created_at; queue job UUID remains separate",
+        "writes": ["full_text_from_description_and_extracted_text", "vision_metadata", "optional_usage"],
+        "text_llm_tail": "skipped_by_design"
+      },
+      "evidence": [
+        "host/src/domain/schemas/vision_schema.py:17-98",
+        "host/src/application/services/vision_processor.py:217-334",
+        "host/src/application/services/vision_processor.py:392-476",
+        "host/src/services/queue_workers/queue_worker.py:559-691",
+        "host/src/services/queue_workers/llm_postprocess_executor.py:479-491"
+      ]
+    }
+  ],
+  "provider_payload_builders": [
+    {
+      "provider": "openrouter_cloud",
+      "shared_fields": ["model", "messages", "optional_max_tokens"],
+      "provider_fields": ["authorization", "attribution_headers", "usage.include", "optional_ephemeral_cache_control"],
+      "response_format_behavior": "copied unchanged when supplied",
+      "evidence": "host/src/infrastructure/llm/payload_builders/openrouter.py:15-98"
+    },
+    {
+      "provider": "polza_compatible_cloud",
+      "shared_fields": ["model", "messages", "optional_max_tokens"],
+      "provider_fields": ["authorization", "optional_ephemeral_cache_control"],
+      "response_format_behavior": "copied unchanged when supplied",
+      "evidence": "host/src/infrastructure/llm/payload_builders/polza.py:16-96"
+    },
+    {
+      "provider": "lmstudio_local_compat",
+      "shared_fields": ["model", "messages", "optional_max_tokens"],
+      "provider_fields": ["optional_authorization", "cache_prompt=true", "chat_template_kwargs.enable_thinking=false"],
+      "response_format_behavior": "copied unchanged when supplied",
+      "evidence": "host/src/infrastructure/llm/payload_builders/lmstudio.py:17-79"
+    }
+  ],
+  "application_owned_state": {
+    "transcription_identity": "UUID generated in application code unless supplied",
+    "transcription_created_at": "application datetime default",
+    "queue_identity": "separate UUID with queue lifecycle timestamps",
+    "speech_segments": "segment IDs and start/end timestamps remain application-owned",
+    "blocks": "block index and start/end timestamps remain application/storage-owned; the model echoes only id and authors text",
+    "vision": "image/transcription identity, dimensions, file linkage, and persistence key remain outside the model schema",
+    "retry_and_fallback": "attempt eligibility, accepted attempt, original text, and persistence outcome remain application-owned"
+  },
+  "gaps": [
+    "Plain-text cleanup has no deterministic response schema or semantic acceptance layer.",
+    "Blocks post-parse validation does not explicitly enforce duplicate rejection, exact count, returned order, or strict text typing.",
+    "Vision post-parse validation defaults missing fields and can recover malformed JSON without a persisted layered verdict.",
+    "Summary storage exists without a request, validator, retry, fallback, synthesis, or persistence owner.",
+    "No production flow persists separate transport, raw-parse, schema, business-identity, semantic, and product-behavior verdicts.",
+    "Provider support for response_format is transport capability, not evidence that a task contract is safe."
+  ],
+  "non_claims": [
+    "This inventory is source-contract evidence, not executed model evidence.",
+    "Prompt files and private user content were not inspected or reproduced.",
+    "No live endpoint, model, provider, persistence round trip, or UI flow was exercised.",
+    "The inventory does not claim summary support, semantic correctness, model admission, audio accuracy, OCR accuracy, or migration readiness."
+  ]
+}

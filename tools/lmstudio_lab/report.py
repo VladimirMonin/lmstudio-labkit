@@ -3,10 +3,15 @@ from __future__ import annotations
 import csv
 import json
 from collections.abc import Mapping, Sequence
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import Any
 
 import yaml
+
+from lmstudio_managed.metrics import (
+    MemoryRecommendationCatalog,
+    memory_recommendation_catalog_schema,
+)
 
 from .config import ExperimentConfig
 from .live_config import LiveSmokeConfig
@@ -53,6 +58,13 @@ CONCURRENCY_DIAGNOSTICS_RESULT_FILE_NAMES = (
     "structured_errors.jsonl",
     "summary.json",
     "report.md",
+)
+MEMORY_RECOMMENDATION_RESULT_FILE_NAMES = (
+    "gpu_memory_matrix.md",
+    "gpu_memory_matrix.json",
+    "gpu_memory_matrix.csv",
+    "model_memory_recommendations.json",
+    "model_memory_recommendation_catalog.schema.json",
 )
 
 STRUCTURED_VALIDATION_SUMMARY_FIELDNAMES = (
@@ -585,10 +597,159 @@ def render_concurrency_diagnostics_report(
     return "\n".join(report_lines)
 
 
+def render_phase_metrics_report(summary: Mapping[str, Any]) -> str:
+    """Render phase telemetry without overstating prefill/decode precision."""
+
+    lines = [
+        "# Phase-aware System Telemetry",
+        "",
+        f"- telemetry_valid: `{summary.get('telemetry_valid')}`",
+        f"- memory_evidence_valid: `{summary.get('memory_evidence_valid')}`",
+        f"- phase_order_valid: `{summary.get('phase_order_valid')}`",
+        f"- timestamp_order_valid: `{summary.get('timestamp_order_valid')}`",
+        f"- sampler_failure_count: `{summary.get('sampler_failure_count')}`",
+        f"- configured_sample_interval_s: `{_format_report_value(summary.get('configured_sample_interval_s'))}`",
+        f"- actual_sample_interval_s: `{_format_report_value(summary.get('actual_sample_interval_s'))}`",
+        "",
+        "## Phase evidence",
+        "",
+    ]
+    phase_summaries = summary.get("phase_summaries")
+    if isinstance(phase_summaries, Sequence) and not isinstance(phase_summaries, (str, bytes)):
+        for phase in phase_summaries:
+            if not isinstance(phase, Mapping):
+                continue
+            lines.append(
+                f"- `{phase.get('marker')}`: samples `{phase.get('sample_count')}`, "
+                f"derivation `{phase.get('derivation_methods')}`, confidence `{phase.get('confidence_levels')}`"
+            )
+    lines.extend(
+        [
+            "",
+            "Coarse polling is never presented as precise prefill/decode evidence.",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def write_memory_recommendation_artifacts(
+    output_dir: str | Path,
+    catalog: MemoryRecommendationCatalog,
+) -> dict[str, Path]:
+    """Write one validated recommendation payload consistently across public formats."""
+
+    if not isinstance(catalog, MemoryRecommendationCatalog):
+        raise TypeError("catalog must be a MemoryRecommendationCatalog")
+    target = Path(output_dir)
+    target.mkdir(parents=True, exist_ok=True)
+    payload = catalog.to_dict()
+    catalog.validate_payload(payload)
+    for row in payload["recommendations"]:
+        for field_name in ("model_artifact", "artifact_revision"):
+            if _is_private_filesystem_reference(row[field_name]):
+                raise ValueError("recommendation catalog contains publication-unsafe values")
+    sanitized_payload, redaction_count = sanitize_metric_payload(payload)
+    if redaction_count:
+        raise ValueError("recommendation catalog contains publication-unsafe values")
+    rows = sanitized_payload["recommendations"]
+    assert isinstance(rows, list)
+    paths = {
+        "matrix_markdown": target / MEMORY_RECOMMENDATION_RESULT_FILE_NAMES[0],
+        "matrix_json": target / MEMORY_RECOMMENDATION_RESULT_FILE_NAMES[1],
+        "matrix_csv": target / MEMORY_RECOMMENDATION_RESULT_FILE_NAMES[2],
+        "catalog_json": target / MEMORY_RECOMMENDATION_RESULT_FILE_NAMES[3],
+        "catalog_schema": target / MEMORY_RECOMMENDATION_RESULT_FILE_NAMES[4],
+    }
+    encoded = json.dumps(sanitized_payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+    paths["matrix_json"].write_text(encoded, encoding="utf-8")
+    paths["catalog_json"].write_text(encoded, encoding="utf-8")
+    schema = memory_recommendation_catalog_schema()
+    paths["catalog_schema"].write_text(
+        json.dumps(schema, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    fieldnames = tuple(schema["properties"]["recommendations"]["items"]["required"])
+    csv_rows = tuple(
+        {
+            field_name: (
+                json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+                if isinstance(value, (list, dict))
+                else value
+            )
+            for field_name, value in row.items()
+        }
+        for row in rows
+    )
+    write_csv_file(paths["matrix_csv"], fieldnames=fieldnames, rows=csv_rows)
+    paths["matrix_markdown"].write_text(
+        _render_memory_recommendation_markdown(
+            schema_revision=catalog.schema_revision,
+            fieldnames=fieldnames,
+            rows=rows,
+        ),
+        encoding="utf-8",
+    )
+    return paths
+
+
+def _is_private_filesystem_reference(value: object) -> bool:
+    if not isinstance(value, str):
+        return False
+    normalized = value.strip()
+    if not normalized:
+        return False
+    lowered = normalized.lower()
+    return (
+        lowered.startswith("file://")
+        or normalized.startswith("~")
+        or PurePosixPath(normalized).is_absolute()
+        or PureWindowsPath(normalized).is_absolute()
+    )
+
+
+def _render_memory_recommendation_markdown(
+    *,
+    schema_revision: str,
+    fieldnames: Sequence[str],
+    rows: Sequence[Mapping[str, Any]],
+) -> str:
+    lines = [
+        "# GPU Memory Recommendation Matrix",
+        "",
+        f"- schema_revision: `{schema_revision}`",
+        "- Fixed model cost and context/concurrency overhead are reported separately.",
+        "- Each concurrency lane uses its measured envelope; P1 is never multiplied to predict P2/P4.",
+        "- Safety reserve is separate from measured peak. One run can never approve a profile.",
+        "",
+        "| " + " | ".join(fieldnames) + " |",
+        "| " + " | ".join("---" for _ in fieldnames) + " |",
+    ]
+    for row in rows:
+        lines.append(
+            "| "
+            + " | ".join(_markdown_recommendation_value(row.get(field)) for field in fieldnames)
+            + " |"
+        )
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _markdown_recommendation_value(value: Any) -> str:
+    if isinstance(value, list):
+        rendered = ", ".join(str(item) for item in value)
+    elif value is None:
+        rendered = "null"
+    else:
+        rendered = str(value)
+    return rendered.replace("\n", " ").replace("|", "\\|")
+
+
 __all__ = [
     "CONCURRENCY_DIAGNOSTICS_RESULT_FILE_NAMES",
     "LIVE_CHUNKED_RESULT_FILE_NAMES",
     "LIVE_RESULT_FILE_NAMES",
+    "MEMORY_RECOMMENDATION_RESULT_FILE_NAMES",
     "RESULT_FILE_NAMES",
     "STRUCTURED_VALIDATION_SUMMARY_FIELDNAMES",
     "build_structured_validation_summary_csv_row",
@@ -596,7 +757,9 @@ __all__ = [
     "render_dry_run_report",
     "render_live_chunked_smoke_report",
     "render_live_smoke_report",
+    "render_phase_metrics_report",
     "write_csv_file",
     "write_json_file",
+    "write_memory_recommendation_artifacts",
     "write_yaml_file",
 ]

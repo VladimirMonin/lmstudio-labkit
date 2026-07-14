@@ -14,16 +14,16 @@ from urllib import error as urllib_error
 from urllib import request as urllib_request
 from urllib.parse import urlsplit, urlunsplit
 
-from libs.lmstudio_managed.generation import GenerationResponseEnvelope
-from libs.lmstudio_managed.lifecycle import (
+from lmstudio_managed.generation import GenerationResponseEnvelope
+from lmstudio_managed.lifecycle import (
     ParallelSemantics,
     classify_parallel_semantics,
 )
-from libs.lmstudio_managed.metrics import (
+from lmstudio_managed.metrics import (
     ParallelEvidence,
     batch_metrics_from_request_metrics,
 )
-from libs.lmstudio_managed.validation import (
+from lmstudio_managed.validation import (
     GenerationFailureKind,
     failure_kind_from_lab_category,
 )
@@ -2307,11 +2307,10 @@ def run_live_structured_smoke(
     normalized_reasoning_control = _validate_structured_reasoning_control_variant(
         reasoning_control_variant
     )
-    if dataset_id != _LIVE_SMALL_DATASET_ID and normalized_reasoning_control != "baseline":
+    if normalized_reasoning_control != "baseline":
         raise ValueError(
-            "structured reasoning control "
-            f"{normalized_reasoning_control!r} is supported only for "
-            f"{_LIVE_SMALL_DATASET_ID} live dataset"
+            "explicit reasoning control is unsupported on /v1/chat/completions; "
+            "use the managed /api/v1/chat native route"
         )
     dataset_manifest = load_dataset_manifest(dataset_id)
     response_format = build_factual_blocks_response_format()
@@ -2361,8 +2360,6 @@ def run_live_structured_smoke(
         "temperature": 0,
         "max_tokens": max_tokens,
     }
-    if normalized_reasoning_control == "chat_template_kwargs_enable_thinking_false":
-        request_payload["chat_template_kwargs"] = {"enable_thinking": False}
     request_transport = transport or _default_transport
     endpoint_url = _chat_completions_url(config.lmstudio_base_url)
     return _execute_live_structured_request(

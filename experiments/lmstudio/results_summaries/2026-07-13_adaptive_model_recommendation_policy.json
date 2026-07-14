@@ -1,0 +1,546 @@
+{
+  "schema_version": "1.0",
+  "report_id": "2026-07-13_adaptive_model_recommendation_policy",
+  "date": "2026-07-13",
+  "scope": "read_only_hardware_aware_approved_model_recommendation_design",
+  "decision": "Recommend only from the intersection of an approved task-profile catalog, current runtime discovery, exact artifact identity, and a platform-specific memory-fit verdict. Missing identity or memory evidence produces a typed unavailable state, never a guessed model.",
+  "evidence_classes": {
+    "exact": "Observed for the exact artifact digest, runtime build, platform adapter, context, parallelism, and workload phase.",
+    "estimate": "Conservative catalog calculation used only for cold screening.",
+    "runtime-unexecuted": "Required production behavior or measurement not exercised by this analysis."
+  },
+  "hard_invariants": [
+    "The approved unit is a versioned task profile, not a model family.",
+    "Hard-filter before ranking.",
+    "Native key, compat ID, artifact digest, format, and quantization must reconcile exactly.",
+    "A family name, parameter count, filename, or equal file size is not identity.",
+    "Unknown quantization cannot match a quantization-specific approval.",
+    "Context fit and memory fit are separate gates.",
+    "CUDA accelerator memory and host RAM are independently limited resources.",
+    "Apple unified memory is one shared pool; overlapping counters are not summed.",
+    "VRAM from multiple devices is never summed without approved placement evidence.",
+    "A cold estimate is never relabeled as an observed peak.",
+    "Manual selection does not bypass identity, capability, or hard memory failure.",
+    "No unapproved fallback model is selected silently."
+  ],
+  "state_machine": {
+    "start": "discover_runtime",
+    "states": [
+      "discover_runtime",
+      "runtime_unavailable",
+      "discovery_incomplete",
+      "reconcile_catalog",
+      "no_approved_profile",
+      "artifact_missing",
+      "identity_ambiguous",
+      "identity_unverified",
+      "identity_mismatch",
+      "collect_hardware_snapshot",
+      "metrics_unavailable",
+      "cold_static_screen",
+      "incompatible_platform",
+      "insufficient_memory",
+      "estimate_only",
+      "evaluate_observed_envelope",
+      "observation_missing",
+      "observation_stale_or_wrong_shape",
+      "observed_insufficient",
+      "eligible",
+      "rank",
+      "recommended",
+      "manual_approved_only"
+    ],
+    "terminal_success": [
+      "recommended"
+    ],
+    "terminal_degraded": [
+      "manual_approved_only",
+      "estimate_only",
+      "observation_missing",
+      "observation_stale_or_wrong_shape"
+    ],
+    "terminal_unavailable": [
+      "runtime_unavailable",
+      "discovery_incomplete",
+      "no_approved_profile",
+      "artifact_missing",
+      "identity_ambiguous",
+      "identity_unverified",
+      "identity_mismatch",
+      "metrics_unavailable",
+      "incompatible_platform",
+      "insufficient_memory",
+      "observed_insufficient"
+    ]
+  },
+  "algorithm": [
+    {
+      "step": 1,
+      "name": "resolve_request_shape",
+      "inputs": [
+        "task_profile_id",
+        "task_contract_version",
+        "required_capabilities",
+        "context_tokens",
+        "output_reserve_tokens",
+        "runtime_parallel",
+        "app_concurrency",
+        "runtime_family",
+        "platform_class",
+        "explicit_user_preference"
+      ],
+      "rule": "Consume exact accepted token/context planning; do not estimate tokens from characters in the recommender."
+    },
+    {
+      "step": 2,
+      "name": "discover_runtime",
+      "inputs": [
+        "native /api/v1/models",
+        "compat /v1/models",
+        "CLI or on-disk inventory"
+      ],
+      "rule": "Preserve per-plane status and identifiers; never infer one ID from another."
+    },
+    {
+      "step": 3,
+      "name": "reconcile_exact_identity",
+      "required_fields": [
+        "native_model_key",
+        "compat_model_id",
+        "format",
+        "artifact_digest_algorithm",
+        "artifact_digest",
+        "quantization",
+        "quantization_verified",
+        "runtime_family_build_constraint"
+      ],
+      "rule": "Digest mismatch is a hard identity mismatch. Hash-unavailable identities are not Auto-eligible."
+    },
+    {
+      "step": 4,
+      "name": "intersect_approved_catalog",
+      "required_matches": [
+        "task profile ID and version",
+        "exact model identity",
+        "required capability",
+        "context tier",
+        "runtime parallelism",
+        "application concurrency",
+        "runtime family/build",
+        "platform class"
+      ],
+      "rule": "Lab candidate or benchmark status is evidence only and cannot auto-promote a production profile."
+    },
+    {
+      "step": 5,
+      "name": "collect_hardware_snapshot",
+      "rule": "Use bytes internally and retain adapter/version, capture time, sample quality, totals, available values, and resource scope."
+    },
+    {
+      "step": 6,
+      "name": "cold_static_screen",
+      "rule": "Apply profile-owned static, KV, workspace, absolute headroom, and proportional headroom envelopes. File size alone is only a lower-bound input."
+    },
+    {
+      "step": 7,
+      "name": "evaluate_observed_peak",
+      "rule": "Reuse only an exact-shape observation binding identity, runtime, platform adapter, context, parallelism, concurrency, KV/cache, placement, workload phase, sample interval, and cleanup read-back."
+    },
+    {
+      "step": 8,
+      "name": "rank_eligible_profiles",
+      "order": [
+        "task-profile approval and semantic evidence",
+        "exact observed fit over estimate-only fit",
+        "residual headroom on limiting resource",
+        "explicit latency or resource preference",
+        "catalog priority",
+        "profile ID deterministic tie-break"
+      ]
+    }
+  ],
+  "memory_equations": {
+    "cuda_accelerator_required": [
+      "static_accelerator_bytes",
+      "estimated_kv_bytes(context, parallel)",
+      "estimated_runtime_workspace_bytes",
+      "accelerator_headroom_bytes"
+    ],
+    "cuda_host_required": [
+      "static_host_bytes",
+      "estimated_host_workspace_bytes",
+      "host_headroom_bytes"
+    ],
+    "apple_unified_required": [
+      "static_resident_bytes",
+      "estimated_kv_bytes(context, parallel)",
+      "estimated_runtime_workspace_bytes",
+      "unified_headroom_bytes"
+    ],
+    "reserve_rule": "Both the absolute and proportional reserve apply; the profile must pass the stricter result.",
+    "estimate_limit": "Scaling formulas may reject an impossible profile but cannot promote an unobserved larger context or concurrency shape to exact fit."
+  },
+  "platform_matrix": [
+    {
+      "platform": "nvidia_single_discrete_gpu",
+      "cold_inputs": [
+        "per-device total/free VRAM",
+        "host RAM available",
+        "approved static/KV/workspace envelopes"
+      ],
+      "observed_inputs": [
+        "baseline",
+        "settled load",
+        "workload peak",
+        "unload read-back",
+        "per-device and host deltas"
+      ],
+      "fit_rule": "Accelerator and host budgets both pass independent reserves.",
+      "fallback": "Estimate-only only when the exact profile policy permits it."
+    },
+    {
+      "platform": "nvidia_multi_gpu",
+      "cold_inputs": [
+        "per-device metrics",
+        "approved placement capability"
+      ],
+      "observed_inputs": [
+        "exact device/layer/shard placement",
+        "per-device peaks"
+      ],
+      "fit_rule": "Never sum devices without approved placement evidence.",
+      "fallback": "Restrict to one proven placement or return unavailable."
+    },
+    {
+      "platform": "cpu_or_offload_non_unified",
+      "cold_inputs": [
+        "host RAM",
+        "discrete accelerator channel when present"
+      ],
+      "observed_inputs": [
+        "host/process peak",
+        "accelerator peak",
+        "exact offload policy"
+      ],
+      "fit_rule": "Every independently limited resource passes.",
+      "fallback": "Do not treat unused VRAM as general RAM."
+    },
+    {
+      "platform": "apple_unified_memory",
+      "cold_inputs": [
+        "physical memory",
+        "available memory",
+        "memory pressure",
+        "approved unified estimate"
+      ],
+      "observed_inputs": [
+        "exact unified peak",
+        "LM Studio process attribution",
+        "MLX runtime allocation/cache peak from verified adapter"
+      ],
+      "fit_rule": "One shared-pool reserve; overlapping OS, process, and runtime counters are not summed.",
+      "fallback": "Use only an equivalent pre-approved observed envelope or return metrics unavailable/observation missing."
+    },
+    {
+      "platform": "unsupported_adapter",
+      "cold_inputs": [],
+      "observed_inputs": [],
+      "fit_rule": "No fit decision.",
+      "fallback": "No recommendation."
+    }
+  ],
+  "hardware_adapters": {
+    "cuda": {
+      "preferred": "NVML with all visible devices and process attribution",
+      "degraded": "nvidia-smi CSV",
+      "host_memory": "OS virtual-memory adapter",
+      "known_current_limit": "Existing LabKit sampling reads the first NVIDIA row and process RSS by process name; it is insufficient for multi-GPU, MIG, sharding, or robust process attribution."
+    },
+    "apple_unified": {
+      "os_fields": [
+        "physical_memory_bytes",
+        "available_memory_bytes",
+        "memory_pressure_state",
+        "process_resident_or_physical_footprint_bytes"
+      ],
+      "mlx_fields": [
+        "allocated_bytes",
+        "active_bytes",
+        "cache_bytes",
+        "peak_allocated_bytes",
+        "peak_cache_bytes",
+        "counter_reset_scope"
+      ],
+      "status": "unresolved",
+      "blocker": "Supported APIs, counter semantics, cache reset, process attribution, sampling overhead, and behavior under LM Studio have not been verified on supported macOS builds."
+    }
+  },
+  "observed_envelope_required_fields": [
+    "profile_id",
+    "artifact_digest",
+    "runtime_family",
+    "runtime_build",
+    "platform_class",
+    "hardware_adapter",
+    "hardware_adapter_version",
+    "context_tokens",
+    "runtime_parallel",
+    "app_concurrency",
+    "kv_cache_policy",
+    "placement_mode",
+    "workload_phase",
+    "baseline_resources",
+    "settled_loaded_resources",
+    "peak_resources",
+    "after_unload_resources",
+    "sample_interval_ms",
+    "observation_count",
+    "cleanup_readback_pass",
+    "evidence_ref"
+  ],
+  "auto_mode": {
+    "required": [
+      "approval_status=approved",
+      "auto_eligible=true",
+      "exact identity match",
+      "required task capability and semantic/product evidence",
+      "compatible runtime/context/parallelism/concurrency",
+      "platform metrics available",
+      "observed_fit or explicitly catalog-authorized conservative_estimate_fit",
+      "no incompatible preloaded instance",
+      "resolved lifecycle ownership"
+    ],
+    "forbidden": [
+      "catalog mutation",
+      "new model approval",
+      "implicit download",
+      "context/concurrency increase to chase quality",
+      "unapproved fallback"
+    ]
+  },
+  "manual_mode": {
+    "visible_groups": [
+      "recommended_now",
+      "approved_not_recommended_for_current_shape",
+      "unavailable_with_reason"
+    ],
+    "rule": "Only exact discovered identities intersected with approved profiles are approved manual choices.",
+    "estimate_only": "Allowed only by explicit product policy with a user-confirmed guarded load/canary and clear not-yet-observed status.",
+    "free_text_model_id": "May remain an advanced diagnostic field but is outside approved selection."
+  },
+  "confidence_policy": [
+    {
+      "confidence": "exact_observed",
+      "required": "Exact identity and request shape, trusted platform adapter, retained peak, and cleanup read-back.",
+      "auto": "eligible_if_other_gates_pass"
+    },
+    {
+      "confidence": "conservative_estimate",
+      "required": "Exact identity, approved formulas, current hardware snapshot, and explicit profile permission.",
+      "auto": "eligible_only_when_catalog_policy_allows"
+    },
+    {
+      "confidence": "runtime_unexecuted",
+      "required": "Design/static contract only; no matching peak.",
+      "auto": "not_eligible_by_default"
+    },
+    {
+      "confidence": "unknown",
+      "required": "Identity, quantization, metrics, or formula missing.",
+      "auto": "never_eligible"
+    }
+  ],
+  "fallback_order": [
+    "Choose another approved profile for the same task with a smaller exact context/concurrency shape.",
+    "Offer an approved manual estimate-only profile with a clear warning if policy permits.",
+    "Keep the original application-owned source/output path and report local model unavailable.",
+    "Never select an unapproved model or mutate the task contract silently."
+  ],
+  "data_contract": {
+    "TaskRequestShape": [
+      "task_profile_id",
+      "task_contract_version",
+      "required_capabilities",
+      "context_tokens",
+      "output_reserve_tokens",
+      "runtime_parallel",
+      "app_concurrency"
+    ],
+    "ApprovedCatalogProfile": [
+      "catalog_version",
+      "profile_id",
+      "profile_version",
+      "approval_status",
+      "auto_eligible",
+      "identity",
+      "runtime_constraints",
+      "memory_envelopes",
+      "quality_evidence_refs"
+    ],
+    "ExactIdentity": [
+      "native_model_key",
+      "compat_model_id",
+      "format",
+      "artifact_digest_algorithm",
+      "artifact_digest",
+      "quantization",
+      "quantization_verified"
+    ],
+    "RuntimeDiscovery": [
+      "native_status",
+      "compat_status",
+      "inventory_status",
+      "identity_match",
+      "loaded_instances"
+    ],
+    "HardwareSnapshot": [
+      "platform_class",
+      "adapter",
+      "adapter_version",
+      "captured_at",
+      "sample_quality",
+      "resources"
+    ],
+    "MemoryDecision": [
+      "evidence_class",
+      "verdict",
+      "limiting_resource",
+      "required_bytes",
+      "available_after_reserve_bytes",
+      "headroom_bytes",
+      "reason_codes"
+    ],
+    "Recommendation": [
+      "state",
+      "selected_profile_id",
+      "confidence",
+      "alternatives",
+      "reason_codes"
+    ]
+  },
+  "reason_codes": [
+    "runtime_unavailable",
+    "native_discovery_failed",
+    "compat_discovery_failed",
+    "inventory_partial",
+    "no_approved_profile",
+    "artifact_missing",
+    "hash_unavailable",
+    "identity_ambiguous",
+    "identity_mismatch",
+    "quantization_unknown",
+    "quantization_mismatch",
+    "platform_unsupported",
+    "metrics_unavailable",
+    "mlx_metrics_adapter_unresolved",
+    "static_estimate_exceeds_budget",
+    "observed_peak_exceeds_budget",
+    "headroom_insufficient",
+    "observation_missing",
+    "observation_stale",
+    "context_shape_unobserved",
+    "concurrency_shape_unobserved",
+    "kv_policy_unobserved",
+    "preloaded_incompatible",
+    "external_instance_not_owned",
+    "approved_manual_only",
+    "recommended_exact_observed"
+  ],
+  "implementation_seams": [
+    "ApprovedTaskProfileCatalog",
+    "RuntimeInventoryAdapter",
+    "HardwareMetricsAdapter",
+    "MemoryEnvelopeEvaluator",
+    "ModelRecommendationService",
+    "LifecyclePort",
+    "RecommendationPresenter"
+  ],
+  "unresolved_gates": [
+    {
+      "id": "G1",
+      "name": "mlx_metal_metrics_adapter",
+      "status": "blocking_for_general_apple_auto",
+      "missing": "Verified APIs, field semantics, reset/scope, process attribution, sampling overhead, and supported-build behavior."
+    },
+    {
+      "id": "G2",
+      "name": "artifact_digest_resolution",
+      "status": "blocking_for_auto_identity",
+      "missing": "Privacy-safe immutable digest resolution for every installed model."
+    },
+    {
+      "id": "G3",
+      "name": "cuda_device_process_attribution",
+      "status": "blocking_for_multi_gpu_auto",
+      "missing": "Multi-GPU, MIG, sharding, and robust process/device attribution."
+    },
+    {
+      "id": "G4",
+      "name": "memory_envelope_calibration",
+      "status": "runtime_unexecuted",
+      "missing": "Exact loaded peaks for every approved task/context/concurrency/quantization shape."
+    },
+    {
+      "id": "G5",
+      "name": "kv_workspace_formulas",
+      "status": "runtime_unexecuted",
+      "missing": "Runtime-specific versioned formulas validated against observed peaks."
+    },
+    {
+      "id": "G6",
+      "name": "headroom_policy",
+      "status": "product_decision_required",
+      "missing": "Absolute and proportional reserve thresholds backed by stress evidence."
+    },
+    {
+      "id": "G7",
+      "name": "host_lifecycle_integration",
+      "status": "runtime_unexecuted",
+      "missing": "End-to-end Auto selection, materialization, ownership, cancellation, cleanup, and fallback evidence."
+    },
+    {
+      "id": "G8",
+      "name": "production_approval_catalog",
+      "status": "not_created_by_this_report",
+      "missing": "Explicit product-owned approvals; current lab candidates must not be auto-promoted."
+    }
+  ],
+  "evidence_sources": [
+    "tools/lmstudio_lab/system_metrics.py",
+    "libs/lmstudio_managed/metrics/models.py",
+    "libs/lmstudio_managed/registry/api_models.py",
+    "libs/lmstudio_managed/registry/models.py",
+    "tools/lmstudio_lab/registry_bridge.py",
+    "experiments/lmstudio/models/candidates.yaml",
+    "experiments/lmstudio/results_summaries/2026-07-12_parallel_cache_gpu_runtime_audit.md",
+    "experiments/lmstudio/results_summaries/2026-07-12_parallel_cache_gpu_runtime_audit.json",
+    "experiments/lmstudio/results_summaries/2026-07-13_labkit_package_reuse_assessment.md",
+    "read-only host application LM Studio discovery, settings, and lifecycle contracts"
+  ],
+  "privacy": {
+    "allowed": [
+      "stable catalog IDs",
+      "cryptographic artifact digests",
+      "numeric resource measurements",
+      "categorical verdicts",
+      "adapter and runtime versions",
+      "safe evidence references"
+    ],
+    "forbidden": [
+      "local model paths",
+      "prompts",
+      "responses",
+      "credentials",
+      "raw user text",
+      "private product names"
+    ]
+  },
+  "non_claims": [
+    "No model is approved, ranked, or made a production default by this report.",
+    "No live hardware, LM Studio, CUDA, MLX, Metal, tokenizer, load, or inference operation was executed.",
+    "Model file size and reported load estimates are not exact resident or peak memory.",
+    "Available memory at recommendation time does not guarantee a later allocation.",
+    "Parameter count is not a task-quality ranking.",
+    "Maximum-GPU placement, physical KV reuse, multi-GPU aggregation, and Apple MLX metrics are not proven."
+  ]
+}

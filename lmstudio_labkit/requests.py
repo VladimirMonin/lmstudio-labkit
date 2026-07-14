@@ -7,6 +7,7 @@ from typing import Any, Literal
 Modality = Literal["text", "image"]
 ResponseMode = Literal["json", "text"]
 EndpointFamily = Literal["openai_compat", "native"]
+ReasoningMode = Literal["auto", "off", "on", "low", "medium", "high"]
 LanguagePolicy = Literal[
     "strict_ru",
     "strict_en",
@@ -178,6 +179,7 @@ class ExecutionOptions:
     temperature: float = 0.0
     timeout_s: float = 30.0
     retry_policy: Literal["off", "retry1"] = "off"
+    reasoning_mode: ReasoningMode = "auto"
     live: bool = False
 
     def safe_metadata(self) -> dict[str, Any]:
@@ -189,6 +191,7 @@ class ExecutionOptions:
             "temperature": self.temperature,
             "timeout_s": self.timeout_s,
             "retry_policy": self.retry_policy,
+            "reasoning_mode": self.reasoning_mode,
             "live": self.live,
         }
 
@@ -367,6 +370,7 @@ __all__ = [
     "RequestEnvelope",
     "RequestPlan",
     "RequestResult",
+    "ReasoningMode",
     "ResponseContract",
     "ResponseMode",
     "TextInput",

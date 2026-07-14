@@ -11,6 +11,7 @@ from lmstudio_labkit import (
     ManagedExecutionResult,
     ManagedExecutorError,
     ManagedLMStudioExecutor,
+    NativeChatDiagnosticResult,
     RequestEnvelope,
     RequestPlan,
     ResponseContract,
@@ -305,3 +306,136 @@ def test_managed_executor_rejects_context_tier_mismatch_with_executor_context() 
 
     with pytest.raises(ManagedExecutorError, match="context_tier must match executor context"):
         executor.execute(structured_plan(context_tier="32768"))
+
+
+class NativeManagedHostRunner(MockManagedHostRunner):
+    def __init__(
+        self,
+        *,
+        reasoning_tokens: int = 0,
+        reasoning_text: str = "",
+        allowed_options: tuple[str, ...] = ("off", "on"),
+    ) -> None:
+        super().__init__()
+        self.reasoning_tokens = reasoning_tokens
+        self.reasoning_text = reasoning_text
+        self.allowed_options = allowed_options
+
+    def preflight_native_reasoning(
+        self,
+        *,
+        model_id: str,
+        reasoning: str,
+    ) -> tuple[tuple[str, ...], str]:
+        self.calls.append(
+            (
+                "preflight_native_reasoning",
+                {"model_id": model_id, "reasoning": reasoning},
+            )
+        )
+        if reasoning not in self.allowed_options:
+            raise ManagedExecutorError(
+                f"native reasoning {reasoning} is not advertised by exact model {model_id}"
+            )
+        return self.allowed_options, "on"
+
+    def native_chat_completion(self, **kwargs: object) -> NativeChatDiagnosticResult:
+        self.calls.append(("native_chat_completion", dict(kwargs)))
+        return NativeChatDiagnosticResult(
+            http_status=200,
+            content_type="application/json",
+            raw_body=b"{}",
+            raw_envelope={},
+            sse_frames=(),
+            reasoning_text=self.reasoning_text,
+            message_text=json.dumps({"id": "ok", "text": "Synthetic response"}),
+            numeric_stats={
+                "input_tokens": 7,
+                "total_output_tokens": 5,
+                "reasoning_output_tokens": self.reasoning_tokens,
+            },
+            finish_reason="stop",
+            boundary="terminal",
+        )
+
+
+def test_compat_executor_rejects_explicit_reasoning_before_host_call() -> None:
+    host = MockManagedHostRunner()
+    executor = ManagedLMStudioExecutor(host_runner=host, allow_model_loads=True)
+
+    with pytest.raises(ManagedExecutorError, match="unsupported on /v1/chat/completions"):
+        executor.execute(structured_plan(reasoning_mode="off"))
+
+    assert host.calls == []
+
+
+def test_native_executor_rejects_unadvertised_off_before_load() -> None:
+    host = NativeManagedHostRunner(allowed_options=("on",))
+    executor = ManagedLMStudioExecutor(
+        host_runner=host,
+        allow_model_loads=True,
+        endpoint_path="/api/v1/chat",
+    )
+
+    with pytest.raises(ManagedExecutorError, match="not advertised"):
+        executor.execute(
+            structured_plan(
+                endpoint_family="native",
+                reasoning_mode="off",
+                max_tokens=64,
+            )
+        )
+
+    assert [name for name, _payload in host.calls] == ["preflight_native_reasoning"]
+
+
+def test_native_executor_fails_closed_on_reasoning_leak_and_cleans_up() -> None:
+    host = NativeManagedHostRunner(reasoning_tokens=3, reasoning_text="hidden")
+    executor = ManagedLMStudioExecutor(
+        host_runner=host,
+        allow_model_loads=True,
+        endpoint_path="/api/v1/chat",
+    )
+
+    with pytest.raises(ManagedExecutorError, match="reasoning_control_not_applied"):
+        executor.execute(
+            structured_plan(
+                endpoint_family="native",
+                reasoning_mode="off",
+                max_tokens=64,
+            )
+        )
+
+    assert host.loaded_instances == 0
+    assert [name for name, _payload in host.calls][-2:] == [
+        "cleanup_model",
+        "count_loaded_instances",
+    ]
+
+
+def test_native_executor_accepts_measured_zero_reasoning_json_message() -> None:
+    host = NativeManagedHostRunner()
+    executor = ManagedLMStudioExecutor(
+        host_runner=host,
+        allow_model_loads=True,
+        endpoint_path="/api/v1/chat",
+    )
+
+    result = executor.execute(
+        structured_plan(
+            endpoint_family="native",
+            reasoning_mode="off",
+            max_tokens=64,
+        )
+    )
+
+    assert json.loads(result.raw_response) == {"id": "ok", "text": "Synthetic response"}
+    assert result.reasoning_mode == "off"
+    assert result.reasoning_output_tokens == 0
+    assert result.reasoning_control_applied is True
+    assert result.strict_schema_runtime_support is False
+    assert result.cleanup_verified is True
+    native_call = next(payload for name, payload in host.calls if name == "native_chat_completion")
+    assert native_call["reasoning"] == "off"
+    assert native_call["max_output_tokens"] == 64
+    assert "response_format" not in native_call

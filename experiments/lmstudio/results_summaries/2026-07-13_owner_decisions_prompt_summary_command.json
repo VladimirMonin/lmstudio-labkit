@@ -1,0 +1,494 @@
+{
+  "schema_version": "lmstudio-labkit-owner-decisions-prompt-summary-command-v1",
+  "date": "2026-07-13",
+  "status": "read_only_owner_decision_recommendation_runtime_unexecuted",
+  "decisions": [
+    {
+      "id": "O1",
+      "topic": "canonical_summary_placeholder",
+      "classification": "approve_now",
+      "recommended_default": "document_summary_only",
+      "recording_scope_location": "SummaryArtifact.scope_kind",
+      "rejected": [
+        "recording_summary_only",
+        "document_summary_and_recording_summary_synonyms",
+        "full_text_alias_to_summary"
+      ],
+      "implementation_authorized": false,
+      "live_authorized": false
+    },
+    {
+      "id": "O11",
+      "topic": "command_history_persistence_and_retention",
+      "classification": "approve_configurable_default",
+      "recommended_default": "shadow_ephemeral",
+      "bootstrap_kill_switch": "disabled",
+      "durable_history": "disabled_until_separate_promotion",
+      "implementation_authorized": false,
+      "live_authorized": false
+    },
+    {
+      "id": "O12",
+      "topic": "legacy_custom_prompt_disposition",
+      "classification": "approve_now",
+      "recommended_default": "explicit_native_legacy_or_blocked_manifest_per_prompt",
+      "unmanifested_existing_prompt": "legacy",
+      "unknown_or_contradictory_prompt": "blocked",
+      "implementation_authorized": false,
+      "live_authorized": false
+    }
+  ],
+  "evidence_boundary": {
+    "current_static_contract": [
+      "The prompt registry recognizes chunk, blocks_json, full_text, clipboard, and context only.",
+      "User prompt files override bundled files by filename.",
+      "The inspected repository prompt inventory contains ten prompts: seven text-shaped, two block-shaped, and one vision-shaped.",
+      "Four inspected prompts use full_text.",
+      "Both inspected block prompts request a bare array while the API-bound schema requires a closed object containing blocks; the current parser tolerates both.",
+      "The nullable bare summary field is loaded, indexed, and transferred, but normal create writes null and no summary request/lifecycle owner exists.",
+      "Microphone cleanup uses generic postprocessing events and clipboard fallback to original text; no command-specific event, artifact, or persistence path exists.",
+      "Persisted microphone transcriptions are saved before postprocessing while ephemeral captures are not saved."
+    ],
+    "retained_executed": [
+      "A 202-call bounded structured-context study supports rejecting full-recording-per-chunk as the default but does not validate a production summary pipeline.",
+      "Bounded structured-vision evidence separates schema success from semantic acceptance and does not validate command or summary quality."
+    ],
+    "recommendations": [
+      "Canonical summary naming, prompt migration states, and initial command-history mode are product-owned policy decisions.",
+      "All target behavior remains runtime-unexecuted."
+    ],
+    "live_unverified": [
+      "Installed custom prompt inventory outside the inspected repository.",
+      "Summary lifecycle, prompt injection, command classifier, command route, clipboard behavior, persistence, retention, and rollback end to end."
+    ],
+    "external_documentation_required": false,
+    "actions": {
+      "host_changes": 0,
+      "labkit_runtime_changes": 0,
+      "prompt_changes": 0,
+      "database_changes": 0,
+      "model_operations": 0,
+      "provider_calls": 0,
+      "clipboard_actions": 0,
+      "migrations": 0,
+      "commits": 0,
+      "pushes": 0
+    }
+  },
+  "summary_placeholder": {
+    "canonical": "document_summary",
+    "synonyms_allowed": false,
+    "full_text_alias": false,
+    "requirement_levels": {
+      "forbidden": "supplied_summary_fails_planning",
+      "optional": "inject_current_accepted_source_matching_artifact_else_omit_manifest_owned_section_deterministically",
+      "required": "fail_planning_or_create_separate_prerequisite_no_empty_or_full_text_fallback"
+    },
+    "eligible_states": [
+      "current"
+    ],
+    "ineligible_states": [
+      "legacy_unverified",
+      "stale",
+      "partial",
+      "failed",
+      "superseded"
+    ],
+    "provenance_outside_prompt": [
+      "artifact_id",
+      "artifact_version",
+      "scope_kind",
+      "source_revision",
+      "source_digest",
+      "prompt_digest"
+    ],
+    "typed_failures": [
+      "prompt_placeholder_unknown",
+      "summary_forbidden_supplied",
+      "summary_required_unavailable",
+      "summary_ineligible",
+      "summary_provenance_mismatch",
+      "prompt_placeholder_leak"
+    ],
+    "failure_side_effects": {
+      "provider_request": false,
+      "persistence": false,
+      "clipboard_copy": false,
+      "auto_paste": false,
+      "full_text_fallback": false
+    },
+    "rollback": {
+      "mechanism": "versioned_task_manifest_kill_switch_plus_request_generation_increment",
+      "fallback_context": "current_target_plus_approved_boundary_context",
+      "does_not": [
+        "rewrite_prompt_history",
+        "mutate_summary_artifacts",
+        "restore_full_text_automatically",
+        "delete_authoritative_source_search_or_export_data"
+      ]
+    },
+    "minimum_acceptance_tests": [
+      "single_summary_token_and_synonym_rejection",
+      "forbidden_optional_required_rendering_matrix",
+      "no_literal_placeholder_leak",
+      "current_source_matching_artifact_only",
+      "local_cloud_logical_message_and_digest_parity",
+      "full_text_document_summary_no_alias_both_directions",
+      "kill_switch_and_stale_generation_zero_side_effects",
+      "raw_postprocessed_fts_and_ordinary_export_unchanged"
+    ]
+  },
+  "prompt_migration": {
+    "states": {
+      "native": "Explicit manifest fixes task, versions, input/output shape, placeholders, context, translation, schema digest, validators, fallback, and provider-neutral parity.",
+      "legacy": "Existing behavior remains behind an explicit compatibility manifest and kill switch with no automatic structured promotion.",
+      "blocked": "No transport because structure, placeholders, task intent, translation target, digest, or output contract is unknown or contradictory."
+    },
+    "unknown_state": "blocked",
+    "missing_manifest_after_enforcement": "blocked",
+    "inventory_summary": {
+      "total": 10,
+      "text_shaped": 7,
+      "block_shaped": 2,
+      "vision_shaped": 1,
+      "uses_full_text": 4,
+      "native_block_shape_contradiction": 2,
+      "installed_custom_prompts_outside_repository_scanned": false
+    },
+    "inventory": [
+      {
+        "source": "bundled",
+        "filename": "corrector_blocks.md",
+        "sha256": "e8f4e49daf19b518e95ac3eefb9e5aa156b84577af4d7e3c670b7698723a14b3",
+        "placeholders": [
+          "blocks_json",
+          "full_text"
+        ],
+        "initial_state": "legacy_full_text_blocks",
+        "native_admission": "blocked",
+        "blockers": [
+          "bare_array_instruction_conflicts_with_closed_object_schema",
+          "deprecated_repeated_full_text_context"
+        ]
+      },
+      {
+        "source": "bundled",
+        "filename": "lecture_notes.md",
+        "sha256": "338d7a9723df662951ea60cd33780f9ce3086b753e2137793c4105d7386cc543",
+        "placeholders": [
+          "chunk"
+        ],
+        "initial_state": "legacy_plain_text",
+        "native_admission": "requires_manifest_contract_and_preview"
+      },
+      {
+        "source": "bundled",
+        "filename": "mic_cloud.md",
+        "sha256": "0922adae4e426c3ffdd56f02633656909eabfa84a7270e5ca346fe79d0bcb54d",
+        "placeholders": [
+          "chunk"
+        ],
+        "initial_state": "legacy_plain_text",
+        "native_admission": "separate_microphone_cleanup_migration"
+      },
+      {
+        "source": "bundled",
+        "filename": "mic_local.md",
+        "sha256": "18160b947daae859a22178a9acdefc12f81212aea3a7f2a9c798a2391131dd08",
+        "placeholders": [
+          "chunk"
+        ],
+        "initial_state": "legacy_plain_text",
+        "native_admission": "same_provider_neutral_manifest_as_cloud_required"
+      },
+      {
+        "source": "bundled",
+        "filename": "sk.md",
+        "sha256": "fd49a08079088102d5229563a8c0c2dd58e2d4b34b0eb7625c05aee64a01018c",
+        "placeholders": [
+          "chunk",
+          "clipboard"
+        ],
+        "initial_state": "legacy_plain_text",
+        "native_admission": "requires_explicit_user_selected_clipboard_context_policy"
+      },
+      {
+        "source": "bundled",
+        "filename": "test_translate.md",
+        "sha256": "b8d8cd6c8383ea9146dfc889ff9b58aa90a1954d5909c1d1c65904baa16c4db1",
+        "placeholders": [
+          "chunk",
+          "full_text"
+        ],
+        "initial_state": "legacy_full_text",
+        "native_admission": "requires_new_revision_without_repeated_full_text_and_with_typed_translation_metadata"
+      },
+      {
+        "source": "bundled",
+        "filename": "tg_style.md",
+        "sha256": "fae185f709b634194c74e893073370e9e041bf912fbb175e8d7b22884f5ebcbb",
+        "placeholders": [
+          "chunk"
+        ],
+        "initial_state": "legacy_plain_text",
+        "native_admission": "requires_manifest_contract_and_preview"
+      },
+      {
+        "source": "bundled",
+        "filename": "translate.md",
+        "sha256": "4f25b7d8a01554fefa91d9b96e558ddf90797795c3e2fcd4cc093d6311c97e16",
+        "placeholders": [
+          "chunk",
+          "full_text"
+        ],
+        "initial_state": "legacy_full_text",
+        "native_admission": "requires_new_revision_without_repeated_full_text_and_with_typed_translation_metadata"
+      },
+      {
+        "source": "bundled",
+        "filename": "translate_blocks.md",
+        "sha256": "57fcab095031b279eee49844e1ce3ab52d1d416812875ffd86b9f08ee4e9b3a7",
+        "placeholders": [
+          "blocks_json",
+          "full_text"
+        ],
+        "initial_state": "legacy_full_text_blocks",
+        "native_admission": "blocked",
+        "blockers": [
+          "bare_array_instruction_conflicts_with_closed_object_schema",
+          "deprecated_repeated_full_text_context",
+          "typed_translation_metadata_missing"
+        ]
+      },
+      {
+        "source": "bundled",
+        "filename": "vision_default.md",
+        "sha256": "ac447a694cf4652a63f6f85dc95d07baa1f0a11bc38ab2bc658bd08a4efc121f",
+        "placeholders": [],
+        "initial_state": "legacy_vision",
+        "native_admission": "requires_explicit_vision_task_and_schema_manifest"
+      }
+    ],
+    "installed_inventory_metadata": [
+      "safe_local_identity",
+      "content_digest",
+      "source_bundled_or_custom",
+      "section_presence",
+      "placeholder_set",
+      "override_relationship",
+      "disposition"
+    ],
+    "raw_prompt_content_in_public_artifact": false,
+    "rules": [
+      "Freeze inventory generation and digest before analysis.",
+      "Custom override receives its own decision and inherits no trust from a same-name bundled file.",
+      "Unknown, both, or missing target placeholders are blocked except explicit vision no-target shape.",
+      "Existing chunk prompts import as legacy plain text.",
+      "Existing block prompts remain legacy until output instructions and exact schema agree.",
+      "full_text remains deprecated legacy and is never document_summary.",
+      "Native migration creates a new immutable prompt and manifest revision.",
+      "Remove full_text legacy registry support only after zero installed inventory or explicit owner waiver."
+    ],
+    "typed_failures": [
+      "prompt_inventory_stale",
+      "prompt_digest_mismatch",
+      "prompt_unreadable",
+      "prompt_sections_invalid",
+      "prompt_placeholder_unknown",
+      "prompt_target_shape_ambiguous",
+      "prompt_target_missing",
+      "prompt_task_manifest_mismatch",
+      "prompt_translation_target_conflict",
+      "prompt_schema_contract_mismatch",
+      "prompt_legacy_disabled",
+      "prompt_manifest_blocked"
+    ],
+    "failure_side_effects": {
+      "provider_request": false,
+      "prompt_rewrite": false,
+      "summary_substitution": false,
+      "persistence_update": false,
+      "clipboard_copy": false,
+      "auto_paste": false
+    },
+    "rollback": {
+      "mechanism": "select_previous_immutable_admitted_revision_and_increment_request_generation",
+      "forbidden": [
+        "rewrite_custom_file",
+        "alias_placeholders",
+        "reuse_disposition_after_digest_change"
+      ],
+      "no_legacy_revision": "typed_unavailable"
+    },
+    "minimum_acceptance_tests": [
+      "bundled_custom_override_and_digest_change_inventory",
+      "exactly_one_native_legacy_or_blocked_state",
+      "unknown_state_fail_closed",
+      "placeholder_and_section_admission_matrix",
+      "explicit_vision_no_target_exception",
+      "translation_target_conflict",
+      "schema_contract_mismatch",
+      "bare_array_cannot_bind_native_closed_object",
+      "chunk_prompt_no_auto_promotion",
+      "full_text_document_summary_no_alias",
+      "local_cloud_same_manifest_and_logical_request",
+      "rollback_exact_revision_and_stale_generation_inert"
+    ]
+  },
+  "command_history": {
+    "modes": {
+      "disabled": {
+        "command_request": false,
+        "command_artifact": false,
+        "role": "bootstrap_and_global_kill_switch"
+      },
+      "shadow_ephemeral": {
+        "command_request": "only_after_offline_gates_and_separate_live_authorization",
+        "candidate_storage": "memory_only_for_bounded_current_request_or_session",
+        "discard": "terminal_outcome_or_process_restart",
+        "durable_history": false,
+        "fts": false,
+        "export": false,
+        "display": false,
+        "copy": false,
+        "paste": false,
+        "transcription_mutation": false,
+        "telemetry": "privacy_safe_categories_counts_and_digests_only"
+      },
+      "persisted": {
+        "initially_approved": false,
+        "required_surface": "distinct_command_artifact_or_table",
+        "forbidden_storage": [
+          "postprocessed_text",
+          "summary"
+        ]
+      }
+    },
+    "recommended_initial_mode": "shadow_ephemeral",
+    "bootstrap_mode_before_command_offline_gates": "disabled",
+    "command_contract": {
+      "classification": "before_prompt_selection",
+      "prompt": "separate_versioned_command_prompt",
+      "response": {
+        "type": "object",
+        "required": [
+          "answer_text"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "answer_text": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "artifact_event": "separate_from_transcription_postprocessing",
+      "excluded_context_by_default": [
+        "trigger",
+        "full_recording",
+        "document_summary",
+        "cleanup_prompt",
+        "clipboard"
+      ]
+    },
+    "typed_failures": [
+      "command_disabled",
+      "command_invalid_empty",
+      "command_route_unsupported",
+      "command_transport_failed",
+      "command_completion_unsafe",
+      "command_raw_parse_failed",
+      "command_schema_failed",
+      "command_semantic_rejected",
+      "command_cancelled",
+      "command_stale_generation",
+      "command_persistence_disabled"
+    ],
+    "failure_side_effects": {
+      "cleanup_fallback": false,
+      "transcript_as_answer": false,
+      "command_text_as_answer": false,
+      "display": false,
+      "clipboard_copy": false,
+      "auto_paste": false,
+      "durable_history": false,
+      "source_transcript_mutation": false,
+      "postprocessed_text_mutation": false,
+      "summary_mutation": false,
+      "ordinary_export_mutation": false
+    },
+    "persisted_promotion_requirements": [
+      "distinct_command_artifact_table_and_typed_events",
+      "atomic_commit_or_recoverable_pending_committed_state",
+      "readback_of_link_generation_attempt_versions_outcome_and_projections",
+      "retention_duration_deletion_export_import_fts_and_privacy_policy",
+      "no_cascade_delete_to_source_transcription_or_media",
+      "cancellation_and_rollback_failure_injection",
+      "separately_authorized_shadow_semantic_evidence"
+    ],
+    "rollback": {
+      "mechanism": "command_contract_kill_switch_plus_request_generation_increment",
+      "future_classification": "pre_existing_dictation_behavior",
+      "shadow_state": "discard",
+      "late_command_results": "inert",
+      "previously_persisted_future_artifacts": "remain_readable_under_recorded_versions_until_retention_policy_acts",
+      "must_not_relabel_as_cleanup": true
+    },
+    "minimum_acceptance_tests": [
+      "trigger_classifier_and_exact_suffix_matrix",
+      "trigger_only_invalid_not_cleanup",
+      "separate_prompt_event_artifact_and_no_transcription_field_writes",
+      "strict_raw_schema_failure_matrix",
+      "zero_display_copy_paste_history_on_all_nonaccepted_outcomes",
+      "shadow_ephemeral_database_fts_transfer_export_clipboard_unchanged",
+      "kill_switch_inflight_invalidation_and_dictation_restore",
+      "future_persisted_transaction_recovery_readback_retention_delete_export_no_cascade"
+    ]
+  },
+  "cross_decision_order": [
+    "approve_O1_vocabulary_and_O12_state_model",
+    "inventory_installed_prompts_by_digest_without_automatic_content_migration",
+    "implement_summary_artifact_lifecycle_before_document_summary_population",
+    "add_manifests_and_fake_adapter_parity_while_existing_prompts_remain_legacy",
+    "add_command_classifier_and_artifact_event_boundaries_offline_with_history_disabled",
+    "allow_only_separately_authorized_shadow_ephemeral_after_offline_gates",
+    "promote_prompt_activation_summary_injection_user_visible_command_and_durable_history_separately"
+  ],
+  "evidence": {
+    "host_aliases": [
+      "host/src/domain/prompt_placeholders.py:35-68",
+      "host/src/domain/prompt_validator.py:83-185",
+      "host/src/infrastructure/llm/prompt_loader.py:26-202,205-365",
+      "host/src/domain/models/config/postprocessing.py:23-31,70-84,100-133,148-206",
+      "host/src/domain/models/transcription.py:171-209",
+      "host/src/infrastructure/storage/components/crud_repository.py:87-157,952-973",
+      "host/src/infrastructure/storage/migrations.py:545-631",
+      "host/src/infrastructure/storage/components/fts_search_provider.py:374-410",
+      "host/src/infrastructure/storage/sqlite_repository.py:583-731",
+      "host/src/infrastructure/mcp/tools/export_transcription.py:303-355",
+      "host/src/services/transcription_service.py:1459-1540",
+      "host/src/application/services/postprocessing_coordinator.py:167-195,225-409",
+      "host/src/domain/events/postprocessing_events.py:31-99",
+      "host/src/services/clipboard_service.py:193-306",
+      "host/tests/test_clipboard_service.py:1240-1357",
+      "host/src/domain/schemas/block_schema.py:19-63",
+      "host/src/application/services/blocks_post_processor.py:462-590"
+    ],
+    "labkit_reports": [
+      "2026-07-13_provider_neutral_prompt_structured_contracts.md",
+      "2026-07-13_summary_artifact_full_text_retirement.md",
+      "2026-07-13_microphone_dictation_command_contract.md",
+      "2026-07-13_host_request_flow_inventory.md",
+      "2026-07-13_task_specific_context_schema_policy.md",
+      "2026-07-13_structured_validation_migration_risks.md",
+      "2026-07-13_local_structured_integration_red_team.md"
+    ]
+  },
+  "non_claims": [
+    "No installed user prompt population outside the inspected repository was inventoried.",
+    "No prompt was migrated, rewritten, enabled, disabled, or proven semantically correct.",
+    "No summary producer, current artifact lifecycle, prompt injection, command classifier, command artifact, retention policy, or durable command history was implemented.",
+    "No live model or provider request, clipboard action, FTS round trip, persistence migration, or cancellation race was executed.",
+    "No command answer quality, summary quality, provider route, model, or production rollout is approved."
+  ]
+}

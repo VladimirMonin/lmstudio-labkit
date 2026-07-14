@@ -161,6 +161,14 @@ sequenceDiagram
 | UI | model picker, progress panel, benchmark panel |
 | Storage | model registry cache, metrics store |
 
+## Neutral package boundary
+
+Reusable lifecycle, identity, telemetry, and recommendation contracts belong to the managed library. Transport execution, cancellation, persistence, user-facing policy, benchmark orchestration, datasets, report generation, and raw evidence remain consumer- or LabKit-owned.
+
+The proposed extraction is a dedicated `lmstudio-managed` distribution exposing the `lmstudio_managed` import package. Its base wheel should contain only the dependency-light contract kernel; LabKit tools and optional runtime integrations must not be imported by the base package. Consumers pin an exact pre-release package version and independently declare the catalog schema revisions they accept.
+
+This is a proposed packaging boundary, not a claim that the distribution has been published. The concrete wheel contents, migration sequence, compatibility gates, and pinned-consumer upgrade procedure are defined in [GPU telemetry, recommendations, and package boundary](12_gpu_telemetry_recommendations_and_package_boundary.md).
+
 ## Roadmap реализации 🗺️
 
 | Phase | Результат |

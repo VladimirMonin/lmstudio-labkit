@@ -1,0 +1,268 @@
+{
+  "schema_version": "lmstudio-labkit-summary-artifact-full-text-retirement-v1",
+  "date": "2026-07-13",
+  "status": "read_only_architecture_recommendation_runtime_unexecuted",
+  "decision": {
+    "retire_full_text_per_chunk": true,
+    "remove_full_text_from_storage": false,
+    "replacement": "current accepted persisted recording summary when task-declared, plus authoritative current target and narrow boundary context",
+    "cache_dependency": false,
+    "legacy_alias_full_text_to_summary": false
+  },
+  "scope": {
+    "live_model_calls": 0,
+    "model_loads": 0,
+    "network_requests": 0,
+    "runtime_tokenizer_captures": 0,
+    "external_repository_changes": 0,
+    "implementation_changes": 0,
+    "evidence_types": [
+      "read_only_host_source_contract",
+      "retained_executed_context_evidence",
+      "retained_executed_cache_timing_evidence",
+      "cross_track_architecture_reports"
+    ]
+  },
+  "current_host_contract": {
+    "domain_summary_field": "nullable_string",
+    "sqlite_summary_field": "nullable_text",
+    "normal_create_writes_summary": null,
+    "general_update_writes_summary": false,
+    "postprocessed_update_writes_summary": false,
+    "load_restores_summary": true,
+    "production_summary_writer_found": false,
+    "summary_request_owner_found": false,
+    "summary_validator_found": false,
+    "summary_refresh_or_staleness_found": false,
+    "fts_columns": ["full_text", "postprocessed_text", "summary", "user_notes"],
+    "summary_scoped_fts": true,
+    "settings_transfer_includes_bare_summary": true,
+    "settings_transfer_includes_summary_provenance": false,
+    "ordinary_transcription_export_layers": ["raw", "postprocessed"],
+    "ordinary_export_substitutes_summary": false,
+    "known_placeholders": ["chunk", "blocks_json", "full_text", "clipboard", "context"],
+    "summary_placeholder_exists": false,
+    "inspected_bundled_prompts_using_full_text": 4,
+    "chunk_paths_pass_complete_text_to_formatter": true,
+    "cache_split_boundary": "full_text_placeholder"
+  },
+  "executed_evidence": {
+    "context_study": {
+      "recordings": 1,
+      "selected_models": 1,
+      "heterogeneous_calls": 202,
+      "chunk_summary_chunks": 35,
+      "by_context": {
+        "current_only": {
+          "valid": {"numerator": 35, "denominator": 35},
+          "median_input_tokens": 786,
+          "median_latency_seconds": 8.04,
+          "summed_input_tokens_approx": 26700,
+          "summed_latency_seconds_approx": 274.9
+        },
+        "boundary_neighbors": {
+          "valid": {"numerator": 33, "denominator": 35},
+          "median_input_tokens": 1040,
+          "median_latency_seconds": 8.22
+        },
+        "adjacent_chunks": {
+          "valid": {"numerator": 34, "denominator": 35},
+          "median_input_tokens": 2107,
+          "median_latency_seconds": 8.6
+        },
+        "full_recording": {
+          "valid": {"numerator": 35, "denominator": 35},
+          "median_input_tokens": 23099,
+          "median_latency_seconds": 20.2,
+          "summed_input_tokens_approx": 807600,
+          "summed_latency_seconds_approx": 700.7
+        }
+      },
+      "full_context_cleanup_defects": [
+        "first_pass_block_attribution_defect",
+        "repeated_malformed_length_exhausted_output"
+      ]
+    },
+    "long_context_representation_slice": {
+      "outputs": 27,
+      "complete": {"numerator": 24, "denominator": 27},
+      "chunk_isolated": {"numerator": 26, "denominator": 27},
+      "structured_input_overhead_percent": "28-30"
+    },
+    "cache_probe": {
+      "requests": 4,
+      "exact_repeat_timing_improved": true,
+      "stable_prefix_changed_suffix_timing_improved": false,
+      "cached_tokens_available": false,
+      "cache_hit_flag_available": false,
+      "reused_prefix_count_available": false,
+      "physical_kv_reuse_proven": false
+    }
+  },
+  "artifact_contract": {
+    "canonical_type": "versioned_summary_artifact",
+    "existing_summary_column_role": "temporary_current_display_and_fts_projection",
+    "required_groups": {
+      "identity": ["artifact_id", "transcription_id", "artifact_kind", "artifact_version", "state"],
+      "source_binding": ["source_layer", "source_revision", "source_digest", "ordered_source_unit_digest", "source_range", "source_count"],
+      "generation": ["strategy", "task_contract_version", "prompt_digest", "response_schema_version", "validator_version"],
+      "runtime_provenance": ["provider_family", "model_stable_id", "model_revision", "runtime_template_revision", "exact_input_tokens", "exact_output_tokens"],
+      "hierarchy": ["partition_plan_digest", "ordered_child_artifact_ids", "ordered_child_digests", "coverage_verdict", "order_verdict"],
+      "validation": ["transport", "completion", "raw_parse", "schema", "scope_grounding", "coverage", "product_state"],
+      "lifecycle": ["request_generation", "attempt_index", "created_at", "accepted_at", "stale_reason", "superseded_by"],
+      "payload": ["structured_payload", "display_search_projection"]
+    },
+    "artifact_kinds": ["chunk", "recording"],
+    "strategies": ["direct", "hierarchical"]
+  },
+  "direct_generation_rule": {
+    "authorization": "exact_runtime_fit_only",
+    "must_include_in_token_count": [
+      "system_message",
+      "user_message",
+      "chat_template_overhead",
+      "schema_or_grammar_overhead",
+      "separators",
+      "complete_authoritative_source_serialization"
+    ],
+    "must_reserve": ["configured_output_budget", "safety_reserve"],
+    "additional_requirements": [
+      "one_bound_source_digest_and_exact_source_order",
+      "compact_recording_level_overview_task",
+      "admitted_context_limit",
+      "latency_and_cancellation_ceiling"
+    ],
+    "static_estimate_role": "candidate_selection_only",
+    "on_missing_exact_measurement_or_no_fit": "route_to_hierarchical_without_oversized_direct_call",
+    "runtime_executed_in_this_report": false
+  },
+  "hierarchical_generation_rule": {
+    "leaf_context": "current_source_range_only",
+    "boundary_fallback": "only_for_detected_interrupted_thought_and_reference_only",
+    "leaf_requirements": ["exact_source_binding", "accepted_state", "bounded_schema", "exact_range_coverage"],
+    "synthesis_input": "ordered_accepted_child_artifacts",
+    "recursive_when_needed": true,
+    "grouping": "adjacent_children_only",
+    "publication_requirements": ["all_leaf_ranges_covered", "exact_order", "all_children_current_for_bound_source_revision", "final_validation_and_readback"],
+    "forbidden": ["drop_child", "silent_truncation", "relevance_reorder", "partial_recording_summary_as_current"],
+    "partial_children": "retain_for_resume_but_do_not_publish_recording_artifact"
+  },
+  "lifecycle": {
+    "states": [
+      "absent",
+      "planned",
+      "generating",
+      "validating",
+      "retrying",
+      "accepted_pending_commit",
+      "current",
+      "cancelled",
+      "failed",
+      "stale",
+      "refresh_planned",
+      "superseded"
+    ],
+    "happy_path": ["absent", "planned", "generating", "validating", "accepted_pending_commit", "current"],
+    "maximum_structural_retries": 1,
+    "structural_retry_eligible": ["invalid_raw_json", "schema_failure", "malformed_bounded_structure"],
+    "structural_retry_ineligible": ["length_exhaustion", "semantic_omission", "unsupported_addition", "scope_leakage", "source_grounding_failure", "cancellation", "stale_request_generation"],
+    "stale_triggers": [
+      "content_bearing_source_revision_or_digest_change",
+      "source_unit_order_or_coverage_change",
+      "source_layer_change",
+      "administrative_generator_or_validator_invalidation"
+    ],
+    "version_change_policy": "prompt_schema_model_or_validator_change_does_not_retroactively_stale_without_explicit_policy_but_refresh_creates_a_distinct_artifact",
+    "stale_ineligible_for": ["prompt_injection", "current_summary_fts_projection", "normal_display", "ordinary_summary_export"]
+  },
+  "placeholder_policy": {
+    "new_placeholder": "recording_summary",
+    "requirement_levels": ["forbidden", "optional", "required"],
+    "missing_optional": "omit_entire_labeled_section",
+    "missing_required": "fail_request_planning_or_schedule_separate_summary_prerequisite",
+    "silent_empty_required_value": false,
+    "silent_full_text_fallback": false,
+    "task_matrix": {
+      "short_microphone_cleanup": "forbidden_current_capture_only",
+      "long_block_cleanup": "optional_summary_plus_reference_only_boundary_and_current_target_blocks",
+      "character_chunk_cleanup_migration": "optional_summary_plus_current_chunk_and_explicit_boundary",
+      "per_chunk_summary_generation": "forbidden_current_chunk_only",
+      "direct_recording_summary": "forbidden_complete_source_once",
+      "hierarchical_leaf_summary": "forbidden_current_range_only",
+      "hierarchical_synthesis": "ordered_child_artifacts_only",
+      "self_contained_generic_transform": "forbidden_by_default",
+      "image_analysis": "forbidden"
+    },
+    "authority_rule": "current targets and application-owned identities override advisory summary wording"
+  },
+  "compatibility_plan": [
+    {"stage": "inventory", "rule": "detect full_text placeholder by prompt identity and digest without logging prompt content"},
+    {"stage": "artifact_contract", "rule": "implement persistence planner validation staleness refresh and readback before prompt behavior changes"},
+    {"stage": "explicit_placeholder", "rule": "add recording_summary and requirement metadata without aliasing full_text"},
+    {"stage": "compatibility_window", "rule": "legacy full_text remains explicit deprecated mode; new or edited use requires advanced compatibility flag"},
+    {"stage": "task_contract_migration", "rule": "new prompt revisions use recording_summary only where justified plus authoritative target placeholders"},
+    {"stage": "shadow", "rule": "separately authorized comparison writes no user-visible or persistent candidate output"},
+    {"stage": "default_retirement", "rule": "legacy full_text prompt fails closed with migration error after its contract is migrated"},
+    {"stage": "remove_legacy_support", "rule": "remove placeholder only after installed and user prompt inventory is zero or explicitly waived"}
+  ],
+  "storage_fts_export": {
+    "retain": ["full_text", "segments", "blocks", "timestamps", "accepted_postprocessed_text", "original_media_references_under_existing_policy"],
+    "legacy_summary_import": "legacy_unverified_or_compatibility_projection_not_prompt_eligible_until_regenerated_or_explicitly_reviewed_and_bound",
+    "fts": "index raw and postprocessed text plus current accepted recording summary projection only",
+    "exclude_from_current_summary_fts": ["stale", "failed", "partial", "superseded"],
+    "settings_transfer": "add summary artifact records and provenance then deterministically rebuild current projection and FTS",
+    "ordinary_transcription_export": "never_replace_raw_or_postprocessed_text_with_summary",
+    "summary_export": "separate_surface_with_strategy_source_revision_artifact_version_and_staleness"
+  },
+  "cache_policy": {
+    "candidate_prefix": "current accepted summary plus stable task instructions",
+    "record": ["summary_digest", "instruction_digest", "runtime_reported_cache_counters_when_available"],
+    "optimization_only": true,
+    "correctness_without_cache_required": true,
+    "forbidden_claims": ["full_recording_prefix_is_justified", "awaited_first_request_proves_materialization", "latency_alone_proves_cache_hit"]
+  },
+  "non_loss_guarantees": [
+    "summary_generation_never_mutates_or_deletes_authoritative_source_surfaces",
+    "every_artifact_binds_to_source_revision_digest_and_exact_coverage",
+    "failed_stale_partial_or_superseded_artifacts_never_enter_prompts_as_current",
+    "hierarchical_publication_requires_complete_ordered_leaf_coverage",
+    "prompt_context_retirement_does_not_remove_full_text_from_storage_raw_search_recovery_or_export",
+    "transform_fallback_is_original_authoritative_target_never_summary",
+    "rollback_disables_summary_injection_without_source_data_migration_or_loss"
+  ],
+  "implementation_gates": [
+    "offline_schema_and_state_machine_branch_tests",
+    "exact_tokenizer_template_and_recursive_planner_tests",
+    "immutable_artifact_current_projection_fts_transfer_and_readback_tests",
+    "prompt_inventory_requirement_compatibility_and_no_alias_tests",
+    "fake_client_source_retention_complete_coverage_stale_export_and_rollback_tests",
+    "separately_authorized_shadow_then_task_specific_canary"
+  ],
+  "evidence": [
+    "host/src/domain/models/transcription.py:171-218,264-318",
+    "host/src/infrastructure/storage/models.py:146-200",
+    "host/src/infrastructure/storage/components/crud_repository.py:87-157,274-355,952-979",
+    "host/src/infrastructure/storage/migrations.py:545-631",
+    "host/src/infrastructure/storage/components/fts_search_provider.py:374-410",
+    "host/src/infrastructure/storage/sqlite_repository.py:583-686,699-731",
+    "host/src/domain/prompt_placeholders.py:35-68",
+    "host/src/domain/prompt_validator.py:28-49,83-185",
+    "host/src/infrastructure/llm/prompt_loader.py:26-202",
+    "host/src/application/services/postprocessing_service.py:278-369,500-664,914-1025",
+    "host/src/application/services/blocks_post_processor.py:140-289,318-406",
+    "host/src/infrastructure/mcp/tools/export_transcription.py:303-355",
+    "experiments/lmstudio/results_summaries/2026-07-13_host_application_shaped_structured_context_summary.md",
+    "experiments/lmstudio/results_summaries/2026-07-12_parallel_cache_gpu_runtime_audit.md",
+    "experiments/lmstudio/results_summaries/2026-07-13_task_specific_context_schema_policy.md",
+    "experiments/lmstudio/results_summaries/2026-07-13_structured_validation_migration_risks.md"
+  ],
+  "limits": [
+    "host_source_findings_are_static_not_executed_product_behavior",
+    "context_comparison_is_one_recording_and_one_selected_model",
+    "direct_exact_fit_gate_is_specified_but_runtime_unexecuted",
+    "no_production_summary_writer_artifact_table_staleness_validator_or_hierarchical_resume_path_found",
+    "no_physical_prefix_or_kv_cache_reuse_claim",
+    "legacy_summary_strings_are_not_claimed_trustworthy_current_or_provenance_complete",
+    "no_implementation_live_call_model_load_migration_commit_or_push"
+  ]
+}

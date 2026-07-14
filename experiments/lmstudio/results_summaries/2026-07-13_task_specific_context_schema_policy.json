@@ -1,0 +1,257 @@
+{
+  "schema_version": "lmstudio-labkit-task-specific-context-schema-policy-v1",
+  "date": "2026-07-13",
+  "status": "read_only_architecture_recommendation_no_production_admission",
+  "decision": {
+    "short_microphone_cleanup": "current_only",
+    "long_microphone_or_file_cleanup": "boundary_neighbors",
+    "per_chunk_summary": "current_only",
+    "whole_recording_summary_fast": "single_direct_full_recording_request",
+    "whole_recording_summary_detailed": "hierarchical_synthesis_from_ordered_current_only_chunk_summaries",
+    "generic_text_postprocessing": "current_only_when_self_contained_boundary_neighbors_when_chunked_and_identity_preserving",
+    "image_analysis": "current_image_only_with_task_specific_api_bound_strict_schema",
+    "explicitly_rejected_default": "full_transcript_per_chunk"
+  },
+  "evidence": {
+    "structured_text_context_study": {
+      "recordings": 1,
+      "models": 1,
+      "calls": {
+        "primary": 157,
+        "repeat_and_cache": 33,
+        "parallel_screening": 12,
+        "total": 202
+      },
+      "technical": {
+        "http_200": {"numerator": 202, "denominator": 202},
+        "parseable_or_practically_valid_structured": {
+          "numerator": 199,
+          "denominator": 202
+        },
+        "independent_quality_observations": null
+      },
+      "cleanup_first_pass": {
+        "calls": 12,
+        "representative_positions": 3,
+        "context_strategies": 4,
+        "evaluated_blocks": 36,
+        "exact_source_ids": {"numerator": 36, "denominator": 36},
+        "timestamp_reattachment_possible_by_id": true,
+        "persistence_or_export_round_trip_executed": false
+      },
+      "chunk_summary_first_pass": {
+        "calls": 140,
+        "chunks": 35,
+        "by_context": {
+          "current_only": {
+            "valid_structured": {"numerator": 35, "denominator": 35},
+            "median_prompt_tokens": 786,
+            "median_latency_seconds": 8.04
+          },
+          "boundary_neighbors": {
+            "valid_structured": {"numerator": 33, "denominator": 35},
+            "median_prompt_tokens": 1040,
+            "median_latency_seconds": 8.22
+          },
+          "adjacent_chunks": {
+            "valid_structured": {"numerator": 34, "denominator": 35},
+            "median_prompt_tokens": 2107,
+            "median_latency_seconds": 8.6
+          },
+          "full_recording": {
+            "valid_structured": {"numerator": 35, "denominator": 35},
+            "median_prompt_tokens": 23099,
+            "median_latency_seconds": 20.2
+          }
+        },
+        "summed_current_only_prompt_tokens_approx": 26700,
+        "summed_current_only_latency_seconds_approx": 274.9,
+        "summed_full_recording_prompt_tokens_approx": 807600,
+        "summed_full_recording_latency_seconds_approx": 700.7
+      },
+      "whole_summary": {
+        "first_pass_calls": 5,
+        "repeat_calls": 5,
+        "byte_identical_repeats": {"numerator": 5, "denominator": 5}
+      }
+    },
+    "long_context_representation_slice": {
+      "controlled_outputs": 27,
+      "models": 3,
+      "positions": ["early", "middle", "late"],
+      "complete_outputs": {"numerator": 24, "denominator": 27},
+      "chunk_isolated_outputs": {"numerator": 26, "denominator": 27},
+      "structured_representation_input_overhead_percent": "28-30",
+      "claim_boundary": "Representation and boundary evidence only; not support for repeating full context per chunk."
+    },
+    "structured_vision": {
+      "models": 4,
+      "fixtures": 4,
+      "authorized_calls_executed": {"numerator": 40, "denominator": 40},
+      "no_transport_error": {"numerator": 40, "denominator": 40},
+      "raw_json_and_independent_schema_pass_when_applicable": {
+        "numerator": 36,
+        "denominator": 36
+      },
+      "native_plain_non_json_by_design": {"numerator": 4, "denominator": 4},
+      "manual_semantics": {
+        "visible_text_exact": {"numerator": 25, "denominator": 39},
+        "salient_text_complete": {"numerator": 31, "denominator": 39},
+        "unsupported_claims_absent": {"numerator": 36, "denominator": 39},
+        "forbidden_private_claims_absent": {"numerator": 39, "denominator": 39}
+      },
+      "production_admission": "none",
+      "comparative_model_ranking": "unsupported"
+    },
+    "source_inspection": {
+      "role": "architecture_evidence_not_executed_model_evidence",
+      "confirmed_contracts": [
+        "block planner identifies previous-tail and next-head boundary blocks",
+        "block requests bind JSON Schema through the API",
+        "stored source blocks keep IDs and timestamps outside model output",
+        "image requests bind a strict task schema through the API"
+      ]
+    }
+  },
+  "context_policy_matrix": {
+    "short_microphone_cleanup": {
+      "current_only": "default",
+      "boundary_neighbors": "only_if_the_application_has_split_a_boundary",
+      "adjacent_chunks": "reject_by_default",
+      "full_recording": "equivalent_to_current_only_only_for_a_genuinely_single_target",
+      "evidence_limit": "no_audio_grounded_short_microphone_result"
+    },
+    "long_microphone_or_file_cleanup": {
+      "current_only": "conservative_alternative",
+      "boundary_neighbors": "default_reference_only_neighbors_current_blocks_only_output_target",
+      "adjacent_chunks": "reject_by_default_no_stable_gain",
+      "full_recording": "reject_per_chunk_boundary_cost_latency_and_output_expansion_risk"
+    },
+    "per_chunk_summary": {
+      "current_only": "default",
+      "boundary_neighbors": "targeted_fallback_for_interrupted_thought_only",
+      "adjacent_chunks": "reject_by_default_neighbor_leakage_risk",
+      "full_recording": "reject_per_chunk_globalized_framing_and_high_cost"
+    },
+    "whole_recording_summary": {
+      "current_only": "inputs_to_hierarchical_synthesis",
+      "boundary_neighbors": "not_primary",
+      "adjacent_chunks": "not_primary",
+      "full_recording": "allowed_once_for_compact_overview"
+    },
+    "generic_text_postprocessing": {
+      "current_only": "default_for_self_contained_input",
+      "boundary_neighbors": "default_for_chunked_identity_preserving_transform",
+      "adjacent_chunks": "reject_by_default",
+      "full_recording": "allowed_once_only_for_document_level_task_not_repeated_per_chunk"
+    },
+    "image_analysis": {
+      "current_only": "current_image_and_explicit_task",
+      "boundary_neighbors": "not_applicable_without_explicit_multi_image_contract",
+      "adjacent_chunks": "not_applicable",
+      "full_recording": "not_applicable"
+    }
+  },
+  "contract_examples": {
+    "block_cleanup": {
+      "response": {"blocks": [{"id": 123, "text": "Processed text"}]},
+      "model_fields": ["blocks[].id", "blocks[].text"],
+      "excluded_model_fields": ["start", "end", "recording_id", "chunk_id"]
+    },
+    "per_chunk_summary": {
+      "response": {
+        "summary": "Short local summary",
+        "key_points": ["Bounded point"],
+        "uncertainties": ["Source-supported uncertainty"]
+      },
+      "application_attaches": [
+        "recording_id",
+        "chunk_id",
+        "ordinal",
+        "source_range",
+        "timestamps"
+      ],
+      "free_form_entities_default": "omit"
+    },
+    "whole_recording_summary": {
+      "response": {
+        "overview": "Compact recording-level summary",
+        "key_points": ["Recording-level point"],
+        "open_questions": ["Unresolved item"]
+      },
+      "application_owns": ["recording_id", "chunk_order", "provenance"]
+    },
+    "generic_text": {
+      "response": {"text": "Processed text"},
+      "identity_sensitive_alternative": "use_block_cleanup_contract"
+    },
+    "image_analysis": {
+      "response": {
+        "description": "Grounded description",
+        "extracted_text": "Visible text only",
+        "language": "und",
+        "scene_type": "screenshot"
+      },
+      "application_owns": [
+        "image_id",
+        "file_identity",
+        "dimensions",
+        "persistence_key",
+        "request_digest",
+        "retry_state"
+      ],
+      "warnings_default": "omit_without_precise_product_semantics_and_valid_evaluator"
+    }
+  },
+  "application_owned_state": [
+    "recording_document_image_chunk_and_block_ids",
+    "expected_count_exact_id_set_uniqueness_and_order",
+    "original_block_start_end_timestamps_and_chunk_source_ranges",
+    "protected_values_and_placeholders",
+    "source_request_schema_digests_and_runtime_provenance",
+    "retry_eligibility_attempt_and_fallback_state",
+    "immutable_original_source_and_fallback_value",
+    "persistence_merge_idempotence_and_read_back_state"
+  ],
+  "acceptance_layers": [
+    "transport",
+    "raw_parse",
+    "schema",
+    "business_identity",
+    "semantic_quality",
+    "product_behavior"
+  ],
+  "block_cleanup_post_validation": [
+    "successful_transport_and_completion_classification",
+    "raw_json_parse_or_separately_recorded_full_fence_recovery",
+    "closed_schema",
+    "exact_item_count",
+    "exact_unique_id_set_and_order",
+    "non_empty_text",
+    "no_reference_neighbor_in_output",
+    "boundary_ownership",
+    "protected_values",
+    "omissions",
+    "unsupported_additions",
+    "runaway_repetition"
+  ],
+  "limits": [
+    "one_recording_and_one_selected_model_for_task_specific_text_context",
+    "representative_not_exhaustive_cleanup_semantic_review",
+    "no_audio_grounded_short_microphone_truth",
+    "no_second_recording_blind_review_multi_rater_score_or_exhaustive_alignment",
+    "no_complete_retry_fallback_persistence_export_or_read_back_execution",
+    "whole_summary_evidence_is_five_first_pass_calls_and_five_repeats_on_one_recording",
+    "vision_evidence_is_four_fixtures_with_mixed_open_world_semantics",
+    "three_byte_identical_vision_pairs_cover_one_ui_request_only",
+    "physical_prefix_cache_reuse_with_changing_chunks_is_unproven"
+  ],
+  "non_claims": [
+    "schema_validity_does_not_prove_semantic_quality",
+    "transport_success_does_not_prove_product_behavior",
+    "no_model_or_concurrency_production_admission",
+    "no_default_full_transcript_per_chunk",
+    "no_image_model_ranking",
+    "no_model_owned_timestamp_authority"
+  ]
+}

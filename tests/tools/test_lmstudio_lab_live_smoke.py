@@ -10,14 +10,14 @@ from urllib import error as urllib_error
 
 import pytest
 import yaml
-from libs.lmstudio_managed.generation import GenerationResponseEnvelope
-from libs.lmstudio_managed.metrics import batch_metrics_from_request_metrics
-from libs.lmstudio_managed.validation import (
+from tools.lmstudio_lab import live_smoke as lmstudio_live_smoke
+
+from lmstudio_managed.generation import GenerationResponseEnvelope
+from lmstudio_managed.metrics import batch_metrics_from_request_metrics
+from lmstudio_managed.validation import (
     GenerationFailureKind,
     failure_kind_from_lab_category,
 )
-from tools.lmstudio_lab import live_smoke as lmstudio_live_smoke
-
 from tools import lmstudio_benchmark, lmstudio_lab
 
 ABSOLUTE_PATH_PATTERNS = (
@@ -1041,46 +1041,26 @@ def test_run_live_structured_smoke_supports_medium_dataset_with_scaled_max_token
     assert '"content"' not in serialized
 
 
-def test_run_live_structured_smoke_adds_chat_template_kwargs_reasoning_control_only() -> None:
-    captured: dict[str, object] = {}
-    baseline_messages, _ = lmstudio_live_smoke.build_live_structured_messages()
-    baseline_response_format = lmstudio_live_smoke.build_factual_blocks_response_format()
+def test_small_live_rejects_compat_reasoning_control_before_transport() -> None:
+    transport_called = False
 
-    def fake_transport(
-        url: str,
-        payload: dict[str, object],
-        timeout_s: float,
-    ) -> dict[str, object]:
-        captured["url"] = url
-        captured["payload"] = payload
-        captured["timeout_s"] = timeout_s
-        return {
-            "choices": [
-                {
-                    "finish_reason": "stop",
-                    "message": {"content": _valid_blocks_json()},
-                }
-            ],
-            "usage": {
-                "prompt_tokens": 44,
-                "completion_tokens": 22,
-                "total_tokens": 66,
-            },
-        }
+    def forbidden_transport(*_args, **_kwargs):
+        nonlocal transport_called
+        transport_called = True
+        raise AssertionError("transport should not be called for unsupported reasoning control")
 
-    outcome = lmstudio_lab.run_live_structured_smoke(
-        _live_config(),
-        run_id="live-run-reasoning-control",
-        transport=fake_transport,
-        reasoning_control_variant="chat_template_kwargs_enable_thinking_false",
-    )
+    with pytest.raises(
+        ValueError,
+        match="unsupported on /v1/chat/completions",
+    ):
+        lmstudio_lab.run_live_structured_smoke(
+            _live_config(),
+            run_id="live-run-reasoning-control",
+            transport=forbidden_transport,
+            reasoning_control_variant="chat_template_kwargs_enable_thinking_false",
+        )
 
-    assert outcome.structured_error is None
-    payload = captured["payload"]
-    assert isinstance(payload, dict)
-    assert payload["chat_template_kwargs"] == {"enable_thinking": False}
-    assert payload["messages"] == baseline_messages
-    assert payload["response_format"] == baseline_response_format
+    assert transport_called is False
 
 
 def test_build_factual_blocks_response_format_baseline_stays_generic() -> None:
@@ -1263,7 +1243,7 @@ def test_medium_live_rejects_reasoning_control_variant_before_transport() -> Non
 
     with pytest.raises(
         ValueError,
-        match="supported only for blocks_json_small",
+        match="unsupported on /v1/chat/completions",
     ):
         lmstudio_lab.run_live_structured_smoke(
             _live_config(dataset_id="blocks_json_medium"),

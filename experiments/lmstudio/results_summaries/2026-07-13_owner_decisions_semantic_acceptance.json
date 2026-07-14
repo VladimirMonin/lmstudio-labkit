@@ -1,0 +1,436 @@
+{
+  "schema_version": "lmstudio-labkit-owner-decision-semantic-acceptance-v1",
+  "date": "2026-07-13",
+  "decision_id": "O10",
+  "status": "recommended_configurable_policy_owner_approval_required",
+  "implementation_authorized": false,
+  "live_execution_authorized": false,
+  "decision": {
+    "policy_unit": "exact_task_contract_prompt_validator_model_route_and_request_shape",
+    "universal_quality_score": false,
+    "ordered_validation_layers": [
+      "current_generation_and_cancellation",
+      "transport_response_surface_and_completion",
+      "untouched_raw_parse",
+      "complete_local_closed_schema",
+      "business_identity_and_target_reference_ownership",
+      "deterministic_task_invariants",
+      "task_specific_semantics",
+      "precommit_generation_fence",
+      "persistence_and_readback"
+    ],
+    "outcomes": {
+      "accepted": "all_required_deterministic_semantic_and_product_gates_passed",
+      "fallback_original": "cleanup_or_translation_candidate_rejected_and_exact_original_returned",
+      "abstain": "contract_permitted_abstention_with_no_candidate_publication",
+      "review_required": "structure_passed_but_semantic_authority_is_missing_or_review_boundary_crossed",
+      "unavailable": "no_safe_equivalent_or_required_evaluator_evidence_absent",
+      "failed": "terminal_transport_control_persistence_or_execution_failure",
+      "cancelled": "stale_or_cancelled_generation_is_inert"
+    },
+    "non_accepted_outcomes": [
+      "fallback_original",
+      "abstain",
+      "review_required",
+      "unavailable",
+      "failed",
+      "cancelled"
+    ]
+  },
+  "evidence_boundary": {
+    "retained_text_context": {
+      "calls": 202,
+      "recordings": 1,
+      "models": 1,
+      "parseable_or_practically_valid": 199,
+      "heterogeneous": true,
+      "independent_semantic_observations": false,
+      "limits": [
+        "cleanup_semantics_deeply_reviewed_only_on_representative_positions",
+        "no_audio_ground_truth",
+        "no_blind_multi_rater_review",
+        "no_end_to_end_host_persistence_readback"
+      ]
+    },
+    "retained_vision": {
+      "calls": 40,
+      "models": 4,
+      "fixtures": 4,
+      "strict_schema_applicable": 36,
+      "raw_and_schema_pass": 36,
+      "image_rows": 39,
+      "visible_text_exact": 25,
+      "salient_text_complete": 31,
+      "no_unsupported_claim": 36,
+      "no_forbidden_private_or_person_claim": 39,
+      "controller_strict_image_rejections": 35,
+      "controller_strict_image_denominator": 35,
+      "interpretation": "transport_and_structure_confirmed_for_bounded_run_semantic_quality_mixed_sparse_gold_not_authoritative"
+    },
+    "current_validator_capabilities": [
+      "raw_parse",
+      "schema_shape_or_JSON_Schema",
+      "expected_ID_diagnostics",
+      "exact_order_and_uniqueness",
+      "non_empty_strings",
+      "finish_and_reasoning_checks",
+      "frozen_truth_text_object_recall_precision",
+      "forbidden_claim_matching"
+    ],
+    "missing_executed_admission_evidence": [
+      "translation",
+      "audio_grounded_microphone_cleanup",
+      "generic_microphone_command",
+      "second_recording",
+      "broad_summary_quality",
+      "host_persistence_readback",
+      "production_canary"
+    ]
+  },
+  "denominators": {
+    "partition_key": [
+      "task_contract",
+      "prompt_version",
+      "validator_version",
+      "model_route_revision",
+      "request_shape_bucket"
+    ],
+    "required": [
+      "submitted_calls",
+      "usable_transport_completions",
+      "raw_parse_eligible_and_passed",
+      "schema_eligible_and_passed",
+      "business_identity_eligible_and_passed",
+      "deterministic_semantic_eligible_and_passed",
+      "human_reviewed_and_passed_without_correction",
+      "accepted_product_outcomes",
+      "fallback_original",
+      "abstain",
+      "review_required",
+      "unavailable",
+      "failed",
+      "cancelled",
+      "persistence_readback_eligible_and_passed"
+    ],
+    "interval": "Wilson_95_percent_for_reviewed_binary_dimensions",
+    "rules": [
+      "semantic_denominators_start_only_after_applicable_structural_gates",
+      "fallback_review_abstain_unavailable_failed_cancelled_never_count_as_accepted",
+      "do_not_pool_across_tasks_models_language_pairs_modalities_or_request_shapes"
+    ]
+  },
+  "task_acceptance": {
+    "cleanup_text": {
+      "deterministic": [
+        "raw_closed_text_contract",
+        "non_empty",
+        "no_reasoning_or_repetition",
+        "policy_protected_values_preserved",
+        "no_reference_only_copy"
+      ],
+      "review_question": "meaning_preserved_and_only_requested_cleanup_with_no_material_omission_or_addition",
+      "signals_not_authority": ["edit_distance", "length_ratio", "embedding_similarity"],
+      "failure": "fallback_original"
+    },
+    "cleanup_blocks": {
+      "deterministic": [
+        "cleanup_text_gates",
+        "exact_target_count",
+        "unique_ID_sequence",
+        "original_order",
+        "no_reference_ID",
+        "no_cross_block_transfer",
+        "timestamps_reattached_outside_model"
+      ],
+      "review_question": "every_block_preserves_meaning_and_ownership",
+      "atomic_batch": true,
+      "failure": "fallback_original_exact_original_sequence"
+    },
+    "translation": {
+      "applies_to": ["text", "blocks"],
+      "deterministic": [
+        "text_or_block_structural_gates",
+        "canonical_target_language_metadata",
+        "protected_and_do_not_translate_inventory_exact",
+        "no_source_or_reference_leakage"
+      ],
+      "review_dimensions": ["adequacy", "target_language", "terminology", "fluency"],
+      "language_detector_is_authority": false,
+      "failure": "fallback_original_or_review_required"
+    },
+    "summary": {
+      "deterministic": [
+        "closed_bounded_schema",
+        "application_owned_source_coverage",
+        "no_stale_or_partial_child",
+        "exact_child_order",
+        "complete_hierarchy_coverage",
+        "bounded_fields",
+        "no_protected_value_mutation"
+      ],
+      "review_dimensions": [
+        "every_claim_source_supported",
+        "no_discussion_promoted_to_decision",
+        "required_source_strata_covered",
+        "scope",
+        "usefulness"
+      ],
+      "human_review_required_until_authoritative_claim_alignment_exists": true,
+      "failure": "review_required_or_unavailable_never_stale_or_partial_fallback"
+    },
+    "vision_closed_world": {
+      "deterministic": [
+        "closed_schema",
+        "exact_fixture_request_binding",
+        "exact_visible_text_under_versioned_normalization",
+        "valid_enums",
+        "no_forbidden_private_or_person_claim"
+      ],
+      "incomplete_gold": "review_required",
+      "failure": "unavailable_no_repair_or_defaults"
+    },
+    "vision_open_world": {
+      "deterministic": [
+        "closed_schema",
+        "no_forbidden_claim",
+        "partial_gold_never_treated_as_exhaustive_precision_authority",
+        "warnings_omitted_by_default_unless_evaluable"
+      ],
+      "review_dimensions": [
+        "grounding",
+        "salient_completeness",
+        "unsupported_claims",
+        "warning_relevance_when_applicable"
+      ],
+      "failure": "review_required_or_unavailable"
+    },
+    "microphone_command": {
+      "deterministic": [
+        "anchored_classifier",
+        "closed_answer_text",
+        "non_empty_plain_projection",
+        "default_context_exclusions",
+        "no_reasoning_or_repetition",
+        "current_generation_fence"
+      ],
+      "generic_semantic_authority": "explicit_user_confirmation",
+      "initial_projection": "display_only_review_candidate_zero_copy_paste",
+      "automatic_acceptance": "requires_separately_approved_bounded_command_class",
+      "failure": "failed_or_unavailable_never_transcript_as_answer"
+    }
+  },
+  "starting_evidence_gates": {
+    "classification": "owner_configurable_starting_defaults_not_retained_evidence_claims",
+    "before_shadow": {
+      "minimum_publication_safe_fixtures": 30,
+      "required_coverage": [
+        "ordinary",
+        "boundary",
+        "empty",
+        "malformed",
+        "adversarial",
+        "cancellation",
+        "stale_generation",
+        "retry_ceiling",
+        "fallback",
+        "persistence_failure"
+      ],
+      "hard_fixture_pass_rate": 1.0,
+      "minimum_double_reviewed_rubric_pilot": 20,
+      "shadow_side_effects": 0,
+      "kill_switch_and_generation_fence_tested": true
+    },
+    "before_canary": {
+      "minimum_structurally_eligible_shadow_candidates": 100,
+      "minimum_stratified_human_reviewed": 50,
+      "minimum_initial_double_reviewed": 20,
+      "critical_defects": 0,
+      "cleanup_translation_bounded_command_pass_without_correction": {
+        "numerator": 49,
+        "denominator": 50
+      },
+      "summary_open_world_vision_all_required_dimensions_pass": {
+        "numerator": 48,
+        "denominator": 50
+      },
+      "closed_world_authoritative_fields": "all_exact",
+      "pool_across_tasks": false
+    },
+    "before_production": {
+      "minimum_stratified_human_reviewed": 200,
+      "cleanup_translation_bounded_command_pass_without_correction": {
+        "numerator": 198,
+        "denominator": 200,
+        "Wilson_95_lower_approx": 0.964
+      },
+      "summary_open_world_vision_all_required_dimensions_pass": {
+        "numerator": 196,
+        "denominator": 200,
+        "Wilson_95_lower_approx": 0.95
+      },
+      "critical_safety_opportunities": {
+        "failures": 0,
+        "denominator": 300,
+        "Wilson_95_upper_approx": 0.013
+      },
+      "deterministic_control_persistence_pass_rate": 1.0,
+      "rollback_rehearsed": true,
+      "unresolved_systematic_gap": false
+    }
+  },
+  "canary": {
+    "initial_eligible_requests": 25,
+    "initial_review_fraction": 1.0,
+    "second_stage_total_eligible_requests": 100,
+    "second_stage_minimum_review_fraction_for_next_75": 0.5,
+    "immutable_attempts": true,
+    "exact_accepted_attempt_traceability": true,
+    "immediate_stop": [
+      "critical_protected_value_mutation",
+      "wrong_block_ownership_or_reference_output",
+      "forbidden_private_or_person_claim",
+      "unsupported_critical_claim",
+      "stale_or_cancelled_publication",
+      "partial_corrupt_persistence_or_readback_mismatch",
+      "command_copy_paste_without_semantic_authorization",
+      "schema_validator_prompt_or_model_identity_mismatch",
+      "silent_structured_to_plain_downgrade",
+      "non_authoritative_ground_truth_or_rubric",
+      "rollback_or_kill_switch_failure"
+    ],
+    "rate_stop": {
+      "semantic_rejects_in_first_25_reviewed": 2,
+      "rolling_reviewed_window": 50,
+      "required_dimension_floor": "task_canary_entry_threshold",
+      "transport_plus_structural_fallback_rate_max": 0.05,
+      "transport_structural_window": 50,
+      "consecutive_transport_or_structure_failures": 3,
+      "latency_windows_over_predeclared_p95_ceiling": 2,
+      "latency_window_requests": 50,
+      "reviewer_disagreement_pause_rate": 0.1,
+      "reviewer_disagreement_window": 50
+    }
+  },
+  "rollback": {
+    "scope": "task_contract_and_profile_route",
+    "steps": [
+      "disable_feature_flag",
+      "stop_new_model_requests",
+      "increment_request_generation",
+      "cleanup_translation_fallback_original",
+      "summary_vision_unavailable_preserve_authority",
+      "command_zero_copy_paste_display_only_at_most",
+      "retain_readable_prompt_schema_validator_policy_and_accepted_attempt_versions",
+      "verify_persistence_readback_and_owned_lifecycle_cleanup"
+    ],
+    "must_not_require": [
+      "data_deletion",
+      "schema_rewrite",
+      "prompt_inference",
+      "model_authored_recovery",
+      "unload_external_instance"
+    ]
+  },
+  "minimum_tests": {
+    "policy_and_denominators": [
+      "unknown_policy_or_evaluator_fails_closed",
+      "typed_outcomes_mutually_exclusive",
+      "nonaccepted_outcomes_never_increment_accepted",
+      "ordered_denominator_eligibility",
+      "no_cross_task_pooling",
+      "Wilson_boundary_fixtures"
+    ],
+    "cleanup_translation": [
+      "protected_value_mutation_matrix",
+      "omission_addition_length_signal_reference_leakage_cross_block_transfer",
+      "exact_block_identity_type_and_atomic_failure",
+      "translation_target_language_terminology_and_meaning_failures",
+      "fallback_persistence_export_readback_preserves_source"
+    ],
+    "summary": [
+      "direct_hierarchical_coverage_and_order",
+      "stale_partial_and_unsupported_claim_rejection",
+      "no_current_prompt_FTS_or_export_for_nonaccepted_artifacts",
+      "frozen_multidimension_rubric_examples"
+    ],
+    "vision": [
+      "explicit_exhaustive_vs_partial_gold",
+      "versioned_OCR_normalization",
+      "separate_grounding_completeness_unsupported_warning_forbidden_dimensions",
+      "no_repair_default_or_unknown_enum_acceptance",
+      "sparse_gold_disagreement_routes_to_review"
+    ],
+    "microphone_command": [
+      "classifier_and_suffix_matrix",
+      "malformed_empty_repetition_reasoning_zero_copy_paste",
+      "current_user_confirmation_only",
+      "no_transcript_cleanup_summary_source_mutation"
+    ],
+    "control_canary_rollback": [
+      "one_total_call_ceiling_immutable_attempts",
+      "cancellation_and_stale_generation_races",
+      "immediate_and_rate_stop_gates",
+      "kill_switch_generation_bump_fallback_unavailable_zero_clipboard_readback_and_cleanup"
+    ]
+  },
+  "decision_classification": [
+    {
+      "decision": "separate_deterministic_semantic_and_product_verdicts",
+      "classification": "approve_now"
+    },
+    {
+      "decision": "typed_outcomes",
+      "classification": "approve_now"
+    },
+    {
+      "decision": "per_task_rubric_and_denominators_no_universal_score",
+      "classification": "approve_now"
+    },
+    {
+      "decision": "sample_floors_and_pass_thresholds",
+      "classification": "approve_configurable_default"
+    },
+    {
+      "decision": "production_semantic_admission_any_task_profile",
+      "classification": "requires_shadow_calibration"
+    },
+    {
+      "decision": "generic_microphone_command_automatic_semantic_acceptance",
+      "classification": "blocked_external_capability",
+      "initial_authority": "explicit_user_confirmation"
+    }
+  ],
+  "sources": {
+    "repository": [
+      "experiments/lmstudio/results_summaries/2026-07-13_host_application_shaped_structured_context_summary.md",
+      "experiments/lmstudio/results_summaries/2026-07-13_native_structured_vision_closure.md",
+      "experiments/lmstudio/results_summaries/2026-07-13_strict_vision_40_call_manual_reconciliation.md",
+      "experiments/lmstudio/results_summaries/2026-07-13_task_specific_context_schema_policy.md",
+      "experiments/lmstudio/results_summaries/2026-07-13_structured_validation_migration_risks.md",
+      "tools/lmstudio_lab/structured.py",
+      "lmstudio_labkit/strict_vision.py"
+    ],
+    "external_primary": [
+      "https://json-schema.org/draft/2020-12/json-schema-validation",
+      "https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf",
+      "https://airc.nist.gov/airmf-resources/playbook/measure/"
+    ]
+  },
+  "actions": {
+    "live_requests": 0,
+    "model_operations": 0,
+    "cloud_calls": 0,
+    "tokenizer_captures": 0,
+    "host_repository_changes": 0,
+    "implementation_changes": 0,
+    "implementation_cards_created": 0,
+    "commits": 0,
+    "pushes": 0
+  },
+  "non_claims": [
+    "No model task profile language pair image class context concurrency or route is admitted.",
+    "Numeric floors are configurable rollout defaults not facts inferred from retained calls.",
+    "No automated metric replaces authoritative review for semantic tasks.",
+    "No live execution implementation migration commit or push was performed."
+  ]
+}

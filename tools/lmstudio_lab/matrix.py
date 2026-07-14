@@ -3,13 +3,23 @@
 from __future__ import annotations
 
 import json
+import math
+import os
 from collections import Counter, defaultdict
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
+from datetime import UTC, datetime
 from hashlib import sha256
 from itertools import product
 from pathlib import Path
 from typing import Any
+
+from lmstudio_managed.metrics import (
+    MemoryCellObservation,
+    MemoryRecommendationCatalog,
+    SafetyReservePolicy,
+    build_memory_recommendation,
+)
 
 from .config import ExperimentConfig, load_experiment_config, load_raw_experiment_config
 from .datasets import DatasetManifest, load_dataset_manifest
@@ -88,6 +98,544 @@ RESOURCE_SUMMARY_FIELDNAMES = (
     "latency_ms",
 )
 _SAFE_ID_REPLACEMENTS = str.maketrans({"/": "_", "\\": "_", " ": "_"})
+MEMORY_MATRIX_SCHEMA_REVISION = "gpu-memory-concurrency-matrix.v1"
+MEMORY_MATRIX_CONTEXT_TIERS = (8192, 16_384, 32_768, 49_152, 65_536)
+MEMORY_MATRIX_LANES = ("load_only", "p1", "p2", "p4")
+
+
+def _require_non_empty(value: object, *, field_name: str) -> str:
+    if not isinstance(value, str):
+        raise ValueError(f"{field_name} must be a non-empty string")
+    normalized = value.strip()
+    if not normalized:
+        raise ValueError(f"{field_name} must be a non-empty string")
+    return normalized
+
+
+@dataclass(frozen=True, slots=True)
+class MemoryMatrixCandidate:
+    model_artifact: str
+    artifact_revision: str
+    artifact_checksum: str
+    quantization: str
+    gpu_placement: str
+    kv_placement: str
+    runtime_identity: str
+    runner_revision: str
+    schema_revision: str
+
+    def __post_init__(self) -> None:
+        for field_name in (
+            "model_artifact",
+            "artifact_revision",
+            "artifact_checksum",
+            "quantization",
+            "gpu_placement",
+            "kv_placement",
+            "runtime_identity",
+            "runner_revision",
+            "schema_revision",
+        ):
+            object.__setattr__(
+                self,
+                field_name,
+                _require_non_empty(getattr(self, field_name), field_name=field_name),
+            )
+        checksum = self.artifact_checksum
+        digest = checksum.removeprefix("sha256:")
+        if (
+            not checksum.startswith("sha256:")
+            or len(digest) != 64
+            or any(character not in "0123456789abcdefABCDEF" for character in digest)
+        ):
+            raise ValueError("artifact_checksum must be a complete sha256 digest")
+
+
+@dataclass(frozen=True, slots=True)
+class MemoryMatrixWorkload:
+    workload_id: str
+    modality: str
+
+    def __post_init__(self) -> None:
+        object.__setattr__(
+            self,
+            "workload_id",
+            _require_non_empty(self.workload_id, field_name="workload_id"),
+        )
+        normalized_modality = _require_non_empty(self.modality, field_name="modality").lower()
+        if normalized_modality not in {"text", "vision"}:
+            raise ValueError("modality must be text or vision")
+        object.__setattr__(self, "modality", normalized_modality)
+
+
+@dataclass(frozen=True, slots=True)
+class MemoryMatrixCell:
+    cell_id: str
+    lane: str
+    model_artifact: str
+    artifact_revision: str
+    artifact_checksum: str
+    quantization: str
+    context_tokens: int
+    runtime_parallel: int
+    application_concurrency: int
+    gpu_placement: str
+    kv_placement: str
+    workload_id: str
+    workload_modality: str
+    runtime_identity: str
+    runner_revision: str
+    schema_revision: str
+    required_attempts: int
+
+    def identity_payload(self) -> dict[str, object]:
+        return {
+            "application_concurrency": self.application_concurrency,
+            "artifact_checksum": self.artifact_checksum,
+            "artifact_revision": self.artifact_revision,
+            "context_tokens": self.context_tokens,
+            "gpu_placement": self.gpu_placement,
+            "kv_placement": self.kv_placement,
+            "model_artifact": self.model_artifact,
+            "quantization": self.quantization,
+            "runner_revision": self.runner_revision,
+            "runtime_identity": self.runtime_identity,
+            "runtime_parallel": self.runtime_parallel,
+            "schema_revision": self.schema_revision,
+            "workload_id": self.workload_id,
+            "workload_modality": self.workload_modality,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class MemoryConcurrencyPlan:
+    plan_id: str
+    schema_revision: str
+    context_tiers: tuple[int, ...]
+    workload_modality: str
+    required_attempts: int
+    cells: tuple[MemoryMatrixCell, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class RequestInterval:
+    request_id: str
+    started_monotonic_s: float
+    ended_monotonic_s: float
+
+    def __post_init__(self) -> None:
+        object.__setattr__(
+            self,
+            "request_id",
+            _require_non_empty(self.request_id, field_name="request_id"),
+        )
+        if not math.isfinite(self.started_monotonic_s) or not math.isfinite(self.ended_monotonic_s):
+            raise ValueError("request interval timestamps must be finite")
+        if self.ended_monotonic_s <= self.started_monotonic_s:
+            raise ValueError("request interval end must be after start")
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "request_id": self.request_id,
+            "started_monotonic_s": self.started_monotonic_s,
+            "ended_monotonic_s": self.ended_monotonic_s,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class MemoryMatrixAttemptReservation:
+    attempt_id: str
+    cell_id: str
+    attempt_index: int
+
+
+@dataclass(frozen=True, slots=True)
+class MemoryMatrixAttemptResult:
+    operation_succeeded: bool
+    observed_identity: Mapping[str, object]
+    request_intervals: tuple[RequestInterval, ...] = ()
+    phase_evidence_valid: bool = False
+    independent_cycle_proven: bool = False
+    immutable_owner_evidence_bound: bool = False
+
+
+def _canonical_hash(payload: Mapping[str, object] | Sequence[object]) -> str:
+    return _hash_text(
+        json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    )
+
+
+def aggregate_memory_recommendations(
+    observations: Sequence[MemoryCellObservation],
+    *,
+    required_repeats: int = 3,
+    reserve_policy: SafetyReservePolicy | None = None,
+) -> MemoryRecommendationCatalog:
+    """Aggregate exact measured cells without extrapolating one lane into another."""
+
+    grouped: defaultdict[tuple[object, ...], list[MemoryCellObservation]] = defaultdict(list)
+    for observation in observations:
+        if not isinstance(observation, MemoryCellObservation):
+            raise TypeError("observations must contain MemoryCellObservation values")
+        grouped[observation.cell_identity()].append(observation)
+    recommendations = tuple(
+        sorted(
+            (
+                build_memory_recommendation(
+                    tuple(rows),
+                    required_repeats=required_repeats,
+                    reserve_policy=reserve_policy,
+                )
+                for rows in grouped.values()
+            ),
+            key=lambda row: (
+                row.model_artifact,
+                row.artifact_revision,
+                row.artifact_checksum,
+                row.quantization,
+                row.context_tokens,
+                row.runtime_parallel,
+                row.application_concurrency,
+                row.workload_class,
+                row.placement_requirement,
+                row.kv_placement,
+            ),
+        )
+    )
+    return MemoryRecommendationCatalog(recommendations=recommendations)
+
+
+def build_memory_concurrency_plan(
+    *,
+    candidate: MemoryMatrixCandidate,
+    workloads: Sequence[MemoryMatrixWorkload],
+    context_tiers: Sequence[int] = MEMORY_MATRIX_CONTEXT_TIERS,
+    required_attempts: int = 3,
+    text_plan_admitted: bool = False,
+) -> MemoryConcurrencyPlan:
+    normalized_workloads = tuple(workloads)
+    if not normalized_workloads:
+        raise ValueError("workloads must not be empty")
+    workload_ids = tuple(workload.workload_id for workload in normalized_workloads)
+    if len(set(workload_ids)) != len(workload_ids):
+        raise ValueError("workload_id values must be unique")
+    modalities = {workload.modality for workload in normalized_workloads}
+    if len(modalities) != 1:
+        raise ValueError("memory matrix must not mix text and vision workloads")
+    modality = next(iter(modalities))
+    if modality == "vision" and not text_plan_admitted:
+        raise ValueError("vision matrix requires admitted text plan evidence")
+    if (
+        isinstance(required_attempts, bool)
+        or not isinstance(required_attempts, int)
+        or required_attempts < 3
+    ):
+        raise ValueError("required_attempts must be an integer >= 3")
+
+    normalized_contexts = tuple(context_tiers)
+    if not normalized_contexts or any(
+        isinstance(context, bool) or not isinstance(context, int) for context in normalized_contexts
+    ):
+        raise ValueError("context_tiers must contain integer token counts")
+    if normalized_contexts != MEMORY_MATRIX_CONTEXT_TIERS[: len(normalized_contexts)]:
+        raise ValueError("context_tiers must be the ordered 8K/16K/32K/48K/64K prefix")
+
+    cell_payloads: list[dict[str, Any]] = []
+    for context_tokens in normalized_contexts:
+        for workload in normalized_workloads:
+            for lane, runtime_parallel, application_concurrency in (
+                ("load_only", 1, 0),
+                ("p1", 1, 1),
+                ("p2", 2, 2),
+                ("p4", 4, 4),
+            ):
+                identity = {
+                    "application_concurrency": application_concurrency,
+                    "artifact_checksum": candidate.artifact_checksum,
+                    "artifact_revision": candidate.artifact_revision,
+                    "context_tokens": context_tokens,
+                    "gpu_placement": candidate.gpu_placement,
+                    "kv_placement": candidate.kv_placement,
+                    "model_artifact": candidate.model_artifact,
+                    "quantization": candidate.quantization,
+                    "runner_revision": candidate.runner_revision,
+                    "runtime_identity": candidate.runtime_identity,
+                    "runtime_parallel": runtime_parallel,
+                    "schema_revision": candidate.schema_revision,
+                    "workload_id": workload.workload_id,
+                    "workload_modality": workload.modality,
+                }
+                cell_payloads.append(
+                    {
+                        **identity,
+                        "cell_id": _canonical_hash(identity),
+                        "lane": lane,
+                        "required_attempts": required_attempts,
+                    }
+                )
+    plan_payload = {
+        "matrix_schema_revision": MEMORY_MATRIX_SCHEMA_REVISION,
+        "required_attempts": required_attempts,
+        "cells": cell_payloads,
+    }
+    return MemoryConcurrencyPlan(
+        plan_id=_canonical_hash(plan_payload),
+        schema_revision=MEMORY_MATRIX_SCHEMA_REVISION,
+        context_tiers=normalized_contexts,
+        workload_modality=modality,
+        required_attempts=required_attempts,
+        cells=tuple(MemoryMatrixCell(**payload) for payload in cell_payloads),
+    )
+
+
+def _maximum_observed_overlap(intervals: Sequence[RequestInterval]) -> int:
+    points: list[tuple[float, int]] = []
+    request_ids: set[str] = set()
+    for interval in intervals:
+        if interval.request_id in request_ids:
+            raise ValueError("request interval ids must be unique within an attempt")
+        request_ids.add(interval.request_id)
+        points.append((interval.started_monotonic_s, 1))
+        points.append((interval.ended_monotonic_s, -1))
+    active = 0
+    maximum = 0
+    for _timestamp, delta in sorted(points, key=lambda point: (point[0], point[1])):
+        active += delta
+        maximum = max(maximum, active)
+    return maximum
+
+
+class MemoryMatrixAttemptStore:
+    """Append-only reservation/outcome journal for one immutable matrix plan."""
+
+    def __init__(self, path: str | Path, plan: MemoryConcurrencyPlan) -> None:
+        self.path = Path(path)
+        self.plan = plan
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        if not self.path.exists() or self.path.stat().st_size == 0:
+            self._append(
+                {
+                    "event": "plan_bound",
+                    "plan_id": plan.plan_id,
+                    "schema_revision": plan.schema_revision,
+                }
+            )
+        events = self.events()
+        binding = events[0] if events else {}
+        if binding.get("event") != "plan_bound" or binding.get("plan_id") != plan.plan_id:
+            raise ValueError("attempt journal plan identity mismatch")
+
+    def _append(self, payload: Mapping[str, object]) -> dict[str, object]:
+        row = {
+            **payload,
+            "recorded_at_utc": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
+        }
+        encoded = (json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n").encode("utf-8")
+        descriptor = os.open(self.path, os.O_APPEND | os.O_CREAT | os.O_WRONLY, 0o600)
+        with os.fdopen(descriptor, "ab") as handle:
+            handle.write(encoded)
+            handle.flush()
+            os.fsync(handle.fileno())
+        return row
+
+    def events(self) -> tuple[dict[str, object], ...]:
+        return tuple(
+            json.loads(line)
+            for line in self.path.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        )
+
+    def reservation_for(self, attempt_id: str) -> dict[str, object] | None:
+        return next(
+            (
+                event
+                for event in self.events()
+                if event.get("event") == "attempt_reserved"
+                and event.get("attempt_id") == attempt_id
+            ),
+            None,
+        )
+
+    def _cell_reservations(self, cell_id: str) -> tuple[dict[str, object], ...]:
+        return tuple(
+            event
+            for event in self.events()
+            if event.get("event") == "attempt_reserved" and event.get("cell_id") == cell_id
+        )
+
+    def _cell_outcomes(self, cell_id: str) -> tuple[dict[str, object], ...]:
+        return tuple(
+            event
+            for event in self.events()
+            if event.get("event") == "attempt_outcome" and event.get("cell_id") == cell_id
+        )
+
+    def _cell_admitted(self, cell: MemoryMatrixCell) -> bool:
+        outcomes = self._cell_outcomes(cell.cell_id)
+        return len(outcomes) >= cell.required_attempts and all(
+            outcome.get("status") == "admitted" for outcome in outcomes
+        )
+
+    def _prerequisite_cell(self, cell: MemoryMatrixCell) -> MemoryMatrixCell | None:
+        lane_index = MEMORY_MATRIX_LANES.index(cell.lane)
+        if lane_index > 0:
+            required_lane = MEMORY_MATRIX_LANES[lane_index - 1]
+            return next(
+                candidate
+                for candidate in self.plan.cells
+                if candidate.context_tokens == cell.context_tokens
+                and candidate.workload_id == cell.workload_id
+                and candidate.lane == required_lane
+            )
+        context_index = self.plan.context_tiers.index(cell.context_tokens)
+        if context_index == 0:
+            return None
+        prior_context = self.plan.context_tiers[context_index - 1]
+        return next(
+            candidate
+            for candidate in self.plan.cells
+            if candidate.context_tokens == prior_context
+            and candidate.workload_id == cell.workload_id
+            and candidate.lane == "p4"
+        )
+
+    def ready_cells(self) -> tuple[MemoryMatrixCell, ...]:
+        ready: list[MemoryMatrixCell] = []
+        for cell in self.plan.cells:
+            prerequisite = self._prerequisite_cell(cell)
+            if prerequisite is not None and not self._cell_admitted(prerequisite):
+                continue
+            if len(self._cell_reservations(cell.cell_id)) >= cell.required_attempts:
+                continue
+            ready.append(cell)
+        return tuple(ready)
+
+    def reserve(self, cell: MemoryMatrixCell) -> MemoryMatrixAttemptReservation:
+        known_cell = next(
+            (candidate for candidate in self.plan.cells if candidate.cell_id == cell.cell_id),
+            None,
+        )
+        if known_cell != cell:
+            raise ValueError("cell does not belong to the bound matrix plan")
+        if cell not in self.ready_cells():
+            raise ValueError("cell is not eligible for a missing attempt")
+        attempt_index = len(self._cell_reservations(cell.cell_id)) + 1
+        attempt_id = f"{cell.cell_id}:attempt-{attempt_index:04d}"
+        self._append(
+            {
+                "event": "attempt_reserved",
+                "plan_id": self.plan.plan_id,
+                "cell_id": cell.cell_id,
+                "attempt_id": attempt_id,
+                "attempt_index": attempt_index,
+                "lane": cell.lane,
+                "identity": cell.identity_payload(),
+            }
+        )
+        return MemoryMatrixAttemptReservation(
+            attempt_id=attempt_id,
+            cell_id=cell.cell_id,
+            attempt_index=attempt_index,
+        )
+
+    def complete(
+        self,
+        reservation: MemoryMatrixAttemptReservation,
+        cell: MemoryMatrixCell,
+        result: MemoryMatrixAttemptResult,
+    ) -> dict[str, object]:
+        known_cell = next(
+            (candidate for candidate in self.plan.cells if candidate.cell_id == cell.cell_id),
+            None,
+        )
+        if known_cell != cell:
+            raise ValueError("cell does not belong to the bound matrix plan")
+        persisted_reservation = self.reservation_for(reservation.attempt_id)
+        if persisted_reservation is None:
+            raise ValueError("attempt outcome requires a persisted reservation")
+        if (
+            reservation.cell_id != cell.cell_id
+            or persisted_reservation.get("cell_id") != cell.cell_id
+            or persisted_reservation.get("attempt_index") != reservation.attempt_index
+        ):
+            raise ValueError("attempt reservation identity mismatch")
+        if any(
+            event.get("event") == "attempt_outcome"
+            and event.get("attempt_id") == reservation.attempt_id
+            for event in self.events()
+        ):
+            raise ValueError("attempt outcome is append-only and already exists")
+
+        identity_matches = dict(result.observed_identity) == cell.identity_payload()
+        maximum_overlap = _maximum_observed_overlap(result.request_intervals)
+        overlap_proven = (
+            True
+            if cell.application_concurrency == 0
+            else maximum_overlap >= cell.application_concurrency
+        )
+        if not result.operation_succeeded:
+            status = "operation_failed"
+        elif not identity_matches:
+            status = "identity_mismatch"
+        elif not overlap_proven:
+            status = "overlap_unproven"
+        elif not result.phase_evidence_valid:
+            status = "phase_evidence_invalid"
+        elif not result.independent_cycle_proven:
+            status = "independent_cycle_unproven"
+        elif not result.immutable_owner_evidence_bound:
+            status = "immutable_owner_evidence_unbound"
+        else:
+            status = "admitted"
+        return self._append(
+            {
+                "event": "attempt_outcome",
+                "plan_id": self.plan.plan_id,
+                "cell_id": cell.cell_id,
+                "attempt_id": reservation.attempt_id,
+                "status": status,
+                "operation_succeeded": result.operation_succeeded,
+                "identity_matches": identity_matches,
+                "configured_runtime_parallel": cell.runtime_parallel,
+                "configured_application_concurrency": cell.application_concurrency,
+                "maximum_observed_overlap": maximum_overlap,
+                "overlap_proven": overlap_proven,
+                "phase_evidence_valid": result.phase_evidence_valid,
+                "independent_cycle_proven": result.independent_cycle_proven,
+                "immutable_owner_evidence_bound": result.immutable_owner_evidence_bound,
+                "request_intervals": [interval.to_dict() for interval in result.request_intervals],
+            }
+        )
+
+
+def execute_memory_matrix_attempt(
+    *,
+    store: MemoryMatrixAttemptStore,
+    cell: MemoryMatrixCell,
+    executor: Callable[[MemoryMatrixAttemptReservation], MemoryMatrixAttemptResult],
+    live_enabled: bool = False,
+    downloads_allowed: bool = False,
+) -> dict[str, object]:
+    if downloads_allowed:
+        raise ValueError("downloads are forbidden for the memory concurrency matrix")
+    if not live_enabled:
+        raise ValueError("memory matrix execution requires live_enabled=True")
+    reservation = store.reserve(cell)
+    try:
+        result = executor(reservation)
+    except Exception:
+        store.complete(
+            reservation,
+            cell,
+            MemoryMatrixAttemptResult(
+                operation_succeeded=False,
+                observed_identity=cell.identity_payload(),
+            ),
+        )
+        raise
+    if not isinstance(result, MemoryMatrixAttemptResult):
+        raise TypeError("matrix executor must return MemoryMatrixAttemptResult")
+    return store.complete(reservation, cell, result)
 
 
 @dataclass(frozen=True, slots=True)
@@ -655,11 +1203,25 @@ def create_structured_matrix_fake_run_artifacts(
 
 
 __all__ = [
+    "MEMORY_MATRIX_CONTEXT_TIERS",
+    "MEMORY_MATRIX_LANES",
+    "MEMORY_MATRIX_SCHEMA_REVISION",
     "MATRIX_CELL_FIELDNAMES",
     "MATRIX_FAKE_RUN_OUTPUT_FILE_NAMES",
     "MATRIX_PLAN_OUTPUT_FILE_NAMES",
+    "MemoryConcurrencyPlan",
+    "MemoryMatrixAttemptReservation",
+    "MemoryMatrixAttemptResult",
+    "MemoryMatrixAttemptStore",
+    "MemoryMatrixCandidate",
+    "MemoryMatrixCell",
+    "MemoryMatrixWorkload",
+    "RequestInterval",
     "StructuredMatrixPlan",
+    "aggregate_memory_recommendations",
+    "build_memory_concurrency_plan",
     "build_structured_matrix_plan",
     "create_structured_matrix_fake_run_artifacts",
     "create_structured_matrix_plan_artifacts",
+    "execute_memory_matrix_attempt",
 ]

@@ -3,17 +3,17 @@ from __future__ import annotations
 from collections.abc import Sequence
 from dataclasses import dataclass
 
-from libs.lmstudio_managed.lifecycle import LifecycleAction as ManagedLifecycleAction
-from libs.lmstudio_managed.lifecycle import LoadConfig as ManagedLoadConfig
-from libs.lmstudio_managed.lifecycle import LoadedInstance as ManagedLoadedInstance
-from libs.lmstudio_managed.lifecycle import ObservedModelState as ManagedObservedModelState
-from libs.lmstudio_managed.lifecycle import (
+from lmstudio_managed.lifecycle import LifecycleAction as ManagedLifecycleAction
+from lmstudio_managed.lifecycle import LoadConfig as ManagedLoadConfig
+from lmstudio_managed.lifecycle import LoadedInstance as ManagedLoadedInstance
+from lmstudio_managed.lifecycle import ObservedModelState as ManagedObservedModelState
+from lmstudio_managed.lifecycle import (
     classify_load_timeout_reconcile as managed_classify_load_timeout_reconcile,
 )
-from libs.lmstudio_managed.lifecycle import (
+from lmstudio_managed.lifecycle import (
     decide_lifecycle_action as managed_decide_lifecycle_action,
 )
-from libs.lmstudio_managed.lifecycle import decide_unload_action as managed_decide_unload_action
+from lmstudio_managed.lifecycle import decide_unload_action as managed_decide_unload_action
 
 
 @dataclass(frozen=True, slots=True)

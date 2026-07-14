@@ -10,14 +10,21 @@ from pathlib import Path
 import pytest
 import tools.lmstudio_lab.managed_runner as managed_runner_module
 import yaml
-from libs.lmstudio_managed.cache_contracts.contracts import (
+from tools.lmstudio_lab import (
+    ManagedLabRunner,
+    SystemMetricsSnapshot,
+    SystemMetricsSummary,
+)
+from tools.lmstudio_lab.datasets import load_chunked_dataset_view
+
+from lmstudio_managed.cache_contracts.contracts import (
     CacheExperimentPlan,
     CompactMemoryRequest,
     StatefulBranchRequest,
     StatefulRootRequest,
     StatelessPrefixRequest,
 )
-from libs.lmstudio_managed.client import (
+from lmstudio_managed.client import (
     EndpointKind,
     EndpointSpec,
     HttpMethod,
@@ -25,19 +32,13 @@ from libs.lmstudio_managed.client import (
     TransportResponse,
     TransportResult,
 )
-from libs.lmstudio_managed.download import DownloadRequest
-from libs.lmstudio_managed.generation import (
+from lmstudio_managed.download import DownloadRequest
+from lmstudio_managed.generation import (
     PlainTextGenerationRequest,
     ResponseFormatKind,
     StructuredGenerationRequest,
 )
-from libs.lmstudio_managed.lifecycle import LoadModelRequest, UnloadModelRequest
-from tools.lmstudio_lab import (
-    ManagedLabRunner,
-    SystemMetricsSnapshot,
-    SystemMetricsSummary,
-)
-from tools.lmstudio_lab.datasets import load_chunked_dataset_view
+from lmstudio_managed.lifecycle import LoadModelRequest, UnloadModelRequest
 
 PREP_DATASET_ID = "blocks_json_medium_chunked"
 PREP_MODEL_KEYS = ("gemma4_e2b_q4km", "gemma4_e4b_q4km")
@@ -2455,6 +2456,12 @@ def test_run_with_system_metrics_writes_artifacts_and_returns_safe_system_summar
         "vram_after_mb": 3072.0,
         "gpu_util_peak_percent": 75.0,
         "gpu_power_peak_watts": 120.0,
+        "configured_sample_interval_s": None,
+        "actual_sample_interval_s": None,
+        "sampler_failure_count": 0,
+        "telemetry_valid": True,
+        "phase_order_valid": True,
+        "phase_summaries": (),
     }
     assert (tmp_path / "system_samples.jsonl").exists()
     assert (tmp_path / "system_summary.json").exists()
@@ -2636,7 +2643,7 @@ def test_run_with_system_metrics_prefers_operation_error_over_cleanup_failure(
     assert fake_sampler.stop_calls == 1
 
 
-def test_run_with_system_metrics_reraises_cleanup_failure_after_successful_operation(
+def test_run_with_system_metrics_isolates_sampler_cleanup_failure_after_successful_operation(
     tmp_path: Path,
 ) -> None:
     class _StopFailingSystemSampler(_FakeSystemSampler):
@@ -2650,13 +2657,16 @@ def test_run_with_system_metrics_reraises_cleanup_failure_after_successful_opera
     )
     runner = ManagedLabRunner(lambda request: None, system_sampler=fake_sampler)
 
-    with pytest.raises(RuntimeError, match="cleanup boom"):
-        runner.run_with_system_metrics(
-            lambda: {"status": "ok", "custom_flag": True},
-            tmp_path,
-        )
+    summary = runner.run_with_system_metrics(
+        lambda: {"status": "ok", "custom_flag": True},
+        tmp_path,
+    )
 
     assert fake_sampler.start_calls == 1
+    assert summary["status"] == "ok"
+    assert summary["custom_flag"] is True
+    assert summary["telemetry_valid"] is False
+    assert summary["sampler_failure_count"] == 1
     assert fake_sampler.stop_calls == 1
 
 

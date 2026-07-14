@@ -1,0 +1,534 @@
+{
+  "schema_version": "lmstudio-labkit-local-structured-request-integration-strategy-v1",
+  "date": "2026-07-13",
+  "status": "read_only_architecture_synthesis_no_implementation_or_production_admission",
+  "decision": {
+    "runtime_model_authority": "host_owned_approved_catalog",
+    "labkit_registry_role": "non_promoting_evidence_input_only",
+    "model_selection_rule": "exact_identity_and_task_capability_and_explicit_promotion",
+    "structured_acceptance": [
+      "transport",
+      "raw_parse",
+      "local_schema",
+      "business_identity",
+      "semantic_quality",
+      "product_behavior"
+    ],
+    "block_grammar": "compact_generic_schema_with_exact_application_side_count_id_uniqueness_and_order_validation",
+    "forbidden_block_grammar": "request_specific_positional_hardened_const",
+    "package_strategy": "candidate_dependency_light_core_plus_host_owned_adapters",
+    "package_status": "candidate_not_current_stable_surface",
+    "default_full_recording_per_chunk": "rejected"
+  },
+  "scope": {
+    "live_requests": 0,
+    "model_operations": 0,
+    "network_requests": 0,
+    "implementation_changes": 0,
+    "external_repository_changes": 0,
+    "commits": 0,
+    "pushes": 0,
+    "evidence_level": [
+      "static_source_contract",
+      "retained_bounded_executed_evidence",
+      "unexecuted_architecture_proposal"
+    ]
+  },
+  "red_team_incorporation": {
+    "claims_reviewed": 37,
+    "verdict_counts": {
+      "confirmed": 19,
+      "overstated": 11,
+      "unsupported": 5,
+      "contradicted": 2
+    },
+    "exact_corrections_incorporated": 11,
+    "material_corrections": [
+      "API-bound schema presence is not full local post-response schema validation.",
+      "Request DTOs and the structural subset of ResponseContract require extraction or adaptation rather than unconditional direct reuse.",
+      "Host telemetry must not reuse verbatim request, cell, or expected identifiers without an approved sanitizing policy.",
+      "The host path excludes positional hardened_const grammar.",
+      "Lifecycle, context-fit, and output-budget utilities are relocate-or-adapt candidates pending a stable core and compatibility tests.",
+      "The core-and-ports layout is a candidate minimal architecture, not a proven smallest safe route.",
+      "Every context default remains provisional at its actual denominator.",
+      "Summary and generic-text response shapes are illustrative and unexecuted.",
+      "Rollback is not configuration-only in the current system.",
+      "Image semantics use separate dimensions plus abstain or review_required rather than an unsupported binary admission gate.",
+      "Shadow, canary, observability, implementation, and live work require later authorization and verification."
+    ]
+  },
+  "current_state": {
+    "api_bound_schema_classes": [
+      "block_preserving_postprocessing",
+      "image_analysis"
+    ],
+    "plain_text_classes": [
+      "generic_existing_text_postprocessing",
+      "short_microphone_cleanup",
+      "long_microphone_cleanup",
+      "long_media_file_cleanup"
+    ],
+    "not_implemented_classes": [
+      "per_chunk_summary",
+      "whole_recording_summary"
+    ],
+    "generation_namespace": "openai_compatible_chat_completions",
+    "provider_payload_behavior": "supplied_response_format_is_preserved_but_runtime_acceptance_is_not_proven",
+    "blocks": {
+      "api_bound_schema_present": true,
+      "full_local_schema_validation": false,
+      "raw_json_parse": true,
+      "missing_id_check": true,
+      "bare_array_rejected": false,
+      "duplicate_id_rejected": false,
+      "extra_id_rejected": false,
+      "reordered_id_rejected": false,
+      "strict_text_type": false,
+      "explicit_fallback_state_persisted": false
+    },
+    "image": {
+      "api_bound_schema_present": true,
+      "truncated_json_repair": true,
+      "missing_field_defaults": true,
+      "unknown_enum_normalization": true,
+      "semantic_grounding_gate": false
+    },
+    "persistence": {
+      "original_source_remains_application_owned": true,
+      "aggregate_and_block_writes_separate": true,
+      "atomic_or_recovery_proof": false,
+      "accepted_attempt_traceability": false
+    }
+  },
+  "authority_boundary": {
+    "host_owned": [
+      "approved_model_catalog",
+      "exact_model_identity",
+      "task_capabilities",
+      "explicit_promotion_state",
+      "prompts",
+      "source_records",
+      "image_materialization",
+      "ids_timestamps_order_and_chunk_assembly",
+      "request_generation_and_cancellation",
+      "retry_eligibility_and_total_logical_call_ceiling",
+      "protected_values",
+      "schema_and_validator_versions",
+      "semantic_thresholds_abstention_and_manual_review",
+      "fallback_and_user_visible_state",
+      "persistence_export_and_read_back",
+      "telemetry_retention_and_identifier_policy"
+    ],
+    "model_echoes_only": [
+      "block_ids"
+    ],
+    "never_model_authority": [
+      "timestamps",
+      "persistence_keys",
+      "source_order",
+      "accepted_attempt",
+      "promotion_state"
+    ]
+  },
+  "target_contracts": {
+    "short_microphone_cleanup": {
+      "status": "proposed_unexecuted",
+      "context": "current_only",
+      "response_shape": {
+        "text": "string"
+      },
+      "identity_sensitive_alternative": "generic_block_contract",
+      "host_owned": [
+        "recording_identity",
+        "raw_transcription",
+        "timing",
+        "protected_values",
+        "request_generation",
+        "fallback"
+      ],
+      "evidence_boundary": "No retained structured audio-grounded short-microphone execution."
+    },
+    "long_microphone_or_file_cleanup": {
+      "status": "provisional_bounded",
+      "context": "current_targets_plus_previous_tail_and_next_head_as_reference_only",
+      "response_shape": {
+        "blocks": [
+          {
+            "id": "integer",
+            "text": "string"
+          }
+        ]
+      },
+      "grammar": "generic_no_request_specific_positional_const",
+      "acceptance": [
+        "exact_target_count",
+        "unique_expected_sequence",
+        "strict_non_empty_strings",
+        "no_reference_output",
+        "protected_values",
+        "no_omission_addition_or_boundary_leakage",
+        "atomic_or_recoverable_persistence_and_read_back"
+      ],
+      "evidence_boundary": {
+        "calls": 12,
+        "evaluated_blocks": 36,
+        "representative_positions": 3,
+        "recordings": 1,
+        "models": 1,
+        "complete_source_to_persistence_run": false
+      }
+    },
+    "per_chunk_summary": {
+      "status": "illustrative_unimplemented",
+      "context": "current_only_with_targeted_boundary_fallback_for_interrupted_thought",
+      "response_shape": {
+        "summary": "bounded_string",
+        "key_points": [
+          "bounded_string"
+        ],
+        "uncertainties": [
+          "bounded_string"
+        ]
+      },
+      "host_owned": [
+        "recording_id",
+        "chunk_id",
+        "ordinal",
+        "source_range",
+        "timestamps",
+        "provenance"
+      ],
+      "evidence_boundary": {
+        "current_only_practically_valid": {
+          "numerator": 35,
+          "denominator": 35
+        },
+        "recordings": 1,
+        "models": 1,
+        "host_feature_implemented": false
+      }
+    },
+    "whole_recording_summary": {
+      "status": "illustrative_unimplemented",
+      "candidates": [
+        "single_full_recording_request_for_compact_overview_when_exact_fit_is_safe",
+        "hierarchical_synthesis_from_ordered_current_only_chunk_summaries_for_detailed_output"
+      ],
+      "response_shape": {
+        "overview": "bounded_string",
+        "key_points": [
+          "bounded_string"
+        ],
+        "open_questions": [
+          "bounded_string"
+        ]
+      },
+      "host_owned": [
+        "recording_identity",
+        "chunk_order",
+        "source_mapping",
+        "synthesis_provenance",
+        "staleness_and_version_state"
+      ],
+      "failure_disposition": "unavailable_not_model_guess",
+      "evidence_boundary": {
+        "first_pass_calls": 5,
+        "repeat_calls": 5,
+        "recordings": 1,
+        "blind_or_multi_rater_scoring": false,
+        "host_owner_and_read_back": false
+      }
+    },
+    "generic_text_postprocessing": {
+      "status": "illustrative_extrapolation",
+      "context": "current_only_if_self_contained_boundary_neighbors_if_chunked_and_identity_preserving_single_full_input_only_for_true_document_level_task",
+      "response_shape": {
+        "text": "string"
+      },
+      "identity_sensitive_alternative": "generic_block_contract",
+      "evidence_boundary": "No generic-document context comparison; heuristic is extrapolated from speech-derived evidence."
+    },
+    "image_analysis": {
+      "status": "bounded_transport_and_schema_only",
+      "context": "current_image_and_explicit_task",
+      "response_shape_example": {
+        "description": "string",
+        "extracted_text": "string",
+        "language": "string",
+        "scene_type": "task_specific_enum"
+      },
+      "structural_policy": "reject_repaired_or_defaulted_structure_as_acceptance",
+      "semantic_dimensions": [
+        "visible_text_exactness",
+        "salient_text_completeness",
+        "object_grounding",
+        "salient_object_completeness",
+        "unsupported_claims",
+        "warning_relevance",
+        "forbidden_private_or_person_claims",
+        "scene_and_language_classification"
+      ],
+      "uncertain_disposition": [
+        "abstain",
+        "review_required"
+      ],
+      "evidence_boundary": {
+        "authorized_calls_no_transport_error": {
+          "numerator": 40,
+          "denominator": 40
+        },
+        "applicable_raw_json_and_schema_pass": {
+          "numerator": 36,
+          "denominator": 36
+        },
+        "visible_text_exact": {
+          "numerator": 25,
+          "denominator": 39
+        },
+        "salient_text_complete": {
+          "numerator": 31,
+          "denominator": 39
+        },
+        "unsupported_claims_absent": {
+          "numerator": 36,
+          "denominator": 39
+        },
+        "production_admission": false,
+        "model_ranking": false
+      }
+    }
+  },
+  "context_policy_matrix": {
+    "short_microphone_cleanup": {
+      "proposed_default": "current_only",
+      "reject_default": "unrelated_adjacent_or_full_context",
+      "evidence_status": "proposed_no_structured_audio_grounded_run"
+    },
+    "long_microphone_or_file_cleanup": {
+      "proposed_default": "boundary_neighbors_reference_only",
+      "alternative": "current_only",
+      "reject_default": [
+        "adjacent_chunks",
+        "full_recording_per_chunk"
+      ],
+      "evidence_status": "provisional_12_calls_36_blocks_3_positions_1_recording_1_model"
+    },
+    "per_chunk_summary": {
+      "proposed_default": "current_only",
+      "alternative": "boundary_context_for_interrupted_thought_only",
+      "reject_default": [
+        "adjacent_chunks",
+        "full_recording_per_chunk"
+      ],
+      "evidence_status": "bounded_35_of_35_current_only_practical_validity_1_recording_1_model"
+    },
+    "whole_recording_summary": {
+      "proposed_default": "direct_full_once_or_hierarchical_current_only_chunk_summary_synthesis",
+      "reject_default": "full_recording_repeated_per_chunk",
+      "evidence_status": "candidate_5_first_pass_plus_5_repeat_calls_1_recording"
+    },
+    "generic_text": {
+      "proposed_default": "current_only_or_boundary_neighbors_by_target_granularity",
+      "reject_default": "full_document_repeated_per_chunk",
+      "evidence_status": "unsupported_generic_document_extrapolation"
+    },
+    "image_analysis": {
+      "proposed_default": "current_image_only",
+      "reject_default": "transcript_neighbor_context_by_analogy",
+      "evidence_status": "bounded_four_fixture_transport_schema_no_semantic_admission"
+    }
+  },
+  "context_cost_evidence": {
+    "chunk_summary_current_only": {
+      "median_prompt_tokens": 786,
+      "median_latency_seconds": 8.04,
+      "approx_total_prompt_tokens_35_calls": 26700,
+      "approx_total_latency_seconds_35_calls": 274.9
+    },
+    "chunk_summary_full_recording_per_chunk": {
+      "median_prompt_tokens": 23099,
+      "median_latency_seconds": 20.2,
+      "approx_total_prompt_tokens_35_calls": 807600,
+      "approx_total_latency_seconds_35_calls": 700.7
+    },
+    "interpretation": "Supports rejecting repeated full context as the default; does not ban one full input for a true whole-recording task."
+  },
+  "package_reuse": {
+    "candidate_extract_or_adapt": [
+      "strict_json_parser_and_parse_stage_vocabulary",
+      "exact_count_id_order_collection_and_validation",
+      "generic_flat_and_block_schema_builders_without_hardened_const",
+      "sanitized_request_and_result_dto_shapes",
+      "structural_subset_of_response_contract",
+      "pure_lifecycle_decisions",
+      "relocated_context_fit",
+      "bounded_output_budget_decisions",
+      "protocols_only_ports"
+    ],
+    "host_adapter_only": [
+      "async_cancellable_structured_transport",
+      "lifecycle_execution_and_ownership",
+      "real_request_body_and_image_materialization",
+      "approved_catalog_mapping",
+      "context_planning",
+      "semantic_policy",
+      "persistence_and_ui"
+    ],
+    "exclude": [
+      "benchmark_and_matrix_orchestration",
+      "strict_vision_controllers",
+      "lab_local_host_runner",
+      "candidate_and_recommendation_state_as_runtime_configuration",
+      "cache_experiments_as_product_proof",
+      "failure_forensics_retention",
+      "benchmark_report_consumption_adapter"
+    ],
+    "prerequisites": [
+      "stable_dependency_light_namespace",
+      "sanitized_metadata_policy",
+      "structural_semantic_policy_split",
+      "complete_validator_or_fail_closed_keyword_allow_list",
+      "install_import_boundary_tests",
+      "fake_host_compatibility_test"
+    ]
+  },
+  "phases": [
+    {
+      "id": 0,
+      "name": "freeze_authority_and_contracts",
+      "status": "proposed_not_authorized",
+      "deliverables": [
+        "host_owned_approved_catalog",
+        "versioned_task_contracts_and_schema_keywords",
+        "telemetry_identifier_and_digest_policy",
+        "six_layer_outcome_vocabulary"
+      ],
+      "exit_gate": "Exact identity, task-capability rejection, unknown-model fail-closed behavior, and no automatic LabKit evidence promotion pass offline."
+    },
+    {
+      "id": 1,
+      "name": "extract_candidate_contract_kernel",
+      "status": "proposed_not_authorized",
+      "deliverables": [
+        "dependency_light_core",
+        "protocols_only_ports",
+        "sanitized_dto_metadata",
+        "structural_contract_split",
+        "lab_runtime_boundary"
+      ],
+      "exit_gate": "Fake-host install/import, boundary, schema-keyword, and no-reverse-import tests pass."
+    },
+    {
+      "id": 2,
+      "name": "build_host_control_and_validation_seams",
+      "status": "proposed_not_authorized",
+      "deliverables": [
+        "async_cancellable_transport",
+        "immutable_attempts_and_generation_fence",
+        "product_defined_total_logical_call_ceiling",
+        "full_local_schema_and_identity_validation",
+        "transactional_or_recoverable_persistence"
+      ],
+      "exit_gate": "Adversarial fake-client, cancellation, stale-completion, persistence failure-injection, export, and read-back tests pass."
+    },
+    {
+      "id": 3,
+      "name": "harden_current_structured_paths",
+      "status": "proposed_not_authorized",
+      "deliverables": [
+        "fail_closed_block_path",
+        "image_structural_rejection",
+        "multidimensional_image_semantics",
+        "explicit_degraded_and_review_states"
+      ],
+      "exit_gate": "Fake transport-to-read-back tests pass for block and image paths without live calls."
+    },
+    {
+      "id": 4,
+      "name": "add_new_task_contracts_offline",
+      "status": "proposed_not_authorized",
+      "deliverables": [
+        "short_cleanup_contract",
+        "long_block_cleanup_contract",
+        "per_chunk_summary_contract",
+        "direct_and_hierarchical_whole_summary_contracts",
+        "generic_text_contract",
+        "deterministic_semantic_and_provenance_fixtures"
+      ],
+      "exit_gate": "Each contract independently passes fake-client request, validation, retry/fallback, cancellation, persistence, export, and read-back tests."
+    },
+    {
+      "id": 5,
+      "name": "separately_authorized_evidence_collection",
+      "status": "not_authorized",
+      "deliverables": [
+        "shadow",
+        "read_only_comparison",
+        "task_specific_canary",
+        "broader_rollout_only_after_thresholds"
+      ],
+      "exit_gate": "Separate owner authorization, privacy-safe instrumentation, task thresholds, kill switch, runtime safety, and evidence review."
+    }
+  ],
+  "proposed_cards": [
+    "define_approved_model_catalog_authority",
+    "extract_dependency_light_contract_kernel",
+    "select_and_verify_schema_validation_policy",
+    "implement_exact_block_acceptance",
+    "implement_request_attempt_and_cancellation_fencing",
+    "make_persistence_acceptance_atomic_or_recoverable",
+    "define_task_semantic_validators",
+    "harden_image_structural_and_semantic_outcomes",
+    "add_summary_ownership_and_provenance_contracts",
+    "add_fake_host_adapter_compatibility_suite",
+    "design_contract_specific_kill_switches_and_rollback_state",
+    "prepare_separately_authorized_shadow_evidence_plan"
+  ],
+  "proposed_cards_status": "planning_only_not_created_not_dispatched_not_runnable_in_this_stage",
+  "mission_blockers": [
+    "No stable dependency-light package core or host install proof.",
+    "Current safe metadata exposes some identifiers verbatim.",
+    "Positional hardened_const conflicts with stronger executed evidence and is excluded from this strategy.",
+    "No full local production schema validator or proven fail-closed keyword allow-list.",
+    "Current block defects do not all fail closed.",
+    "No immutable attempts, request-generation fence, or total logical-call ceiling.",
+    "No atomic or recoverable aggregate-plus-block persistence, export, or read-back proof.",
+    "No production thresholds and fixtures for protected values, boundaries, omissions, or unsupported additions.",
+    "Image parsing tolerates structural defects and no valid binary semantic rubric exists.",
+    "No summary owner, final schemas, provenance, persistence, or read-back.",
+    "Context evidence is narrow and short-microphone quality is not audio-grounded.",
+    "No kill switches, readable validator state, or rollback traceability.",
+    "No host-owned approved model catalog maps configured model strings to exact identity, task capability, and promotion state."
+  ],
+  "evidence_gaps": [
+    "real_cancellation_races",
+    "partial_persistence_recovery",
+    "production_concurrency",
+    "broad_ocr_quality",
+    "broad_summary_quality",
+    "cross_task_model_admission",
+    "generic_document_context_comparison",
+    "physical_cache_reuse_with_changing_chunks"
+  ],
+  "non_claims": [
+    "no_implementation_or_migration",
+    "no_prompt_change_or_private_prompt_publication",
+    "no_model_selection_ranking_promotion_download_load_or_call",
+    "no_cloud_network_shadow_canary_or_benchmark_authorization",
+    "schema_validity_does_not_prove_semantics_or_product_behavior",
+    "no_audio_grounded_cleanup_broad_ocr_summary_concurrency_cache_or_production_claim",
+    "rollback_is_not_configuration_only_today",
+    "package_core_adapters_validators_state_machine_persistence_and_catalog_do_not_yet_exist_as_proven_host_contracts",
+    "no_external_repository_edit_commit_or_push"
+  ],
+  "evidence_sources": {
+    "stage_1": [
+      "experiments/lmstudio/results_summaries/2026-07-13_host_request_flow_inventory.md",
+      "experiments/lmstudio/results_summaries/2026-07-13_labkit_package_reuse_assessment.md",
+      "experiments/lmstudio/results_summaries/2026-07-13_task_specific_context_schema_policy.md",
+      "experiments/lmstudio/results_summaries/2026-07-13_structured_validation_migration_risks.md"
+    ],
+    "stage_2": "experiments/lmstudio/results_summaries/2026-07-13_local_structured_integration_red_team.md",
+    "json_companions": "same_stem_for_each_report"
+  }
+}

@@ -134,15 +134,32 @@ Quality scoring должен быть отделён от технических
 
 ## System metrics 🎮
 
-| Метрика | Источник |
-|---------|----------|
-| VRAM used | `nvidia-smi` |
-| GPU utilization | `nvidia-smi` |
-| Power draw | `nvidia-smi` |
-| RAM used | `psutil` |
-| Process memory | `psutil.Process` |
-| CPU utilization | `psutil` |
-| Disk activity | optional |
+| Метрика | Primary source | Fallback / semantics |
+|---------|----------------|----------------------|
+| Per-device VRAM used/free/total | NVML | `nvidia-smi` device-only |
+| Per-process GPU memory | NVML process query | `null` when attribution is unavailable |
+| GPU and memory utilization | NVML | `nvidia-smi` device-only |
+| Power draw | NVML | `nvidia-smi` device-only |
+| MIG identity/state | NVML | explicit unsupported/unavailable state |
+| RAM used | `psutil` | `null` when unavailable |
+| Process memory | `psutil.Process` | only when safely attributable |
+| CPU utilization | `psutil` | `null` when unavailable |
+
+Every GPU sample carries one evidence level: `nvml_process_attributed`, `nvml_device_only`, `nvidia_smi_device_only`, or `unavailable`. Device-only evidence must never be promoted to a process-attributed claim. Device and process identifiers in publication-safe artifacts are hashed or omitted.
+
+Phase-aware summaries retain samples for clean baseline, load, loaded idle, request dispatch, prefill, first token, decode, concurrent peak, batch completion, post-batch idle, unload, and after-unload global zero. A derived phase records its derivation method and confidence; coarse polling is not exact prefill/decode evidence. The configured and actual sample intervals, sampler failure count, phase-order validity, and telemetry validity are part of the summary.
+
+## Versioned memory recommendation catalog
+
+The reusable catalog schema is `model-memory-recommendation-catalog.v1`. Each row is keyed by exact artifact/revision/checksum, quantization, context, runtime parallelism, application concurrency, workload, placement requirement, and KV placement. Display-name-only matching is invalid.
+
+The catalog keeps the measured peak, fixed loaded cost, context/concurrency overhead, safety reserve, and recommended memory separate. These values are observations and derived envelopes; they do not authorize linear scaling from P1 to P2 or P4.
+
+Consumers must validate the exact `schema_revision` and complete row shape with the validator from their pinned managed-contract package. Unknown revisions, extra or missing fields, duplicate identities, invalid digests, and unsorted rows fail closed. Status handling is explicit: `approved` may be considered only for an exact local match; `manual_only` requires an explicit decision; `rejected` and `insufficient_evidence` are not eligible for automatic selection.
+
+The v1 row does not serialize runtime identity, runner/schema revisions, hardware identity, or proof that repeats were independent load/unload cycles. Its evidence digest does not prove those omitted facts. A standalone consumer must bind the row to separately reviewed immutable owner evidence containing them; without that binding, even a serialized `approved` row is not eligible for automatic selection.
+
+See [GPU telemetry, recommendations, and package boundary](12_gpu_telemetry_recommendations_and_package_boundary.md) for full usage and non-claim rules.
 
 ## Aggregations 📈
 
@@ -184,6 +201,9 @@ erDiagram
 5. Тексты prompt/response не пишутся по умолчанию.
 6. Dataset идентифицируется hash-ом.
 7. Load config сохраняется фактический, а не только запрошенный.
+8. Device-only telemetry не считается process-attributed evidence.
+9. Recommendation catalog revision проверяется до чтения строк.
+10. Measured peak и safety reserve не объединяются в одно недоказуемое число.
 
 ## Итог 🧷
 

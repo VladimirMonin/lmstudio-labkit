@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from collections.abc import Mapping, Sequence
 
-from libs.lmstudio_managed.registry import (
+from lmstudio_managed.registry import (
     ModelCandidate,
     ModelCapability,
     ModelEvidenceRef,

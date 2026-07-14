@@ -1,0 +1,72 @@
+{
+  "$id": "model-memory-recommendation-catalog.v1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "recommendations": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "application_concurrency": {"minimum": 0, "type": "integer"},
+          "artifact_checksum": {"pattern": "^sha256:[0-9a-fA-F]{64}$", "type": "string"},
+          "artifact_revision": {"minLength": 1, "type": "string"},
+          "context_concurrency_overhead_vram_mb": {"minimum": 0, "type": ["number", "null"]},
+          "context_tokens": {"minimum": 1, "type": "integer"},
+          "evidence_revision": {"pattern": "^sha256:[0-9a-fA-F]{64}$", "type": "string"},
+          "fixed_model_cost_vram_mb": {"minimum": 0, "type": ["number", "null"]},
+          "kv_placement": {"minLength": 1, "type": "string"},
+          "measured_peak_vram_mb": {"minimum": 0, "type": ["number", "null"]},
+          "model_artifact": {"minLength": 1, "type": "string"},
+          "placement_requirement": {"minLength": 1, "type": "string"},
+          "quantization": {"minLength": 1, "type": "string"},
+          "recommended_vram_mb": {"minimum": 0, "type": ["number", "null"]},
+          "repeat_count": {"minimum": 1, "type": "integer"},
+          "required_repeats": {"minimum": 3, "type": "integer"},
+          "runtime_parallel": {"minimum": 1, "type": "integer"},
+          "safety_reserve_policy": {"minLength": 1, "type": "string"},
+          "safety_reserve_vram_mb": {"minimum": 0, "type": ["number", "null"]},
+          "status": {"enum": ["approved", "manual_only", "rejected", "insufficient_evidence"]},
+          "status_reasons": {
+            "items": {"minLength": 1, "type": "string"},
+            "minItems": 1,
+            "type": "array"
+          },
+          "telemetry_evidence": {
+            "enum": ["nvml_process_attributed", "nvml_device_only", "nvidia_smi_device_only", "unavailable"]
+          },
+          "workload_class": {"minLength": 1, "type": "string"}
+        },
+        "required": [
+          "model_artifact",
+          "artifact_revision",
+          "artifact_checksum",
+          "quantization",
+          "context_tokens",
+          "runtime_parallel",
+          "application_concurrency",
+          "workload_class",
+          "placement_requirement",
+          "kv_placement",
+          "measured_peak_vram_mb",
+          "fixed_model_cost_vram_mb",
+          "context_concurrency_overhead_vram_mb",
+          "safety_reserve_policy",
+          "safety_reserve_vram_mb",
+          "recommended_vram_mb",
+          "telemetry_evidence",
+          "evidence_revision",
+          "repeat_count",
+          "required_repeats",
+          "status",
+          "status_reasons"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "schema_revision": {"const": "model-memory-recommendation-catalog.v1"}
+  },
+  "required": ["schema_revision", "recommendations"],
+  "title": "LM Studio model memory recommendation catalog",
+  "type": "object"
+}

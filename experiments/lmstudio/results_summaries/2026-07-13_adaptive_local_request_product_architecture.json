@@ -1,0 +1,358 @@
+{
+  "schema_version": "lmstudio-labkit-adaptive-local-request-product-architecture-v1",
+  "date": "2026-07-13",
+  "status": "proposed_architecture_owner_approval_required_before_implementation",
+  "decision": {
+    "architecture": "One application-owned task, prompt, response, validation, fallback, and invocation contract shared by local and cloud transport adapters.",
+    "approval_unit": "versioned_approved_task_profile",
+    "local_selection": "approved_catalog_intersection_with_exact_runtime_identity_capability_context_shape_and_platform_memory_verdict",
+    "token_planning": "conservative_preload_estimate_then_loaded_instance_exact_prompt_token_gate",
+    "output_escalation": "independent_truncation_only_under_one_logical_call_ceiling",
+    "validation_layers": [
+      "transport",
+      "completion",
+      "raw_parse",
+      "full_local_schema",
+      "business_identity",
+      "semantic_quality",
+      "product_behavior"
+    ],
+    "full_text": "retained_as_authoritative_storage_search_and_export_surface_but_retired_as_default_repeated_per_chunk_context",
+    "summary": "versioned_provenance_bound_artifact_consumed_only_by_task_declared_context_policy",
+    "microphone": "deterministic_pre_request_split_between_dictation_cleanup_and_MODEL_command",
+    "implementation_authorized": false,
+    "live_execution_authorized": false
+  },
+  "evidence_boundary": {
+    "exact_source_contract": [
+      "Current block and image paths bind API response schemas while ordinary text cleanup remains plain text.",
+      "Current summary storage has no production request, validation, lifecycle, or read-back owner.",
+      "Local and cloud generation share a compatibility chat-completions seam and preserve supplied response_format plumbing.",
+      "Application code owns record, block, queue, persistence identity, ordering, and timestamps."
+    ],
+    "bounded_executed": {
+      "exact_token_rows": 80,
+      "loaded_instance_bindings": 4,
+      "exact_formatted_prompt_token_range": [925, 12797],
+      "structured_context_calls": 202,
+      "structured_context_recordings": 1,
+      "structured_context_models": 1,
+      "structured_vision_calls": 40,
+      "structured_vision_models": 4,
+      "structured_vision_fixtures": 4,
+      "structured_vision_raw_schema_applicable": {
+        "numerator": 36,
+        "denominator": 36
+      },
+      "interpretation": "Bounded transport, structure, context, and selected semantic evidence only; no general product admission."
+    },
+    "runtime_unexecuted": [
+      "approved product catalog",
+      "host package extraction and adapters",
+      "host exact-token preflight",
+      "platform memory recommendation",
+      "provider capability negotiation",
+      "full validation and attempt state machine",
+      "summary lifecycle",
+      "microphone command path",
+      "transactional persistence and rollback"
+    ],
+    "actions_by_synthesis": {
+      "live_requests": 0,
+      "model_operations": 0,
+      "cloud_calls": 0,
+      "tokenizer_captures": 0,
+      "host_repository_changes": 0,
+      "implementation_changes": 0,
+      "commits": 0,
+      "pushes": 0
+    }
+  },
+  "hard_invariants": [
+    "The approved unit is a versioned task profile, not a model family.",
+    "Lab candidate or benchmark status never promotes a production profile automatically.",
+    "Exact model identity requires reconciled native key, compat ID, artifact digest, format, and verified quantization.",
+    "Context fit and memory fit remain separate gates.",
+    "A conservative estimate is never labeled exact or observed.",
+    "Local generation requires a post-materialization exact prompt-token gate unless the task explicitly allows conservative short-request mode.",
+    "Provider adapters do not select task, prompt, schema, translation target, validator, fallback, or product outcome.",
+    "Structured execution never silently downgrades to prompt-only JSON or plain text.",
+    "Request-specific block IDs stay out of positional const grammar and are validated after generation.",
+    "API-bound schema presence is not local post-response schema validation.",
+    "Full text remains authoritative and a summary remains derived and lossy.",
+    "full_text and document_summary are never silently aliased.",
+    "Microphone dictation and MODEL command modes do not share prompts, artifacts, fallback meaning, or clipboard failure behavior.",
+    "Rollback is not configuration-driven until kill switch, generation fence, accepted-attempt traceability, and readable versions exist."
+  ],
+  "decision_matrix": [
+    {
+      "concern": "model_approval_and_recommendation",
+      "approved": "Hard-filter approved task profiles by exact installed identity, required capability, request shape, and platform memory before ranking.",
+      "evidence_class": "runtime-unexecuted",
+      "rejected": ["family_name_identity", "parameter_count_ranking", "file_size_as_fit", "unapproved_fallback"]
+    },
+    {
+      "concern": "resource_policy",
+      "approved": "CUDA VRAM and host RAM are independent budgets; Apple unified memory is one pool; absolute and proportional reserves both apply.",
+      "evidence_class": "static_design_with_unresolved_adapters",
+      "rejected": ["sum_unproven_gpus", "add_apple_vram_to_ram", "free_memory_as_guarantee"]
+    },
+    {
+      "concern": "provider_contract",
+      "approved": "One frozen application TaskRequest and one shared validator/fallback policy above transport-only adapters.",
+      "evidence_class": "static_source_contract_runtime-unexecuted_parity",
+      "rejected": ["provider_specific_business_contract", "schema_rewrite", "silent_structured_downgrade"]
+    },
+    {
+      "concern": "structured_schema",
+      "approved": "Compact generic closed schemas plus exact application-side identity and order checks.",
+      "evidence_class": "bounded-executed",
+      "rejected": ["hardened_positional_const_host_path", "bare_array_acceptance", "wrong_type_coercion", "extra_id_filtering"]
+    },
+    {
+      "concern": "token_and_output_planning",
+      "approved": "Pre-load estimate, compatible materialization, exact loaded-instance prompt count, separately labeled overhead, and truncation-only output escalation under one call counter.",
+      "evidence_class": "exact_method_plus_runtime-unexecuted_product_flow",
+      "rejected": ["estimate_only_generation_for_exact_required_task", "budget_escalation_for_structural_or_semantic_failure", "multiplying_retry_budgets"]
+    },
+    {
+      "concern": "summary_and_full_text",
+      "approved": "Keep authoritative full text; use immutable provenance-bound summary artifacts only where a manifest permits document_summary.",
+      "evidence_class": "bounded_context_evidence_plus_runtime-unexecuted_lifecycle",
+      "rejected": ["delete_full_text", "bare_summary_as_authority", "full_text_summary_alias", "cache_dependent_correctness"]
+    },
+    {
+      "concern": "microphone",
+      "approved": "Classify anchored MODEL command before prompt selection and keep dictation cleanup and command execution as separate contracts.",
+      "evidence_class": "exact_current_dictation_source_contract_plus_runtime-unexecuted_command",
+      "rejected": ["fuzzy_model_trigger", "command_answer_in_postprocessed_text", "transcript_as_command_failure_answer", "copy_or_paste_on_command_failure"]
+    },
+    {
+      "concern": "package_boundary",
+      "approved": "Candidate dependency-light core and protocol-only ports consumed through host adapters.",
+      "evidence_class": "static_and_offline_assessment",
+      "rejected": ["lab_controller_in_product", "copy_based_integration", "broad_facade_as_stable_core"]
+    }
+  ],
+  "canonical_contracts": {
+    "approved_task_profile": {
+      "required_groups": [
+        "task_and_contract_version",
+        "prompt_manifest_and_response_contract",
+        "capabilities_and_endpoint_family",
+        "exact_model_identity_requirements",
+        "approved_context_parallelism_and_concurrency_shapes",
+        "context_and_summary_policy",
+        "output_timeout_and_total_call_policy",
+        "exact_tokenization_mode",
+        "validator_and_fallback_policy",
+        "semantic_product_evidence",
+        "platform_memory_envelopes"
+      ],
+      "owner": "host_product",
+      "lab_auto_promotion": false
+    },
+    "task_request": {
+      "required_groups": [
+        "request_identity_generation_attempt",
+        "task_profile_and_prompt_manifest",
+        "fully_rendered_ordered_messages",
+        "response_schema_and_business_identity",
+        "target_and_reference_ownership",
+        "optional_current_summary_reference",
+        "translation_metadata_when_required",
+        "output_timeout_and_call_budgets",
+        "validator_and_fallback_policy",
+        "privacy_safe_provenance_digests"
+      ],
+      "freeze_before_provider_selection": true,
+      "unresolved_placeholder_behavior": "fail_planning"
+    },
+    "response_contracts": {
+      "postprocess_text_v1": {"shape": {"text": "non_empty_string"}},
+      "postprocess_blocks_v1": {"shape": {"blocks": [{"id": "integer", "text": "non_empty_string"}]}, "request_specific_id_consts": false},
+      "translate_text_v1": {"shape": {"text": "non_empty_string"}, "translation_metadata": "required_application_owned"},
+      "translate_blocks_v1": {"shape": {"blocks": [{"id": "integer", "text": "non_empty_string"}]}, "translation_metadata": "required_application_owned"},
+      "microphone_command_v1": {"shape": {"answer_text": "non_empty_string"}},
+      "legacy_plain_text_v0": {"explicit_compatibility_only": true}
+    },
+    "summary_placeholder": {
+      "proposed_canonical": "document_summary",
+      "recording_scope": "SummaryArtifact.scope_kind=recording",
+      "second_synonym_allowed": false,
+      "owner_confirmation_required": true,
+      "requirement_levels": ["forbidden", "optional", "required"],
+      "missing_optional": "deterministic_manifest_owned_section_omission",
+      "missing_required": "fail_planning_or_schedule_separate_prerequisite",
+      "full_text_alias": false
+    }
+  },
+  "target_data_flow": [
+    {
+      "stage": 0,
+      "name": "classify_product_operation",
+      "outputs": ["dictation_cleanup", "microphone_MODEL_command", "postprocess", "translate", "summarize", "image_task"]
+    },
+    {
+      "stage": 1,
+      "name": "assemble_and_freeze_task",
+      "actions": ["resolve_task_manifest_and_response_contract", "classify_target_and_reference_units", "attach_permitted_current_summary", "render_messages", "freeze_schema_policies_and_digests"]
+    },
+    {
+      "stage": 2,
+      "name": "resolve_execution_candidates",
+      "actions": ["intersect_approved_profiles_and_capabilities", "local_exact_identity_reconciliation", "cloud_provider_model_route_capability_reconciliation"]
+    },
+    {
+      "stage": 3,
+      "name": "preflight_estimate_and_resource_screen",
+      "actions": ["conservative_token_estimate", "select_output_reserve", "local_platform_memory_screen", "hard_filter_and_select_or_typed_unavailable"]
+    },
+    {
+      "stage": 4,
+      "name": "materialize_execution_boundary",
+      "actions": ["local_compatible_owned_load_or_reuse", "cloud_approved_route_binding", "read_back_local_identity_and_effective_context"]
+    },
+    {
+      "stage": 5,
+      "name": "exact_or_policy_approved_token_gate",
+      "actions": ["local_apply_prompt_template_and_tokenize", "classify_schema_and_task_overhead", "cloud_exact_tokenizer_if_equivalently_bound_else_task_policy", "deterministic_replan_without_generation_on_no_fit"]
+    },
+    {
+      "stage": 6,
+      "name": "generate_under_one_call_counter",
+      "actions": ["increment_before_submission", "preserve_immutable_attempt", "escalate_output_only_on_independent_truncation_and_next_stage_fit"]
+    },
+    {
+      "stage": 7,
+      "name": "layered_validation",
+      "actions": ["current_generation_and_cancellation", "transport_and_completion", "untouched_raw_parse", "complete_local_schema", "business_identity", "semantic_and_protected_values", "precommit_fence"]
+    },
+    {
+      "stage": 8,
+      "name": "commit_product_outcome",
+      "actions": ["atomic_or_recoverable_persistence", "read_back_identity_order_state_and_attempt", "emit_explicit_accepted_fallback_failed_unavailable_cancelled_abstain_or_review_required"]
+    },
+    {
+      "stage": 9,
+      "name": "release_owned_local_resources",
+      "actions": ["never_unload_external_instance", "retain_privacy_safe_categorical_count_and_digest_telemetry"]
+    }
+  ],
+  "planning_cycle_resolution": "Recommendation and exact token planning use two phases: conservative candidate/context planning before load, followed by one exact gate after an approved local instance materializes. Exact no-fit causes deterministic replanning without a generation call.",
+  "task_policy_starting_points": {
+    "classification": "proposed_runtime-unexecuted_product_defaults",
+    "short_microphone_cleanup": {"context": "current_capture_only", "output_stages": [512, 1024], "call_ceiling": 2, "exact_mode": "conservative_short_request_only"},
+    "long_block_cleanup": {"context": "current_targets_plus_reference_only_boundaries_optional_summary_by_manifest", "output_stages": [1024, 2048, 4096], "call_ceiling": 3, "exact_mode": "required", "unqualified_stages": [4096]},
+    "per_chunk_summary": {"context": "current_chunk_only", "output_stages": [512, 1024], "call_ceiling": 2, "exact_mode": "required_for_long_or_near_budget"},
+    "direct_recording_summary": {"context": "complete_authoritative_source_once", "output_stages": [1024, 2048], "call_ceiling": 2, "exact_mode": "required"},
+    "hierarchical_summary": {"context": "ordered_accepted_child_summaries", "output_stages": [1024, 2048, 4096], "call_ceiling": 3, "exact_mode": "required", "unqualified_stages": [4096]},
+    "generic_self_contained": {"context": "current_input_only", "output_stages": [512, 1024, 2048], "call_ceiling": 3, "exact_mode": "conservative_short_request_only"},
+    "image_analysis": {"context": "current_image_and_task_schema", "output_stages": [512, 1024], "call_ceiling": 2, "image_bytes_as_text_tokens": false},
+    "microphone_command": {"context": "current_command_text_only", "output_stages": "owner_decision_required", "proposed_call_ceiling": 2}
+  },
+  "output_escalation": {
+    "allowed": ["finish_reason_length", "finish_reason_absent_and_completion_usage_at_cap"],
+    "explicit_normal_stop_wins_at_cap": true,
+    "completion_safety_still_required": true,
+    "forbidden": ["complete_malformed_json", "schema_failure", "identity_or_order_failure", "semantic_failure", "protected_value_failure", "repetition", "reasoning_leakage", "cancellation", "persistence_failure"]
+  },
+  "summary_architecture": {
+    "canonical": "immutable_versioned_SummaryArtifact",
+    "required_groups": ["identity", "source_revision_digest_and_exact_coverage", "direct_or_hierarchical_provenance", "task_prompt_schema_validator_versions", "runtime_and_token_evidence", "layered_validation", "request_generation_and_attempt", "current_stale_superseded_lifecycle", "structured_payload_and_projection"],
+    "direct_rule": "exact_complete_source_fit_required_else_hierarchical",
+    "hierarchical_rule": "ordered_non_lossy_leaf_ranges_and_complete_accepted_child_coverage_before_current_recording_artifact",
+    "existing_summary_column": "temporary_projection_of_single_current_accepted_recording_artifact",
+    "prompt_eligible_states": ["current"],
+    "prompt_ineligible_states": ["legacy_unverified", "stale", "failed", "partial", "superseded"],
+    "retain_authoritative_surfaces": ["full_text", "postprocessed_text", "blocks", "timestamps", "source_media_references", "raw_search", "raw_export"],
+    "separate_summary_export": true,
+    "cache_dependency": false,
+    "full_text_retirement_steps": ["inventory_by_identity_and_digest", "implement_summary_lifecycle_before_consumption", "add_document_summary_without_alias", "explicit_legacy_window", "task_by_task_prompt_migration", "remove_placeholder_only_after_zero_inventory_or_waiver"]
+  },
+  "microphone_architecture": {
+    "classifier": {
+      "owner": "application",
+      "position": "before_prompt_selection",
+      "trigger": "ASCII MODEL case-insensitive at first non-whitespace position, optional horizontal whitespace, then required colon or full-width colon",
+      "suffix_normalization": "outer_whitespace_trim_only",
+      "empty_suffix": "command_invalid",
+      "fuzzy_matching": false
+    },
+    "dictation": {
+      "prompt": "existing_simple_cleanup_initially",
+      "context": "current_capture_only",
+      "fallback": "exact_original_transcript_with_explicit_degraded_state",
+      "artifact": "microphone_cleanup"
+    },
+    "command": {
+      "prompt": "separate_versioned_command_prompt",
+      "response_contract": "microphone_command_v1",
+      "excluded_context_by_default": ["trigger", "cleanup_prompt", "full_recording", "document_summary", "clipboard"],
+      "artifact": "microphone_model_command",
+      "must_not_write": ["source_transcript", "postprocessed_text", "summary"],
+      "success_projection": ["display_text", "copy_text", "paste_text"],
+      "failure_projection": "typed_error_and_zero_copy_paste",
+      "transcript_as_answer_fallback": false
+    },
+    "provider_parity": true,
+    "schema_incapable_route": "unsupported_no_prompt_only_downgrade"
+  },
+  "package_boundary": {
+    "classification": "candidate_minimal_architecture_not_existing_stable_surface",
+    "candidate_core": ["privacy_sanitized_structural_request_result_DTOs", "raw_JSON_parse_outcomes", "compact_schema_builders", "complete_or_fail_closed_schema_validation", "lifecycle_decision_policy", "context_fit", "output_budget_decisions", "protocol_only_ports"],
+    "host_owned": ["prompts", "source_and_persistence_types", "IDs_and_timestamps", "catalog_governance", "transport_and_lifecycle_side_effects", "cancellation", "semantic_policy", "UI_and_clipboard"],
+    "excluded": ["benchmark_orchestration", "strict_vision_controllers", "live_runners", "lab_candidate_registry", "reports", "forensics", "host_implementation_copy"]
+  },
+  "migration_stages": [
+    {"stage": 0, "name": "owner_policy_closure", "live": false, "gate": "Canonical vocabulary, catalog, telemetry, validator, output, headroom, and retention decisions are versioned and fail closed."},
+    {"stage": 1, "name": "contract_kernel_and_boundaries", "live": false, "gate": "Install/import and architecture tests prove one-way dependency, sanitized identifiers, and no lab-controller leakage."},
+    {"stage": 2, "name": "task_manifests_and_fake_adapter_parity", "live": false, "gate": "Messages, schema, budgets, task, and validation policy match across adapters except a closed transport allow-list."},
+    {"stage": 3, "name": "validator_attempt_control_and_persistence", "live": false, "gate": "Adversarial contracts, cumulative retry, cancellation, stale completion, failure injection, export, read-back, and rollback tests pass."},
+    {"stage": 4, "name": "local_catalog_lifecycle_resource_and_token_planning", "live": false, "gate": "Simulated transitions prove no unapproved selection, incompatible reuse, unsafe unload, estimate-as-exact promotion, or generation after exact no-fit."},
+    {"stage": 5, "name": "structured_text_and_translation_shadow", "live": true, "separate_authorization_required": true, "gate": "Task-specific transport, structure, semantics, latency, and fallback evidence pass without user-visible persistence."},
+    {"stage": 6, "name": "summary_artifact_lifecycle", "live": false, "gate": "Fake-client direct and hierarchical paths prove complete coverage, source retention, staleness, projection, export, resume, and read-back before summary consumption."},
+    {"stage": 7, "name": "microphone_command_shadow", "live": true, "separate_authorization_required": true, "gate": "Classifier, provider parity, strict rejection, cancellation, clipboard zero-side-effect, and artifact read-back pass while ordinary dictation remains unchanged."},
+    {"stage": 8, "name": "task_canaries_and_legacy_retirement", "live": true, "separate_authorization_required": true, "gate": "Per-contract kill switch, accepted-attempt traceability, readable versions, task thresholds, prompt disposition, and rollback are proven."}
+  ],
+  "owner_decisions": [
+    {"id": "O1", "topic": "canonical_summary_placeholder", "recommended": "document_summary_only_with_recording_scope_in_artifact_metadata", "blocking": "manifest_implementation"},
+    {"id": "O2", "topic": "approved_task_profile_catalog_governance", "recommended": "signed_or_integrity_protected_versioned_host_catalog_with_explicit_review", "blocking": "auto_selection"},
+    {"id": "O3", "topic": "artifact_digest_resolution", "recommended": "privacy_safe_immutable_artifact_or_trusted_manifest_digest", "blocking": "exact_auto_identity"},
+    {"id": "O4", "topic": "identifier_and_digest_telemetry", "recommended": "counts_categories_and_keyed_digests_no_raw_request_cell_or_expected_IDs_by_default", "blocking": "telemetry_reuse"},
+    {"id": "O5", "topic": "complete_JSON_Schema_strategy", "recommended": "complete_validator_or_closed_tested_keyword_allow_list_rejecting_unknown_keywords", "blocking": "native_structured_promotion"},
+    {"id": "O6", "topic": "output_stages_degraded_threshold_safety_ratio_and_call_ceilings", "recommended": "proposed_values_offline_and_shadow_only_until_validated", "blocking": "production_defaults"},
+    {"id": "O7", "topic": "memory_headroom_and_estimate_policy", "recommended": "versioned_absolute_and_proportional_reserves_by_platform_and_profile", "blocking": "estimate_based_auto"},
+    {"id": "O8", "topic": "Apple_MLX_Metal_metrics", "recommended": "no_general_Apple_Auto_until_adapter_semantics_are_verified", "blocking": "general_Apple_Auto"},
+    {"id": "O9", "topic": "CUDA_multi_device_process_attribution", "recommended": "single_proven_device_profiles_only_until_placement_evidence", "blocking": "multi_GPU_Auto"},
+    {"id": "O10", "topic": "task_semantic_validators_and_thresholds", "recommended": "fail_closed_or_abstain_review_when_absent", "blocking": "task_canary_promotion"},
+    {"id": "O11", "topic": "command_history_persistence_and_retention", "recommended": "shadow_artifacts_only_until_transaction_readback_and_retention_approval", "blocking": "persistent_command_history"},
+    {"id": "O12", "topic": "legacy_custom_prompt_disposition", "recommended": "explicit_native_legacy_or_blocked_manifest_per_prompt", "blocking": "full_text_and_prompt_inference_retirement"}
+  ],
+  "proposed_implementation_cards": [
+    {"order": 1, "title": "Approve policy records and schema vocabulary", "depends_on": [], "done": "Owner decisions O1-O7 are versioned; schemas parse; unknown states fail closed."},
+    {"order": 2, "title": "Extract candidate core and ports", "depends_on": [1], "done": "Install/import, dependency direction, optional-dependency, and identifier sanitization tests pass."},
+    {"order": 3, "title": "Implement task definitions manifests and provider parity fixtures", "depends_on": [1, 2], "done": "Logical messages, schema, budgets, task, and validation policy match across fake adapters except the transport allow-list."},
+    {"order": 4, "title": "Implement full validation and logical-attempt control plane", "depends_on": [2, 3], "done": "Adversarial response and retry interaction matrix passes with immutable attempts and explicit outcomes."},
+    {"order": 5, "title": "Make persistence atomic or recoverable", "depends_on": [4], "done": "Failure injection proves deterministic recovery and exact accepted-attempt identity/order read-back."},
+    {"order": 6, "title": "Implement approved catalog and local recommendation adapters", "depends_on": [1, 2], "done": "Missing, ambiguous, unsupported, and insufficient paths return typed unavailable with no unapproved fallback."},
+    {"order": 7, "title": "Implement local lifecycle and exact-token planner", "depends_on": [4, 6], "done": "Offline integration proves compatible ownership, exact no-fit replan, truncation-only escalation, and cleanup."},
+    {"order": 8, "title": "Implement summary artifact lifecycle", "depends_on": [4, 5, 7], "done": "Fake-client direct/hierarchical lifecycle, complete coverage, staleness, FTS, export, resume, non-loss, and read-back pass; injection remains disabled."},
+    {"order": 9, "title": "Implement microphone command shadow path", "depends_on": [3, 4, 5], "done": "Classifier, parity, strict validation, cancellation, rollback, and zero clipboard side-effect tests pass."},
+    {"order": 10, "title": "Inventory and migrate legacy prompts", "depends_on": [3, 8], "done": "Every custom prompt has native, legacy, or blocked disposition plus rollback metadata."},
+    {"order": 11, "title": "Design separately authorized shadow and canary evidence plan", "depends_on": [5, 7, 8, 9, 10], "done": "Exact tasks, routes, denominators, privacy metrics, semantic review, stop gates, and rollback have owner approval before live execution."}
+  ],
+  "dispatch": {
+    "implementation_cards_created": 0,
+    "implementation_dispatched": false
+  },
+  "non_claims": [
+    "No model, task profile, context size, concurrency, memory threshold, or rollout percentage is approved.",
+    "No end-to-end host integration or host-product exact token count is established.",
+    "Apple MLX/Metal and multi-GPU recommendation safety are not established.",
+    "Structured microphone cleanup, command answers, translation, summary, and vision semantic quality are not admitted.",
+    "Complete local/cloud capability parity is not proven.",
+    "Transactional persistence, rollback, cache reuse, and production readiness are not proven.",
+    "This report does not authorize live inference, model loads/downloads, cloud calls, migration, commit, or push."
+  ]
+}

@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from enum import StrEnum
+from typing import Any
 
 from ..lifecycle.state import ParallelSemantics
 from ..validation.models import GenerationFailureKind, StructuredValidationStatus
@@ -16,6 +17,67 @@ class ModelScreeningVerdict(StrEnum):
     NEEDS_TIMEOUT_POLICY = "needs_timeout_policy"
     NEEDS_PROMPT_POLICY = "needs_prompt_policy"
     NOT_CANDIDATE_YET = "not_candidate_yet"
+
+
+class TelemetryStatus(StrEnum):
+    AVAILABLE = "available"
+    UNAVAILABLE = "unavailable"
+    ERROR = "error"
+
+
+class GpuTelemetryEvidenceLevel(StrEnum):
+    NVML_PROCESS_ATTRIBUTED = "nvml_process_attributed"
+    NVML_DEVICE_ONLY = "nvml_device_only"
+    NVIDIA_SMI_DEVICE_ONLY = "nvidia_smi_device_only"
+    UNAVAILABLE = "unavailable"
+
+
+class GpuProcessKind(StrEnum):
+    COMPUTE = "compute"
+    GRAPHICS = "graphics"
+
+
+@dataclass(frozen=True, slots=True)
+class GpuProcessSample:
+    process_id_hash: str
+    kind: GpuProcessKind
+    used_gpu_memory_mb: float | None = None
+    gpu_instance_id: int | None = None
+    compute_instance_id: int | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class GpuDeviceSample:
+    device_index: int | None
+    device_id_hash: str
+    evidence_level: GpuTelemetryEvidenceLevel
+    status: TelemetryStatus = TelemetryStatus.AVAILABLE
+    name_hash: str | None = None
+    vram_total_mb: float | None = None
+    vram_used_mb: float | None = None
+    vram_free_mb: float | None = None
+    gpu_util_percent: float | None = None
+    gpu_memory_util_percent: float | None = None
+    gpu_power_watts: float | None = None
+    processes: tuple[GpuProcessSample, ...] = ()
+    mig_enabled: bool | None = None
+    is_mig_device: bool = False
+    mig_device_index: int | None = None
+    parent_device_id_hash: str | None = None
+    error_category: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class GpuTelemetrySample:
+    timestamp_utc: str
+    evidence_level: GpuTelemetryEvidenceLevel
+    status: TelemetryStatus
+    devices: tuple[GpuDeviceSample, ...] = ()
+    adapter: str | None = None
+    error_category: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
 
 
 @dataclass(frozen=True, slots=True)
@@ -75,6 +137,7 @@ class SystemSample:
     vram_used_mb: float | None = None
     ram_used_mb: float | None = None
     gpu_util_percent: float | None = None
+    gpu_telemetry: GpuTelemetrySample | None = None
 
 
 @dataclass(frozen=True, slots=True)

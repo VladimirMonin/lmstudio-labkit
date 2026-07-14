@@ -1,0 +1,406 @@
+{
+  "schema_version": "lmstudio-labkit-provider-neutral-prompt-structured-contracts-v1",
+  "date": "2026-07-13",
+  "status": "read_only_architecture_recommendation_runtime_unexecuted",
+  "decision": {
+    "shared_contract": "Local and cloud consume the same application-owned task definition, prompt manifest, rendered messages, response contract, validation policy, fallback policy, and invocation metadata.",
+    "adapter_boundary": [
+      "endpoint_and_authentication",
+      "provider_cache_annotations",
+      "output_limit_transport_field",
+      "local_reasoning_control",
+      "timeout_and_cancellation_wiring",
+      "response_envelope_extraction"
+    ],
+    "adapter_must_not_select": [
+      "task_kind",
+      "prompt_manifest",
+      "schema",
+      "output_shape",
+      "translation_target",
+      "validator_policy",
+      "fallback_policy"
+    ],
+    "structured_downgrade": "forbidden",
+    "legacy_plain_text": "explicit_compatibility_contract_only"
+  },
+  "evidence_boundary": {
+    "exact_source_contract": [
+      "All current providers use one OpenAI-compatible chat-completions seam for generation.",
+      "Provider payload builders pass response_format unchanged when supplied.",
+      "Current prompt loading recognizes chunk, blocks_json, full_text, clipboard, and context placeholders.",
+      "Current text paths are plain text; current block processing binds strict JSON Schema but has incomplete post-generation identity validation.",
+      "Provider/model/route strict-schema capability negotiation is not implemented.",
+      "Application code owns record, queue, chunk, block, persistence identities, ordering, and timestamps."
+    ],
+    "executed_retained": {
+      "structured_text_context_calls": 202,
+      "structured_text_parseable_or_practically_valid": {"numerator": 199, "denominator": 202},
+      "structured_vision_authorized_calls": {"numerator": 40, "denominator": 40},
+      "structured_vision_raw_schema_applicable": {"numerator": 36, "denominator": 36},
+      "interpretation": "Bounded structural and context evidence only; no production semantic or product admission."
+    },
+    "runtime_unexecuted": [
+      "new prompt manifests",
+      "capability handshake",
+      "custom prompt migration",
+      "new text structured path",
+      "translation metadata registry",
+      "shared validator and persistence state machine",
+      "end_to_end rollout"
+    ],
+    "live_actions": 0,
+    "model_operations": 0,
+    "provider_calls": 0,
+    "implementation_changes": 0,
+    "external_repository_changes": 0
+  },
+  "task_kinds": [
+    {
+      "id": "postprocess_text_v1",
+      "input_shape": "text",
+      "required_placeholder": "chunk",
+      "optional_placeholders": ["context", "document_summary", "clipboard"],
+      "output_contract": "structured_text_v1",
+      "translation_metadata": "forbidden",
+      "fallback": "original_target_text"
+    },
+    {
+      "id": "postprocess_blocks_v1",
+      "input_shape": "blocks",
+      "required_placeholder": "blocks_json",
+      "optional_placeholders": ["context", "document_summary", "clipboard"],
+      "output_contract": "structured_blocks_v1",
+      "translation_metadata": "forbidden",
+      "identity": "exact_count_unique_id_sequence_original_order_no_reference_targets",
+      "fallback": "all_original_target_blocks"
+    },
+    {
+      "id": "translate_text_v1",
+      "input_shape": "text",
+      "required_placeholder": "chunk",
+      "optional_placeholders": ["context", "document_summary", "clipboard_if_manifest_permits", "target_language"],
+      "output_contract": "structured_text_v1",
+      "translation_metadata": "required",
+      "fallback": "original_source_text_with_degraded_state"
+    },
+    {
+      "id": "translate_blocks_v1",
+      "input_shape": "blocks",
+      "required_placeholder": "blocks_json",
+      "optional_placeholders": ["context", "document_summary", "clipboard_if_manifest_permits", "target_language"],
+      "output_contract": "structured_blocks_v1",
+      "translation_metadata": "required",
+      "identity": "exact_count_unique_id_sequence_original_order_no_reference_targets",
+      "fallback": "all_original_source_blocks_with_degraded_state"
+    },
+    {
+      "id": "legacy_plain_text_v0",
+      "input_shape": "text",
+      "required_placeholder": "chunk",
+      "optional_placeholders": ["legacy_profile_allow_list"],
+      "output_contract": "plain_message_text",
+      "translation_metadata": "manifest_specific",
+      "fallback": "existing_caller_behavior",
+      "promotion": "never_implicit"
+    }
+  ],
+  "response_contracts": {
+    "structured_text_v1": {
+      "schema": {
+        "type": "object",
+        "required": ["text"],
+        "additionalProperties": false,
+        "properties": {"text": {"type": "string", "minLength": 1}}
+      },
+      "model_fields": ["text"],
+      "application_fields": ["request_id", "source_identity", "timestamps", "attempt", "fallback_state"]
+    },
+    "structured_blocks_v1": {
+      "schema": {
+        "type": "object",
+        "required": ["blocks"],
+        "additionalProperties": false,
+        "properties": {
+          "blocks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "text"],
+              "additionalProperties": false,
+              "properties": {
+                "id": {"type": "integer"},
+                "text": {"type": "string", "minLength": 1}
+              }
+            }
+          }
+        }
+      },
+      "model_fields": ["blocks[].id", "blocks[].text"],
+      "business_validation": [
+        "exact_count",
+        "unique_ids",
+        "exact_expected_id_sequence",
+        "original_order",
+        "strict_non_empty_text",
+        "no_reference_only_output"
+      ],
+      "request_specific_id_consts_default": false
+    }
+  },
+  "task_request": {
+    "required_fields": [
+      "request_id",
+      "request_generation",
+      "attempt_index",
+      "task_kind",
+      "task_version",
+      "prompt_manifest_id",
+      "prompt_manifest_version",
+      "messages",
+      "response_contract_id",
+      "context_policy",
+      "output_budget",
+      "timeout",
+      "total_call_ceiling",
+      "source_digest",
+      "prompt_digest",
+      "schema_digest",
+      "validator_version",
+      "fallback_policy_id"
+    ],
+    "conditional_fields": {
+      "translation": "required_for_translation_tasks_only",
+      "expected_ids": "required_for_block_tasks",
+      "expected_ids_digest": "required_for_block_tasks"
+    },
+    "logical_message_parity": "identical_across_provider_adapters_except_explicit_transport_annotations"
+  },
+  "prompt_manifest": {
+    "required_fields": [
+      "manifest_id",
+      "version",
+      "source",
+      "task_kind",
+      "task_version",
+      "input_shape",
+      "output_contract_id",
+      "required_placeholders",
+      "optional_placeholders",
+      "context_policy",
+      "translation_policy",
+      "validator_policy_id",
+      "fallback_policy_id",
+      "schema_digest",
+      "compatibility_mode"
+    ],
+    "source_values": ["bundled", "custom"],
+    "compatibility_modes": ["native_v1", "legacy_text_v0", "blocked"],
+    "admission_failures": [
+      "missing_required_value",
+      "unknown_placeholder",
+      "both_content_placeholders",
+      "missing_content_placeholder",
+      "input_output_shape_mismatch",
+      "task_manifest_mismatch",
+      "translation_target_conflict",
+      "schema_digest_mismatch"
+    ]
+  },
+  "placeholders": {
+    "canonical": {
+      "chunk": {"role": "current_text_target", "required_for": ["text_tasks"], "exclusive_with": "blocks_json"},
+      "blocks_json": {"role": "compact_current_target_blocks", "required_for": ["block_tasks"], "exclusive_with": "chunk"},
+      "context": {"role": "small_reference_only_boundary_context", "optional": true},
+      "document_summary": {
+        "role": "existing_application_owned_document_or_recording_summary_reference",
+        "optional": true,
+        "authority": false,
+        "provenance_outside_prompt": ["source_digest", "summary_version"],
+        "absence": "valid"
+      },
+      "clipboard": {"role": "explicit_user_selected_auxiliary_context", "optional": true, "manifest_gated": true},
+      "target_language": {"role": "derived_display_value_from_typed_translation_metadata", "allowed_for": ["translation_tasks"]}
+    },
+    "legacy": {
+      "full_text": {
+        "status": "deprecated_legacy_only",
+        "silent_alias_to_document_summary": false,
+        "new_manifests": "rejected",
+        "migration": "explicit_budgeted_legacy_profile_or_user_edit"
+      }
+    },
+    "optional_rendering": "manifest_owned_section_omission_or_deterministic_empty_value_no_literal_placeholder_leak"
+  },
+  "translation_metadata": {
+    "source": {
+      "language_tag": "explicit_detected_or_und",
+      "mode": ["declared", "detected", "und"],
+      "provenance_recorded": true
+    },
+    "target": {
+      "language_tag": "required_canonical_bcp47_style",
+      "display_name": "derived_from_application_language_registry"
+    },
+    "preserve": {
+      "code_identifiers": true,
+      "technical_terms": "task_policy",
+      "protected_values": true
+    },
+    "model_target_authority": false,
+    "validators": [
+      "target_language_compliance",
+      "protected_term_preservation",
+      "source_language_leak_policy",
+      "no_unsupported_addition_or_omission"
+    ],
+    "hard_coded_custom_target": "manifest_must_pin_same_target_or_request_is_rejected"
+  },
+  "application_owned_state": [
+    "request_recording_document_image_chunk_block_queue_and_persistence_ids",
+    "request_generation_attempt_idempotence_accepted_attempt_and_fallback_state",
+    "source_order_expected_count_exact_id_sequence_uniqueness_and_target_reference_split",
+    "source_ranges_and_start_end_timestamps",
+    "source_prompt_schema_expected_id_validator_and_output_digests",
+    "protected_value_inventory",
+    "persistence_transaction_and_readback_state"
+  ],
+  "validator_pipeline": [
+    "current_generation_and_not_cancelled",
+    "transport_and_safe_completion",
+    "exact_raw_json_parse",
+    "full_local_closed_schema",
+    "business_identity",
+    "task_semantics_and_protected_values",
+    "precommit_cancellation_and_generation_fence",
+    "atomic_persistence_and_readback"
+  ],
+  "retry_fallback": {
+    "transport_retry": {
+      "eligible": ["transient_timeout", "rate_limit", "server_failure"],
+      "requirements": ["bounded", "cancel_aware", "generation_aware"]
+    },
+    "structural_retry": {
+      "maximum": 1,
+      "eligible": ["invalid_raw_json", "closed_schema_failure", "identity_or_order_failure"],
+      "ineligible": [
+        "semantic_omission_or_addition",
+        "protected_value_mutation",
+        "boundary_leakage",
+        "length_exhaustion",
+        "runaway_repetition",
+        "translation_language_failure"
+      ]
+    },
+    "global": "one_logical_total_call_ceiling_with_immutable_attempts",
+    "text_fallback": "original_target_text_fallback_original",
+    "blocks_fallback": "complete_original_target_sequence_fallback_original",
+    "structured_to_plain_downgrade": false,
+    "no_safe_original_equivalent": "failed_or_unavailable"
+  },
+  "provider_capability_negotiation": {
+    "key": ["provider", "model_revision", "endpoint_family"],
+    "evidence_states": ["verified", "claimed", "unknown", "unsupported"],
+    "required_fields": [
+      "chat_messages",
+      "strict_json_schema",
+      "schema_profile",
+      "finish_reason",
+      "usage_tokens",
+      "max_output_tokens",
+      "reasoning_control",
+      "cache_mode",
+      "cancellation"
+    ],
+    "outcomes": {
+      "native_structured": "bind_exact_response_format_unchanged_and_use_shared_validator",
+      "legacy_plain_text": "only_for_manifest_declaring_legacy_plain_text_v0",
+      "unsupported": "fail_before_transport_and_retain_original_source",
+      "shadow_only": "no_user_visible_or_persistent_replacement"
+    },
+    "claimed_or_unknown_strict_schema_for_promotion": false,
+    "adapter_schema_rewrite": false,
+    "provider_specific_schema_variant": "separately_versioned_contract_with_own_evidence"
+  },
+  "custom_prompt_compatibility": {
+    "inventory_metadata": ["local_identity", "content_digest", "sections", "placeholder_set"],
+    "public_raw_content": false,
+    "rules": [
+      "Unknown placeholders, both content placeholders, no content placeholder, or target conflict are blocked.",
+      "Existing chunk prompts default to legacy_plain_text_v0.",
+      "Opt-in to structured_text_v1 requires an explicit manifest and compatibility preview.",
+      "Existing blocks_json prompts are not automatically structured_blocks_v1.",
+      "Prompt-only bare-array output instructions are incompatible with the closed object envelope and require migration.",
+      "Existing full_text stays deprecated legacy and is never interpreted as document_summary.",
+      "Provider switching preserves the same admitted custom manifest.",
+      "Offline fixtures cover optional values, placeholder leaks, schema digests, and fake-adapter parity."
+    ],
+    "filename_is_task_identity": false,
+    "ui_fields": [
+      "task_kind",
+      "output_contract",
+      "required_and_optional_placeholders",
+      "translation_target_policy",
+      "legacy_status",
+      "blocking_diagnostics"
+    ]
+  },
+  "migration": [
+    {"stage": 1, "name": "contract_kernel", "live_output_change": false},
+    {"stage": 2, "name": "manifest_inventory_and_custom_classification", "live_output_change": false},
+    {"stage": 3, "name": "fake_adapter_payload_parity", "live_output_change": false},
+    {"stage": 4, "name": "shadow_structured_text", "live_output_change": false},
+    {"stage": 5, "name": "harden_blocks_validation_control_and_persistence", "live_output_change": false},
+    {"stage": 6, "name": "translation_canary_one_target_and_shape_at_a_time", "live_output_change": true},
+    {"stage": 7, "name": "document_summary_consumption_after_separate_summary_lifecycle", "live_output_change": true},
+    {"stage": 8, "name": "retire_full_text_and_prompt_inference_after_explicit_custom_disposition", "live_output_change": true}
+  ],
+  "required_offline_evidence": [
+    "manifest_and_placeholder_admission",
+    "optional_section_rendering_and_no_placeholder_leak",
+    "local_cloud_fake_adapter_payload_parity_with_transport_allow_list",
+    "exact_schema_binding_and_digest_rejection",
+    "text_and_block_raw_schema_identity_failure_matrix",
+    "translation_target_and_protected_term_failure_matrix",
+    "capability_verified_unknown_unsupported_and_shadow_outcomes",
+    "no_silent_structured_downgrade",
+    "separate_retry_accounting_under_total_call_ceiling",
+    "stale_generation_cancellation_and_original_fallback",
+    "atomic_persistence_failure_injection_and_readback",
+    "legacy_custom_inventory_and_reversible_preview"
+  ],
+  "evidence": {
+    "public": [
+      "experiments/lmstudio/results_summaries/2026-07-13_host_request_flow_inventory.md",
+      "experiments/lmstudio/results_summaries/2026-07-13_labkit_package_reuse_assessment.md",
+      "experiments/lmstudio/results_summaries/2026-07-13_task_specific_context_schema_policy.md",
+      "experiments/lmstudio/results_summaries/2026-07-13_structured_validation_migration_risks.md",
+      "lmstudio_labkit/requests.py",
+      "lmstudio_labkit/schema_builders.py",
+      "lmstudio_labkit/json_normalization.py",
+      "lmstudio_labkit/validation.py"
+    ],
+    "host_aliases": [
+      "host/src/infrastructure/llm/prompt_loader.py",
+      "host/src/domain/prompt_placeholders.py",
+      "host/src/domain/prompt_validator.py",
+      "host/src/domain/models/config/postprocessing.py",
+      "host/src/application/services/postprocessing_service.py",
+      "host/src/application/services/blocks_post_processor.py",
+      "host/src/domain/schemas/block_schema.py",
+      "host/src/infrastructure/llm/openai_compatible_client.py",
+      "host/src/infrastructure/llm/payload_builders/{openrouter,polza,lmstudio}.py",
+      "host/src/domain/llm_providers.py",
+      "host/tests/focused_prompt_postprocessing_block_payload_provider_contracts"
+    ]
+  },
+  "limits": [
+    "No provider or model route was newly capability-tested.",
+    "No new prompt, schema, validator, persistence state machine, summary lifecycle, target registry, or custom migration is implemented.",
+    "No model, context size, semantic threshold, concurrency, or rollout percentage is approved.",
+    "Logical message parity is a required future offline test, not an executed result here.",
+    "Translation quality is not established by schema or language-character heuristics.",
+    "document_summary is consumption-only and no summary generation is created or validated.",
+    "Private prompt text and raw user content are not published."
+  ]
+}

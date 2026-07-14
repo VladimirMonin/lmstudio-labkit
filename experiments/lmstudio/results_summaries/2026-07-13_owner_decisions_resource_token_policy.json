@@ -1,0 +1,271 @@
+{
+  "schema_version": "lmstudio-labkit-owner-decisions-resource-token-policy-v1",
+  "date": "2026-07-13",
+  "status": "recommended_owner_decisions_runtime_unexecuted",
+  "actions_by_report": {
+    "live_requests": 0,
+    "model_operations": 0,
+    "cloud_calls": 0,
+    "tokenizer_captures": 0,
+    "implementation_changes": 0,
+    "host_repository_changes": 0,
+    "commits": 0,
+    "pushes": 0
+  },
+  "decisions": [
+    {
+      "id": "O6",
+      "classification": "approve_configurable_default",
+      "recommendation": "Use versioned bounded task output stages, truncation-only escalation, a 0.85 context safety ratio, a 256-token uncalibrated margin, a 0.50 conservative degraded threshold, and cumulative two/three-call ceilings.",
+      "production_promotion": "requires_shadow_calibration"
+    },
+    {
+      "id": "O7",
+      "classification": "approve_configurable_default",
+      "recommendation": "Evaluate CUDA VRAM and host RAM independently, evaluate Apple unified memory as one pool, and apply the stricter absolute/proportional reserve per resource.",
+      "production_promotion": "requires_shadow_calibration"
+    },
+    {
+      "id": "O8",
+      "classification": "blocked_external_capability",
+      "recommendation": "Disable general Apple Auto unless a verified shared-pool adapter or an exact trusted catalog envelope supplies attributable pressure/process/runtime evidence.",
+      "production_promotion": "verified_adapter_or_exact_observed_envelope_required"
+    },
+    {
+      "id": "O9",
+      "classification": "approve_now",
+      "recommendation": "Restrict CUDA Auto to one exact physical GPU or one exact MIG instance; never sum devices without exact approved placement and per-device evidence.",
+      "production_promotion": "multi_device_auto_blocked_until_exact_placement_evidence"
+    }
+  ],
+  "evidence": {
+    "retained_exact_token": {
+      "rows": 80,
+      "loaded_instance_bindings": 4,
+      "formatted_prompt_token_range": [925, 12797],
+      "interpretation": "exact only for frozen request/model/instance/runtime bindings"
+    },
+    "retained_output_failures": [
+      "two extended-context summaries exhausted 1024 tokens and became structurally unusable",
+      "one full-context cleanup exhausted 4096 tokens and returned malformed JSON"
+    ],
+    "current_static_gaps": [
+      "AdaptiveOutputBudgetPolicy permits parse-incomplete escalation without independent truncation",
+      "current system metrics parses only the first nvidia-smi GPU row",
+      "current system metrics does not bind GPU memory to an exact LM Studio PID or placement",
+      "no verified Apple LM Studio process/runtime adapter exists"
+    ]
+  },
+  "two_phase_algorithm": {
+    "phase_a_pre_materialization": [
+      "freeze exact approved task profile, rendered messages, schema, identity, request digests, context tiers, output stages, call ceiling, token mode, platform class and policy versions",
+      "select the smallest configured initial output stage covering the contract-derived estimate",
+      "calculate conservative token demand and choose the smallest fitting approved context tier",
+      "collect platform resource snapshot and apply typed reserve gates",
+      "allow estimate-only materialization only when the exact profile explicitly permits it",
+      "otherwise return manual_approved_only or unavailable before load"
+    ],
+    "phase_b_post_materialization": [
+      "read back exact model, runtime, instance, context, parallelism, placement and load configuration",
+      "apply the loaded prompt template and tokenizer to the same frozen messages",
+      "re-evaluate exact prompt plus classified overhead, reserve and margin",
+      "read settled resource state with exact CUDA process/device attribution or verified Apple envelope",
+      "generate only after token and resource gates pass and increment one cumulative call counter",
+      "monitor immutable attempt, peak and pressure evidence",
+      "escalate output only for independent truncation when next-stage fit and call ceiling pass",
+      "release only owned resources and require cleanup read-back"
+    ]
+  },
+  "token_policy": {
+    "context_safety_ratio": {
+      "value": 0.85,
+      "evidence_class": "provisional_configurable"
+    },
+    "uncalibrated_margin_tokens": {
+      "value": 256,
+      "evidence_class": "retained_bounded_minimum_provisional"
+    },
+    "degraded_estimate_threshold_of_safe_budget": {
+      "value": 0.5,
+      "evidence_class": "provisional_configurable"
+    },
+    "estimate_formula": "E_chat + E_schema + E_task + R0 + M <= floor(context * 0.85)",
+    "degraded_formula": "E_chat + E_schema + E_task + hard_output_max + M <= floor(0.50 * floor(context * 0.85))",
+    "uncalibrated_text_bound": "one_token_per_UTF8_byte",
+    "exact_formula": "T_sdk + H_schema + H_task + R0 + M <= floor(effective_context * 0.85)",
+    "exact_label_boundary": "Only T_sdk is exact until schema/task overhead is observed for the same binding.",
+    "task_defaults": {
+      "short_microphone_cleanup": {"stages": [512, 1024], "hard_maximum": 1024, "call_ceiling": 2, "token_mode": "conservative_estimate_allowed_under_degraded_rule"},
+      "microphone_command": {"stages": [512, 1024], "hard_maximum": 1024, "call_ceiling": 2, "token_mode": "conservative_estimate_allowed_under_degraded_rule"},
+      "long_block_cleanup": {"stages": [1024, 2048, 4096], "hard_maximum": 4096, "call_ceiling": 3, "token_mode": "exact_required", "shadow_only_stages": [4096]},
+      "per_chunk_summary": {"stages": [512, 1024], "hard_maximum": 1024, "call_ceiling": 2, "token_mode": "exact_required_for_long_or_near_budget"},
+      "direct_recording_summary": {"stages": [1024, 2048], "hard_maximum": 2048, "call_ceiling": 2, "token_mode": "exact_required"},
+      "hierarchical_summary": {"stages": [1024, 2048, 4096], "hard_maximum": 4096, "call_ceiling": 3, "token_mode": "exact_required", "shadow_only_stages": [4096]},
+      "generic_self_contained_transform": {"stages": [512, 1024, 2048], "hard_maximum": 2048, "call_ceiling": 3, "token_mode": "conservative_only_for_short_bounded_input"},
+      "image_analysis": {"stages": [512, 1024], "hard_maximum": 1024, "call_ceiling": 2, "token_mode": "provider_runtime_specific", "image_bytes_as_text_tokens": false}
+    },
+    "truncation": {
+      "allowed_signals": [
+        "finish_reason_length",
+        "finish_reason_absent_and_completion_tokens_at_or_above_cap"
+      ],
+      "explicit_normal_stop_wins_at_cap": true,
+      "missing_finish_and_usage": "truncation_signal_unavailable",
+      "forbidden_escalation_causes": [
+        "complete_malformed_JSON",
+        "schema_failure",
+        "identity_or_order_failure",
+        "semantic_failure",
+        "protected_value_failure",
+        "repetition",
+        "reasoning_leakage",
+        "cancellation",
+        "persistence_failure"
+      ]
+    },
+    "library_8192_maximum": "guardrail_not_host_stage"
+  },
+  "resource_policy": {
+    "reserve_formula": "max(absolute_reserve_bytes, floor(total_bytes * proportional_reserve))",
+    "fit_formula": "required_bytes <= max(0, current_available_bytes - reserve_bytes)",
+    "startup_defaults": {
+      "cuda_target_vram": {"absolute_reserve_gib": 1, "proportional_reserve": 0.1, "evidence_class": "provisional_configurable"},
+      "discrete_host_ram": {"absolute_reserve_gib": 2, "proportional_reserve": 0.15, "evidence_class": "provisional_configurable"},
+      "apple_unified_memory": {"absolute_reserve_gib": 4, "proportional_reserve": 0.2, "evidence_class": "provisional_configurable"},
+      "apple_metal_working_set": {"absolute_reserve_gib": 1, "proportional_reserve": 0.15, "evidence_class": "provisional_configurable"}
+    },
+    "envelope_binding": [
+      "exact_identity",
+      "context",
+      "runtime_parallelism",
+      "application_concurrency",
+      "KV_cache_policy",
+      "placement",
+      "runtime_build",
+      "adapter_version",
+      "sample_interval",
+      "baseline",
+      "settled_load",
+      "peak",
+      "unload_readback"
+    ],
+    "cuda": {
+      "preferred_adapter": "NVML",
+      "auto_allowed_states": ["cuda_single_device_verified"],
+      "conditional_auto_states": ["cuda_single_device_verified_with_catalog_authorized_conservative_estimate_fit"],
+      "unavailable_states": ["cuda_single_device_degraded", "cuda_multi_device_unverified", "cuda_metrics_unavailable"],
+      "placement_rule": "one exact physical device UUID or one exact MIG instance handle",
+      "sum_devices": false,
+      "independent_budgets": ["target_device_VRAM", "host_RAM"],
+      "process_list_is_dynamic": true
+    },
+    "apple": {
+      "shared_pool": true,
+      "sum_RAM_and_VRAM": false,
+      "states": {
+        "apple_verified": "physical/available memory, pressure, exact process footprint and runtime active/cache/peak counters bound to one interval with tested reset/overlap semantics",
+        "apple_degraded_observed_envelope": "exact trusted catalog envelope only; no upward extrapolation",
+        "apple_unavailable": "required counter missing, attribution ambiguous, pressure warning/critical, or envelope shape mismatch"
+      },
+      "general_auto_without_verified_adapter": false,
+      "auto_without_runtime_counters": "exact_trusted_catalog_envelope_only",
+      "hard_pressure_states": ["warning", "critical"]
+    }
+  },
+  "auto_without_exact_metrics": {
+    "exact_token_count_missing": "only conservative_estimate_allowed tasks below degraded threshold; otherwise unavailable",
+    "usage_missing": "retain declared cap/call ceiling; disable usage reconciliation and usage-based truncation",
+    "cuda_process_or_device_attribution_missing": "static estimate may reject; Auto unavailable",
+    "cuda_peak_envelope_missing": "catalog-authorized single-device conservative estimate only; otherwise measurement required",
+    "apple_verified_adapter_missing": "exact trusted catalog envelope only; otherwise Auto unavailable",
+    "apple_pressure_missing": "Auto unavailable",
+    "multi_device_placement_missing": "Auto unavailable"
+  },
+  "reason_codes": {
+    "planning_token": [
+      "unresolved_request", "estimate_unavailable", "estimate_no_fit", "exact_tokenization_unavailable", "exact_no_fit", "schema_overhead_unobserved", "usage_unavailable", "usage_reconciliation_fault", "truncation_signal_unavailable", "truncation_observed", "truncation_next_stage_no_fit", "truncation_ceiling_reached", "complete_structural_failure", "semantic_failure", "call_ceiling_reached", "cancelled_or_stale"
+    ],
+    "resource_lifecycle": [
+      "resource_adapter_unsupported", "resource_metrics_unavailable", "resource_snapshot_stale", "headroom_insufficient", "static_estimate_exceeds_budget", "observed_peak_exceeds_budget", "load_identity_mismatch", "load_shape_mismatch", "settled_load_not_observed", "process_attribution_ambiguous", "cleanup_readback_failed", "external_instance_not_owned"
+    ],
+    "cuda": [
+      "cuda_device_unresolved", "cuda_process_not_bound", "cuda_competing_process_ambiguous", "cuda_multi_device_unverified", "cuda_mig_handle_required", "cuda_placement_unverified", "cuda_vram_insufficient", "host_ram_insufficient"
+    ],
+    "apple": [
+      "apple_unified_adapter_unverified", "apple_pressure_unavailable", "apple_pressure_warning", "apple_pressure_critical", "apple_process_footprint_unavailable", "apple_runtime_counters_unavailable", "apple_counter_overlap_unverified", "apple_envelope_missing", "apple_envelope_shape_mismatch", "apple_unified_memory_insufficient", "apple_metal_working_set_insufficient"
+    ]
+  },
+  "rollback": {
+    "policy_owner": "host_product",
+    "versioned_configuration": true,
+    "kill_switches": [
+      "auto_selection_enabled",
+      "estimate_only_token_mode_enabled",
+      "conservative_resource_estimate_auto_enabled_per_platform_profile",
+      "apple_auto_enabled",
+      "cuda_multi_device_auto_enabled",
+      "task_output_stage_call_policy_version"
+    ],
+    "startup_defaults": {
+      "cuda_multi_device_auto_enabled": false,
+      "apple_auto_enabled_without_verified_adapter_or_exact_envelope": false
+    },
+    "inflight_behavior": "policy change marks in-flight request generations stale at the publication fence",
+    "lifecycle_behavior": "never unload external instances",
+    "fallback": "approved_manual_selection_or_existing_non_model_original_source_path"
+  },
+  "minimum_acceptance_tests": [
+    "freeze-before-estimate invalidation",
+    "smallest fitting approved context tier",
+    "estimate-pass exact-fail replans with zero generation calls",
+    "degraded threshold below/equal/above boundaries",
+    "explicit normal stop at cap does not escalate",
+    "only independent truncation increases output cap",
+    "all retry classes share one cumulative call counter",
+    "reserve equality underflow unknown and stale states",
+    "CUDA VRAM and host RAM are independent",
+    "multiple GPUs are never summed",
+    "MIG requires a specific instance handle and exact process placement",
+    "Apple overlapping counters are not summed",
+    "Apple warning or critical pressure blocks Auto",
+    "missing Apple adapter permits only exact trusted envelope",
+    "cancellation and stale generation prevent persistence",
+    "cleanup releases only owned instances",
+    "rollback disables future Auto and invalidates in-flight publication"
+  ],
+  "calibration_plan": {
+    "authorization": "separate_live_plan_required",
+    "token_rows": ["estimate", "T_sdk", "server_usage_delta", "context", "schema_family", "runtime_template_version"],
+    "resource_rows": ["baseline", "settled_load", "peak", "pressure", "process_device_attribution", "unload_readback"],
+    "attempt_rows": ["task_stage", "finish_usage_signal", "structural_outcome", "semantic_outcome", "latency", "cancellation", "call_count"],
+    "provisional_minimum_matching_token_observations": 30,
+    "provisional_minimum_clean_resource_cycles": 10,
+    "required_zero_counts": ["OOM", "critical_pressure", "cleanup_fault", "negative_token_reconciliation"],
+    "promotion_rule": "observed upper bound remains below configured reserve",
+    "bucket_reset_dimensions": ["runtime", "model_revision", "quantization", "context", "parallelism", "concurrency", "placement", "KV_cache", "adapter", "schema_family", "policy_version"],
+    "sample_count_classification": "engineering_startup_gate_not_statistical_guarantee"
+  },
+  "official_sources": [
+    {"topic": "LM Studio exact loaded-model prompt token method", "url": "https://lmstudio.ai/docs/python/model-info/get-context-length"},
+    {"topic": "LM Studio tokenization", "url": "https://lmstudio.ai/docs/typescript/tokenization"},
+    {"topic": "LM Studio load context semantics", "url": "https://lmstudio.ai/docs/typescript/api-reference/llm-load-model-config"},
+    {"topic": "LM Studio native load endpoint", "url": "https://lmstudio.ai/docs/developer/rest/load"},
+    {"topic": "LM Studio native model inventory", "url": "https://lmstudio.ai/docs/developer/rest/list"},
+    {"topic": "LM Studio estimate-only load changelog", "url": "https://lmstudio.ai/docs/developer/api-changelog"},
+    {"topic": "NVIDIA NVML device memory, process and MIG queries", "url": "https://docs.nvidia.com/deploy/nvml-api/group__nvmlDeviceQueries.html"},
+    {"topic": "MLX unified memory", "url": "https://ml-explore.github.io/mlx/build/html/usage/unified_memory.html"},
+    {"topic": "MLX memory management counters and controls", "url": "https://ml-explore.github.io/mlx/build/html/python/memory_management.html"},
+    {"topic": "Apple Metal recommended working set", "url": "https://developer.apple.com/documentation/metal/mtldevice/recommendedmaxworkingsetsize"},
+    {"topic": "Apple system memory pressure", "url": "https://developer.apple.com/documentation/dispatch/dispatchsourcememorypressure"},
+    {"topic": "Apple process physical footprint", "url": "https://developer.apple.com/documentation/kernel/task_vm_info_data_t/1553210-phys_footprint"}
+  ],
+  "non_claims": [
+    "No production model task profile context tier memory envelope latency target or semantic threshold is approved.",
+    "Provisional numeric values and sample counts are not universal hardware or statistical facts.",
+    "Static estimates free memory and file size are not observed peak memory.",
+    "MLX counters are not proven available or attributable through external LM Studio.",
+    "recommendedMaxWorkingSetSize is not OS available memory or a guaranteed allocation.",
+    "Current first-row nvidia-smi telemetry is insufficient for multi-device or process-safe Auto.",
+    "No live execution or implementation is authorized."
+  ]
+}

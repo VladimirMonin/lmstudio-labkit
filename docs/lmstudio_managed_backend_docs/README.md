@@ -20,6 +20,7 @@
 | 09 | `09_metrics_schema_and_result_format.md` | Схема метрик, JSONL/SQLite формат результатов |
 | 10 | `10_lmstudio_managed_backend_architecture.md` | Итоговая архитектура подсистемы LM Studio Managed Backend |
 | 11 | `11_test_matrix_5060ti_16gb_cuda.md` | Расширенная тестовая матрица под RTX 5060 Ti 16GB, включая vision |
+| 12 | `12_gpu_telemetry_recommendations_and_package_boundary.md` | Publication-safe GPU telemetry semantics, versioned recommendation usage, and standalone package extraction proposal |
 
 ## Рекомендуемый порядок чтения 🧭
 
@@ -36,6 +37,7 @@ graph TD
     I --> H
     H --> J[11 Test Matrix 5060 Ti]
     J --> K[10 Managed Backend Architecture]
+    K --> L[12 Telemetry and Package Boundary]
 ```
 
 > [!TIP]

@@ -18,7 +18,7 @@ from .output_budget import (
     decide_output_budget,
     observe_output_budget,
 )
-from .requests import RequestPlan, RequestResult
+from .requests import ReasoningMode, RequestPlan, RequestResult
 
 
 class ManagedExecutorError(RuntimeError):
@@ -54,6 +54,9 @@ class ManagedExecutionResult:
     output_budgets_used: tuple[int, ...] = ()
     output_budget_stop_reason: str | None = None
     failure_forensics_attempts: tuple[dict[str, object], ...] = ()
+    reasoning_mode: ReasoningMode = "auto"
+    reasoning_output_tokens: int | None = None
+    reasoning_control_applied: bool | None = None
 
 
 class ManagedHostRunner(Protocol):
@@ -83,6 +86,24 @@ class ManagedHostRunner(Protocol):
         max_tokens: int | None = None,
     ) -> object: ...
 
+    def preflight_native_reasoning(
+        self,
+        *,
+        model_id: str,
+        reasoning: str,
+    ) -> tuple[tuple[str, ...], str]: ...
+
+    def native_chat_completion(
+        self,
+        *,
+        model_id: str,
+        messages: Sequence[Mapping[str, str]],
+        reasoning: str | None,
+        max_output_tokens: int,
+        temperature: float,
+        timeout_s: float,
+    ) -> NativeChatDiagnosticResult: ...
+
     def cleanup_model(self, *, model_id: str) -> object: ...
 
     def count_loaded_instances(self, *, model_id: str) -> int | None: ...
@@ -92,10 +113,10 @@ class ManagedHostRunner(Protocol):
 class ManagedLMStudioExecutor:
     """Guarded adapter for a host-managed LM Studio runner.
 
-    Version 1 intentionally supports a narrow text-only live shape: structured
-    JSON over OpenAI-compatible ``/v1/chat/completions`` with explicit context
-    lengths, parallel 1, and temperature 0. It performs no network I/O unless a
-    host runner is injected.
+    Version 1 supports a narrow text-only live shape over either OpenAI-compatible
+    ``/v1/chat/completions`` or native ``/api/v1/chat``. Native structured responses
+    are plain model text validated locally; no JSON grammar is sent to the server.
+    Both routes use explicit context lengths, parallel 1, and temperature 0.
     """
 
     host_runner: ManagedHostRunner
@@ -109,8 +130,10 @@ class ManagedLMStudioExecutor:
     failure_forensics: LocalFailureForensics | None = None
 
     def __post_init__(self) -> None:
-        if self.endpoint_path != "/v1/chat/completions":
-            raise ManagedExecutorError("managed executor supports only /v1/chat/completions")
+        if self.endpoint_path not in {"/v1/chat/completions", "/api/v1/chat"}:
+            raise ManagedExecutorError(
+                "managed executor supports only /v1/chat/completions or /api/v1/chat"
+            )
         if self.context_length not in SUPPORTED_MANAGED_CONTEXT_LENGTHS:
             supported = ", ".join(str(item) for item in sorted(SUPPORTED_MANAGED_CONTEXT_LENGTHS))
             raise ManagedExecutorError(f"managed executor supported context lengths: {supported}")
@@ -152,6 +175,14 @@ class ManagedLMStudioExecutor:
             plan.options.endpoint_family != first_plan.options.endpoint_family for plan in plans
         ):
             raise ManagedExecutorError("managed executor session requires one endpoint_family")
+        if any(plan.options.reasoning_mode != first_plan.options.reasoning_mode for plan in plans):
+            raise ManagedExecutorError("managed executor session requires one reasoning_mode")
+        reasoning_mode = first_plan.options.reasoning_mode
+        if self.endpoint_path == "/api/v1/chat" and reasoning_mode != "auto":
+            self.host_runner.preflight_native_reasoning(
+                model_id=model_id,
+                reasoning=reasoning_mode,
+            )
         pre_load_instances = self.host_runner.count_loaded_instances(model_id=model_id)
         if pre_load_instances is None:
             raise ManagedExecutorError("managed executor pre-load state was not verified")
@@ -210,6 +241,7 @@ class ManagedLMStudioExecutor:
                 int | None,
                 int | None,
                 str | None,
+                int | None,
                 tuple[int, ...],
                 str | None,
                 tuple[dict[str, object], ...],
@@ -233,6 +265,7 @@ class ManagedLMStudioExecutor:
                 prompt_tokens: int | None = None
                 completion_tokens: int | None = None
                 cached_tokens: int | None = None
+                reasoning_output_tokens: int | None = None
                 finish_reason: str | None = None
                 stop_reason: str | None = (
                     "caller_override" if plan.options.max_tokens is not None else None
@@ -241,30 +274,72 @@ class ManagedLMStudioExecutor:
                 for attempt_index, max_tokens in enumerate(budgets, start=1):
                     started_at = datetime.now(UTC).isoformat()
                     started = time.monotonic()
-                    chat_options: dict[str, Any] = {
-                        "endpoint_path": self.endpoint_path,
-                        "model_id": model_id,
-                        "messages": _messages_from_plan(plan),
-                        "response_format": _response_format_from_plan(
-                            plan, strict_json_schema=self.strict_json_schema
-                        ),
-                        "temperature": self.temperature,
-                        "timeout_s": plan.options.timeout_s,
-                    }
-                    if max_tokens is not None:
-                        chat_options["max_tokens"] = max_tokens
-                    raw_payload = self.host_runner.chat_completion(**chat_options)
+                    if self.endpoint_path == "/api/v1/chat":
+                        if max_tokens is None:
+                            raise ManagedExecutorError(
+                                "native managed requests require explicit max_tokens"
+                            )
+                        raw_payload = self.host_runner.native_chat_completion(
+                            model_id=model_id,
+                            messages=_messages_from_plan(plan),
+                            reasoning=None if reasoning_mode == "auto" else reasoning_mode,
+                            max_output_tokens=max_tokens,
+                            temperature=self.temperature,
+                            timeout_s=plan.options.timeout_s,
+                        )
+                    else:
+                        chat_options: dict[str, Any] = {
+                            "endpoint_path": self.endpoint_path,
+                            "model_id": model_id,
+                            "messages": _messages_from_plan(plan),
+                            "response_format": _response_format_from_plan(
+                                plan, strict_json_schema=self.strict_json_schema
+                            ),
+                            "temperature": self.temperature,
+                            "timeout_s": plan.options.timeout_s,
+                        }
+                        if max_tokens is not None:
+                            chat_options["max_tokens"] = max_tokens
+                        raw_payload = self.host_runner.chat_completion(**chat_options)
                     attempt_latency_ms = (time.monotonic() - started) * 1000
                     total_latency_ms += attempt_latency_ms
                     try:
-                        (
-                            raw_response,
-                            prompt_tokens,
-                            completion_tokens,
-                            cached_tokens,
-                            finish_reason,
-                        ) = _parse_chat_payload(raw_payload)
+                        if self.endpoint_path == "/api/v1/chat":
+                            (
+                                raw_response,
+                                prompt_tokens,
+                                completion_tokens,
+                                cached_tokens,
+                                finish_reason,
+                                reasoning_output_tokens,
+                            ) = _parse_native_managed_payload(
+                                raw_payload,
+                                reasoning_mode=reasoning_mode,
+                            )
+                        else:
+                            (
+                                raw_response,
+                                prompt_tokens,
+                                completion_tokens,
+                                cached_tokens,
+                                finish_reason,
+                            ) = _parse_chat_payload(raw_payload)
                     except ManagedExecutorError:
+                        if self.endpoint_path != "/api/v1/chat":
+                            handle = _capture_compat_forensics_attempt(
+                                forensics=self.failure_forensics,
+                                plan=plan,
+                                attempt_index=attempt_index,
+                                context_length=self.context_length,
+                                max_tokens=max_tokens,
+                                started_at=started_at,
+                                latency_ms=attempt_latency_ms,
+                                raw_payload=raw_payload,
+                            )
+                            if handle is not None:
+                                all_forensics_handles.append(handle)
+                        raise
+                    if self.endpoint_path != "/api/v1/chat":
                         handle = _capture_compat_forensics_attempt(
                             forensics=self.failure_forensics,
                             plan=plan,
@@ -274,25 +349,12 @@ class ManagedLMStudioExecutor:
                             started_at=started_at,
                             latency_ms=attempt_latency_ms,
                             raw_payload=raw_payload,
+                            raw_response=raw_response,
+                            finish_reason=finish_reason,
                         )
                         if handle is not None:
+                            plan_forensics_handles.append(handle)
                             all_forensics_handles.append(handle)
-                        raise
-                    handle = _capture_compat_forensics_attempt(
-                        forensics=self.failure_forensics,
-                        plan=plan,
-                        attempt_index=attempt_index,
-                        context_length=self.context_length,
-                        max_tokens=max_tokens,
-                        started_at=started_at,
-                        latency_ms=attempt_latency_ms,
-                        raw_payload=raw_payload,
-                        raw_response=raw_response,
-                        finish_reason=finish_reason,
-                    )
-                    if handle is not None:
-                        plan_forensics_handles.append(handle)
-                        all_forensics_handles.append(handle)
                     if adaptive_policy is None:
                         break
                     assert max_tokens is not None
@@ -320,6 +382,7 @@ class ManagedLMStudioExecutor:
                         completion_tokens,
                         cached_tokens,
                         finish_reason,
+                        reasoning_output_tokens,
                         tuple(budgets_used),
                         stop_reason,
                         tuple(
@@ -354,6 +417,7 @@ class ManagedLMStudioExecutor:
                 completion_tokens,
                 cached_tokens,
                 finish_reason,
+                reasoning_output_tokens,
                 output_budgets_used,
                 output_budget_stop_reason,
                 failure_forensics_attempts,
@@ -370,7 +434,11 @@ class ManagedLMStudioExecutor:
                     cleanup_verified=cleanup_verified,
                     final_loaded_instances=final_loaded_instances,
                     post_load_instances=post_load_instances,
-                    strict_schema_runtime_support=self.strict_json_schema,
+                    strict_schema_runtime_support=(
+                        self.strict_json_schema
+                        if self.endpoint_path == "/v1/chat/completions"
+                        else False
+                    ),
                     hardened_schema_validation_available=True,
                     session_id=session_id,
                     session_request_index=index,
@@ -384,6 +452,11 @@ class ManagedLMStudioExecutor:
                     output_budgets_used=output_budgets_used,
                     output_budget_stop_reason=output_budget_stop_reason,
                     failure_forensics_attempts=failure_forensics_attempts,
+                    reasoning_mode=reasoning_mode,
+                    reasoning_output_tokens=reasoning_output_tokens,
+                    reasoning_control_applied=(
+                        reasoning_output_tokens == 0 if reasoning_mode == "off" else None
+                    ),
                 )
             )
         return tuple(results)
@@ -393,9 +466,17 @@ class ManagedLMStudioExecutor:
             raise NotImplementedError("managed executor v1 does not support image requests")
         if plan.envelope.modality != "text":
             raise ManagedExecutorError("managed executor v1 supports text modality only")
-        if plan.options.endpoint_family != "openai_compat":
+        expected_endpoint_family = (
+            "native" if self.endpoint_path == "/api/v1/chat" else "openai_compat"
+        )
+        if plan.options.endpoint_family != expected_endpoint_family:
             raise ManagedExecutorError(
-                "managed executor v1 supports only openai_compat endpoint family"
+                f"managed executor endpoint requires {expected_endpoint_family} endpoint family"
+            )
+        if self.endpoint_path == "/v1/chat/completions" and plan.options.reasoning_mode != "auto":
+            raise ManagedExecutorError(
+                "explicit reasoning control is unsupported on /v1/chat/completions; "
+                "use /api/v1/chat"
             )
         if plan.options.context_tier != str(self.context_length):
             raise ManagedExecutorError("managed executor context_tier must match executor context")
@@ -469,6 +550,9 @@ def _lifecycle_metadata(execution: ManagedExecutionResult) -> dict[str, object]:
         "output_budgets_used": list(execution.output_budgets_used),
         "output_budget_stop_reason": execution.output_budget_stop_reason,
         "failure_forensics_attempts": list(execution.failure_forensics_attempts),
+        "reasoning_mode": execution.reasoning_mode,
+        "reasoning_output_tokens": execution.reasoning_output_tokens,
+        "reasoning_control_applied": execution.reasoning_control_applied,
     }
 
 
@@ -628,6 +712,45 @@ def _parse_chat_payload(
     cached_tokens = _cached_tokens_from_usage(usage) if isinstance(usage, Mapping) else None
     finish_reason = _extract_finish_reason(payload)
     return raw_response, prompt_tokens, completion_tokens, cached_tokens, finish_reason
+
+
+def _parse_native_managed_payload(
+    payload: object,
+    *,
+    reasoning_mode: ReasoningMode,
+) -> tuple[str, int | None, int | None, int | None, str | None, int | None]:
+    if not isinstance(payload, NativeChatDiagnosticResult):
+        raise ManagedExecutorError("native chat payload must be NativeChatDiagnosticResult")
+    if payload.http_status >= 400 or payload.boundary != "terminal":
+        raise ManagedExecutorError("native chat request did not complete successfully")
+    reasoning_output_tokens = _coerce_numeric_int(
+        payload.numeric_stats.get("reasoning_output_tokens")
+    )
+    if reasoning_mode == "off":
+        if reasoning_output_tokens != 0 or payload.reasoning_text.strip():
+            raise ManagedExecutorError("reasoning_control_not_applied")
+    if not payload.message_text.strip():
+        raise ManagedExecutorError("native chat payload did not include public message content")
+    prompt_tokens = _coerce_numeric_int(payload.numeric_stats.get("input_tokens"))
+    completion_tokens = _coerce_numeric_int(payload.numeric_stats.get("total_output_tokens"))
+    return (
+        payload.message_text,
+        prompt_tokens,
+        completion_tokens,
+        None,
+        payload.finish_reason,
+        reasoning_output_tokens,
+    )
+
+
+def _coerce_numeric_int(value: object) -> int | None:
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    return None
 
 
 def _cached_tokens_from_usage(usage: Mapping[str, object]) -> int | None:
@@ -832,6 +955,58 @@ class LocalLMStudioHostRunner:
         if max_tokens is not None:
             payload["max_tokens"] = max_tokens
         return self._request_json(endpoint_path, payload, timeout_s)
+
+    def preflight_native_reasoning(
+        self,
+        *,
+        model_id: str,
+        reasoning: str,
+    ) -> tuple[tuple[str, ...], str]:
+        """Verify that one exact installed model advertises the requested mode."""
+
+        return self._preflight_native_reasoning(model_id=model_id, reasoning=reasoning)
+
+    def native_chat_completion(
+        self,
+        *,
+        model_id: str,
+        messages: Sequence[Mapping[str, str]],
+        reasoning: str | None,
+        max_output_tokens: int,
+        temperature: float,
+        timeout_s: float,
+    ) -> NativeChatDiagnosticResult:
+        """Execute native chat without applying a server-side JSON grammar."""
+
+        if max_output_tokens <= 0:
+            raise ManagedExecutorError("native max_output_tokens must be positive")
+        if temperature != 0:
+            raise ManagedExecutorError("native managed requests require temperature 0")
+        if reasoning is not None:
+            self._preflight_native_reasoning(model_id=model_id, reasoning=reasoning)
+        native_input, system_prompt = _native_input_from_messages(messages)
+        payload: dict[str, object] = {
+            "model": model_id,
+            "input": native_input,
+            "max_output_tokens": max_output_tokens,
+            "temperature": temperature,
+            "stream": False,
+            "store": False,
+        }
+        if reasoning is not None:
+            payload["reasoning"] = reasoning
+        if system_prompt is not None:
+            payload["system_prompt"] = system_prompt
+        raw_body, content_type, http_status = self._request_native_chat(
+            payload=payload,
+            timeout_s=timeout_s,
+            stream=False,
+        )
+        return parse_native_chat_response(
+            raw_body,
+            content_type=content_type,
+            http_status=http_status,
+        )
 
     def strict_chat_completion(
         self,

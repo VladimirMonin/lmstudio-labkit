@@ -1,0 +1,405 @@
+{
+  "schema_version": "lmstudio-labkit-local-structured-integration-red-team-v1",
+  "date": "2026-07-13",
+  "status": "read_only_red_team",
+  "scope": {
+    "stage_1_reports_reviewed": 4,
+    "live_requests": 0,
+    "model_operations": 0,
+    "network_requests": 0,
+    "implementation_changes": 0,
+    "external_repository_changes": 0
+  },
+  "verdict_definitions": {
+    "confirmed": "Current code or retained executed evidence supports the claim within its stated boundary.",
+    "overstated": "The claim has a supported core but is broader, more direct, or more production-ready than the evidence permits.",
+    "unsupported": "The claim is a plausible proposal or extrapolation without direct current-code or executed-evidence support.",
+    "contradicted": "Current code or stronger retained evidence conflicts with the claim."
+  },
+  "claims": [
+    {
+      "id": "HF1",
+      "source_report": "host_request_flow_inventory",
+      "claim": "Block-preserving text processing and image analysis are the two current API-bound strict-schema request classes.",
+      "verdict": "confirmed",
+      "correction": "Keep this as static source-contract evidence; no provider or UI execution was performed.",
+      "evidence": ["host block request construction", "host image request construction"]
+    },
+    {
+      "id": "HF2",
+      "source_report": "host_request_flow_inventory",
+      "claim": "Generic, short-microphone, long-microphone, and media text-mode cleanup accept plain text without structural or semantic acceptance gates.",
+      "verdict": "confirmed",
+      "correction": "Transport-envelope extraction and thinking-tag cleanup must not be described as task validation.",
+      "evidence": ["host text request construction", "host postprocessing merge path"]
+    },
+    {
+      "id": "HF3",
+      "source_report": "host_request_flow_inventory",
+      "claim": "Per-chunk and whole-recording summary flows are not implemented even though summary storage exists.",
+      "verdict": "confirmed",
+      "correction": "The storage field is reserved capacity, not evidence of a request, synthesis, update, or read-back owner.",
+      "evidence": ["host normal record creation writes a null summary", "no production summary request owner found"]
+    },
+    {
+      "id": "HF4",
+      "source_report": "host_request_flow_inventory",
+      "claim": "Provider builders preserve a supplied response format and generation uses the compatibility chat-completions namespace.",
+      "verdict": "confirmed",
+      "correction": "This confirms payload plumbing only; it does not prove every configured provider accepts the schema at runtime.",
+      "evidence": ["host provider payload builders", "host compatibility client"]
+    },
+    {
+      "id": "HF5",
+      "source_report": "host_request_flow_inventory",
+      "claim": "The current block parser accepts bare arrays, coerces text, filters extra IDs, and does not reject duplicates or reordered IDs.",
+      "verdict": "confirmed",
+      "correction": "The report JSON field json_schema=true must be read as API binding, not local post-response schema validation; the parser does not run a full JSON Schema validator.",
+      "evidence": ["host block parser lines 462-590"]
+    },
+    {
+      "id": "HF6",
+      "source_report": "host_request_flow_inventory",
+      "claim": "The image parser can recover truncated JSON, default missing fields, and map an unknown scene type to a fallback value.",
+      "verdict": "confirmed",
+      "correction": "These are tolerant parser outcomes, not schema success, semantic grounding, or OCR admission.",
+      "evidence": ["host image parser lines 393-476"]
+    },
+    {
+      "id": "HF7",
+      "source_report": "host_request_flow_inventory",
+      "claim": "Application-owned IDs and timestamps remain outside model authority while aggregate and per-block persistence are separate operations.",
+      "verdict": "confirmed",
+      "correction": "Do not infer atomicity, accepted-attempt traceability, fallback labeling, export correctness, or read-back from this source layout.",
+      "evidence": ["host record creation", "host queue aggregate write followed by per-block write"]
+    },
+    {
+      "id": "PK1",
+      "source_report": "labkit_package_reuse_assessment",
+      "claim": "Dependency direction must remain host application to a LabKit contract kernel, with host-owned adapters and no reverse import.",
+      "verdict": "confirmed",
+      "correction": "This is supported as an architecture boundary, not as evidence that the proposed kernel already exists as a stable package surface.",
+      "evidence": ["LabKit import-boundary tests", "absence of host imports in LabKit"]
+    },
+    {
+      "id": "PK2",
+      "source_report": "labkit_package_reuse_assessment",
+      "claim": "Request DTOs are directly reusable and provide privacy-safe metadata.",
+      "verdict": "overstated",
+      "correction": "The DTO shapes are reusable after a host adapter, but safe_metadata emits request_id, cell_id, and expected_ids without hashing. Arbitrary host identifiers therefore require sanitization or replacement before telemetry use.",
+      "evidence": ["lmstudio_labkit/requests.py RequestEnvelope.safe_metadata", "RequestPlan.safe_metadata", "ResponseContract.safe_metadata"]
+    },
+    {
+      "id": "PK3",
+      "source_report": "labkit_package_reuse_assessment",
+      "claim": "ResponseContract is directly reusable as a response-contract core.",
+      "verdict": "overstated",
+      "correction": "Only its structural subset is a candidate for extraction. The current dataclass mixes structural identity with language, reference-output, image-ground-truth, punctuation, paragraphing, terminology, and manual-review policy.",
+      "evidence": ["lmstudio_labkit/requests.py ResponseContract fields"]
+    },
+    {
+      "id": "PK4",
+      "source_report": "labkit_package_reuse_assessment",
+      "claim": "Conservative JSON parsing and exact ID/order validation primitives are directly reusable.",
+      "verdict": "confirmed",
+      "correction": "Keep strict raw parsing as default, report any normalization separately, and pair exact-ID validation with task-specific target paths.",
+      "evidence": ["lmstudio_labkit/json_normalization.py", "lmstudio_labkit/validation.py validate_exact_ids"]
+    },
+    {
+      "id": "PK5",
+      "source_report": "labkit_package_reuse_assessment",
+      "claim": "Both generic and hardened block schema builders are directly reusable for host requests.",
+      "verdict": "contradicted",
+      "correction": "Use only compact generic grammar plus application-side exact ID/order checks for the validated migration path. The hardened_const variant places request-specific IDs in positional const grammar, while stronger retained evidence shows that this grammar failed before generation on all four tested models and the generic repair passed 80/80 bounded P4 requests.",
+      "evidence": ["lmstudio_labkit/schema_builders.py hardened_const", "2026-07-12 structured output and scorer audit positional-const finding"]
+    },
+    {
+      "id": "PK6",
+      "source_report": "labkit_package_reuse_assessment",
+      "claim": "The custom schema validator is reusable as structural validation.",
+      "verdict": "confirmed",
+      "correction": "It is valid only for an allow-listed tested keyword subset. Unknown types default to a match and unsupported keywords are not rejected, so it cannot satisfy the migration report's requirement for a full production JSON Schema validator.",
+      "evidence": ["lmstudio_labkit/validation.py _schema_errors", "lmstudio_labkit/validation.py _matches_type"]
+    },
+    {
+      "id": "PK7",
+      "source_report": "labkit_package_reuse_assessment",
+      "claim": "Lifecycle policy, context fit, and output-budget policy are direct host dependencies today.",
+      "verdict": "overstated",
+      "correction": "The pure decisions are extraction candidates, but context fit still lives under tools, lifecycle lives under a repository-layout namespace, and output-budget decisions need host cumulative latency, cancellation, and retry policy. Treat all three as adapt-or-relocate until a stable core exists.",
+      "evidence": ["current wheel topology", "current module locations", "host-owned lifecycle and retry boundary"]
+    },
+    {
+      "id": "PK8",
+      "source_report": "labkit_package_reuse_assessment",
+      "claim": "Managed executors, fake-first clients, cache contracts, registry records, and vision controller concepts require adapters, while benchmark and strict-vision orchestration must stay out of host runtime.",
+      "verdict": "confirmed",
+      "correction": "No live compatibility or product behavior is implied; the current image DTO also carries only a reference hash and cannot materialize an image request by itself.",
+      "evidence": ["managed executor boundaries", "generation client request-hash behavior", "strict vision controller scope"]
+    },
+    {
+      "id": "PK9",
+      "source_report": "labkit_package_reuse_assessment",
+      "claim": "The proposed core-and-ports extraction is the smallest safe route.",
+      "verdict": "unsupported",
+      "correction": "Describe it as a candidate minimal architecture. No alternative extraction comparison, install test in the host, semantic-version contract, or end-to-end adapter proof establishes that it is uniquely smallest or safe in product operation.",
+      "evidence": ["proposal only", "no host package integration executed"]
+    },
+    {
+      "id": "PK10",
+      "source_report": "labkit_package_reuse_assessment",
+      "claim": "Lab model identity and capability vocabulary may cross an adapter, but lab candidate and recommendation state must not become runtime authority.",
+      "verdict": "confirmed",
+      "correction": "Use one host-owned approved catalog keyed by exact model identity and task capability. Current host configuration selects provider model strings directly, while LabKit registries explicitly remain lab-only; no approved-catalog mapper or promotion gate is currently implemented.",
+      "evidence": ["LabKit registry production-promotion guards", "LabKit internal recommendation audience guards", "host provider configuration model selection"]
+    },
+    {
+      "id": "CP1",
+      "source_report": "task_specific_context_schema_policy",
+      "claim": "Short microphone cleanup should default to a current-only structured transform.",
+      "verdict": "overstated",
+      "correction": "Current-only is a scope-consistent proposed default, but structured short-microphone cleanup and audio-grounded semantic quality have not been executed. Do not claim efficacy or admission.",
+      "evidence": ["no retained audio-grounded short-microphone run", "current host path is plain text"]
+    },
+    {
+      "id": "CP2",
+      "source_report": "task_specific_context_schema_policy",
+      "claim": "Boundary-neighbor context is the default for long microphone and file cleanup.",
+      "verdict": "overstated",
+      "correction": "It was the best reviewed option for three representative positions from one recording and one model. Keep it provisional until complete multi-chunk identity, semantic, merge, persistence, and source-type evidence exists.",
+      "evidence": ["12 first-pass cleanup calls", "36 evaluated blocks", "no complete source-to-persistence run"]
+    },
+    {
+      "id": "CP3",
+      "source_report": "task_specific_context_schema_policy",
+      "claim": "Current-only is the default for per-chunk summaries.",
+      "verdict": "overstated",
+      "correction": "The bounded study strongly supports current-only over repeated full context for locality, structure, latency, and token cost, but the host summary feature is unimplemented and evidence covers one recording and one model.",
+      "evidence": ["35/35 current-only practical validity", "one-recording evidence boundary", "no production summary owner"]
+    },
+    {
+      "id": "CP4",
+      "source_report": "task_specific_context_schema_policy",
+      "claim": "Use one direct full request for a compact whole summary or hierarchical synthesis for detailed notes.",
+      "verdict": "overstated",
+      "correction": "Both are bounded design candidates from five first-pass and five repeat whole-summary calls on one recording. They lack blind or multi-rater scoring, production request ownership, persistence, and read-back evidence.",
+      "evidence": ["bounded whole-summary series", "summary path not implemented"]
+    },
+    {
+      "id": "CP5",
+      "source_report": "task_specific_context_schema_policy",
+      "claim": "Generic text should use current-only when self-contained and boundary neighbors when chunked.",
+      "verdict": "unsupported",
+      "correction": "This is a reasonable target-granularity heuristic extrapolated from one speech-derived recording. No generic-document evidence establishes boundary-neighbor quality or protected-value behavior.",
+      "evidence": ["no generic-document context comparison"]
+    },
+    {
+      "id": "CP6",
+      "source_report": "task_specific_context_schema_policy",
+      "claim": "Image analysis should use the current image and a task-specific strict schema.",
+      "verdict": "confirmed",
+      "correction": "Confirmed only for single-image transport and bounded schema capability. The 36/36 raw/schema result coexists with mixed OCR, completeness, and unsupported-claim outcomes and grants no semantic or production admission.",
+      "evidence": ["40/40 bounded image calls", "36/36 applicable raw/schema", "mixed manual semantic dimensions"]
+    },
+    {
+      "id": "CP7",
+      "source_report": "task_specific_context_schema_policy",
+      "claim": "Default full-transcript-per-chunk should be rejected.",
+      "verdict": "confirmed",
+      "correction": "The rejection is supported as a default for the tested cleanup and chunk-summary contracts, not as a ban on a single document-level or whole-recording task.",
+      "evidence": ["full-context token and latency multiplier", "boundary attribution defect", "repeated malformed length-exhausted cleanup"]
+    },
+    {
+      "id": "CP8",
+      "source_report": "task_specific_context_schema_policy",
+      "claim": "Request-specific identities should stay out of grammar const positions and be checked after generation.",
+      "verdict": "confirmed",
+      "correction": "This is the strongest tested block-contract rule and must override the reuse report's unqualified direct-reuse recommendation for hardened_const.",
+      "evidence": ["positional-const HTTP 400 on four models", "generic exact-count schema plus post-validation passed 80/80 bounded P4 requests"]
+    },
+    {
+      "id": "CP9",
+      "source_report": "task_specific_context_schema_policy",
+      "claim": "The proposed chunk-summary, whole-summary, and generic-text schemas are ready task contracts.",
+      "verdict": "unsupported",
+      "correction": "They are illustrative target shapes. The exact proposed schemas were not exercised through host transport, full validation, retry, semantic acceptance, persistence, export, or read-back; list limits and field policies are still unspecified.",
+      "evidence": ["illustrative schemas", "no host summary implementation", "no generic structured-text integration run"]
+    },
+    {
+      "id": "CP10",
+      "source_report": "task_specific_context_schema_policy",
+      "claim": "Application ownership and layered transport, parse, schema, identity, semantic, and product verdicts are required.",
+      "verdict": "confirmed",
+      "correction": "This is an acceptance architecture, not a claim that the current host persists those layers.",
+      "evidence": ["mixed vision structure and semantics", "current tolerant block and image parsers", "missing end-to-end persistence evidence"]
+    },
+    {
+      "id": "MR1",
+      "source_report": "structured_validation_migration_risks",
+      "claim": "API-bound JSON Schema is a grammar gate only and current post-generation behavior is not consistently fail closed.",
+      "verdict": "confirmed",
+      "correction": "Keep transport, raw parse, local schema, identity, semantics, and product behavior separate.",
+      "evidence": ["host block parser tolerance", "host image parser recovery/defaults", "bounded vision semantic variance"]
+    },
+    {
+      "id": "MR2",
+      "source_report": "structured_validation_migration_risks",
+      "claim": "Production acceptance requires a full local JSON Schema validator.",
+      "verdict": "confirmed",
+      "correction": "This is a mission blocker, not an existing capability. The current host parser does not run one and LabKit's custom validator is explicitly a subset.",
+      "evidence": ["host parser behavior", "LabKit validator implementation"]
+    },
+    {
+      "id": "MR3",
+      "source_report": "structured_validation_migration_risks",
+      "claim": "Use at most one structural retry, separate it from transport retry, preserve both attempts, and enforce one total-call ceiling.",
+      "verdict": "overstated",
+      "correction": "This is a conservative policy candidate supported by failure analysis, but immutable attempts, category-specific retry, and a logical-request ceiling have not been executed end to end. The exact ceiling and latency contract remain product decisions.",
+      "evidence": ["current one block retry", "no retained retry/fallback state-machine execution"]
+    },
+    {
+      "id": "MR4",
+      "source_report": "structured_validation_migration_risks",
+      "claim": "Semantic, protected-value, boundary, length, and image-grounding failures should skip structural retry and fail closed.",
+      "verdict": "confirmed",
+      "correction": "Confirmed as a conservative safety disposition; task-specific semantic detectors and thresholds are still missing and must not be implied by the policy.",
+      "evidence": ["length-cap runaway evidence", "schema-versus-semantics separation", "original-source ownership"]
+    },
+    {
+      "id": "MR5",
+      "source_report": "structured_validation_migration_risks",
+      "claim": "Immutable attempts, request-generation fencing, atomic acceptance, transactional persistence, and read-back define the safe control path.",
+      "verdict": "unsupported",
+      "correction": "Treat these as required target mechanisms. Current code has no durable request-generation fence or immutable attempt ledger, and aggregate plus per-block writes are separate operations without retained failure-recovery evidence.",
+      "evidence": ["current queue cancellation checks", "separate aggregate and block writes", "no transaction/read-repair evidence"]
+    },
+    {
+      "id": "MR6",
+      "source_report": "structured_validation_migration_risks",
+      "claim": "Rollback is configuration-only.",
+      "verdict": "contradicted",
+      "correction": "Rollback can become configuration-driven only after a contract kill switch, durable request-generation fence, traceable accepted attempts, and readable schema/validator versions exist. Current source inspection explicitly found those mechanisms missing.",
+      "evidence": ["no durable request-generation fence found", "no current accepted-attempt and validator-version persistence"]
+    },
+    {
+      "id": "MR7",
+      "source_report": "structured_validation_migration_risks",
+      "claim": "A binary image semantic-admission gate can be required for migration.",
+      "verdict": "overstated",
+      "correction": "Separate semantic dimensions and review/abstain outcomes are required, but no valid binary rubric or production threshold exists. The prior binary controller was invalidated by manual reconciliation.",
+      "evidence": ["40-call image closure", "defective semantic validator supersession"]
+    },
+    {
+      "id": "MR8",
+      "source_report": "structured_validation_migration_risks",
+      "claim": "Shadow, read-only comparison, canary, and broader rollout are ready migration stages.",
+      "verdict": "unsupported",
+      "correction": "They are a sensible sequence, not an executable current plan. Shadow mode requires separate live authorization plus privacy-safe instrumentation; canary requires the blockers in this report and task-specific thresholds.",
+      "evidence": ["no shadow implementation", "no kill switch", "no production thresholds"]
+    },
+    {
+      "id": "MR9",
+      "source_report": "structured_validation_migration_risks",
+      "claim": "The proposed privacy-safe observability record can be adopted directly.",
+      "verdict": "overstated",
+      "correction": "The categorical taxonomy is sound, but identifier and digest handling needs a concrete retention and threat model. Existing LabKit safe metadata exposes some identifiers verbatim, and current host state does not persist the full attempt/validator record.",
+      "evidence": ["LabKit safe_metadata identifier exposure", "missing host attempt ledger"]
+    },
+    {
+      "id": "MR10",
+      "source_report": "structured_validation_migration_risks",
+      "claim": "Original-source fallback makes structurally unsafe cleanup migration safe.",
+      "verdict": "overstated",
+      "correction": "Fallback is necessary but insufficient until exact degraded state, cancellation fencing, atomic persistence, export, and read-back are verified. Summary and image tasks have no equivalent safe original result and must remain unavailable on failure.",
+      "evidence": ["current original-block fallback", "fallback state not persisted", "no end-to-end fallback/read-back run"]
+    }
+  ],
+  "exact_corrections": [
+    "Change blocks json_schema=true wording to API-bound schema present; no full local post-response schema validation is currently performed.",
+    "Reclassify LabKit request DTOs and ResponseContract from unconditional direct reuse to extraction/adaptation because identifiers are emitted verbatim in safe metadata and structural fields are mixed with lab semantic policy.",
+    "Exclude hardened_const from the recommended host request path; use compact generic grammar plus exact application-side count, ID, uniqueness, and order checks.",
+    "Reclassify lifecycle, context-fit, and output-budget utilities as relocate-or-adapt until a stable dependency-light core namespace and host compatibility test exist.",
+    "Call the core-and-ports layout a candidate minimal architecture, not the proven smallest safe route.",
+    "Mark short-microphone, long-cleanup, per-chunk, whole-summary, and generic-text context defaults as provisional at their actual evidence denominators.",
+    "Label proposed summary and generic-text schemas as illustrative and unexecuted.",
+    "State that rollback is not configuration-only in the current system; it depends on unimplemented kill-switch, generation-fence, traceability, and version-readability mechanisms.",
+    "Replace binary image admission language with multidimensional semantic review plus abstain/review_required until a valid threshold is established.",
+    "Treat shadow/canary rollout and privacy-safe observability as implementation proposals requiring separate authorization and verification.",
+    "Make the host-owned approved model catalog the only runtime selection authority. Lab registry and benchmark recommendation records are evidence inputs only; exact identity and task-capability intersection is required and automatic promotion is forbidden."
+  ],
+  "mission_blockers": [
+    {
+      "id": "B1",
+      "blocker": "No stable, dependency-light package core exists; current pure contracts are split across top-level repository-layout namespaces and a broad eager facade.",
+      "gate": "Install/import compatibility test against the extracted core with boundary tests."
+    },
+    {
+      "id": "B2",
+      "blocker": "Safe metadata emits request, cell, and expected IDs verbatim.",
+      "gate": "Define host identifier policy and prove telemetry contains only approved categorical values, counts, or keyed digests."
+    },
+    {
+      "id": "B3",
+      "blocker": "The recommended hardened positional-const block grammar conflicts with stronger model evidence.",
+      "gate": "Use generic grammar and exact post-generation identity checks; remove hardened_const from the migration contract."
+    },
+    {
+      "id": "B4",
+      "blocker": "Neither the host parser nor LabKit's subset validator provides full production JSON Schema validation.",
+      "gate": "Select a complete validator or an explicit schema-keyword allow-list that fails closed, then test every accepted schema."
+    },
+    {
+      "id": "B5",
+      "blocker": "Duplicate, extra, reordered, wrong-type, empty-text, and bare-array block outputs do not all fail closed in the current host path.",
+      "gate": "Offline contract tests prove exact count, unique sequence, strict strings, and object-only shape."
+    },
+    {
+      "id": "B6",
+      "blocker": "Immutable attempts, request-generation fencing, and a total logical-call ceiling are absent.",
+      "gate": "Cancellation and stale-completion tests cover every retry and pre-commit boundary."
+    },
+    {
+      "id": "B7",
+      "blocker": "Aggregate and per-block writes are separate and no retained transaction, recovery, export, or read-back proof exists.",
+      "gate": "Failure-injection and deterministic recovery tests prove one accepted attempt and exact source identity/order after read-back."
+    },
+    {
+      "id": "B8",
+      "blocker": "Protected-value, boundary, omission, and unsupported-addition validators lack production thresholds and fixtures.",
+      "gate": "Task-specific deterministic fixtures and explicit review/fallback dispositions pass offline."
+    },
+    {
+      "id": "B9",
+      "blocker": "The image path tolerates schema defects and no valid semantic admission rubric exists.",
+      "gate": "Reject repaired/defaulted structure and establish independently reviewed multidimensional OCR/grounding outcomes with abstention."
+    },
+    {
+      "id": "B10",
+      "blocker": "Summary request ownership, exact schemas, synthesis provenance, persistence, and read-back are not implemented.",
+      "gate": "Fake-client end-to-end tests close direct and hierarchical summary contracts before any live canary."
+    },
+    {
+      "id": "B11",
+      "blocker": "Context-policy evidence is narrow: one recording and one model for task-specific text, representative cleanup positions, and no audio-grounded short-microphone truth.",
+      "gate": "Keep defaults provisional and require task/source-specific canary evidence under separate authorization."
+    },
+    {
+      "id": "B12",
+      "blocker": "Kill switches, versioned validator state, and rollback traceability required by the rollout report do not exist.",
+      "gate": "Offline state-machine and rollback tests pass before shadow or canary stages."
+    },
+    {
+      "id": "B13",
+      "blocker": "No host-owned approved model catalog currently maps configured provider model strings to exact verified identity, task capability, and explicit promotion state.",
+      "gate": "Define one catalog authority and prove exact-identity lookup, task-capability rejection, unknown-model fail-closed behavior, and evidence-only LabKit import without automatic promotion."
+    }
+  ],
+  "synthesis_constraints": [
+    "The final strategy must preserve confirmed current-state inventory facts but apply every exact correction above.",
+    "The final strategy must not select hardened positional-const grammar for host block requests.",
+    "The final strategy must distinguish candidate architecture from current reusable package surface.",
+    "The final strategy must select a host-owned approved catalog as runtime authority; LabKit registry and benchmark recommendations remain non-promoting evidence inputs.",
+    "Every context default must carry its exact evidence denominator and product non-admission boundary.",
+    "Shadow, canary, live inference, implementation, commit, and push remain outside this analysis stage."
+  ]
+}

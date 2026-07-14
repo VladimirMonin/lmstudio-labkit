@@ -11,6 +11,7 @@ Current code includes extracted managed LM Studio backend contracts, lab runners
 - [Structured matrix benchmark design](docs/structured_matrix_design.md)
 - [Public API design](docs/public_api_design.md)
 - [Current state analysis](docs/analysis_current_state.md)
+- [GPU telemetry, memory recommendations, and package boundary](docs/lmstudio_managed_backend_docs/12_gpu_telemetry_recommendations_and_package_boundary.md)
 
 ## Live demo snapshots
 

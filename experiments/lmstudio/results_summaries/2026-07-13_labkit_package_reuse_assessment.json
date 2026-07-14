@@ -1,0 +1,357 @@
+{
+  "schema_version": "1.0",
+  "report_id": "2026-07-13_labkit_package_reuse_assessment",
+  "scope": "read_only_static_and_offline_test_assessment",
+  "evidence_levels": [
+    "static",
+    "offline_tests"
+  ],
+  "non_claims": [
+    "No live endpoint was called.",
+    "No model was loaded, downloaded, or benchmarked.",
+    "Transport compatibility, semantic quality, and product acceptance were not established.",
+    "No host integration, implementation, commit, or push was performed."
+  ],
+  "dependency_direction": {
+    "allowed": [
+      "host application -> LabKit contract kernel",
+      "host-owned adapters -> host transport, lifecycle, cancellation, persistence, and UI"
+    ],
+    "forbidden": [
+      "LabKit -> host application",
+      "LabKit core -> benchmark or report tooling"
+    ],
+    "host_owned": [
+      "prompts",
+      "source records",
+      "IDs and timestamps",
+      "ordering and chunk assembly",
+      "model selection",
+      "retry and fallback policy",
+      "cancellation",
+      "lifecycle ownership handles",
+      "persistence",
+      "product acceptance"
+    ]
+  },
+  "classification": {
+    "direct": [
+      {
+        "area": "request_contracts",
+        "symbols": [
+          "TextInput",
+          "ImageInput",
+          "ChatMessage",
+          "RequestEnvelope",
+          "ExecutionOptions",
+          "RequestPlan",
+          "RequestResult"
+        ],
+        "source": "lmstudio_labkit/requests.py",
+        "boundary": "Interchange DTOs only; not host persistence models."
+      },
+      {
+        "area": "response_contract_core",
+        "symbols": [
+          "ResponseContract.mode",
+          "ResponseContract.schema",
+          "ResponseContract.expected_ids",
+          "ResponseContract.id_paths",
+          "ResponseContract.id_field_names",
+          "ResponseContract.preserve_order",
+          "ResponseContract.language_policy"
+        ],
+        "source": "lmstudio_labkit/requests.py",
+        "boundary": "Host owns business meaning and task-specific policy."
+      },
+      {
+        "area": "json_parsing",
+        "symbols": [
+          "parse_json_response",
+          "JsonNormalizationResult",
+          "JsonParseStage"
+        ],
+        "source": "lmstudio_labkit/json_normalization.py",
+        "boundary": "Normalization remains separately reported and never counts as semantic repair."
+      },
+      {
+        "area": "schema_builders",
+        "symbols": [
+          "build_simple_flat_schema",
+          "build_blocks_schema"
+        ],
+        "source": "lmstudio_labkit/schema_builders.py",
+        "boundary": "Host wraps the inner schema in the provider response format and owns schema versioning."
+      },
+      {
+        "area": "structural_validation",
+        "symbols": [
+          "validate_json_schema",
+          "validate_exact_ids",
+          "collect_ids_by_path",
+          "validate_finish_reason",
+          "ValidationResult",
+          "ValidationSummary"
+        ],
+        "source": "lmstudio_labkit/validation.py",
+        "boundary": "Use only the tested JSON Schema keyword subset or pair with a complete host validator."
+      },
+      {
+        "area": "lifecycle_policy",
+        "symbols": [
+          "LoadConfig",
+          "LoadedInstance",
+          "ObservedModelState",
+          "LifecycleDecision",
+          "decide_lifecycle_action",
+          "decide_unload_action",
+          "classify_load_timeout_reconcile"
+        ],
+        "source": "libs/lmstudio_managed/lifecycle",
+        "boundary": "Host observes state and executes decisions; package policy remains side-effect free."
+      },
+      {
+        "area": "context_fit",
+        "symbols": [
+          "ContextFitResult",
+          "evaluate_context_fit"
+        ],
+        "source": "tools/lmstudio_lab/context_fit.py",
+        "boundary": "Relocate into the stable core namespace before product dependency."
+      },
+      {
+        "area": "output_budget",
+        "symbols": [
+          "AdaptiveOutputBudgetPolicy",
+          "observe_output_budget",
+          "decide_output_budget"
+        ],
+        "source": "lmstudio_labkit/output_budget.py",
+        "boundary": "Host owns cumulative retry budget, cancellation, and product safety."
+      }
+    ],
+    "adapt": [
+      {
+        "area": "managed_text_executor",
+        "symbols": [
+          "ManagedLMStudioExecutor",
+          "ManagedHostRunner",
+          "ManagedLMStudioTransport"
+        ],
+        "reason": "Current seam is synchronous, text-only, structured-JSON-only, OpenAI-compatible-only, parallel-one, fixed-context, and owns load/cleanup around an initially empty state.",
+        "adapter": "Host-native async/cancellable structured transport and lifecycle port."
+      },
+      {
+        "area": "semantic_validation",
+        "symbols": [
+          "ResponseContract semantic policy fields",
+          "language and postprocessing validators"
+        ],
+        "reason": "Lab quality heuristics do not define universal product behavior.",
+        "adapter": "Task policy selects checks and maps warning/fail outcomes to host fallback and review."
+      },
+      {
+        "area": "managed_clients",
+        "symbols": [
+          "GenerationClient",
+          "LifecycleClient",
+          "ModelListClient"
+        ],
+        "reason": "Fake-first privacy-safe clients model transport contracts; generation sends identity hashes rather than production request bodies.",
+        "adapter": "Host transport materializes real bodies and maps typed errors."
+      },
+      {
+        "area": "registry_identity",
+        "symbols": [
+          "ModelIdentity",
+          "ModelCapability",
+          "ModelCandidate"
+        ],
+        "reason": "Identity vocabulary is reusable; lab candidate and recommendation status is not runtime truth.",
+        "adapter": "Host-owned catalog mapping."
+      },
+      {
+        "area": "cache_and_context_contracts",
+        "symbols": [
+          "StatelessPrefixRequest",
+          "StatefulRootRequest",
+          "StatefulBranchRequest",
+          "CompactMemoryRequest"
+        ],
+        "reason": "Contracts describe evidence shapes but do not prove cache reuse or choose product context.",
+        "adapter": "Host context planner maps current, neighbor, chunk, compact-memory, and full-recording policies."
+      },
+      {
+        "area": "vision_request_core",
+        "symbols": [
+          "strict response-format payload shape",
+          "StructuredCallOutcome status separation"
+        ],
+        "reason": "Payload and outcome concepts are reusable, but the controller combines experiment policy and lifecycle.",
+        "adapter": "Small host vision transport that reports transport, raw parse, schema, semantic grounding, and product decision separately."
+      },
+      {
+        "area": "schema_wrapper",
+        "symbols": [
+          "OpenAI-compatible json_schema response format"
+        ],
+        "reason": "LabKit builders return inner schemas while host providers accept the full response format.",
+        "adapter": "Host-owned named strict schema wrapper."
+      }
+    ],
+    "exclude": [
+      {
+        "area": "benchmark_orchestration",
+        "examples": [
+          "benchmarks.py",
+          "suites.py",
+          "datasets.py",
+          "artifacts.py",
+          "reports.py",
+          "review_pack.py",
+          "snapshots.py",
+          "cli.py"
+        ],
+        "reason": "Experiment planning, execution matrices, artifact writing, reporting, and resume behavior are not request-core responsibilities."
+      },
+      {
+        "area": "strict_vision_controllers",
+        "examples": [
+          "StrictStructuredVisionRunner",
+          "StrictVisionLaunchController",
+          "StrictVisionContinuationController"
+        ],
+        "reason": "Experiment-specific allowlists, fixtures, private captures, preflights, global-zero assumptions, and launch accounting."
+      },
+      {
+        "area": "lab_host_implementation",
+        "examples": [
+          "LocalLMStudioHostRunner"
+        ],
+        "reason": "Would duplicate and bypass host networking, queue, cancellation, lifecycle ownership, and error handling."
+      },
+      {
+        "area": "candidate_recommendation_registry",
+        "examples": [
+          "candidate intake",
+          "candidate execution",
+          "structured matrix",
+          "recommendation drafts"
+        ],
+        "reason": "Lab evidence and admission records are not dynamic product configuration."
+      },
+      {
+        "area": "lab_tools",
+        "examples": [
+          "tools/lmstudio_lab"
+        ],
+        "reason": "Probes, acquisition, live smoke, config, metrics, report, and cache-plan generation are experiment scaffolding; only context-fit merits relocation."
+      },
+      {
+        "area": "failure_forensics",
+        "examples": [
+          "failure_forensics.py",
+          "strict vision private capture"
+        ],
+        "reason": "Owner-only experiment diagnostics have different retention and privacy obligations from product telemetry."
+      },
+      {
+        "area": "report_adapter",
+        "examples": [
+          "HostApplicationAdapter.consume_report"
+        ],
+        "reason": "Benchmark report consumption is not a production request execution port."
+      }
+    ]
+  },
+  "adapter_seams": [
+    {
+      "name": "host_request_mapper",
+      "responsibility": "Map a host operation to RequestEnvelope, ResponseContract, and ExecutionOptions without leaking persistence types into LabKit."
+    },
+    {
+      "name": "structured_transport_port",
+      "responsibility": "Async/cancellable transport for messages, strict response format, image parts, output budget, timeout, untouched response surface, finish reason, usage, and typed errors."
+    },
+    {
+      "name": "lifecycle_port",
+      "responsibility": "Observe runtime, apply pure lifecycle decisions, return an ownership handle, and release only owned instances."
+    },
+    {
+      "name": "validation_pipeline",
+      "responsibility": "Separate transport, raw parse, optional bounded normalization, schema/ID validation, semantic review, and host product decision."
+    },
+    {
+      "name": "context_planner",
+      "responsibility": "Host selects current-only, boundary-neighbor, adjacent-chunk, compact-memory, or full-recording context; LabKit evaluates fit and evidence."
+    },
+    {
+      "name": "registry_adapter",
+      "responsibility": "Map host configuration to stable model identity/capability records without auto-promoting lab recommendations."
+    }
+  ],
+  "packaging_risks": [
+    {
+      "id": "P1",
+      "risk": "The wheel exposes repository layout as three package trees: lmstudio_labkit, libs/lmstudio_managed, and tools/lmstudio_lab."
+    },
+    {
+      "id": "P2",
+      "risk": "The top-level facade eagerly exports benchmark, live, strict-vision, artifact, and report symbols alongside request DTOs."
+    },
+    {
+      "id": "P3",
+      "risk": "The alpha package does not establish a stable semantic-version compatibility surface."
+    },
+    {
+      "id": "P4",
+      "risk": "All consumers receive LM Studio SDK, Pillow, and YAML dependencies even when importing standard-library-only core contracts."
+    },
+    {
+      "id": "P5",
+      "risk": "Pure contracts are split across lmstudio_labkit, libs, and tools namespaces."
+    },
+    {
+      "id": "P6",
+      "risk": "ResponseContract combines universal structure with lab-specific semantic policy."
+    },
+    {
+      "id": "P7",
+      "risk": "The custom schema validator supports a tested subset, not complete JSON Schema semantics."
+    },
+    {
+      "id": "P8",
+      "risk": "Strict vision combines request payload, fixtures, lifecycle, forensics, grounding, and launch control in one large module."
+    },
+    {
+      "id": "P9",
+      "risk": "Copy-based integration would create split ownership and drift between package and host source copies."
+    }
+  ],
+  "smallest_extraction_strategy": [
+    "Create a stable lmstudio_labkit.core surface for request/result DTOs, structural response contracts, JSON normalization, tested schema builders, structural validators, lifecycle state/policy, context fit, and bounded output-budget decisions.",
+    "Create lmstudio_labkit.ports containing protocols only; host code implements transport, lifecycle execution, cancellation, image materialization, registry mapping, and persistence.",
+    "Keep benchmark, strict-vision controllers, artifacts, reports, datasets, forensics, and live runners in a lab-only namespace or optional extra.",
+    "Make the host application depend on the package contract kernel and prohibit all host imports, host field names, host prompts, and host persistence types inside LabKit.",
+    "Protect the direction with import-boundary tests and fake-adapter compatibility tests; reserve live integration for a later explicit gate."
+  ],
+  "evidence": [
+    "pyproject.toml",
+    "lmstudio_labkit/__init__.py",
+    "lmstudio_labkit/requests.py",
+    "lmstudio_labkit/json_normalization.py",
+    "lmstudio_labkit/schema_builders.py",
+    "lmstudio_labkit/validation.py",
+    "lmstudio_labkit/managed_executor.py",
+    "lmstudio_labkit/strict_vision.py",
+    "libs/lmstudio_managed/lifecycle",
+    "libs/lmstudio_managed/client/generation_client.py",
+    "tools/lmstudio_lab/context_fit.py",
+    "tests/libs/test_lmstudio_labkit_public_facade.py",
+    "tests/lmstudio_labkit/test_managed_executor_mocked.py",
+    "tests/lmstudio_labkit/test_strict_structured_vision_runner.py",
+    "tests/architecture/test_lmstudio_managed_boundaries.py",
+    "tests/architecture/test_lmstudio_lab_core_contracts.py",
+    "read-only host application structured text and vision source inspection"
+  ]
+}

@@ -1,0 +1,333 @@
+{
+  "schema_version": "lmstudio-labkit-microphone-dictation-command-contract-v1",
+  "date": "2026-07-13",
+  "status": "read_only_architecture_recommendation_runtime_unexecuted",
+  "decision": {
+    "modes": [
+      "dictation_cleanup",
+      "model_command"
+    ],
+    "dictation_prompt": "separate_simple_microphone_cleanup_prompt",
+    "command_prompt": "separate_versioned_complex_command_prompt",
+    "command_response": "strict_json_envelope_then_application_owned_plain_answer_projection",
+    "artifact_separation": "command_answer_must_not_write_postprocessed_text_or_summary",
+    "provider_contract": "same_task_prompt_schema_validation_and_product_behavior_for_local_and_cloud"
+  },
+  "evidence_level": {
+    "exact_source_contracts": [
+      "Microphone postprocessing selects a microphone prompt.",
+      "Current microphone cleanup is accepted as plain text and stored in postprocessed_text.",
+      "Clipboard and auto-paste consume postprocessed_text with original-text fallback.",
+      "Local and cloud text generation share the compatibility chat-completions seam.",
+      "The summary field is reserved but no summary request flow populates it."
+    ],
+    "exact_source_gaps": [
+      "No MODEL command classifier exists.",
+      "No command-specific prompt or strict response schema exists.",
+      "No command-result artifact or command-specific UI/persistence event exists."
+    ],
+    "runtime_executed": false,
+    "estimates": []
+  },
+  "classification": {
+    "authority": "application",
+    "immutable_input": "transcript_text",
+    "algorithm": [
+      "Preserve transcript_text exactly.",
+      "Skip leading Unicode whitespace for trigger detection only.",
+      "At the first non-whitespace character match ASCII MODEL case-insensitively.",
+      "Allow optional horizontal whitespace before a required colon.",
+      "Accept ASCII colon or full-width colon.",
+      "Extract the original suffix after the delimiter and trim outer whitespace only."
+    ],
+    "accepted_examples_by_shape": [
+      "MODEL:<content>",
+      "model: <content>",
+      "leading_whitespace + MoDeL + optional_horizontal_space + colon + content",
+      "MODEL + full_width_colon + content"
+    ],
+    "rejected_trigger_shapes": [
+      "missing_colon",
+      "period_instead_of_colon",
+      "mid_sentence_occurrence",
+      "translated_word",
+      "fuzzy_or_approximate_spelling",
+      "unapproved_lookalike_punctuation"
+    ],
+    "empty_suffix": "command_invalid_not_dictation",
+    "command_text": {
+      "owner": "application",
+      "source": "original_transcript_suffix_after_trigger",
+      "normalization": "outer_whitespace_trim_only",
+      "model_may_rewrite": false
+    }
+  },
+  "state_machine": {
+    "common": [
+      "captured",
+      "transcribed",
+      "classified"
+    ],
+    "dictation_cleanup": [
+      "cleanup_requested",
+      "cleanup_response_received",
+      "cleanup_validated",
+      "cleanup_ready"
+    ],
+    "dictation_terminal_alternatives": [
+      "cleanup_fallback_original",
+      "cancelled",
+      "failed"
+    ],
+    "model_command": [
+      "command_text_validated",
+      "command_requested",
+      "command_envelope_received",
+      "command_envelope_validated",
+      "command_ready"
+    ],
+    "command_terminal_alternatives": [
+      "command_invalid",
+      "command_failed",
+      "cancelled"
+    ],
+    "stale_rule": "Any in-flight state becomes inert when request generation changes.",
+    "publication_fence": "Only the current non-cancelled generation may display, copy, paste, or persist output."
+  },
+  "dictation_cleanup_contract": {
+    "prompt": "simple_microphone_cleanup_only",
+    "default_context": "current_short_transcript_only",
+    "document_summary": false,
+    "compatibility_contract": "cleanup_plain_v1_may_remain_explicit_during_migration",
+    "recommended_structured_contract": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "fallback": "exact_original_transcript_with_explicit_fallback_original_outcome",
+    "artifact_kind": "microphone_cleanup"
+  },
+  "model_command_contract": {
+    "prompt": "separate_versioned_command_prompt",
+    "request_content": [
+      "command_text",
+      "explicitly_approved_bounded_context_if_a_future_contract_allows_it"
+    ],
+    "excluded_by_default": [
+      "MODEL_trigger",
+      "cleanup_prompt",
+      "full_recording",
+      "document_summary",
+      "clipboard_content"
+    ],
+    "response_schema": {
+      "type": "object",
+      "required": [
+        "answer_text"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "answer_text": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "parse_mode": "raw_json_object_occupying_entire_response",
+    "forbidden_normalization_or_repair": [
+      "markdown_fence_stripping",
+      "embedded_object_extraction",
+      "truncated_json_repair",
+      "reasoning_tag_stripping_into_success",
+      "type_coercion",
+      "missing_field_defaults",
+      "plain_text_as_success"
+    ],
+    "structural_retry": {
+      "maximum": 1,
+      "kind": "new_immutable_model_attempt_not_local_repair",
+      "eligible": [
+        "raw_json_failure",
+        "closed_schema_failure"
+      ],
+      "ineligible": [
+        "length_exhaustion",
+        "runaway_repetition",
+        "reasoning_leakage",
+        "semantic_failure",
+        "cancellation",
+        "stale_generation"
+      ]
+    },
+    "artifact_kind": "microphone_model_command",
+    "must_not_write": [
+      "postprocessed_text",
+      "summary",
+      "source_transcript"
+    ]
+  },
+  "command_artifact": {
+    "application_owned_fields": [
+      "artifact_id",
+      "transcription_id",
+      "request_generation",
+      "command_text",
+      "display_text",
+      "copy_text",
+      "paste_text",
+      "provider_provenance",
+      "model_provenance",
+      "prompt_version_or_digest",
+      "schema_version_or_digest",
+      "validator_version",
+      "transport_verdict",
+      "parse_verdict",
+      "schema_verdict",
+      "semantic_verdict",
+      "attempt_state",
+      "cancellation_state",
+      "persistence_state"
+    ],
+    "model_authored_fields": [
+      "answer_text"
+    ],
+    "publication_safe_telemetry_excludes": [
+      "raw_prompt",
+      "raw_provider_output",
+      "raw_transcript",
+      "raw_command_text"
+    ]
+  },
+  "ui_projections": {
+    "dictation_cleanup": {
+      "display_text": "accepted_cleaned_text_else_explicit_original_fallback",
+      "copy_text": "accepted_cleaned_text_else_original_when_automation_allowed",
+      "paste_text": "same_safe_selected_text_when_automation_allowed"
+    },
+    "model_command": {
+      "display_text": "validated_answer_text_only",
+      "copy_text": "validated_answer_text_only",
+      "paste_text": "validated_answer_text_only",
+      "initial_equality": "display_text_equals_copy_text_equals_paste_text_equals_answer_text",
+      "failure_behavior": "typed_error_state_and_no_copy_or_paste"
+    },
+    "ownership": "application",
+    "downstream_rule": "Consumers must not infer command projections from generic postprocessed_text."
+  },
+  "failure_policy": {
+    "empty_transcript": "no_request_no_clipboard_automation",
+    "trigger_with_empty_command_text": "command_invalid_no_cleanup_no_command_request_no_copy_no_paste",
+    "empty_provider_content": "command_failed_no_transcript_fallback",
+    "empty_answer_text": "command_failed_no_transcript_fallback",
+    "malformed_fenced_repaired_or_coerced_output": "parse_or_schema_failure_then_at_most_one_new_structural_attempt",
+    "dictation_failure": "explicit_exact_original_fallback_allowed",
+    "command_failure": "never_paste_MODEL_transcript_or_command_text_as_answer",
+    "late_completion": "ignored_after_cancel_or_generation_change"
+  },
+  "provider_parity": {
+    "shared": [
+      "trigger_classifier",
+      "command_text_extraction",
+      "prompt_version",
+      "message_construction",
+      "strict_response_schema",
+      "raw_parse_and_local_schema_validation",
+      "semantic_and_cancellation_gates",
+      "plain_answer_projection",
+      "ui_clipboard_and_persistence_behavior"
+    ],
+    "adapter_specific": [
+      "endpoint_and_base_url",
+      "authorization_headers",
+      "usage_and_cache_fields",
+      "local_cache_prompt",
+      "local_thinking_controls",
+      "readiness",
+      "lifecycle_ownership"
+    ],
+    "schema_capability_rule": "A provider without strict schema support is unsupported for command mode until an explicit compatibility contract is approved; no prompt-only JSON downgrade."
+  },
+  "document_summary_policy": {
+    "used_for_command": false,
+    "reasons": [
+      "A microphone command is a current user request, not a document-summary task.",
+      "The current summary field has no implemented producer, validator, freshness policy, or request owner.",
+      "Implicit summary injection can leak unrelated recording content and change command scope.",
+      "Hidden mutable context harms local/cloud parity and increases token use."
+    ],
+    "future_exception": "Requires a separate user-visible context contract with source identity, freshness, fit, privacy, and cancellation gates."
+  },
+  "compatibility_and_migration": [
+    "Classify before microphone prompt selection and cleanup execution.",
+    "Leave non-trigger dictation behavior unchanged initially.",
+    "Add a dedicated command prompt ID, strict schema, request kind, completion event, and artifact type.",
+    "Do not overload postprocessed_text or summary with command answers.",
+    "Route clipboard consumers through explicit copy_text and paste_text.",
+    "Retain original-text fallback for cleanup but not for command answers.",
+    "Specify transaction, read-back, and retention before persisting command history.",
+    "Use shadow mode before user-visible command output.",
+    "Rollback disables command execution and invalidates in-flight command generations."
+  ],
+  "tests_to_add": {
+    "classification_and_ownership": [
+      "trigger_case_and_whitespace_matrix",
+      "full_width_colon",
+      "missing_colon_and_mid_sentence_rejection",
+      "translated_fuzzy_and_lookalike_rejection",
+      "exact_original_suffix_extraction",
+      "trigger_only_is_command_invalid",
+      "original_transcript_and_command_text_immutable_across_retry_cancel"
+    ],
+    "prompt_and_provider_parity": [
+      "dictation_uses_only_cleanup_prompt",
+      "command_uses_only_command_prompt",
+      "equivalent_local_and_cloud_messages_schema_budget_and_request_kind",
+      "no_summary_full_recording_or_clipboard_by_default",
+      "schema_incapable_provider_rejected"
+    ],
+    "parsing_and_validation": [
+      "accept_exact_closed_non_empty_answer_object",
+      "reject_empty_plain_fenced_wrapped_truncated_array_missing_extra_wrong_type_outputs",
+      "reject_reasoning_leak_length_cap_and_repetition",
+      "maximum_one_immutable_structural_retry_with_total_call_ceiling",
+      "no_unwrap_extract_coerce_default_or_repair_acceptance_path"
+    ],
+    "ui_clipboard_persistence_and_races": [
+      "dictation_projection_and_explicit_original_fallback",
+      "command_projection_uses_only_validated_answer_text",
+      "zero_copy_paste_on_invalid_failed_cancelled_stale_or_semantic_reject",
+      "command_does_not_mutate_postprocessed_text_summary_or_source",
+      "command_artifact_mode_link_attempt_validator_and_outcome_round_trip",
+      "cancellation_at_each_boundary_prevents_late_publish",
+      "rollback_invalidates_commands_and_restores_dictation"
+    ]
+  },
+  "evidence_map": [
+    "host/src/domain/models/config/postprocessing.py:23-25,70-84,93-133",
+    "host/src/application/services/postprocessing_coordinator.py:118-155,197-223,225-391",
+    "host/src/application/services/postprocessing_service.py:914-1025",
+    "host/src/infrastructure/llm/prompt_loader.py:26-28,52-137",
+    "host/src/services/transcription_service.py:1459-1540",
+    "host/src/services/clipboard_service.py:223-306",
+    "host/src/domain/models/transcription.py:171-209,264-318",
+    "2026-07-13_host_request_flow_inventory.md",
+    "2026-07-13_task_specific_context_schema_policy.md",
+    "2026-07-13_structured_validation_migration_risks.md"
+  ],
+  "non_claims": [
+    "No private prompt text or raw user transcript was inspected or reproduced.",
+    "No command semantic rubric or quality threshold is established.",
+    "No spoken alias beyond the explicit textual trigger is approved.",
+    "No provider, microphone recognizer, clipboard target, UI, persistence, latency, or race was exercised.",
+    "Schema validity does not prove answer correctness, safety, or production admission.",
+    "No implementation or migration is claimed complete."
+  ]
+}

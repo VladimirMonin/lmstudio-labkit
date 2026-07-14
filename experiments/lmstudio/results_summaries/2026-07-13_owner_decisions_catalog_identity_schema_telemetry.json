@@ -1,0 +1,516 @@
+{
+  "schema_version": "lmstudio-labkit-owner-decisions-catalog-identity-schema-telemetry-v1",
+  "date": "2026-07-13",
+  "status": "read_only_owner_decision_research",
+  "scope": {
+    "decisions": ["O2", "O3", "O4", "O5"],
+    "implementation_authorized": false,
+    "live_execution_authorized": false,
+    "catalog_entries_approved": 0,
+    "models_approved": 0
+  },
+  "decision_summary": [
+    {
+      "id": "O2",
+      "topic": "approved_task_profile_catalog_governance",
+      "disposition": "approve_now",
+      "default": "host_owned_versioned_integrity_protected_catalog_with_explicit_product_review_and_no_lab_auto_promotion",
+      "blocking_when_absent": "auto_selection"
+    },
+    {
+      "id": "O3",
+      "topic": "exact_artifact_identity_and_digest",
+      "disposition": "approve_now",
+      "default": "native_key_plus_compat_id_plus_format_plus_verified_quantization_plus_immutable_artifact_sha256",
+      "blocking_when_absent": "exact_auto_identity"
+    },
+    {
+      "id": "O4",
+      "topic": "identifier_digest_and_telemetry_privacy",
+      "disposition": "approve_now",
+      "default": "local_raw_control_identity_and_exported_purpose_separated_HMAC_SHA256_pseudonyms_plus_counts_categories",
+      "blocking_when_absent": "product_telemetry_reuse"
+    },
+    {
+      "id": "O5",
+      "topic": "complete_JSON_Schema_validation",
+      "disposition": "approve_now",
+      "default": "Draft_2020_12_complete_validator_plus_fail_closed_product_schema_admission_profile",
+      "blocking_when_absent": "native_structured_promotion"
+    }
+  ],
+  "evidence_boundary": {
+    "current_static_contract": [
+      "Native and OpenAI-compatible model discovery are separate planes.",
+      "Current identity facts do not include an immutable artifact digest.",
+      "Current safe metadata can retain raw request/cell/expected IDs, raw model IDs, and stable unkeyed content-derived digests.",
+      "Current LabKit validators are deliberate keyword/shape subsets, not complete Draft 2020-12 validators.",
+      "The current package has no complete JSON Schema dependency."
+    ],
+    "retained_executed": [
+      "Bounded structured vision evidence had 36 of 36 applicable calls pass raw parse and schema validation while semantic dimensions remained mixed.",
+      "Retained runtime studies do not establish a production catalog or immutable artifact digest for every installation."
+    ],
+    "runtime_unexecuted": [
+      "catalog signing and updater",
+      "artifact resolver on target installations",
+      "product telemetry key management and retention",
+      "complete validator integration",
+      "end_to_end_host_recommendation_and_persistence"
+    ],
+    "actions_by_this_report": {
+      "live_requests": 0,
+      "model_operations": 0,
+      "cloud_calls": 0,
+      "artifact_hashes_computed": 0,
+      "host_repository_changes": 0,
+      "implementation_changes": 0,
+      "catalog_mutations": 0,
+      "commits": 0,
+      "pushes": 0
+    }
+  },
+  "catalog_contract": {
+    "approval_unit": "ApprovedTaskProfile",
+    "owner": "host_product",
+    "lab_auto_promotion": false,
+    "profile_required_groups": [
+      "profile_and_task_versions",
+      "prompt_and_response_contract_versions",
+      "endpoint_and_capabilities",
+      "exact_artifact_identity",
+      "context_runtime_parallel_and_application_concurrency_shape",
+      "output_timeout_and_cumulative_call_policy",
+      "validator_semantic_fallback_and_persistence_policy_versions",
+      "platform_runtime_constraints_and_memory_envelopes",
+      "evidence_references_and_approval_state",
+      "independent_auto_eligible_flag"
+    ],
+    "payload_v1": {
+      "required": [
+        "catalog_schema_version",
+        "catalog_id",
+        "revision",
+        "issued_at",
+        "expires_at",
+        "minimum_host_version",
+        "previous_payload_digest",
+        "profiles",
+        "revocations",
+        "keyset_version"
+      ],
+      "revision": "monotonic_unsigned_integer",
+      "canonicalization": "RFC8785_JCS",
+      "payload_digest": "sha256",
+      "signature_default": "Ed25519_offline_product_release_key",
+      "trust_root_owner": "local_product_trust_store"
+    },
+    "unsigned_bootstrap": {
+      "allowed": "embedded_catalog_inside_authenticated_application_package_only",
+      "external_updates": "catalog_update_unsupported",
+      "plain_checksum_as_signature": false
+    },
+    "promotion_workflow": [
+      "propose_non_runnable_candidate",
+      "validate_schema_signature_revision_chain_and_cross_references",
+      "independent_task_and_shape_specific_evidence_review",
+      "explicit_product_owner_approval",
+      "separate_explicit_auto_eligible_decision",
+      "stage_complete_snapshot_and_run_offline_reconciliation",
+      "atomic_activation_pointer_swap_and_readback",
+      "privacy_safe_observation_without_mutation_authority"
+    ],
+    "updater": {
+      "fetch_separate_from_activate": true,
+      "require": [
+        "trusted_signature",
+        "canonical_payload_digest",
+        "unexpired_metadata",
+        "compatible_host_version",
+        "strictly_increasing_revision",
+        "previous_payload_digest_matches_current"
+      ],
+      "complete_snapshot_only": true,
+      "retained_known_good_revisions_minimum": 1,
+      "activation": "atomic_pointer_swap_with_readback"
+    },
+    "rollback": {
+      "kill_switch": "disable_new_auto_and_increment_catalog_generation",
+      "ordinary_target": "previous_known_good_payload",
+      "authorization": "new_signed_higher_revision_rollback_record_naming_target_digest",
+      "old_revision_replay": "reject",
+      "historical_record_readability_required": true,
+      "unapproved_artifact_promotion": false,
+      "external_instance_unload": false
+    },
+    "typed_outcomes": [
+      "catalog_missing",
+      "catalog_schema_invalid",
+      "catalog_signature_invalid",
+      "catalog_key_untrusted",
+      "catalog_expired",
+      "catalog_revision_rollback_rejected",
+      "catalog_chain_mismatch",
+      "catalog_host_incompatible",
+      "catalog_profile_revoked",
+      "catalog_profile_not_approved",
+      "catalog_profile_manual_only",
+      "catalog_update_unsupported"
+    ]
+  },
+  "identity_contract": {
+    "scopes": [
+      "catalog_artifact_identity",
+      "current_runtime_identity",
+      "telemetry_pseudonymous_identity"
+    ],
+    "scope_digest_reuse_forbidden": true,
+    "exact_binding_required": [
+      "native_model_key",
+      "compat_model_id",
+      "format",
+      "quantization_name",
+      "quantization_verified_true",
+      "artifact_digest_algorithm_sha256",
+      "artifact_digest",
+      "artifact_digest_source",
+      "artifact_digest_scope"
+    ],
+    "digest_sources": {
+      "computed_artifact_bytes": "sha256_over_safely_resolved_immutable_artifact_bytes",
+      "trusted_signed_manifest": "sha256_from_signature_verified_manifest_with_explicit_subject_and_byte_scope"
+    },
+    "digest_scopes": [
+      "single_file_bytes",
+      "signed_manifest_subject",
+      "versioned_deterministic_bundle_manifest"
+    ],
+    "forbidden_substitutes": [
+      "family_name",
+      "display_name",
+      "parameter_label",
+      "size_bytes",
+      "bits_per_weight",
+      "runtime_visibility",
+      "loaded_instance_id",
+      "inferred_digest_from_model_id"
+    ],
+    "resolver": {
+      "arbitrary_directory_scan": false,
+      "path_logging_or_persistence": false,
+      "requirements": [
+        "bound_to_LM_Studio_inventory_record",
+        "regular_non_symlinked_artifact",
+        "approved_model_root",
+        "streaming_sha256",
+        "before_after_stability_or_trusted_handle"
+      ],
+      "failure_behavior": "artifact_digest_unavailable"
+    },
+    "typed_outcomes": [
+      "identity_exact",
+      "native_identity_missing",
+      "compat_identity_missing",
+      "identity_ambiguous",
+      "identity_mismatch",
+      "format_missing",
+      "format_mismatch",
+      "quantization_unknown",
+      "quantization_mismatch",
+      "artifact_missing",
+      "artifact_digest_unavailable",
+      "artifact_digest_source_untrusted",
+      "artifact_digest_scope_unsupported",
+      "artifact_digest_mismatch",
+      "runtime_shape_mismatch"
+    ],
+    "auto_eligible_outcomes": ["identity_exact"]
+  },
+  "telemetry_contract": {
+    "raw_local_only": [
+      "native_model_key",
+      "compat_model_id",
+      "loaded_instance_id",
+      "artifact_sha256",
+      "request_id",
+      "cell_id",
+      "job_id",
+      "source_id",
+      "expected_ids",
+      "prompt",
+      "source_text",
+      "response_text",
+      "image_bytes",
+      "local_paths"
+    ],
+    "export_allowed": [
+      "bounded_categories",
+      "bounded_reason_codes",
+      "counts",
+      "timings",
+      "token_usage",
+      "public_contract_versions",
+      "purpose_separated_keyed_pseudonyms"
+    ],
+    "pseudonym_v1": {
+      "algorithm": "HMAC-SHA-256",
+      "encoding": "base64url",
+      "message_prefix": "lmstudio-labkit-telemetry-v1\\0",
+      "message_fields": ["purpose", "canonical_value"],
+      "canonical_structured_values": "RFC8785_JCS",
+      "purposes": [
+        "artifact",
+        "model_route",
+        "request",
+        "source",
+        "schema_private",
+        "expected_id_set"
+      ],
+      "key_storage": "outside_logs_and_artifacts",
+      "key_epoch_label": true,
+      "purpose_separation_required": true,
+      "default_output_bits": 256,
+      "unkeyed_low_entropy_identifier_hashing": false,
+      "key_unavailable_behavior": "telemetry_identity_omitted_without_unkeyed_fallback"
+    },
+    "integrity_digest_exception": "Public immutable schemas and catalog payloads may use unkeyed SHA-256 for integrity, but integrity digests are not private event pseudonyms.",
+    "minimum_event_fields": [
+      "event_schema_version",
+      "occurred_at_bucket",
+      "catalog_revision_ref",
+      "profile_ref",
+      "artifact_ref",
+      "request_ref",
+      "schema_or_contract_version",
+      "endpoint_family",
+      "attempt_index",
+      "outcome_category",
+      "reason_codes",
+      "latency_and_token_counts",
+      "expected_and_observed_counts",
+      "duplicate_missing_extra_reordered_counts",
+      "parse_schema_business_semantic_fallback_persistence_verdicts",
+      "telemetry_key_epoch"
+    ],
+    "validator_error_projection": "stable_keyword_category_and_bounded_instance_path_shape_without_values",
+    "retention_starting_default_days": 30,
+    "raw_content_telemetry_retention_days": 0,
+    "aggregate_without_pseudonyms_may_outlive_events": true,
+    "legal_retention_determination_claimed": false
+  },
+  "schema_validation_contract": {
+    "dialect": "https://json-schema.org/draft/2020-12/schema",
+    "implementation_default": "python_jsonschema_Draft202012Validator",
+    "required_layers": [
+      "product_schema_admission",
+      "meta_schema_validation",
+      "untouched_instance_validation",
+      "business_identity_validation",
+      "semantic_and_product_validation"
+    ],
+    "admission_profile_v1": {
+      "declared_dialect_required": true,
+      "unknown_keyword_behavior": "reject_before_activation",
+      "undeclared_vocabulary_behavior": "reject_before_activation",
+      "remote_HTTP_reference_behavior": "reject_before_activation",
+      "reference_registry": "local_preloaded_product_registry_only",
+      "allowed_keywords_initial": [
+        "$schema",
+        "$id_product_local_URN_only",
+        "$defs",
+        "$ref_local_or_preloaded_only",
+        "type",
+        "const",
+        "enum",
+        "properties",
+        "required",
+        "additionalProperties",
+        "items",
+        "prefixItems",
+        "minItems",
+        "maxItems",
+        "uniqueItems",
+        "minLength",
+        "maxLength",
+        "pattern",
+        "minimum",
+        "maximum"
+      ],
+      "conditionally_allowed_after_adversarial_tests": ["allOf", "anyOf", "oneOf", "not"],
+      "rejected_initial": [
+        "unknown_or_custom_keywords",
+        "undeclared_vocabularies",
+        "remote_references",
+        "format_in_acceptance_critical_position",
+        "contentEncoding",
+        "contentMediaType",
+        "contentSchema",
+        "default_or_coercion_or_repair_extensions",
+        "implementation_specific_keywords",
+        "schema_without_declared_dialect"
+      ],
+      "boolean_schema_handling_required": true,
+      "recursive_linter_required": true
+    },
+    "activation_sequence": [
+      "JCS_canonicalize_and_verify_schema_digest",
+      "recursive_product_admission_lint",
+      "resolve_local_or_preloaded_references_only",
+      "Draft202012Validator_check_schema",
+      "construct_or_cache_by_schema_validator_profile_versions"
+    ],
+    "response_sequence": [
+      "parse_untouched_raw_JSON_without_repair_coercion_or_defaults",
+      "collect_complete_validator_errors",
+      "sort_errors_by_instance_path_schema_path_keyword",
+      "emit_privacy_safe_categories_and_counts",
+      "require_zero_schema_errors",
+      "exact_business_identity_and_order",
+      "task_semantics_and_protected_values",
+      "cancellation_and_request_generation_fence",
+      "atomic_or_recoverable_persistence_and_readback"
+    ],
+    "provider_strict_claim_sufficient": false,
+    "typed_outcomes": [
+      "schema_contract_ready",
+      "schema_dialect_missing",
+      "schema_dialect_unsupported",
+      "schema_unknown_keyword",
+      "schema_vocabulary_unsupported",
+      "schema_remote_reference_forbidden",
+      "schema_reference_unresolved",
+      "schema_meta_invalid",
+      "schema_digest_mismatch",
+      "validator_unavailable",
+      "validator_version_unreadable",
+      "instance_raw_json_invalid",
+      "instance_schema_invalid"
+    ],
+    "rollback": {
+      "profile_pins": [
+        "response_contract_id",
+        "schema_digest",
+        "schema_profile_version",
+        "validator_version"
+      ],
+      "kill_switch": "prevent_new_submissions_and_increment_request_generation",
+      "catalog_reactivation": "signed_higher_revision_rollback",
+      "historical_unloadable_validator": "readable_historical_record_not_revalidated_or_promoted"
+    }
+  },
+  "minimum_acceptance_tests": {
+    "catalog_updater": [
+      "valid_signed_genesis_and_next_revision_activate",
+      "tamper_signature_key_expiry_chain_duplicate_and_host_version_fail_closed",
+      "lower_revision_and_mix_match_rejected",
+      "lab_evidence_cannot_mutate_catalog",
+      "activation_crash_recovery_before_and_after_pointer_swap",
+      "kill_switch_invalidates_inflight_recommendation_generation",
+      "signed_higher_revision_rollback_succeeds_plain_replay_fails"
+    ],
+    "identity": [
+      "exact_all_fields_pass",
+      "each_missing_field_returns_typed_unavailable",
+      "same_name_size_different_digest_fails",
+      "same_digest_incompatible_format_quantization_or_shape_fails",
+      "ambiguous_plane_mapping_fails",
+      "resolver_rejects_path_symlink_out_of_root_and_changed_during_hash_without_leak",
+      "unsupported_multifile_scope_fails"
+    ],
+    "telemetry": [
+      "serialization_contains_no_raw_content_paths_or_identifiers",
+      "same_value_purpose_epoch_stable_other_purpose_or_epoch_distinct",
+      "missing_key_omits_pseudonym_without_unkeyed_fallback",
+      "validator_error_projection_contains_no_rejected_values",
+      "cardinality_and_length_bounds",
+      "retention_removes_event_pseudonyms_preserves_approved_aggregates"
+    ],
+    "schema": [
+      "declared_Draft202012_and_check_schema",
+      "unknown_nested_keyword_remote_ref_vocab_format_and_digest_fail_pretransport",
+      "required_additional_type_enum_const_string_array_numeric_boundaries",
+      "boolean_schema_items_false_prefixItems_defs_local_ref_and_unresolved_ref",
+      "schema_and_business_identity_failures_remain_separate",
+      "provider_claimed_strict_is_locally_revalidated",
+      "repaired_fenced_coerced_or_defaulted_JSON_not_raw_success",
+      "missing_validator_or_unreadable_version_typed_unavailable",
+      "deterministic_privacy_safe_error_ordering",
+      "schema_success_cannot_bypass_later_gates"
+    ]
+  },
+  "external_sources": [
+    {
+      "url": "https://lmstudio.ai/docs/developer/rest/list",
+      "authority": "official_LM_Studio",
+      "claim": "Native model listing documents key, quantization, size, format, capabilities, and loaded-instance runtime config; no immutable artifact digest is documented."
+    },
+    {
+      "url": "https://lmstudio.ai/docs/developer/openai-compat/models",
+      "authority": "official_LM_Studio",
+      "claim": "The OpenAI-compatible endpoint lists models visible to the server and may include downloaded models under Just-In-Time loading."
+    },
+    {
+      "url": "https://json-schema.org/draft/2020-12/json-schema-core.html",
+      "authority": "official_JSON_Schema_specification",
+      "claim": "Draft 2020-12 defines dialect/vocabulary processing and says unknown keywords should be treated as annotations."
+    },
+    {
+      "url": "https://json-schema.org/draft/2020-12/json-schema-validation.html",
+      "authority": "official_JSON_Schema_specification",
+      "claim": "Draft 2020-12 defines validation vocabularies and assertion behavior."
+    },
+    {
+      "url": "https://python-jsonschema.readthedocs.io/en/stable/validate/",
+      "authority": "official_python_jsonschema_documentation",
+      "claim": "Validator instances assume valid schemas; check_schema validates schemas, and format assertions require a format checker."
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc2104",
+      "authority": "RFC_Editor",
+      "claim": "HMAC combines a cryptographic hash with a shared secret key for message authentication."
+    },
+    {
+      "url": "https://www.rfc-editor.org/rfc/rfc8785",
+      "authority": "RFC_Editor",
+      "claim": "JCS provides deterministic JSON canonicalization for repeatable hashing and signing."
+    },
+    {
+      "url": "https://theupdateframework.github.io/specification/latest/",
+      "authority": "official_TUF_specification",
+      "claim": "Signed/versioned metadata supports defenses against rollback, freeze, and mix-and-match update attacks."
+    }
+  ],
+  "retrieved_at_utc": "2026-07-13T15:39:04Z",
+  "local_evidence": [
+    "docs/adaptive_local_request_product_architecture.md",
+    "experiments/lmstudio/results_summaries/2026-07-13_adaptive_model_recommendation_policy.md",
+    "experiments/lmstudio/results_summaries/2026-07-13_labkit_package_reuse_assessment.md",
+    "experiments/lmstudio/results_summaries/2026-07-13_structured_validation_migration_risks.md",
+    "experiments/lmstudio/results_summaries/2026-07-13_provider_neutral_prompt_structured_contracts.md",
+    "experiments/lmstudio/results_summaries/2026-07-13_host_request_flow_inventory.md",
+    "libs/lmstudio_managed/registry/identity.py",
+    "libs/lmstudio_managed/registry/api_models.py",
+    "tools/lmstudio_lab/identity_probe.py",
+    "lmstudio_labkit/requests.py",
+    "tools/lmstudio_lab/privacy.py",
+    "tools/lmstudio_lab/metrics.py",
+    "lmstudio_labkit/validation.py",
+    "lmstudio_labkit/schema_builders.py",
+    "tools/lmstudio_lab/structured.py",
+    "tests/lmstudio_labkit/test_schema_keywords.py"
+  ],
+  "remaining_blockers": [
+    "exact_artifact_resolver_support_on_each_target_installation",
+    "task_specific_semantic_evidence",
+    "provider_runtime_schema_capability_evidence",
+    "persistence_and_control_plane_gates",
+    "separately_authorized_shadow_and_canary_execution"
+  ],
+  "non_claims": [
+    "No model, task profile, catalog entry, digest source, or rollout percentage is approved.",
+    "LM Studio model APIs are not claimed to expose an immutable artifact digest.",
+    "Current LabKit schema validation is not claimed to be complete.",
+    "HMAC pseudonyms are not claimed to make event data anonymous.",
+    "No model discovery, hashing, load, inference, cloud call, migration, implementation, commit, or push is authorized."
+  ]
+}

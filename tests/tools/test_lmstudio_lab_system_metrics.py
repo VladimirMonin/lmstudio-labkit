@@ -10,9 +10,9 @@ from types import SimpleNamespace
 
 import pytest
 import yaml
-from libs.lmstudio_managed.metrics import SystemSummary as ManagedSystemSummary
 from tools.lmstudio_lab import system_metrics as system_metrics_module
 
+from lmstudio_managed.metrics import SystemSummary as ManagedSystemSummary
 from tools import lmstudio_benchmark, lmstudio_lab
 
 ABSOLUTE_PATH_PATTERNS = (
@@ -284,6 +284,14 @@ def test_system_metrics_summary_to_managed_summary_preserves_before_peak_after_a
         "gpu_util_peak_percent": 85.0,
         "gpu_memory_util_peak_percent": 66.0,
         "gpu_power_peak_watts": 140.0,
+        "configured_sample_interval_s": None,
+        "actual_sample_interval_s": None,
+        "sampler_failure_count": 0,
+        "telemetry_valid": True,
+        "phase_order_valid": True,
+        "timestamp_order_valid": False,
+        "memory_evidence_valid": False,
+        "phase_summaries": (),
     }
 
 

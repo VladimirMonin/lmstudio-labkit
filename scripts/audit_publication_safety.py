@@ -20,11 +20,35 @@ PATTERNS = [
         re.compile(r"(?i)(api[_-]?key|token|secret|password)\s*[:=]\s*['\"][^'\"]+['\"]"),
     ),
     ("private home path", re.compile(r"/home/v/(Syncthing|\.hermes|code/Whisper-Voice-Machine)")),
+    (
+        "generic POSIX user profile path",
+        re.compile(r"/(?:home/(?!v(?:/|$))|Users/)[^/\s]+(?:/[^\s`'\"]+)+"),
+    ),
+    (
+        "generic private POSIX root",
+        re.compile(r"/(?:srv|mnt)/[^\s`'\"]+(?:/[^\s`'\"]+)+"),
+    ),
+    (
+        "Windows user profile path",
+        re.compile(r"(?i)\b[A-Z]:[\\/](?:Users|Documents and Settings)[\\/][^\\/\s]+"),
+    ),
 ]
 ALLOWLIST = {
     "scripts/audit_publication_safety.py",
     "instructions/SEC.publication_safety.instructions.md",
     "AGENTS.MD",
+}
+PATH_FIXTURE_ALLOWLIST = {
+    "tests/architecture/test_publication_safety_audit.py",
+    "tests/lmstudio_labkit/test_privacy_scanner.py",
+    "tests/tools/test_lmstudio_lab_memory_recommendations.py",
+    "tests/tools/test_lmstudio_lab_metrics.py",
+    "tests/tools/test_lmstudio_lab_model_probe.py",
+}
+PATH_LABELS = {
+    "generic POSIX user profile path",
+    "generic private POSIX root",
+    "Windows user profile path",
 }
 
 
@@ -56,6 +80,12 @@ for path in ROOT.rglob("*"):
             "private home path",
         }
         if rel in ALLOWLIST and label in allow_terms:
+            continue
+        if (
+            rel in PATH_FIXTURE_ALLOWLIST
+            or rel.startswith("tests/")
+            or rel == "tools/lmstudio_lab/private_benchmark_pack.py"
+        ) and label in PATH_LABELS:
             continue
         for match in pattern.finditer(text):
             line = text.count("\n", 0, match.start()) + 1

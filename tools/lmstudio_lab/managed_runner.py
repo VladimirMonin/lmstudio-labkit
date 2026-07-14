@@ -15,7 +15,8 @@ from urllib import parse as urllib_parse
 from urllib import request as urllib_request
 
 import yaml
-from libs.lmstudio_managed.cache_contracts.contracts import (
+
+from lmstudio_managed.cache_contracts.contracts import (
     CacheEvidence,
     CacheExperimentPlan,
     CacheMeasurementStatus,
@@ -23,7 +24,7 @@ from libs.lmstudio_managed.cache_contracts.contracts import (
     ResponsesCacheProbeStatus,
     parse_responses_usage,
 )
-from libs.lmstudio_managed.client import (
+from lmstudio_managed.client import (
     DownloadClient,
     GenerationClient,
     LifecycleClient,
@@ -31,15 +32,15 @@ from libs.lmstudio_managed.client import (
     ModelListClient,
     TransportRequest,
 )
-from libs.lmstudio_managed.client.errors import SafeApiError
-from libs.lmstudio_managed.download import DownloadRequest
-from libs.lmstudio_managed.generation import (
+from lmstudio_managed.client.errors import SafeApiError
+from lmstudio_managed.download import DownloadRequest
+from lmstudio_managed.generation import (
     PlainTextGenerationRequest,
     ResponseFormatKind,
     StructuredGenerationRequest,
 )
-from libs.lmstudio_managed.lifecycle import LoadModelRequest, UnloadModelRequest
-from libs.lmstudio_managed.registry import (
+from lmstudio_managed.lifecycle import LoadModelRequest, UnloadModelRequest
+from lmstudio_managed.registry import (
     LoadedInstanceRecord,
     ModelListResponse,
     parse_native_model_list,
@@ -59,6 +60,9 @@ from .live_smoke import LiveTransport, run_live_chunked_structured_smoke, run_li
 from .metrics import (
     SCHEMA_VERSION,
     LMStudioLabMetricRecord,
+    PhaseConfidence,
+    PhaseDerivationMethod,
+    PhaseMarker,
     TokenMetrics,
     append_jsonl_record,
 )
@@ -107,6 +111,12 @@ _SAFE_SYSTEM_SUMMARY_KEYS = (
     "vram_after_mb",
     "gpu_util_peak_percent",
     "gpu_power_peak_watts",
+    "configured_sample_interval_s",
+    "actual_sample_interval_s",
+    "sampler_failure_count",
+    "telemetry_valid",
+    "phase_order_valid",
+    "phase_summaries",
 )
 _MEDIUM_CHUNKED_PREP_DATASET_ID = "blocks_json_medium_chunked"
 _MEDIUM_CHUNKED_LIVE_ALLOWED_DATASET_IDS = frozenset(
@@ -734,6 +744,26 @@ class ManagedLabRunner:
         result = self._generation_client.complete_plain_text(request, timeout_s=timeout_s)
         return _generation_summary(result)
 
+    def mark_system_phase(
+        self,
+        marker: PhaseMarker,
+        derivation_method: PhaseDerivationMethod = PhaseDerivationMethod.DIRECT_EVENT,
+        confidence: PhaseConfidence = PhaseConfidence.HIGH,
+    ) -> None:
+        marker_method = getattr(self._system_sampler, "mark_phase", None)
+        if not callable(marker_method):
+            return
+        try:
+            marker_method(marker, derivation_method, confidence)
+        except Exception:
+            try:
+                self._system_sampler.samples.append(
+                    SystemMetricsSnapshot(error_category="sampler_error")
+                )
+            except Exception:
+                pass
+            return
+
     def run_with_system_metrics(
         self,
         operation: ManagedOperation,
@@ -748,30 +778,54 @@ class ManagedLabRunner:
             tuple[type[BaseException], BaseException, TracebackType | None] | None
         ) = None
 
-        self._system_sampler.start(providers=normalized_providers)
+        sampler_failure_count = 0
+        try:
+            self._system_sampler.start(providers=normalized_providers)
+        except Exception:
+            sampler_failure_count += 1
         try:
             operation_summary = _sanitize_operation_summary(operation())
         except Exception:
             pending_exception = sys.exc_info()
         finally:
-            cleanup_error: Exception | None = None
             try:
                 system_summary = self._system_sampler.stop(providers=normalized_providers)
+            except Exception:
+                sampler_failure_count += 1
+
+            recorded_sampler_failures = sum(
+                getattr(sample, "error_category", None) == "sampler_error"
+                for sample in getattr(self._system_sampler, "samples", ())
+            )
+
+            if system_summary is None:
+                system_summary = SystemMetricsSummary(
+                    providers=normalized_providers,
+                    sampler_failure_count=sampler_failure_count + recorded_sampler_failures,
+                    telemetry_valid=False,
+                )
+            elif sampler_failure_count or recorded_sampler_failures:
+                system_summary.sampler_failure_count = (
+                    max(system_summary.sampler_failure_count, recorded_sampler_failures)
+                    + sampler_failure_count
+                )
+                system_summary.telemetry_valid = False
+
+            try:
                 write_system_telemetry_artifacts(
                     Path(run_dir),
                     samples=self._system_sampler.samples,
                     summary=system_summary,
                 )
-            except Exception as error:
-                cleanup_error = error
+            except Exception:
+                system_summary.sampler_failure_count += 1
+                system_summary.telemetry_valid = False
 
             if pending_exception is not None:
                 exc_type, exc, traceback = pending_exception
                 if exc is not None:
                     raise exc.with_traceback(traceback)
                 raise exc_type
-            if cleanup_error is not None:
-                raise cleanup_error
 
         assert operation_summary is not None
         assert system_summary is not None
@@ -8445,6 +8499,7 @@ class ManagedLabRunner:
                 timeout_s=timeout_s,
                 transport=native_transport,
                 operation=_live_operation,
+                phase_callback=self.mark_system_phase,
             )
 
         cache_summary = self.run_with_system_metrics(
@@ -8802,6 +8857,7 @@ class ManagedLabRunner:
                 timeout_s=timeout_s,
                 transport=native_transport,
                 operation=_live_operation,
+                phase_callback=self.mark_system_phase,
             )
 
         comparison_summary = self.run_with_system_metrics(
@@ -9191,6 +9247,7 @@ class ManagedLabRunner:
                 timeout_s=timeout_s,
                 transport=native_transport,
                 operation=_live_operation,
+                phase_callback=self.mark_system_phase,
             )
 
         instrumentation_summary = self.run_with_system_metrics(
@@ -9683,6 +9740,7 @@ class ManagedLabRunner:
                 timeout_s=timeout_s,
                 transport=native_transport,
                 operation=_live_operation,
+                phase_callback=self.mark_system_phase,
             )
 
         batch_summary = self.run_with_system_metrics(
@@ -9920,6 +9978,7 @@ class ManagedLabRunner:
                 timeout_s=timeout_s,
                 transport=native_transport,
                 operation=_live_operation,
+                phase_callback=self.mark_system_phase,
             )
 
         batch_summary = self.run_with_system_metrics(

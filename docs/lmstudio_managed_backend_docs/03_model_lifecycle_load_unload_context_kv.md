@@ -136,6 +136,23 @@ graph LR
 6. Любое unload-событие должно сбрасывать связанные session/cache IDs.
 7. Все load/unload операции должны иметь timeout и диагностику.
 
+## Measured lifecycle and GPU-placement claims
+
+Memory calibration must cover the complete lifecycle rather than only a before/after pair. Sampling begins at a clean baseline, records load and loaded-idle state, follows attributable request phases, and continues through unload and confirmed global zero. Unknown values remain `null`; zero means a real measured zero.
+
+The runtime record keeps four placement facts separate:
+
+```text
+full_gpu_requested
+full_gpu_config_applied
+full_gpu_runtime_observed
+full_gpu_physical_placement_unproven
+```
+
+A maximum-GPU request or matching load-config echo proves intent and applied configuration, not complete physical layer residency. Attributable GPU memory and activity strengthen runtime evidence, but they still do not prove absence of CPU fallback unless the installed runtime exposes that fact. Reports must retain `full_gpu_physical_placement_unproven` whenever layer placement cannot be verified.
+
+Sampler failure is isolated from the model operation result: it must not turn a successful request into a transport failure. It does, however, invalidate memory recommendation evidence for that attempt. See [GPU telemetry, recommendations, and package boundary](12_gpu_telemetry_recommendations_and_package_boundary.md) for the evidence ladder and catalog-consumption rules.
+
 ## Итог 🧷
 
 Lifecycle manager — это слой, который превращает LM Studio из интерактивного приложения в предсказуемый backend. Он не просто вызывает `load`: он применяет профили, проверяет фактический config, управляет VRAM/RAM, соблюдает purpose-политику и создаёт основу для benchmark-матрицы. На 16GB VRAM агрессивные режимы должны быть экспериментальными до фактических замеров.

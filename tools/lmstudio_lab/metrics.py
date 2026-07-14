@@ -1,14 +1,15 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import asdict, dataclass, field
 from datetime import UTC, datetime
+from enum import StrEnum
 from pathlib import Path
 from typing import Any
 
-from libs.lmstudio_managed.metrics import RequestMetrics
-from libs.lmstudio_managed.validation import failure_kind_from_lab_category
+from lmstudio_managed.metrics import RequestMetrics
+from lmstudio_managed.validation import failure_kind_from_lab_category
 
 from .privacy import (
     REDACTED_VALUE,
@@ -39,6 +40,58 @@ SAFE_ERROR_CATEGORIES = (
     "unknown",
 )
 _SAFE_ENVELOPE_BOOL_KEYS = ("content_empty", "reasoning_content_present")
+
+
+class PhaseMarker(StrEnum):
+    CLEAN_BASELINE = "clean_baseline"
+    LOAD_STARTED = "load_started"
+    LOADED_IDLE = "loaded_idle"
+    REQUEST_DISPATCHED = "request_dispatched"
+    PREFILL_ACTIVE = "prefill_active"
+    FIRST_RESPONSE_UNIT = "first_token"
+    DECODE_ACTIVE = "decode_active"
+    CONCURRENT_PEAK = "concurrent_peak"
+    BATCH_COMPLETED = "batch_completed"
+    POST_BATCH_IDLE = "post_batch_idle"
+    UNLOAD_STARTED = "unload_started"
+    AFTER_UNLOAD_GLOBAL_ZERO = "after_unload_global_zero"
+
+
+PHASE_MARKER_ORDER = tuple(PhaseMarker)
+
+
+class PhaseDerivationMethod(StrEnum):
+    DIRECT_EVENT = "direct_event"
+    ATTRIBUTABLE_REQUEST_INTERVAL = "attributable_request_interval"
+    UNAVAILABLE = "unavailable"
+
+
+class PhaseConfidence(StrEnum):
+    HIGH = "high"
+    MEDIUM = "medium"
+    UNAVAILABLE = "unavailable"
+
+
+@dataclass(frozen=True, slots=True)
+class PhaseMarkerRecord:
+    marker: PhaseMarker
+    sequence: int
+    derivation_method: PhaseDerivationMethod
+    confidence: PhaseConfidence
+
+
+def validate_phase_marker_order(records: Sequence[PhaseMarkerRecord]) -> bool:
+    """Validate monotonic event and canonical phase ordering."""
+
+    previous_sequence = -1
+    previous_rank = -1
+    for record in records:
+        rank = PHASE_MARKER_ORDER.index(record.marker)
+        if record.sequence <= previous_sequence or rank < previous_rank:
+            return False
+        previous_sequence = record.sequence
+        previous_rank = rank
+    return True
 
 
 def _utc_now_iso() -> str:
@@ -389,6 +442,11 @@ def append_jsonl_record(
 __all__ = [
     "LMStudioLabMetricRecord",
     "LoadConfigSummary",
+    "PHASE_MARKER_ORDER",
+    "PhaseConfidence",
+    "PhaseDerivationMethod",
+    "PhaseMarker",
+    "PhaseMarkerRecord",
     "ResponseFormatSummary",
     "SAFE_ERROR_CATEGORIES",
     "SCHEMA_VERSION",
@@ -397,4 +455,5 @@ __all__ = [
     "TokenMetrics",
     "ValidationMetrics",
     "append_jsonl_record",
+    "validate_phase_marker_order",
 ]

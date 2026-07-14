@@ -1,0 +1,235 @@
+{
+  "schema_version": "lmstudio-labkit-structured-validation-migration-risks-v1",
+  "date": "2026-07-13",
+  "status": "offline_read_only_analysis",
+  "decision": "API-bound JSON Schema is a runtime grammar gate only. Safe migration additionally requires application-owned raw parse, business identity, semantic safety, protected-value, cancellation, persistence, and product-behavior gates.",
+  "scope": {
+    "model_calls": 0,
+    "model_loads": 0,
+    "network_requests": 0,
+    "runtime_changes": 0,
+    "external_repository_changes": 0,
+    "analysis_surfaces": [
+      "host compatibility request and payload construction",
+      "host block schema, processing, retry, fallback, ordering, persistence, cancellation, and tests",
+      "host image schema, parsing, cancellation, result construction, and tests",
+      "LabKit structured validation and vision closure evidence"
+    ]
+  },
+  "current_contract_findings": {
+    "api_bound_schema": {
+      "blocks": true,
+      "images": true,
+      "plain_text_chunks": false,
+      "interpretation": "Block and image paths use strict closed JSON Schema through the compatibility payload; plain text chunk cleanup remains unstructured."
+    },
+    "blocks_post_generation": {
+      "one_structural_retry": true,
+      "original_block_fallback": true,
+      "rejects_missing_ids": true,
+      "rejects_duplicate_ids": false,
+      "rejects_reordered_ids": false,
+      "rejects_extra_ids": false,
+      "extra_id_behavior": "filtered",
+      "wrong_text_type_behavior": "coerced_to_string",
+      "bare_array_behavior": "accepted_despite_object_schema",
+      "merge_order": "numeric_id_sort",
+      "explicit_fallback_state_persisted": false
+    },
+    "transport_retry": {
+      "separate_from_structural_retry": true,
+      "retryable_categories": ["timeout", "request_timeout", "rate_limit", "server"],
+      "risk": "Transport attempts and the structural retry can multiply without one logical-request call ceiling."
+    },
+    "cancellation": {
+      "queue_active_task_cancellation_present": true,
+      "vision_cooperative_cancel_check_present": true,
+      "in_flight_block_requests_may_finish": true,
+      "durable_request_generation_fence_found": false
+    },
+    "persistence": {
+      "aggregate_and_block_writes_are_separate_operations": true,
+      "atomic_transaction_evidence": false,
+      "fallback_distinguished_from_model_success": false
+    },
+    "vision_post_generation": {
+      "truncated_json_repair": true,
+      "missing_required_field_defaults": true,
+      "unknown_enum_fallback": true,
+      "semantic_grounding_gate": false,
+      "risk": "Schema defects can become apparently usable results, while structural validity remains independent from OCR and grounding quality."
+    }
+  },
+  "failure_taxonomy": {
+    "transport": ["connection", "timeout", "http_status", "missing_final_text", "cancelled"],
+    "completion": ["empty_output", "length_explicit", "length_usage_cap", "runaway_repetition", "reasoning_leak"],
+    "raw_parse": ["invalid_json", "fenced_json", "repaired_or_truncated_json"],
+    "runtime_schema": ["missing_field", "extra_field", "wrong_type", "wrong_enum", "unclosed_structure"],
+    "business_identity": ["count_mismatch", "missing_id", "duplicate_id", "extra_id", "reordered_id", "empty_text"],
+    "semantic_ownership": ["omission", "unsupported_addition", "cross_block_leak", "cross_chunk_leak", "summary_scope_leak"],
+    "protected_values": ["name_change", "number_change", "date_change", "url_change", "command_change", "placeholder_change", "identifier_change", "timestamp_change"],
+    "image_semantics": ["visible_text_inexact", "salient_text_incomplete", "object_ungrounded", "salient_object_incomplete", "unsupported_warning_or_claim"],
+    "control_flow": ["stale_attempt_wins", "attempt_zero_overwritten", "late_completion_after_cancel"],
+    "persistence": ["partial_write", "fallback_as_success", "partial_batch_commit", "readback_mismatch"],
+    "observability": ["unknown_collapse", "attempt_missing", "fallback_missing", "validator_version_missing"]
+  },
+  "fail_closed_gates": [
+    "Request generation is current and not cancelled.",
+    "Transport completed with final text and safe finish/usage state.",
+    "Raw JSON parses without silent repair, unwrap, or defaults.",
+    "A local full JSON Schema validator accepts the closed payload.",
+    "Expected count, ID sequence, uniqueness, order, and non-empty string types match exactly.",
+    "Only authoritative target units are changed or summarized.",
+    "Application-derived protected values and placeholders are unchanged.",
+    "Task-specific semantic safety passes; image dimensions remain separate.",
+    "Cancellation and request generation are rechecked immediately before commit.",
+    "Output, control state, and validator summary commit atomically and pass read-back."
+  ],
+  "retry_policy": {
+    "transport": {
+      "eligible": ["transient_timeout", "rate_limit", "server_failure"],
+      "ineligible": ["deterministic_http_4xx", "lost_local_instance", "semantic_failure"],
+      "requirements": ["bounded", "cancel_aware", "request_generation_aware"]
+    },
+    "structural": {
+      "maximum_retries": 1,
+      "eligible": ["invalid_raw_json", "full_schema_failure", "missing_duplicate_extra_or_reordered_ids"],
+      "retry_change": "Keep source and semantic instruction fixed; add one terse correction naming only the failed structural gate.",
+      "ineligible": ["length", "runaway_repetition", "reasoning_leak", "semantic_omission", "unsupported_addition", "boundary_leak", "protected_value_change", "image_grounding_or_ocr_failure"]
+    },
+    "global_rule": "Attempt zero and retry one are immutable; define one total-call ceiling so transport and structural retries cannot multiply invisibly."
+  },
+  "fallback_policy": {
+    "structural_exhaustion": "Return all original target blocks unchanged in application order and mark fallback_original.",
+    "semantic_or_safety_failure": "Skip structural retry and return original targets unchanged.",
+    "summary_or_image_without_safe_original_equivalent": "Remain failed or unavailable; do not publish a structurally valid guess.",
+    "batch_default": "Atomic acceptance only.",
+    "forbidden_behaviors": [
+      "filter_extra_ids",
+      "sort_reordered_response_into_apparent_correctness",
+      "coerce_wrong_types",
+      "default_required_image_fields",
+      "persist_only_valid_subset",
+      "report_fallback_as_model_success"
+    ]
+  },
+  "application_owned_state": [
+    "request_id",
+    "request_generation",
+    "source_digest",
+    "expected_id_sequence",
+    "timestamps",
+    "protected_value_digest",
+    "retry_state",
+    "fallback_state",
+    "schema_version",
+    "validator_version"
+  ],
+  "persistence_contract": {
+    "authoritative_order": "original expected sequence, not numeric sorting unless domain-guaranteed equivalent",
+    "commit_fence": "Only the current non-cancelled request generation may commit.",
+    "atomic_unit": ["aggregate_text", "per_block_updates", "attempt_state", "fallback_state", "validator_summary"],
+    "fallback_if_no_transaction": "Use explicit pending/committed state plus deterministic recovery and read-back.",
+    "readback": ["source_identity", "id_sequence", "timestamps", "accepted_attempt", "control_state"]
+  },
+  "image_semantic_gate": {
+    "dimensions": [
+      "visible_text_exactness",
+      "salient_text_completeness",
+      "object_grounding",
+      "salient_object_completeness",
+      "unsupported_claims",
+      "warning_relevance",
+      "forbidden_private_or_person_claims",
+      "scene_and_language_classification"
+    ],
+    "closed_world": "Use exact or explicitly tolerance-scored references where available.",
+    "open_world": "Use an independently reviewed grounding rubric with abstain or review_required outcomes.",
+    "non_claim": "The bounded 36/36 raw/schema result does not establish production semantic admission."
+  },
+  "rollout": [
+    {
+      "stage": "offline_contract_tests",
+      "writes_user_output": false,
+      "requirement": "Exercise every taxonomy branch, attempt ledger, cancellation fence, and persistence failure with fake clients."
+    },
+    {
+      "stage": "shadow",
+      "writes_user_output": false,
+      "requirement": "Validate privacy-safe categories only; never replace or persist user-visible output."
+    },
+    {
+      "stage": "read_only_comparison",
+      "writes_user_output": false,
+      "requirement": "Compare accepted candidates with unchanged source and manual review by task and source position."
+    },
+    {
+      "stage": "canary",
+      "writes_user_output": true,
+      "requirement": "One task contract at a time with original-source fallback, kill switch, call/latency ceiling, and automatic rollback."
+    },
+    {
+      "stage": "broader_rollout",
+      "writes_user_output": true,
+      "requirement": "Task-specific semantic and persistence thresholds pass; no cross-task inference."
+    }
+  ],
+  "rollback": {
+    "actions": [
+      "Disable new local structured requests by contract-specific kill switch.",
+      "Advance request generation so in-flight completions are inert.",
+      "Continue with original application-owned source and timestamps.",
+      "Retain traceability from committed output to accepted attempt, schema, and validator versions."
+    ]
+  },
+  "observability": {
+    "record": [
+      "task_kind",
+      "endpoint_family",
+      "model_revision",
+      "request_generation",
+      "attempt_index",
+      "transport_category_and_status",
+      "latency",
+      "finish_reason",
+      "token_usage_and_configured_cap",
+      "raw_parse_mode",
+      "schema_result_and_category",
+      "identity_defect_counts",
+      "protected_value_and_boundary_verdicts_without_values",
+      "semantic_dimensions_and_review_state",
+      "cancellation_stage",
+      "fallback_reason",
+      "persistence_state_and_readback",
+      "privacy_safe_provenance_digests"
+    ],
+    "never_record": ["prompt", "raw_output", "source_text", "protected_values", "credentials", "local_paths", "image_bytes"]
+  },
+  "missing_tests": [
+    "Duplicate, extra, reordered, wrong-type, empty-text, and bare-array block responses fail closed.",
+    "Structural retry is distinct from transport retry, has a total-call ceiling, and preserves both attempts.",
+    "Fallback preserves exact original text, ID order, timestamps, degraded state, persistence read-back, and export.",
+    "Cancellation before request, during retry/backoff, in flight, after validation, and during commit prevents late persistence.",
+    "Aggregate and per-block writes have transaction, failure-injection, and recovery coverage.",
+    "Protected names, numbers, dates, URLs, commands, placeholders, and cross-boundary leakage have deterministic fixtures.",
+    "Usage-at-cap and runaway repetition fail despite a normal stop reason.",
+    "Image parsing rejects repaired/defaulted schema failures and semantic tests cover OCR, grounding, completeness, and unsupported claims.",
+    "Shadow/canary kill switch, stale generation, rollback, schema version, and validator version have integration coverage.",
+    "Metrics expose attempt, fallback, validator, and persistence outcomes without raw content."
+  ],
+  "evidence_gaps": [
+    "No retained end-to-end host run demonstrates structural retry, original fallback, persistence, read-back, and export together.",
+    "No cancellation race has been exercised against a real local structured request.",
+    "No valid binary image semantic-admission rubric is established.",
+    "No production threshold exists for protected-value or semantic acceptance.",
+    "No transaction or read-repair evidence exists for partial persistence failure.",
+    "Bounded model evidence does not establish broad model ranking, cross-task admission, or production concurrency."
+  ],
+  "public_evidence": [
+    "experiments/lmstudio/results_summaries/2026-07-12_structured_output_and_scorer_audit.md",
+    "experiments/lmstudio/results_summaries/2026-07-12_source_application_pipeline_fit.md",
+    "experiments/lmstudio/results_summaries/2026-07-13_host_application_shaped_structured_context_summary.md",
+    "experiments/lmstudio/results_summaries/2026-07-13_native_structured_vision_closure.md",
+    "experiments/lmstudio/results_summaries/2026-07-13_strict_vision_40_call_manual_reconciliation.md"
+  ]
+}
