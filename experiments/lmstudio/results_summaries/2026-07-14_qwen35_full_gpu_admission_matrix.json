@@ -1,0 +1,106 @@
+{
+  "schema_version": "qwen35-full-gpu-admission-matrix-v1",
+  "report_id": "2026-07-14_qwen35_full_gpu_admission_matrix",
+  "date": "2026-07-14",
+  "status": "no_admission_zero_inference",
+  "legend": {
+    "confirmed": "Directly established by executed evidence.",
+    "not_proven": "Required positive runtime evidence was unavailable; fail closed.",
+    "not_evaluated": "No executed inference denominator or response exists.",
+    "not_applicable": "A prerequisite gate prevented the operation.",
+    "no_admission": "Production or matrix admission is not supported."
+  },
+  "totals": {
+    "candidate_rows": 66,
+    "planned_inference_calls": 68,
+    "actual_inference_calls": 0,
+    "stop_gated_rows": 66,
+    "admitted_models": 0
+  },
+  "models": [
+    {
+      "model_id": "qwen/qwen3.5-4b",
+      "exact_execution_identity": "qwen/qwen3.5-4b@q4_k_m",
+      "candidate_rows": 36,
+      "planned_calls": 37,
+      "actual_calls": 0,
+      "stop_gated_rows": 36,
+      "dimensions": {
+        "identity": "confirmed",
+        "lifecycle_load": "confirmed",
+        "full_gpu_execution": "not_proven",
+        "context_8192_materialization_shape": "confirmed",
+        "inference_at_8192": "not_evaluated",
+        "context_16384": "not_evaluated",
+        "strict_route_schema": "not_evaluated",
+        "semantic_quality": "not_evaluated",
+        "cache_session": "not_evaluated",
+        "concurrency": "not_evaluated",
+        "vision": "not_evaluated",
+        "repeatability": "not_evaluated",
+        "production": "no_admission"
+      },
+      "full_gpu_gate": {
+        "maximum_gpu_requested": "confirmed",
+        "exact_instance_materialized": "confirmed",
+        "context_8192_parallel_1_materialized": "confirmed",
+        "gpu_kv_cache_observed": "confirmed",
+        "authoritative_all_layers_gpu": "not_proven",
+        "explicit_cpu_fallback_false": "not_proven",
+        "explicit_resource_downgrade_false": "not_proven",
+        "explicit_memory_thrash_false": "not_proven"
+      }
+    },
+    {
+      "model_id": "qwen3.5-9b-mtp",
+      "catalog_quantization": "Q4_K_S",
+      "exact_execution_identity": null,
+      "candidate_rows": 30,
+      "planned_calls": 31,
+      "actual_calls": 0,
+      "stop_gated_rows": 30,
+      "dimensions": {
+        "identity": "not_proven",
+        "lifecycle_load": "not_applicable",
+        "full_gpu_execution": "not_evaluated",
+        "context_8192_materialization_shape": "not_evaluated",
+        "inference_at_8192": "not_evaluated",
+        "context_16384": "not_evaluated",
+        "strict_route_schema": "not_evaluated",
+        "semantic_quality": "not_evaluated",
+        "cache_session": "not_evaluated",
+        "concurrency": "not_evaluated",
+        "vision": "not_evaluated",
+        "repeatability": "not_evaluated",
+        "production": "no_admission"
+      },
+      "full_gpu_gate": {
+        "immutable_selected_variant": "not_proven",
+        "maximum_gpu_requested": "not_applicable",
+        "exact_instance_materialized": "not_applicable",
+        "authoritative_all_layers_gpu": "not_evaluated",
+        "explicit_cpu_fallback_false": "not_evaluated",
+        "explicit_resource_downgrade_false": "not_evaluated",
+        "explicit_memory_thrash_false": "not_evaluated"
+      }
+    }
+  ],
+  "lanes": [
+    {"lane": "lifecycle_strict_canary", "qwen_4b_rows": 1, "qwen_4b_planned_calls": 1, "qwen_9b_mtp_rows": 1, "qwen_9b_mtp_planned_calls": 1, "actual_calls": 0},
+    {"lane": "structured_text", "qwen_4b_rows": 12, "qwen_4b_planned_calls": 12, "qwen_9b_mtp_rows": 6, "qwen_9b_mtp_planned_calls": 6, "actual_calls": 0},
+    {"lane": "context_cache", "qwen_4b_rows": 10, "qwen_4b_planned_calls": 10, "qwen_9b_mtp_rows": 6, "qwen_9b_mtp_planned_calls": 6, "actual_calls": 0},
+    {"lane": "concurrency", "qwen_4b_rows": 2, "qwen_4b_planned_calls": 3, "qwen_9b_mtp_rows": 2, "qwen_9b_mtp_planned_calls": 3, "actual_calls": 0},
+    {"lane": "strict_structured_vision", "qwen_4b_rows": 11, "qwen_4b_planned_calls": 11, "qwen_9b_mtp_rows": 15, "qwen_9b_mtp_planned_calls": 15, "actual_calls": 0}
+  ],
+  "comparison": {
+    "supported": false,
+    "comparable_inference_outputs": 0,
+    "reason": "The candidates stopped at different prerequisite gates and produced no inference responses."
+  },
+  "reentry_requirements": [
+    "Pin immutable exact execution identity for the candidate.",
+    "Observe authoritative all-layer GPU placement after materialization.",
+    "Observe explicit negative CPU fallback, resource downgrade, and memory-thrash facts required by the reviewed contract.",
+    "Start inference only after the complete hard gate passes in a newly reviewed run."
+  ]
+}

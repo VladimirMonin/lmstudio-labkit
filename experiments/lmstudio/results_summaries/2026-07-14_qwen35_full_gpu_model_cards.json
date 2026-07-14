@@ -1,0 +1,129 @@
+{
+  "schema_version": "qwen35-full-gpu-model-cards-v1",
+  "report_id": "2026-07-14_qwen35_full_gpu_model_cards",
+  "date": "2026-07-14",
+  "status": "evidence_scoped_zero_inference_cards",
+  "shared_boundary": {
+    "candidate_rows": 66,
+    "planned_inference_calls": 68,
+    "actual_inference_calls": 0,
+    "stop_gated_rows": 66,
+    "quality_ranking_supported": false,
+    "production_recommendation_supported": false
+  },
+  "model_cards": [
+    {
+      "model_id": "qwen/qwen3.5-4b",
+      "display_name": "Qwen 3.5 4B",
+      "exact_selected_variant": "qwen/qwen3.5-4b@q4_k_m",
+      "catalog_quantization": "Q4_K_M",
+      "catalog_modalities": ["text", "vision"],
+      "advertised_reasoning_control": ["off", "on"],
+      "denominators": {
+        "candidate_rows": 36,
+        "planned_inference_calls": 37,
+        "actual_inference_calls": 0,
+        "stop_gated_rows": 36,
+        "raw_inference_responses": 0
+      },
+      "executed_evidence": {
+        "load_attempts": 1,
+        "successful_cli_loads": 1,
+        "materialized_instances": 1,
+        "requested_gpu_placement": "max",
+        "observed_context_length": 8192,
+        "observed_parallel": 1,
+        "observed_kv_cache_gpu": true,
+        "unload_requests": 1,
+        "cleanup_global_zero_verified": true
+      },
+      "missing_admission_evidence": [
+        "authoritative gpu_layers == total_layers > 0",
+        "authoritative all-layer runtime telemetry",
+        "explicit cpu_fallback=false",
+        "explicit resource_guardrail_downgrade=false",
+        "explicit memory_thrash=false"
+      ],
+      "admission": "not_proven_fail_closed",
+      "supported_use_statement": "No workload use is recommended. The evidence supports only one bounded CLI load/unload lifecycle at the requested materialization shape.",
+      "not_evaluated": [
+        "inference transport",
+        "strict inference route",
+        "raw JSON and JSON Schema",
+        "business and semantic fidelity",
+        "8192-context inference behavior",
+        "16384-context behavior",
+        "cache and session behavior",
+        "concurrency",
+        "vision grounding and OCR",
+        "repeatability"
+      ],
+      "reentry_condition": "Run a newly reviewed canary that positively attests every required full-GPU and explicit-negative runtime fact before inference."
+    },
+    {
+      "model_id": "qwen3.5-9b-mtp",
+      "display_name": "Qwen 3.5 9B MTP",
+      "exact_selected_variant": null,
+      "catalog_quantization": "Q4_K_S",
+      "catalog_modalities": ["text", "vision"],
+      "advertised_reasoning_control": [],
+      "reasoning_control_note": "The captured metadata advertised no reasoning control, so the manifest omitted the field rather than inventing support.",
+      "denominators": {
+        "candidate_rows": 30,
+        "planned_inference_calls": 31,
+        "actual_inference_calls": 0,
+        "stop_gated_rows": 30,
+        "raw_inference_responses": 0
+      },
+      "executed_evidence": {
+        "immutable_execution_identity_available": false,
+        "load_attempts": 0,
+        "materialized_instances": 0,
+        "cleanup_global_zero_verified": true
+      },
+      "admission": "execution_identity_unavailable_fail_closed",
+      "supported_use_statement": "No workload use is recommended. The captured catalog entry is insufficient to bind an executed model instance.",
+      "not_evaluated": [
+        "lifecycle load",
+        "full-GPU execution",
+        "inference transport",
+        "strict inference route",
+        "raw JSON and JSON Schema",
+        "business and semantic fidelity",
+        "context behavior",
+        "cache and session behavior",
+        "concurrency",
+        "vision grounding and OCR",
+        "repeatability"
+      ],
+      "reentry_condition": "Pin immutable selected-variant and artifact identity, then run a newly reviewed full-GPU canary."
+    }
+  ],
+  "comparison_boundary": {
+    "supported": false,
+    "reason": "The 4B candidate reached materialization while the 9B MTP candidate stopped before load; neither reached inference.",
+    "forbidden_rankings": [
+      "quality",
+      "latency",
+      "throughput",
+      "memory efficiency",
+      "schema adherence",
+      "context handling",
+      "cache reuse",
+      "concurrency",
+      "vision quality"
+    ]
+  },
+  "deployment_boundary": {
+    "production_admitted_models": 0,
+    "deployment_ready_models": 0,
+    "unattended_processing_approved": false,
+    "future_positive_recommendation_requires": [
+      "full-GPU admission",
+      "executed inference denominator",
+      "raw response review",
+      "semantic adjudication",
+      "workload-specific safety gates"
+    ]
+  }
+}

@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "report_id": "2026-07-14_qwen35_full_gpu_manual_review",
+  "date": "2026-07-14",
+  "scope": "publication_safe_manual_review_of_bounded_qwen35_canary_and_zero_call_matrix",
+  "verdict": "capability_stop_zero_inference",
+  "non_claims": [
+    "No model is proven eligible for full-GPU matrix execution.",
+    "No inference transport, parse, schema, business, semantic, repeatability, cache, concurrency, or vision-quality claim is made.",
+    "Requested maximum-GPU placement and successful materialization are not treated as execution proof.",
+    "Historical runtime events outside the pinned canary window are not attributed to the canonical run."
+  ],
+  "evidence_integrity": {
+    "owner_payload_files_reviewed": 16,
+    "evidence_index_reviewed": true,
+    "files_read_total": 17,
+    "indexed_digest_size_mode_matches": 16,
+    "indexed_digest_size_mode_failures": 0,
+    "server_log_delta_matches_pinned_slice": true
+  },
+  "bindings": {
+    "executed_canary_manifest_sha256": "37d1d9afb2127a32569b342fa905810f3b624784036dbdd3283477cafe8978da",
+    "current_final_manifest_sha256": "46264eda0caef52a0634832fa69013c42e1a44926007c704c8542e24c867b5fc",
+    "executed_canary_production_host_sha256": "b3af12e89bb4d3e04fd5624c2876943d67a08356b5b976f9baa520e8950646c3",
+    "artifact_pin_file_sha256": "c897dd7ec5df63a65169b8663eba271d88deb831618a6a85d767b6f3f671bdbc",
+    "evidence_index_sha256": "3262b91113322c225e898f033d94f9c6a46b892ba04a35a2f6e476a6ebda13a0",
+    "server_log_delta_sha256": "e85a8d281083b9f77e08be5a0b87d3e8ba1d186ea64f21481aa9e2a29e2590cb"
+  },
+  "authorization": {
+    "stage4_authorized": false,
+    "eligible_models": 0,
+    "eligible_rows": 0,
+    "eligible_calls": 0
+  },
+  "accounting": {
+    "candidate_rows": 66,
+    "candidate_planned_inference_calls": 68,
+    "rows_reconciled": 66,
+    "stop_gated_rows": 66,
+    "actual_inference_attempts": 0,
+    "actual_inference_calls": 0,
+    "raw_inference_responses": 0,
+    "successful_cells": 0,
+    "load_attempts": 1,
+    "materialized_instances": 1,
+    "unload_requests": 1,
+    "stop_reasons": {
+      "full_gpu_materialization_not_proven": 1,
+      "base_full_gpu_not_proven": 35,
+      "execution_identity_unavailable": 30
+    }
+  },
+  "lanes": [
+    {"lane": "lifecycle_strict_canary", "planned_rows": 2, "planned_calls": 2, "actual_calls": 0, "stop_gated_rows": 2},
+    {"lane": "structured_text", "planned_rows": 18, "planned_calls": 18, "actual_calls": 0, "stop_gated_rows": 18},
+    {"lane": "context_cache", "planned_rows": 16, "planned_calls": 16, "actual_calls": 0, "stop_gated_rows": 16},
+    {"lane": "concurrency", "planned_rows": 4, "planned_calls": 6, "actual_calls": 0, "stop_gated_rows": 4},
+    {"lane": "strict_structured_vision", "planned_rows": 26, "planned_calls": 26, "actual_calls": 0, "stop_gated_rows": 26}
+  ],
+  "models": [
+    {
+      "model_id": "qwen/qwen3.5-4b",
+      "variant": "qwen/qwen3.5-4b@q4_k_m",
+      "planned_rows": 36,
+      "planned_calls": 37,
+      "load_attempts": 1,
+      "load_transport_successes": 1,
+      "load_latency_ms": 25437.64,
+      "materialized_instances": 1,
+      "requested_context_length": 8192,
+      "observed_context_length": 8192,
+      "requested_parallel": 1,
+      "observed_parallel": 1,
+      "kv_cache_gpu": true,
+      "authoritative_gpu_layers_available": false,
+      "explicit_cpu_fallback_false_available": false,
+      "explicit_resource_downgrade_false_available": false,
+      "memory_thrash_false_available": false,
+      "admission": "not_proven_fail_closed",
+      "actual_inference_calls": 0,
+      "stop_gated_rows": 36,
+      "cleanup_verified": true
+    },
+    {
+      "model_id": "qwen3.5-9b-mtp",
+      "planned_rows": 30,
+      "planned_calls": 31,
+      "immutable_artifact_identity_available": false,
+      "load_attempts": 0,
+      "materialized_instances": 0,
+      "admission": "execution_identity_unavailable_fail_closed",
+      "actual_inference_calls": 0,
+      "stop_gated_rows": 30,
+      "cleanup_verified": true
+    }
+  ],
+  "dimension_verdicts": {
+    "lifecycle_load_transport": {"executed": 1, "successful": 1, "verdict": "transport_success_admission_failed"},
+    "inference_transport": {"executed": 0, "verdict": "not_evaluated"},
+    "raw_parse": {"executed": 0, "verdict": "not_evaluated"},
+    "json_schema": {"executed": 0, "verdict": "not_evaluated"},
+    "business_validation": {"executed": 0, "verdict": "not_evaluated"},
+    "semantic_quality": {"executed": 0, "verdict": "not_evaluated"},
+    "repeatability": {"executed": 0, "verdict": "not_evaluated"},
+    "cache_session": {"executed": 0, "verdict": "not_evaluated"},
+    "concurrency": {"executed": 0, "verdict": "not_evaluated"},
+    "vision_pixel_review": {"executed_responses": 0, "images_compared": 0, "verdict": "not_applicable_zero_calls"}
+  },
+  "runtime_log": {
+    "exact_window_has_load": true,
+    "exact_window_has_materialization": true,
+    "exact_window_has_immutable_instance_lookup": true,
+    "exact_window_inference_requests": 0,
+    "exact_window_has_unload": true,
+    "foreign_or_unattributed_events_preserved_separately": true
+  },
+  "cleanup": {
+    "captured_initial_lms_ps_loaded_total": 0,
+    "captured_initial_native_loaded_total": 0,
+    "captured_group_final_lms_ps_loaded_total": 0,
+    "captured_group_final_native_loaded_total": 0,
+    "captured_matrix_final_lms_ps_loaded_total": 0,
+    "captured_matrix_final_native_loaded_total": 0,
+    "review_time_lms_ps_loaded_total": 0,
+    "review_time_native_loaded_total": 0
+  },
+  "conclusion": "The bounded evidence protocol completed safely and reconciled every candidate row, but the hard runtime gate admitted no model. Matrix execution remains 0 of 68 planned inference calls, so no quality or production recommendation is supported."
+}

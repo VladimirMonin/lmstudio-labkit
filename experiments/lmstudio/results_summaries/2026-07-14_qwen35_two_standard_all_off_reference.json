@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "date": "2026-07-14",
+  "status": "completed_with_recorded_failures",
+  "reasoning_mode": "off",
+  "mtp_used": false,
+  "manifest_sha256": "46264eda0caef52a0634832fa69013c42e1a44926007c704c8542e24c867b5fc",
+  "private_summary_sha256": "bdb8fb9f88de3d4c5bd40f216ec03b3031d869ec4fcc307504d4bddae2905fd4",
+  "models": [
+    {
+      "model_key": "qwen3.5-4b",
+      "rows_recorded": 36,
+      "actual_http_calls": 35,
+      "expected_http_calls": 37,
+      "row_statuses": {
+        "executed": 34,
+        "exception": 2
+      },
+      "http_statuses": {
+        "200": 16,
+        "400": 19
+      },
+      "missing_calls_reason": "session reuse rows had no bound previous response identifier"
+    },
+    {
+      "model_key": "qwen/qwen3.5-9b",
+      "rows_recorded": 30,
+      "actual_http_calls": 31,
+      "expected_http_calls": 31,
+      "row_statuses": {
+        "executed": 30
+      },
+      "http_statuses": {
+        "200": 28,
+        "400": 3
+      },
+      "missing_calls_reason": null
+    }
+  ],
+  "totals": {
+    "rows_recorded": 66,
+    "actual_http_calls": 66,
+    "expected_http_calls": 68,
+    "row_statuses": {
+      "executed": 64,
+      "exception": 2
+    },
+    "http_statuses": {
+      "200": 44,
+      "400": 22
+    },
+    "request_artifacts": 66,
+    "response_artifacts": 66,
+    "load_records": 14,
+    "artifact_files": 177,
+    "final_loaded_total": 0
+  },
+  "publication": {
+    "raw_prompts_included": false,
+    "raw_responses_included": false,
+    "private_paths_included": false,
+    "machine_identifiers_included": false
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "schema_version": "qwen35-full-gpu-matrix-closure-v1",
+  "report_id": "2026-07-14_qwen35_full_gpu_matrix_closure",
+  "date": "2026-07-14",
+  "status": "capability_stop_zero_inference",
+  "decision": {
+    "full_gpu_admitted_models": 0,
+    "production_admitted_models": 0,
+    "model_ranking_published": false,
+    "quality_evaluated": false,
+    "conclusion": "The bounded matrix failed closed before inference because neither candidate satisfied all hard runtime prerequisites."
+  },
+  "denominators": {
+    "candidate_rows": 66,
+    "planned_inference_calls": 68,
+    "actual_inference_calls": 0,
+    "stop_gated_rows": 66,
+    "raw_inference_responses": 0,
+    "successful_cells": 0,
+    "non_null_acceptance_verdicts": 0,
+    "earlier_call_ceiling_not_denominator": 80
+  },
+  "lanes": [
+    {"lane": "lifecycle_strict_canary", "candidate_rows": 2, "planned_calls": 2, "actual_calls": 0, "stop_gated_rows": 2},
+    {"lane": "structured_text", "candidate_rows": 18, "planned_calls": 18, "actual_calls": 0, "stop_gated_rows": 18},
+    {"lane": "context_cache", "candidate_rows": 16, "planned_calls": 16, "actual_calls": 0, "stop_gated_rows": 16},
+    {"lane": "concurrency", "candidate_rows": 4, "planned_calls": 6, "actual_calls": 0, "stop_gated_rows": 4},
+    {"lane": "strict_structured_vision", "candidate_rows": 26, "planned_calls": 26, "actual_calls": 0, "stop_gated_rows": 26}
+  ],
+  "models": [
+    {
+      "model_id": "qwen/qwen3.5-4b",
+      "exact_variant": "qwen/qwen3.5-4b@q4_k_m",
+      "candidate_rows": 36,
+      "planned_inference_calls": 37,
+      "actual_inference_calls": 0,
+      "stop_gated_rows": 36,
+      "load_attempts": 1,
+      "successful_cli_loads": 1,
+      "materialized_instances": 1,
+      "requested_gpu_placement": "max",
+      "observed_context_length": 8192,
+      "observed_parallel": 1,
+      "observed_kv_cache_gpu": true,
+      "authoritative_all_layers_gpu_proven": false,
+      "explicit_cpu_fallback_false_available": false,
+      "explicit_resource_downgrade_false_available": false,
+      "explicit_memory_thrash_false_available": false,
+      "admission": "not_proven_fail_closed"
+    },
+    {
+      "model_id": "qwen3.5-9b-mtp",
+      "catalog_quantization": "Q4_K_S",
+      "exact_selected_variant": null,
+      "candidate_rows": 30,
+      "planned_inference_calls": 31,
+      "actual_inference_calls": 0,
+      "stop_gated_rows": 30,
+      "immutable_execution_identity_available": false,
+      "load_attempts": 0,
+      "materialized_instances": 0,
+      "admission": "execution_identity_unavailable_fail_closed"
+    }
+  ],
+  "dimension_verdicts": {
+    "lifecycle_load_transport": {"executed": 1, "successful": 1, "verdict": "transport_success_admission_failed"},
+    "full_gpu": {"admitted_models": 0, "verdict": "not_proven"},
+    "inference_route": {"executed_calls": 0, "verdict": "not_evaluated"},
+    "schema": {"executed_responses": 0, "verdict": "not_evaluated"},
+    "semantic_quality": {"executed_responses": 0, "verdict": "not_evaluated"},
+    "context": {"executed_calls": 0, "verdict": "not_evaluated_beyond_4b_materialization_shape"},
+    "cache_session": {"planned_calls": 16, "actual_calls": 0, "verdict": "not_evaluated"},
+    "concurrency": {"candidate_rows": 4, "planned_calls": 6, "actual_calls": 0, "verdict": "not_evaluated"},
+    "vision": {"planned_calls": 26, "actual_calls": 0, "verdict": "not_evaluated"},
+    "repeatability": {"actual_repeat_calls": 0, "verdict": "not_evaluated"}
+  },
+  "ledger": {
+    "records": 66,
+    "status_counts": {"stop_gated": 66},
+    "stop_reason_counts": {
+      "full_gpu_materialization_not_proven": 1,
+      "base_full_gpu_not_proven": 35,
+      "execution_identity_unavailable": 30
+    },
+    "actual_inference_calls_sum": 0
+  },
+  "separate_confirmed_operational_facts": {
+    "cleanup_dual_source_zero": {
+      "initial": true,
+      "group_final": true,
+      "matrix_final": true,
+      "independent_review_time": true
+    },
+    "evidence_integrity": {
+      "indexed_payload_files": 16,
+      "digest_size_mode_matches": 16,
+      "digest_size_mode_failures": 0
+    }
+  },
+  "snapshot_provenance": {
+    "executed_canary_manifest_sha256": "37d1d9afb2127a32569b342fa905810f3b624784036dbdd3283477cafe8978da",
+    "current_final_manifest_sha256": "46264eda0caef52a0634832fa69013c42e1a44926007c704c8542e24c867b5fc",
+    "executed_canary_production_host_sha256": "b3af12e89bb4d3e04fd5624c2876943d67a08356b5b976f9baa520e8950646c3",
+    "later_runtime_authority_repairs_executed": false
+  },
+  "comparison_limits": {
+    "comparable_inference_outputs": 0,
+    "quality_comparison_supported": false,
+    "latency_or_throughput_comparison_supported": false,
+    "schema_context_cache_concurrency_vision_comparison_supported": false,
+    "reason": "The candidates stopped at different prerequisite gates and produced no inference responses."
+  },
+  "non_claims": [
+    "Neither model was proven fully GPU-resident.",
+    "No inference call or raw inference response exists.",
+    "Schema, semantic, context, cache, concurrency, vision, and repeatability were not evaluated.",
+    "Zero successful cells must not be described as failed model outputs.",
+    "No model ranking, production admission, deployment recommendation, or capability comparison is supported.",
+    "Later unexecuted repairs do not strengthen the executed canary evidence."
+  ],
+  "privacy": {
+    "contains_raw_requests_or_responses": false,
+    "contains_private_paths": false,
+    "contains_personal_data": false,
+    "owner_only_evidence_published": false
+  },
+  "companions": {
+    "admission_matrix": "2026-07-14_qwen35_full_gpu_admission_matrix.json",
+    "model_cards": "2026-07-14_qwen35_full_gpu_model_cards.json",
+    "manual_review": "2026-07-14_qwen35_full_gpu_manual_review.json",
+    "red_team": "2026-07-14_qwen35_full_gpu_red_team.json"
+  }
+}

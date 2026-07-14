@@ -1,0 +1,176 @@
+{
+  "schema_version": "1.0",
+  "report_id": "2026-07-14_qwen35_full_gpu_red_team",
+  "date": "2026-07-14",
+  "scope": "publication_safe_red_team_of_qwen35_manual_review_and_runtime_evidence",
+  "verdict": "pass_with_mandatory_claim_boundaries",
+  "core_conclusion": "The evidence confirms a safe fail-closed capability stop with zero inference. It does not establish full-GPU eligibility, model quality, model comparison, or production suitability.",
+  "classification_definitions": {
+    "confirmed": "Directly established by canonical evidence.",
+    "overstated": "A narrower fact is established, but the broader wording exceeds the evidence.",
+    "unsupported": "The required executed denominator or raw response does not exist.",
+    "contradicted": "The claim conflicts with the canonical ledger or admission result."
+  },
+  "evidence_bindings": {
+    "executed_canary_manifest_sha256": "37d1d9afb2127a32569b342fa905810f3b624784036dbdd3283477cafe8978da",
+    "current_final_manifest_sha256": "46264eda0caef52a0634832fa69013c42e1a44926007c704c8542e24c867b5fc",
+    "executed_canary_production_host_sha256": "b3af12e89bb4d3e04fd5624c2876943d67a08356b5b976f9baa520e8950646c3",
+    "later_repairs_executed_in_canonical_canary": false
+  },
+  "denominators": {
+    "candidate_rows": 66,
+    "planned_inference_calls": 68,
+    "actual_inference_calls": 0,
+    "stop_gated_rows": 66,
+    "raw_inference_responses": 0,
+    "non_null_acceptance_verdicts": 0,
+    "capture_references": 0,
+    "stage4_authorized_models": 0,
+    "stage4_authorized_rows": 0,
+    "stage4_authorized_calls": 0,
+    "earlier_call_ceiling_not_denominator": 80
+  },
+  "lanes": [
+    {"lane": "lifecycle_strict_canary", "candidate_rows": 2, "planned_calls": 2, "actual_calls": 0, "stop_gated_rows": 2},
+    {"lane": "structured_text", "candidate_rows": 18, "planned_calls": 18, "actual_calls": 0, "stop_gated_rows": 18},
+    {"lane": "context_cache", "candidate_rows": 16, "planned_calls": 16, "actual_calls": 0, "stop_gated_rows": 16},
+    {"lane": "concurrency", "candidate_rows": 4, "planned_calls": 6, "actual_calls": 0, "stop_gated_rows": 4},
+    {"lane": "strict_structured_vision", "candidate_rows": 26, "planned_calls": 26, "actual_calls": 0, "stop_gated_rows": 26}
+  ],
+  "models": [
+    {
+      "model_id": "qwen/qwen3.5-4b",
+      "candidate_rows": 36,
+      "planned_calls": 37,
+      "load_attempts": 1,
+      "successful_cli_loads": 1,
+      "materialized_instances": 1,
+      "observed_context_length": 8192,
+      "observed_parallel": 1,
+      "observed_kv_cache_gpu": true,
+      "authoritative_all_layers_gpu": false,
+      "explicit_cpu_fallback_false": false,
+      "explicit_resource_downgrade_false": false,
+      "explicit_memory_thrash_false": false,
+      "actual_inference_calls": 0,
+      "admission": "not_proven_fail_closed"
+    },
+    {
+      "model_id": "qwen3.5-9b-mtp",
+      "candidate_rows": 30,
+      "planned_calls": 31,
+      "immutable_execution_identity_available": false,
+      "load_attempts": 0,
+      "materialized_instances": 0,
+      "actual_inference_calls": 0,
+      "admission": "execution_identity_unavailable_fail_closed"
+    }
+  ],
+  "claim_classifications": [
+    {
+      "dimension": "full_gpu",
+      "classification": "contradicted",
+      "classification_scope": "any_positive_eligibility_claim",
+      "confirmed_boundary": "Maximum GPU placement was requested for one 4B load, but authoritative full-GPU execution was not proven; 9B was not loaded.",
+      "invalid_claim": "Either model was proven fully GPU-resident or admitted to the matrix."
+    },
+    {
+      "dimension": "route",
+      "classification": "overstated",
+      "classification_scope": "generalizing_cli_load_success_to_inference",
+      "confirmed_boundary": "One CLI lifecycle load returned success.",
+      "unsupported_boundary": "The API-bound strict inference route, inference transport, and response surface have a zero-call denominator.",
+      "invalid_claim": "The strict inference route or canary inference worked."
+    },
+    {
+      "dimension": "schema",
+      "classification": "unsupported",
+      "executed_denominator": 0,
+      "invalid_claim": "JSON Schema or business validation passed or failed for either model."
+    },
+    {
+      "dimension": "context",
+      "classification": "overstated",
+      "confirmed_boundary": "The 4B materialized instance reported context 8192 and parallel 1.",
+      "unsupported_boundary": "No 8k inference behavior, 16k admission, long-context retention, or context performance was tested."
+    },
+    {
+      "dimension": "cache_session",
+      "classification": "unsupported",
+      "planned_calls": 16,
+      "actual_calls": 0,
+      "invalid_claim": "Cold, warm, prefix, or session reuse behavior was measured."
+    },
+    {
+      "dimension": "concurrency",
+      "classification": "unsupported",
+      "candidate_rows": 4,
+      "planned_calls": 6,
+      "actual_calls": 0,
+      "invalid_claim": "Sequential or parallel-2 throughput, stability, or full-GPU behavior was measured."
+    },
+    {
+      "dimension": "vision",
+      "classification": "unsupported",
+      "planned_calls": 26,
+      "actual_calls": 0,
+      "raw_responses": 0,
+      "invalid_claim": "Vision transport, schema, grounding, OCR, or pixel fidelity was evaluated."
+    },
+    {
+      "dimension": "repeatability",
+      "classification": "unsupported",
+      "actual_repeat_calls": 0,
+      "invalid_claim": "Output stability or repeatability was measured."
+    },
+    {
+      "dimension": "model_comparison",
+      "classification": "unsupported",
+      "reason": "The candidates stopped at different prerequisite gates and produced no inference outputs.",
+      "invalid_claim": "Either model is better or worse in quality, speed, schema adherence, context, cache, concurrency, or vision."
+    },
+    {
+      "dimension": "production",
+      "classification": "contradicted",
+      "classification_scope": "any_admission_or_recommendation_claim",
+      "reason": "Stage 4 authorized zero models, rows, and calls.",
+      "invalid_claim": "Either model is production-ready, recommended, ranked, or approved by this matrix."
+    }
+  ],
+  "separate_confirmed_claims": {
+    "lifecycle_load_transport": {"attempted": 1, "successful": 1},
+    "cleanup": {
+      "initial_dual_source_zero": true,
+      "group_final_dual_source_zero": true,
+      "matrix_final_dual_source_zero": true,
+      "review_time_dual_source_zero": true
+    },
+    "evidence_integrity": {
+      "indexed_files": 16,
+      "digest_size_mode_matches": 16,
+      "digest_size_mode_failures": 0,
+      "owner_only_root_mode": "0700"
+    }
+  },
+  "ledger_reconciliation": {
+    "records": 66,
+    "status_counts": {"stop_gated": 66},
+    "stop_reason_counts": {
+      "full_gpu_materialization_not_proven": 1,
+      "base_full_gpu_not_proven": 35,
+      "execution_identity_unavailable": 30
+    },
+    "actual_inference_calls_sum": 0,
+    "warning": "Zero successful cells does not mean 66 or 68 failed model outputs; no model output exists."
+  },
+  "mandatory_corrections": [
+    "Use 66 candidate rows, 68 planned inference calls, and 0 actual inference calls; the earlier 80-call ceiling is not the executed plan denominator.",
+    "State 0 of 68 calls executed and 66 of 66 rows stop-gated; do not report 68 failed calls.",
+    "Keep the single successful CLI load outside inference denominators and do not call it a successful strict canary.",
+    "Describe 4B as materialized at the requested 8192/parallel-1 shape but not proven full-GPU.",
+    "Describe 9B as not loaded because immutable execution identity was unavailable, not as a full-GPU or quality failure.",
+    "Mark route, schema, semantic, cache, concurrency, vision, and repeatability as not evaluated rather than failed.",
+    "Preserve executed-snapshot provenance; later repairs were not run and cannot retroactively strengthen the canary evidence.",
+    "Publish no model ranking, capability comparison, production admission, or deployment recommendation from this run."
+  ]
+}
